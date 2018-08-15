@@ -105,6 +105,7 @@ osm_utilST_t OSM_UTIL_ST[60] =
 	{ .st="",   .state=""                     },   // 59
 };
 
+// https://wiki.openstreetmap.org/wiki/Map_Features
 const char* const OSM_UTIL_CLASSES[] =
 {
 	"class:none",
