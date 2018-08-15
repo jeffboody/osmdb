@@ -63,6 +63,11 @@ int main(int argc, char** argv)
 		goto fail_parse;
 	}
 
+	if(xml_ostream_complete(os) == 0)
+	{
+		goto fail_os;
+	}
+
 	osm_parser_delete(&parser);
 	xml_ostream_delete(&os);
 
@@ -70,6 +75,7 @@ int main(int argc, char** argv)
 	return EXIT_SUCCESS;
 
 	// failure
+	fail_os:
 	fail_parse:
 		osm_parser_delete(&parser);
 	fail_parser:
