@@ -25,9 +25,9 @@
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
-#include "osm_util.h"
+#include "osmdb_util.h"
 
-#define LOG_TAG "osm"
+#define LOG_TAG "osmdb"
 #include "libxmlstream/xml_log.h"
 
 /***********************************************************
@@ -38,10 +38,10 @@ typedef struct
 {
 	char st[3];
 	char state[32];
-} osm_utilST_t;
+} osmdb_utilST_t;
 
 // https://en.wikipedia.org/wiki/Federal_Information_Processing_Standard_state_code
-osm_utilST_t OSM_UTIL_ST[60] =
+osmdb_utilST_t OSM_UTIL_ST[60] =
 {
 	{ .st="",   .state=""                     },   // 0
 	{ .st="AL", .state="Alabama"              },   // 1
@@ -210,7 +210,7 @@ const char* const OSM_UTIL_RELATION_MEMBER_ROLE[] =
 * public                                                   *
 ***********************************************************/
 
-int osm_stNameToCode(const char* name)
+int osmdb_stNameToCode(const char* name)
 {
 	assert(name);
 
@@ -226,7 +226,7 @@ int osm_stNameToCode(const char* name)
 	return 0;
 }
 
-int osm_stAbrevToCode(const char* abrev)
+int osmdb_stAbrevToCode(const char* abrev)
 {
 	assert(abrev);
 
@@ -262,21 +262,21 @@ int osm_stAbrevToCode(const char* abrev)
 	return 0;
 }
 
-const char* osm_stCodeToName(int code)
+const char* osmdb_stCodeToName(int code)
 {
 	assert((code >= 0) && (code < 60));
 
 	return OSM_UTIL_ST[code].state;
 }
 
-const char* osm_stCodeToAbrev(int code)
+const char* osmdb_stCodeToAbrev(int code)
 {
 	assert((code >= 0) && (code < 60));
 
 	return OSM_UTIL_ST[code].st;
 }
 
-int osm_classNameToCode(const char* name)
+int osmdb_classNameToCode(const char* name)
 {
 	assert(name);
 
@@ -294,17 +294,17 @@ int osm_classNameToCode(const char* name)
 	return 0;
 }
 
-int osm_classKVToCode(const char* k, const char* v)
+int osmdb_classKVToCode(const char* k, const char* v)
 {
 	assert(k);
 	assert(v);
 
 	char name[256];
 	snprintf(name, 256, "%s:%s", k, v);
-	return osm_classNameToCode(name);
+	return osmdb_classNameToCode(name);
 }
 
-const char* osm_classCodeToName(int code)
+const char* osmdb_classCodeToName(int code)
 {
 	int idx = 0;
 	while(OSM_UTIL_CLASSES[idx])
@@ -318,7 +318,7 @@ const char* osm_classCodeToName(int code)
 	return OSM_UTIL_CLASSES[0];
 }
 
-int osm_relationTagTypeToCode(const char* type)
+int osmdb_relationTagTypeToCode(const char* type)
 {
 	assert(type);
 
@@ -336,7 +336,7 @@ int osm_relationTagTypeToCode(const char* type)
 	return 0;
 }
 
-const char* osm_relationTagCodeToType(int code)
+const char* osmdb_relationTagCodeToType(int code)
 {
 	int idx = 0;
 	while(OSM_UTIL_RELATION_TAG_TYPE[idx])
@@ -350,7 +350,7 @@ const char* osm_relationTagCodeToType(int code)
 	return OSM_UTIL_RELATION_TAG_TYPE[0];
 }
 
-int osm_relationMemberTypeToCode(const char* type)
+int osmdb_relationMemberTypeToCode(const char* type)
 {
 	assert(type);
 
@@ -368,7 +368,7 @@ int osm_relationMemberTypeToCode(const char* type)
 	return 0;
 }
 
-const char* osm_relationMemberCodeToType(int code)
+const char* osmdb_relationMemberCodeToType(int code)
 {
 	int idx = 0;
 	while(OSM_UTIL_RELATION_MEMBER_TYPE[idx])
@@ -382,7 +382,7 @@ const char* osm_relationMemberCodeToType(int code)
 	return OSM_UTIL_RELATION_MEMBER_TYPE[0];
 }
 
-int osm_relationMemberRoleToCode(const char* role)
+int osmdb_relationMemberRoleToCode(const char* role)
 {
 	assert(role);
 
@@ -400,7 +400,7 @@ int osm_relationMemberRoleToCode(const char* role)
 	return 0;
 }
 
-const char* osm_relationMemberCodeToRole(int code)
+const char* osmdb_relationMemberCodeToRole(int code)
 {
 	int idx = 0;
 	while(OSM_UTIL_RELATION_MEMBER_ROLE[idx])

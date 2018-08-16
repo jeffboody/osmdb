@@ -27,9 +27,9 @@
 #include "libxmlstream/xml_istream.h"
 #include "libxmlstream/xml_ostream.h"
 #include "osm_parser.h"
-#include "../osm_util.h"
+#include "../osmdb_util.h"
 
-#define LOG_TAG "osm"
+#define LOG_TAG "osmdb"
 #include "libxmlstream/xml_log.h"
 
 #define OSM_STATE_INIT            0
@@ -487,7 +487,7 @@ static int osm_parseSt(const char* num)
 	}
 
 	// replace empty string with 0
-	const char* abrev = osm_stCodeToAbrev(code);
+	const char* abrev = osmdb_stCodeToAbrev(code);
 	if(abrev[0] == '\0')
 	{
 		return 0;
@@ -629,12 +629,12 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 	if(self->tag_st)
 	{
 		xml_ostream_attr(self->os, "st",
-		                 osm_stCodeToAbrev(self->tag_st));
+		                 osmdb_stCodeToAbrev(self->tag_st));
 	}
 	if(self->tag_class)
 	{
 		xml_ostream_attr(self->os, "class",
-		                 osm_classCodeToName(self->tag_class));
+		                 osmdb_classCodeToName(self->tag_class));
 	}
 	xml_ostream_end(self->os);
 
@@ -661,7 +661,7 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 		{
 			char name[256];
 			char abrev[256];
-			int  class = osm_classKVToCode(atts[j], atts[n]);
+			int  class = osmdb_classKVToCode(atts[j], atts[n]);
 			if(class)
 			{
 				self->tag_class = class;
@@ -687,7 +687,7 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 			}
 			else if(strcmp(atts[j], "gnis:ST_alpha") == 0)
 			{
-				self->tag_st = osm_stAbrevToCode(atts[n]);
+				self->tag_st = osmdb_stAbrevToCode(atts[n]);
 			}
 		}
 
@@ -760,7 +760,7 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	if(self->tag_class)
 	{
 		xml_ostream_attr(self->os, "class",
-		                 osm_classCodeToName(self->tag_class));
+		                 osmdb_classCodeToName(self->tag_class));
 	}
 
 	// write way nds
@@ -799,7 +799,7 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 		{
 			char name[256];
 			char abrev[256];
-			int  class = osm_classKVToCode(atts[j], atts[n]);
+			int  class = osmdb_classKVToCode(atts[j], atts[n]);
 			if(class)
 			{
 				self->tag_class = class;
@@ -935,13 +935,13 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 	if(self->rel_type)
 	{
 		xml_ostream_attr(self->os, "type",
-		                 osm_relationTagCodeToType(self->rel_type));
+		                 osmdb_relationTagCodeToType(self->rel_type));
 	}
 
 	if(self->tag_class)
 	{
 		xml_ostream_attr(self->os, "class",
-		                 osm_classCodeToName(self->tag_class));
+		                 osmdb_classCodeToName(self->tag_class));
 	}
 
 	// write rel members
@@ -955,10 +955,10 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 		{
 			xml_ostream_begin(self->os, "member");
 			xml_ostream_attr(self->os, "type",
-			                 osm_relationMemberCodeToType(m->type));
+			                 osmdb_relationMemberCodeToType(m->type));
 			xml_ostream_attrf(self->os, "ref", "%0.0lf", m->ref);
 			xml_ostream_attr(self->os, "role",
-			                 osm_relationMemberCodeToRole(m->role));
+			                 osmdb_relationMemberCodeToRole(m->role));
 			xml_ostream_end(self->os);
 		}
 		free(m);
@@ -988,7 +988,7 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 		{
 			char name[256];
 			char abrev[256];
-			int  class = osm_classKVToCode(atts[j], atts[n]);
+			int  class = osmdb_classKVToCode(atts[j], atts[n]);
 			if(class)
 			{
 				self->tag_class = class;
@@ -1001,7 +1001,7 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 			}
 			else if((strcmp(atts[j], "type") == 0))
 			{
-				self->rel_type = osm_relationTagTypeToCode(atts[n]);
+				self->rel_type = osmdb_relationTagTypeToCode(atts[n]);
 			}
 		}
 
@@ -1050,7 +1050,7 @@ osm_parser_beginOsmRelMember(osm_parser_t* self, int line,
 	{
 		if(strcmp(atts[i], "type")  == 0)
 		{
-			m->type = osm_relationMemberTypeToCode(atts[j]);
+			m->type = osmdb_relationMemberTypeToCode(atts[j]);
 		}
 		else if(strcmp(atts[i], "ref")  == 0)
 		{
@@ -1058,7 +1058,7 @@ osm_parser_beginOsmRelMember(osm_parser_t* self, int line,
 		}
 		else if(strcmp(atts[i], "role")  == 0)
 		{
-			m->role = osm_relationMemberRoleToCode(atts[j]);
+			m->role = osmdb_relationMemberRoleToCode(atts[j]);
 		}
 
 		i += 2;

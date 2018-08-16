@@ -21,30 +21,30 @@
  *
  */
 
-#ifndef osm_util_H
-#define osm_util_H
+#ifndef osmdb_util_H
+#define osmdb_util_H
 
 // st conversions
-int         osm_stNameToCode(const char* name);
-int         osm_stAbrevToCode(const char* abrev);
-const char* osm_stCodeToName(int code);
-const char* osm_stCodeToAbrev(int code);
+int         osmdb_stNameToCode(const char* name);
+int         osmdb_stAbrevToCode(const char* abrev);
+const char* osmdb_stCodeToName(int code);
+const char* osmdb_stCodeToAbrev(int code);
 
 // class conversions
-int         osm_classNameToCode(const char* name);
-int         osm_classKVToCode(const char* k, const char* v);
-const char* osm_classCodeToName(int code);
+int         osmdb_classNameToCode(const char* name);
+int         osmdb_classKVToCode(const char* k, const char* v);
+const char* osmdb_classCodeToName(int code);
 
 // relation tag type conversions
-int         osm_relationTagTypeToCode(const char* type);
-const char* osm_relationTagCodeToType(int code);
+int         osmdb_relationTagTypeToCode(const char* type);
+const char* osmdb_relationTagCodeToType(int code);
 
 // relation member type conversions
-int         osm_relationMemberTypeToCode(const char* type);
-const char* osm_relationMemberCodeToType(int code);
+int         osmdb_relationMemberTypeToCode(const char* type);
+const char* osmdb_relationMemberCodeToType(int code);
 
 // relation member role conversions
-int         osm_relationMemberRoleToCode(const char* role);
-const char* osm_relationMemberCodeToRole(int code);
+int         osmdb_relationMemberRoleToCode(const char* role);
+const char* osmdb_relationMemberCodeToRole(int code);
 
 #endif

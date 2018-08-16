@@ -1,5 +1,5 @@
-TARGET   = build-osm2
-CLASSES  = osm_parser ../osm_util
+TARGET   = osmdb-build
+CLASSES  = osm_parser ../osmdb_util
 SOURCE   = $(TARGET).c $(CLASSES:%=%.c)
 OBJECTS  = $(TARGET).o $(CLASSES:%=%.o)
 HFILES   = $(CLASSES:%=%.h)

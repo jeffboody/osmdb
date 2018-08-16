@@ -28,7 +28,7 @@
 #include "libxmlstream/xml_ostream.h"
 #include "osm_parser.h"
 
-#define LOG_TAG "osm"
+#define LOG_TAG "osmdb"
 #include "libxmlstream/xml_log.h"
 
 /***********************************************************
@@ -39,7 +39,7 @@ int main(int argc, char** argv)
 {
 	if(argc != 3)
 	{
-		LOGE("%s in.osm out.osm2", argv[0]);
+		LOGE("%s in.osm out.osmdb", argv[0]);
 		return EXIT_FAILURE;
 	}
 
