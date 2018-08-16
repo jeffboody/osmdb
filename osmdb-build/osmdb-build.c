@@ -39,11 +39,11 @@ int main(int argc, char** argv)
 {
 	if(argc != 3)
 	{
-		LOGE("%s in.osm out.osmdb", argv[0]);
+		LOGE("%s in.osm out.osmdb.gz", argv[0]);
 		return EXIT_FAILURE;
 	}
 
-	xml_ostream_t* os = xml_ostream_new(argv[2]);
+	xml_ostream_t* os = xml_ostream_newGz(argv[2]);
 	if(os == NULL)
 	{
 		return EXIT_FAILURE;
