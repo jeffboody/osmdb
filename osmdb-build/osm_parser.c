@@ -522,7 +522,7 @@ osm_parser_beginOsm(osm_parser_t* self, int line,
 	assert(atts);
 
 	self->state = OSM_STATE_OSM;
-	xml_ostream_begin(self->os, "osm");
+	xml_ostream_begin(self->os, "osmdb");
 
 	return 1;
 }
