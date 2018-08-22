@@ -46,6 +46,171 @@
 #define OSM_STATE_DONE           -1
 
 /***********************************************************
+* private - auxillary data                                 *
+***********************************************************/
+
+typedef struct
+{
+	double lat;
+	double lon;
+} osm_coord_t;
+
+static osm_coord_t* osm_coord_new(double lat, double lon)
+{
+	osm_coord_t* self = (osm_coord_t*)
+	                    malloc(sizeof(osm_coord_t));
+	if(self == NULL)
+	{
+		LOGE("malloc failed");
+		return NULL;
+	}
+
+	self->lat = lat;
+	self->lon = lon;
+	return self;
+}
+
+static void osm_coord_delete(osm_coord_t** _self)
+{
+	assert(_self);
+
+	osm_coord_t* self = *_self;
+	if(self)
+	{
+		free(self);
+		*_self = NULL;
+	}
+}
+
+typedef struct
+{
+	double t;
+	double l;
+	double b;
+	double r;
+} osm_box_t;
+
+static osm_box_t* osm_box_newNds(a3d_list_t* nds,
+                                 a3d_hashmap_t* nodes)
+{
+	assert(nds);
+	assert(nodes);
+
+	osm_box_t*      self = NULL;
+	a3d_listitem_t* iter = a3d_list_head(nds);
+	while(iter)
+	{
+		double* ref = (double*)
+		              a3d_list_peekitem(iter);
+
+		// check if ref exists in nodes
+		a3d_hashmapIter_t hiterator;
+		osm_coord_t* coord;
+		coord = (osm_coord_t*)
+		        a3d_hashmap_findf(nodes, &hiterator,
+		                          "%0.0lf", *ref);
+		if(coord == NULL)
+		{
+			LOGW("invalid ref=%0.0lf", *ref);
+			iter = a3d_list_next(iter);
+			continue;
+		}
+
+		if(self == NULL)
+		{
+			self = (osm_box_t*)
+			       malloc(sizeof(osm_box_t));
+			if(self == NULL)
+			{
+				LOGE("malloc failed");
+				return NULL;
+			}
+
+			// bounding box is a single point
+			self->t = coord->lat;
+			self->l = coord->lon;
+			self->b = coord->lat;
+			self->r = coord->lon;
+		}
+		else
+		{
+			// include the new point in the bounding box
+			if(coord->lat > self->t)
+			{
+				self->t = coord->lat;
+			}
+			else if(coord->lat < self->b)
+			{
+				self->b = coord->lat;
+			}
+
+			if(coord->lon < self->l)
+			{
+				self->l = coord->lon;
+			}
+			else if(coord->lon > self->r)
+			{
+				self->r = coord->lon;
+			}
+		}
+
+		iter = a3d_list_next(iter);
+	}
+
+	return self;
+}
+
+static void osm_box_delete(osm_box_t** _self)
+{
+	assert(_self);
+
+	osm_box_t* self = *_self;
+	if(self)
+	{
+		free(self);
+		*_self = NULL;
+	}
+}
+
+typedef struct
+{
+	int    type;
+	int    role;
+	double ref;
+} osm_relationMember_t;
+
+static osm_relationMember_t*
+osm_relationMember_new(int type, int role, double ref)
+{
+	osm_relationMember_t* self = (osm_relationMember_t*)
+	                             malloc(sizeof(osm_relationMember_t));
+	if(self == NULL)
+	{
+		LOGE("malloc failed");
+		return NULL;
+	}
+
+	self->type = type;
+	self->role = role;
+	self->ref  = ref;
+
+	return self;
+}
+
+static void
+osm_relationMember_delete(osm_relationMember_t** _self)
+{
+	assert(_self);
+
+	osm_relationMember_t* self = *_self;
+	if(self)
+	{
+		free(self);
+		*_self = NULL;
+	}
+}
+
+/***********************************************************
 * private - parsing utils                                  *
 ***********************************************************/
 
@@ -608,6 +773,22 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 
 	self->state = OSM_STATE_OSM;
 
+	osm_coord_t* coord;
+	coord = osm_coord_new(self->attr_lat, self->attr_lon);
+	if(coord == NULL)
+	{
+		return 0;
+	}
+
+	a3d_hashmapIter_t hiterator;
+	if(a3d_hashmap_addf(self->nodes, &hiterator,
+	                    (const void*) coord,
+	                    "%0.0lf", self->attr_id) == 0)
+	{
+		osm_coord_delete(&coord);
+		return 0;
+	}
+
 	xml_ostream_attrf(self->os, "id", "%0.0lf", self->attr_id);
 	if((self->attr_lat != 0.0) || (self->attr_lon != 0.0))
 	{
@@ -748,6 +929,23 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 
 	self->state = OSM_STATE_OSM;
 
+	osm_box_t* box;
+	box = osm_box_newNds(self->way_nds, self->nodes);
+	if(box == NULL)
+	{
+		LOGE("invalid box on line=%i", line);
+		return 0;
+	}
+
+	a3d_hashmapIter_t hiterator;
+	if(a3d_hashmap_addf(self->ways, &hiterator,
+	                    (const void*) box,
+	                    "%0.0lf", self->attr_id) == 0)
+	{
+		osm_box_delete(&box);
+		return 0;
+	}
+
 	xml_ostream_attrf(self->os, "id", "%0.0lf", self->attr_id);
 	if(self->tag_name[0] != '\0')
 	{
@@ -762,6 +960,13 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 		xml_ostream_attr(self->os, "class",
 		                 osmdb_classCodeToName(self->tag_class));
 	}
+	if(box)
+	{
+		xml_ostream_attrf(self->os, "t", "%lf", box->t);
+		xml_ostream_attrf(self->os, "l", "%lf", box->l);
+		xml_ostream_attrf(self->os, "b", "%lf", box->b);
+		xml_ostream_attrf(self->os, "r", "%lf", box->r);
+	}
 
 	// write way nds
 	a3d_listitem_t* iter = a3d_list_head(self->way_nds);
@@ -769,6 +974,7 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	{
 		double* ref = (double*)
 		              a3d_list_remove(self->way_nds, &iter);
+
 		xml_ostream_begin(self->os, "nd");
 		xml_ostream_attrf(self->os, "ref", "%0.0lf", *ref);
 		xml_ostream_end(self->os);
@@ -863,6 +1069,17 @@ osm_parser_beginOsmWayNd(osm_parser_t* self, int line,
 		j += 2;
 	}
 
+	// check if ref exists in nodes
+	a3d_hashmapIter_t hiterator;
+	if(a3d_hashmap_findf(self->nodes, &hiterator,
+	                     "%0.0lf", *ref) == NULL)
+	{
+		// LOGW("discard ref=%0.0lf", *ref);
+		free(ref);
+		return 1;
+	}
+
+	// add the ref to the way_nds
 	if((*ref == 0.0) ||
 	   (a3d_list_enqueue(self->way_nds,
 	                     (const void*) ref) == 0))
@@ -922,6 +1139,8 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 
 	self->state = OSM_STATE_OSM;
 
+	// TODO - box
+
 	xml_ostream_attrf(self->os, "id", "%0.0lf", self->attr_id);
 	if(self->tag_name[0] != '\0')
 	{
@@ -961,7 +1180,7 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 			                 osmdb_relationMemberCodeToRole(m->role));
 			xml_ostream_end(self->os);
 		}
-		free(m);
+		osm_relationMember_delete(&m);
 	}
 	xml_ostream_end(self->os);
 
@@ -1035,44 +1254,51 @@ osm_parser_beginOsmRelMember(osm_parser_t* self, int line,
 
 	self->state = OSM_STATE_OSM_REL_MEMBER;
 
-	osm_relationMember_t* m;
-	m = (osm_relationMember_t*)
-	    calloc(1, sizeof(osm_relationMember_t));
-	if(m == NULL)
-	{
-		LOGE("calloc failed");
-		return 0;
-	}
-
-	int i = 0;
-	int j = 1;
+	int    i    = 0;
+	int    j    = 1;
+	int    type = 0;
+	double ref  = 0.0;
+	int    role = 0;
 	while(atts[i] && atts[j])
 	{
 		if(strcmp(atts[i], "type")  == 0)
 		{
-			m->type = osmdb_relationMemberTypeToCode(atts[j]);
+			type = osmdb_relationMemberTypeToCode(atts[j]);
 		}
 		else if(strcmp(atts[i], "ref")  == 0)
 		{
-			m->ref = strtod(atts[j], NULL);
+			ref = strtod(atts[j], NULL);
 		}
 		else if(strcmp(atts[i], "role")  == 0)
 		{
-			m->role = osmdb_relationMemberRoleToCode(atts[j]);
+			role = osmdb_relationMemberRoleToCode(atts[j]);
 		}
 
 		i += 2;
 		j += 2;
 	}
 
-	if(a3d_list_enqueue(self->rel_members,
-	                    (const void*) m) == 0)
+	osm_relationMember_t* m;
+	m = osm_relationMember_new(type, ref, role);
+	if(m == NULL)
 	{
-		free(m);
 		return 0;
 	}
 
+	if(a3d_list_enqueue(self->rel_members,
+	                    (const void*) m) == 0)
+	{
+		goto fail_enqueue;
+		return 0;
+	}
+
+	// success
 	return 1;
+
+	// failure
+	fail_enqueue:
+		osm_relationMember_delete(&m);
+	return 0;
 }
 
 static int
@@ -1115,12 +1341,36 @@ osm_parser_t* osm_parser_new(xml_ostream_t* os)
 		goto fail_rel_members;
 	}
 
+	self->nodes = a3d_hashmap_new();
+	if(self->nodes == NULL)
+	{
+		goto fail_nodes;
+	}
+
+	self->ways = a3d_hashmap_new();
+	if(self->ways == NULL)
+	{
+		goto fail_ways;
+	}
+
+	self->rels = a3d_hashmap_new();
+	if(self->rels == NULL)
+	{
+		goto fail_rels;
+	}
+
 	self->os = os;
 
 	// success
 	return self;
 
 	// failure
+	fail_rels:
+		a3d_hashmap_delete(&self->ways);
+	fail_ways:
+		a3d_hashmap_delete(&self->nodes);
+	fail_nodes:
+		a3d_list_delete(&self->rel_members);
 	fail_rel_members:
 		a3d_list_delete(&self->way_nds);
 	fail_way_nds:
@@ -1141,7 +1391,7 @@ void osm_parser_delete(osm_parser_t** _self)
 			osm_relationMember_t* m;
 			m = (osm_relationMember_t*)
 			    a3d_list_remove(self->rel_members, &iter);
-			free(m);
+			osm_relationMember_delete(&m);
 		}
 
 		iter = a3d_list_head(self->way_nds);
@@ -1152,6 +1402,38 @@ void osm_parser_delete(osm_parser_t** _self)
 			free(ref);
 		}
 
+		a3d_hashmapIter_t  hiterator;
+		a3d_hashmapIter_t* hiter;
+		hiter = a3d_hashmap_head(self->nodes, &hiterator);
+		while(hiter)
+		{
+			osm_coord_t* coord;
+			coord = (osm_coord_t*)
+			        a3d_hashmap_remove(self->nodes, &hiter);
+			osm_coord_delete(&coord);
+		}
+
+		hiter = a3d_hashmap_head(self->ways, &hiterator);
+		while(hiter)
+		{
+			osm_box_t* box;
+			box = (osm_box_t*)
+			      a3d_hashmap_remove(self->ways, &hiter);
+			osm_box_delete(&box);
+		}
+
+		hiter = a3d_hashmap_head(self->rels, &hiterator);
+		while(hiter)
+		{
+			osm_box_t* box;
+			box = (osm_box_t*)
+			      a3d_hashmap_remove(self->rels, &hiter);
+			osm_box_delete(&box);
+		}
+
+		a3d_hashmap_delete(&self->rels);
+		a3d_hashmap_delete(&self->ways);
+		a3d_hashmap_delete(&self->nodes);
 		a3d_list_delete(&self->rel_members);
 		a3d_list_delete(&self->way_nds);
 		free(self);
