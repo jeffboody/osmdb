@@ -525,11 +525,11 @@ static const char* osm_parseWord(int line,
 		   (c == '"'))
 		{
 			// eat unsupported characters
-			if(c == '"')
-			{
-				LOGW("quote i=%i, line=%i, str=%s",
-				     i, line, str);
-			}
+			// if(c == '"')
+			// {
+			// 	LOGW("quote i=%i, line=%i, str=%s",
+			// 	     i, line, str);
+			// }
 			++i;
 			continue;
 		}
