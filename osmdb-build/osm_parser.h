@@ -29,6 +29,13 @@
 
 typedef struct
 {
+	int nodes;
+	int ways;
+	int rels;
+} osm_classHistogram_t;
+
+typedef struct
+{
 	int state;
 	xml_ostream_t* os;
 
@@ -57,6 +64,9 @@ typedef struct
 	a3d_hashmap_t* nodes;
 	a3d_hashmap_t* ways;
 	a3d_hashmap_t* rels;
+
+	// histogram of class types
+	osm_classHistogram_t* histogram;
 } osm_parser_t;
 
 osm_parser_t* osm_parser_new(xml_ostream_t* os);

@@ -948,6 +948,9 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 	}
 	xml_ostream_end(self->os);
 
+	// update histogram
+	++self->histogram[self->tag_class].nodes;
+
 	return 1;
 }
 
@@ -1110,6 +1113,9 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 		free(ref);
 	}
 	xml_ostream_end(self->os);
+
+	// update histogram
+	++self->histogram[self->tag_class].ways;
 
 	return 1;
 }
@@ -1333,6 +1339,9 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 	}
 	xml_ostream_end(self->os);
 
+	// update histogram
+	++self->histogram[self->tag_class].rels;
+
 	return 1;
 }
 
@@ -1537,12 +1546,23 @@ osm_parser_t* osm_parser_new(xml_ostream_t* os)
 		goto fail_rels;
 	}
 
+	int cnt = osmdb_classCount();
+	self->histogram = (osm_classHistogram_t*)
+	                  calloc(cnt, sizeof(osm_classHistogram_t));
+	if(self->histogram == NULL)
+	{
+		LOGE("calloc failed");
+		goto fail_histogram;
+	}
+
 	self->os = os;
 
 	// success
 	return self;
 
 	// failure
+	fail_histogram:
+		a3d_hashmap_delete(&self->ways);
 	fail_rels:
 		a3d_hashmap_delete(&self->ways);
 	fail_ways:
@@ -1563,6 +1583,24 @@ void osm_parser_delete(osm_parser_t** _self)
 	osm_parser_t* self = *_self;
 	if(self)
 	{
+		// print histogram
+		int idx;
+		int cnt = osmdb_classCount();
+		for(idx = 0; idx < cnt; ++idx)
+		{
+			if(self->histogram[idx].nodes ||
+			   self->histogram[idx].ways  ||
+			   self->histogram[idx].rels)
+			{
+				LOGI("class=%s, nodes=%i, ways=%i, rels=%i",
+				     osmdb_classCodeToName(idx),
+				     self->histogram[idx].nodes,
+				     self->histogram[idx].ways,
+				     self->histogram[idx].rels);
+			}
+		}
+		free(self->histogram);
+
 		a3d_listitem_t* iter = a3d_list_head(self->rel_members);
 		while(iter)
 		{

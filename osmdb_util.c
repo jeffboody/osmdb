@@ -1235,6 +1235,16 @@ const char* osmdb_classCodeToName(int code)
 	return OSM_UTIL_CLASSES[0];
 }
 
+int osmdb_classCount(void)
+{
+	int idx = 0;
+	while(OSM_UTIL_CLASSES[idx])
+	{
+		++idx;
+	}
+	return idx;
+}
+
 int osmdb_relationTagTypeToCode(const char* type)
 {
 	assert(type);
