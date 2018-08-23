@@ -110,7 +110,6 @@ osmdb_parser_select(osmdb_parser_t* self,
 
 		// add id->name
 		a3d_hashmapIter_t iter;
-		LOGI("add %s %s", id, name);
 		if(a3d_hashmap_add(hash, &iter, s, id) == 0)
 		{
 			LOGE("a3d_hashmap_add failed id=%s", id);
@@ -311,7 +310,6 @@ osmdb_parser_beginOsmWayNd(osmdb_parser_t* self, int line,
 			snprintf(s, len, "%s", ref);
 
 			// add ref->ref
-			LOGI("add %s", s);
 			if(a3d_hashmap_add(self->nodes, &iter, s, s) == 0)
 			{
 				LOGE("a3d_hashmap_add failed ref=%s", s);
@@ -465,7 +463,6 @@ osmdb_parser_beginOsmRelMember(osmdb_parser_t* self, int line,
 			}
 			snprintf(s, len, "%s", ref);
 
-			LOGI("add %s", s);
 			if(a3d_hashmap_add(hash, &iter, s, s) == 0)
 			{
 				LOGE("a3d_hashmap_add failed ref=%s", s);
