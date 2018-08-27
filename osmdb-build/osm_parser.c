@@ -51,44 +51,6 @@
 
 typedef struct
 {
-	int    type;
-	int    role;
-	double ref;
-} osm_relationMember_t;
-
-static osm_relationMember_t*
-osm_relationMember_new(int type, int role, double ref)
-{
-	osm_relationMember_t* self = (osm_relationMember_t*)
-	                             malloc(sizeof(osm_relationMember_t));
-	if(self == NULL)
-	{
-		LOGE("malloc failed");
-		return NULL;
-	}
-
-	self->type = type;
-	self->role = role;
-	self->ref  = ref;
-
-	return self;
-}
-
-static void
-osm_relationMember_delete(osm_relationMember_t** _self)
-{
-	assert(_self);
-
-	osm_relationMember_t* self = *_self;
-	if(self)
-	{
-		free(self);
-		*_self = NULL;
-	}
-}
-
-typedef struct
-{
 	double lat;
 	double lon;
 } osm_coord_t;
@@ -149,7 +111,6 @@ static osm_box_t* osm_box_newNds(a3d_list_t* nds,
 		                          "%0.0lf", *ref);
 		if(coord == NULL)
 		{
-			// filtered in osm_parser_beginOsmWayNd
 			LOGW("invalid ref=%0.0lf", *ref);
 			iter = a3d_list_next(iter);
 			continue;
@@ -199,139 +160,49 @@ static osm_box_t* osm_box_newNds(a3d_list_t* nds,
 	return self;
 }
 
-static osm_box_t*
-osm_box_newMembers(a3d_list_t* rel_members,
-                   a3d_hashmap_t* nodes,
-                   a3d_hashmap_t* ways)
-{
-	assert(rel_members);
-	assert(nodes);
-	assert(ways);
-
-	// write rel members
-	osm_box_t*      self = NULL;
-	a3d_listitem_t* iter = a3d_list_head(rel_members);
-	while(iter)
-	{
-		osm_relationMember_t* m;
-		m = (osm_relationMember_t*)
-		    a3d_list_peekitem(iter);
-
-		// check if ref exists in nodes
-		a3d_hashmapIter_t hiterator;
-		osm_coord_t* coord = NULL;
-		osm_box_t*   box   = NULL;
-		const char*  type  = osmdb_relationMemberCodeToType(m->type);
-		if(strcmp("node", type) == 0)
-		{
-			coord = (osm_coord_t*)
-			        a3d_hashmap_findf(nodes, &hiterator,
-			                          "%0.0lf", m->ref);
-		}
-		else if(strcmp("way", type) == 0)
-		{
-			box = (osm_box_t*)
-			        a3d_hashmap_findf(ways, &hiterator,
-			                          "%0.0lf", m->ref);
-		}
-		else
-		{
-			// filtered in osm_parser_beginOsmRelMember
-			LOGW("ignore ref=%0.0lf", m->ref);
-			iter = a3d_list_next(iter);
-			continue;
-		}
-
-		if((coord == NULL) && (box == NULL))
-		{
-			// filtered in osm_parser_beginOsmRelMember
-			LOGW("invalid ref=%0.0lf", m->ref);
-			iter = a3d_list_next(iter);
-			continue;
-		}
-
-		if(self == NULL)
-		{
-			self = (osm_box_t*)
-			       malloc(sizeof(osm_box_t));
-			if(self == NULL)
-			{
-				LOGE("malloc failed");
-				return NULL;
-			}
-
-			// initialize bounding box
-			if(coord)
-			{
-				self->t = coord->lat;
-				self->l = coord->lon;
-				self->b = coord->lat;
-				self->r = coord->lon;
-			}
-			else
-			{
-				self->t = box->t;
-				self->l = box->l;
-				self->b = box->b;
-				self->r = box->r;
-			}
-		}
-		else
-		{
-			// include the new coord/box in the bounding box
-			if(coord)
-			{
-				if(coord->lat > self->t)
-				{
-					self->t = coord->lat;
-				}
-				else if(coord->lat < self->b)
-				{
-					self->b = coord->lat;
-				}
-
-				if(coord->lon < self->l)
-				{
-					self->l = coord->lon;
-				}
-				else if(coord->lon > self->r)
-				{
-					self->r = coord->lon;
-				}
-			}
-			else
-			{
-				if(box->t > self->t)
-				{
-					self->t = box->t;
-				}
-				else if(box->b < self->b)
-				{
-					self->b = box->b;
-				}
-
-				if(box->l < self->l)
-				{
-					self->l = box->l;
-				}
-				else if(box->r > self->r)
-				{
-					self->r = box->r;
-				}
-			}
-		}
-
-		iter = a3d_list_next(iter);
-	}
-
-	return self;
-}
-
 static void osm_box_delete(osm_box_t** _self)
 {
 	assert(_self);
 
 	osm_box_t* self = *_self;
+	if(self)
+	{
+		free(self);
+		*_self = NULL;
+	}
+}
+
+typedef struct
+{
+	int    type;
+	int    role;
+	double ref;
+} osm_relationMember_t;
+
+static osm_relationMember_t*
+osm_relationMember_new(int type, int role, double ref)
+{
+	osm_relationMember_t* self = (osm_relationMember_t*)
+	                             malloc(sizeof(osm_relationMember_t));
+	if(self == NULL)
+	{
+		LOGE("malloc failed");
+		return NULL;
+	}
+
+	self->type = type;
+	self->role = role;
+	self->ref  = ref;
+
+	return self;
+}
+
+static void
+osm_relationMember_delete(osm_relationMember_t** _self)
+{
+	assert(_self);
+
+	osm_relationMember_t* self = *_self;
 	if(self)
 	{
 		free(self);
@@ -1274,25 +1145,6 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 
 	self->state = OSM_STATE_OSM;
 
-	osm_box_t* box;
-	box = osm_box_newMembers(self->rel_members,
-	                         self->nodes,
-	                         self->ways);
-	if(box == NULL)
-	{
-		LOGE("invalid box on line=%i", line);
-		return 0;
-	}
-
-	a3d_hashmapIter_t hiterator;
-	if(a3d_hashmap_addf(self->rels, &hiterator,
-	                    (const void*) box,
-	                    "%0.0lf", self->attr_id) == 0)
-	{
-		osm_box_delete(&box);
-		return 0;
-	}
-
 	xml_ostream_attrf(self->os, "id", "%0.0lf", self->attr_id);
 	if(self->tag_name[0] != '\0')
 	{
@@ -1302,22 +1154,17 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 	{
 		xml_ostream_attr(self->os, "abrev", self->tag_abrev);
 	}
+
 	if(self->rel_type)
 	{
 		xml_ostream_attr(self->os, "type",
 		                 osmdb_relationTagCodeToType(self->rel_type));
 	}
+
 	if(self->tag_class)
 	{
 		xml_ostream_attr(self->os, "class",
 		                 osmdb_classCodeToName(self->tag_class));
-	}
-	if(box)
-	{
-		xml_ostream_attrf(self->os, "t", "%lf", box->t);
-		xml_ostream_attrf(self->os, "l", "%lf", box->l);
-		xml_ostream_attrf(self->os, "b", "%lf", box->b);
-		xml_ostream_attrf(self->os, "r", "%lf", box->r);
 	}
 
 	// write rel members
@@ -1438,37 +1285,8 @@ osm_parser_beginOsmRelMember(osm_parser_t* self, int line,
 		j += 2;
 	}
 
-	// check if ref exists
-	int type_node = osmdb_relationMemberTypeToCode("node");
-	int type_way  = osmdb_relationMemberTypeToCode("way");
-	a3d_hashmapIter_t hiterator;
-	if(type == type_node)
-	{
-		if(a3d_hashmap_findf(self->nodes, &hiterator,
-		                     "%0.0lf", ref) == NULL)
-		{
-			// LOGW("discard ref=%0.0lf", ref);
-			return 1;
-		}
-	}
-	else if(type == type_way)
-	{
-		if(a3d_hashmap_findf(self->ways, &hiterator,
-		                     "%0.0lf", ref) == NULL)
-		{
-			// LOGW("discard ref=%0.0lf", ref);
-			return 1;
-		}
-	}
-	else
-	{
-		// ignore relations
-		// LOGW("discard ref=%0.0lf", *ref);
-		return 1;
-	}
-
 	osm_relationMember_t* m;
-	m = osm_relationMember_new(type, role, ref);
+	m = osm_relationMember_new(type, ref, role);
 	if(m == NULL)
 	{
 		return 0;
