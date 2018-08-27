@@ -1275,7 +1275,9 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 	self->state = OSM_STATE_OSM;
 
 	osm_box_t* box;
-	box = osm_box_newMembers(self->rel_members, self->nodes, self->ways);
+	box = osm_box_newMembers(self->rel_members,
+	                         self->nodes,
+	                         self->ways);
 	if(box == NULL)
 	{
 		LOGE("invalid box on line=%i", line);
@@ -1562,7 +1564,7 @@ osm_parser_t* osm_parser_new(xml_ostream_t* os)
 
 	// failure
 	fail_histogram:
-		a3d_hashmap_delete(&self->ways);
+		a3d_hashmap_delete(&self->rels);
 	fail_rels:
 		a3d_hashmap_delete(&self->ways);
 	fail_ways:
