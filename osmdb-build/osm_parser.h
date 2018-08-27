@@ -25,7 +25,13 @@
 #define osm_parser_H
 
 #include "a3d/a3d_list.h"
-#include "a3d/a3d_hashmap.h"
+
+typedef struct
+{
+	int    type;
+	int    role;
+	double ref;
+} osm_relationMember_t;
 
 typedef struct
 {
@@ -59,11 +65,6 @@ typedef struct
 
 	// rel members
 	a3d_list_t* rel_members;
-
-	// map from ids to coords/boxes
-	a3d_hashmap_t* nodes;
-	a3d_hashmap_t* ways;
-	a3d_hashmap_t* rels;
 
 	// histogram of class types
 	osm_classHistogram_t* histogram;
