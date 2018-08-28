@@ -16,7 +16,7 @@ $(TARGET): $(OBJECTS) a3d xmlstream libexpat
 .PHONY: a3d xmlstream libexpat
 
 a3d:
-	$(MAKE) -C a3d -f Makefile.loax
+	$(MAKE) -C a3d -f Makefile.sdl
 
 xmlstream:
 	$(MAKE) -C libxmlstream
@@ -26,7 +26,7 @@ libexpat:
 
 clean:
 	rm -f $(OBJECTS) *~ \#*\# $(TARGET)
-	$(MAKE) -C a3d -f Makefile.loax clean
+	$(MAKE) -C a3d -f Makefile.sdl clean
 	$(MAKE) -C libxmlstream clean
 	$(MAKE) -C libexpat/expat/lib clean
 	rm a3d libxmlstream libexpat
