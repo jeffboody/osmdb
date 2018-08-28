@@ -190,3 +190,36 @@ int osmdb_filter_select(osmdb_filter_t* self,
 	a3d_hashmapIter_t iter;
 	return a3d_hashmap_find(self->classes, &iter, class);
 }
+
+int osmdb_filter_selectNode(osmdb_filter_t* self,
+                            osmdb_node_t* node)
+{
+	assert(self);
+	assert(node);
+
+	const char* class = osmdb_classCodeToName(node->class);
+	a3d_hashmapIter_t iter;
+	return a3d_hashmap_find(self->classes, &iter, class);
+}
+
+int osmdb_filter_selectWay(osmdb_filter_t* self,
+                           osmdb_way_t* way)
+{
+	assert(self);
+	assert(way);
+
+	const char* class = osmdb_classCodeToName(way->class);
+	a3d_hashmapIter_t iter;
+	return a3d_hashmap_find(self->classes, &iter, class);
+}
+
+int osmdb_filter_selectRelation(osmdb_filter_t* self,
+                                osmdb_relation_t* relation)
+{
+	assert(self);
+	assert(relation);
+
+	const char* class = osmdb_classCodeToName(relation->class);
+	a3d_hashmapIter_t iter;
+	return a3d_hashmap_find(self->classes, &iter, class);
+}

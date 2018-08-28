@@ -25,6 +25,9 @@
 #define osmdb_filter_H
 
 #include "a3d/a3d_hashmap.h"
+#include "osmdb_node.h"
+#include "osmdb_way.h"
+#include "osmdb_relation.h"
 
 typedef struct
 {
@@ -35,5 +38,11 @@ osmdb_filter_t* osmdb_filter_new(const char* fname);
 void            osmdb_filter_delete(osmdb_filter_t** _self);
 int             osmdb_filter_select(osmdb_filter_t* self,
                                     const char** atts, int line);
+int             osmdb_filter_selectNode(osmdb_filter_t* self,
+                                        osmdb_node_t* node);
+int             osmdb_filter_selectWay(osmdb_filter_t* self,
+                                       osmdb_way_t* way);
+int             osmdb_filter_selectRelation(osmdb_filter_t* self,
+                                            osmdb_relation_t* relation);
 
 #endif
