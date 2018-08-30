@@ -24,6 +24,9 @@
 #ifndef osmdb_way_H
 #define osmdb_way_H
 
+#include "a3d/a3d_list.h"
+#include "libxmlstream/xml_ostream.h"
+
 typedef struct
 {
 	double id;
@@ -35,7 +38,11 @@ typedef struct
 } osmdb_way_t;
 
 osmdb_way_t* osmdb_way_new(const char** atts, int line);
+osmdb_way_t* osmdb_way_copy(osmdb_way_t* self);
 void         osmdb_way_delete(osmdb_way_t** _self);
+int          osmdb_way_export(osmdb_way_t* self,
+                              xml_ostream_t* os);
+int          osmdb_way_size(osmdb_way_t* self);
 int          osmdb_way_nd(osmdb_way_t* self,
                           const char** atts, int line);
 

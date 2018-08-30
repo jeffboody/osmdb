@@ -23,7 +23,9 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 #include "osmdb_way.h"
+#include "osmdb_util.h"
 
 #define LOG_TAG "osmdb"
 #include "libxmlstream/xml_log.h"
@@ -137,12 +139,75 @@ void osmdb_way_delete(osmdb_way_t** _self)
 	osmdb_way_t* self = *_self;
 	if(self)
 	{
+		a3d_listitem_t* iter = a3d_list_head(self->nds);
+		while(iter)
+		{
+			double* ref = (double*)
+			              a3d_list_remove(self->nds, &iter);
+			free(ref);
+		}
+
 		a3d_list_delete(&self->nds);
 		free(self->name);
 		free(self->abrev);
 		free(self);
 		*_self = NULL;
 	}
+}
+
+int osmdb_way_export(osmdb_way_t* self, xml_ostream_t* os)
+{
+	assert(self);
+	assert(os);
+
+	int ret = 1;
+	ret &= xml_ostream_begin(os, "way");
+	ret &= xml_ostream_attrf(os, "id", "%0.0lf", self->id);
+	if(self->name)
+	{
+		ret &= xml_ostream_attr(os, "name", self->name);
+	}
+	if(self->abrev)
+	{
+		ret &= xml_ostream_attr(os, "abrev", self->abrev);
+	}
+	if(self->class)
+	{
+		ret &= xml_ostream_attr(os, "class",
+		                        osmdb_classCodeToName(self->class));
+	}
+
+	a3d_listitem_t* iter = a3d_list_head(self->nds);
+	while(iter)
+	{
+		double* ref = (double*) a3d_list_peekitem(iter);
+		ret &= xml_ostream_begin(os, "nd");
+		ret &= xml_ostream_attrf(os, "ref", "%0.0lf", *ref);
+		ret &= xml_ostream_end(os);
+		iter = a3d_list_next(iter);
+	}
+
+	ret &= xml_ostream_end(os);
+
+	return ret;
+}
+
+int osmdb_way_size(osmdb_way_t* self)
+{
+	assert(self);
+
+	int size = sizeof(osmdb_way_t);
+	if(self->name)
+	{
+		size += strlen(self->name);
+	}
+	if(self->abrev)
+	{
+		size += strlen(self->abrev);
+	}
+	size += sizeof(double)*a3d_list_size(self->nds);
+
+	return size;
 }
 
 int osmdb_way_nd(osmdb_way_t* self, const char** atts, int line)
@@ -179,13 +244,13 @@ int osmdb_way_nd(osmdb_way_t* self, const char** atts, int line)
 		LOGE("malloc failed");
 		return 0;
 	}
-	*_ref = strtod(ref);
+	*_ref = strtod(ref, NULL);
 
 	// add nd to list
 	if(a3d_list_append(self->nds, NULL,
 	                   (const void*) _ref) == NULL)
 	{
-		goto fail_append:
+		goto fail_append;
 	}
 
 	// success

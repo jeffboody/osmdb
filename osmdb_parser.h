@@ -28,11 +28,11 @@
 #include "osmdb_way.h"
 #include "osmdb_relation.h"
 
-typedef int (*osmdb_parser_nodeFn)(const void* priv,
+typedef int (*osmdb_parser_nodeFn)(void* priv,
                                    osmdb_node_t* node);
-typedef int (*osmdb_parser_wayFn)(const void* priv,
+typedef int (*osmdb_parser_wayFn)(void* priv,
                                   osmdb_way_t* way);
-typedef int (*osmdb_parser_relationFn)(const void* priv,
+typedef int (*osmdb_parser_relationFn)(void* priv,
                                        osmdb_relation_t* relation);
 
 int osmdb_parse(const char* fname, void* priv,

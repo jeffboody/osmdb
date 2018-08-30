@@ -24,6 +24,9 @@
 #ifndef osmdb_relation_H
 #define osmdb_relation_H
 
+#include "a3d/a3d_list.h"
+#include "libxmlstream/xml_ostream.h"
+
 typedef struct
 {
 	int    type;
@@ -42,7 +45,11 @@ typedef struct
 } osmdb_relation_t;
 
 osmdb_relation_t* osmdb_relation_new(const char** atts, int line);
+osmdb_relation_t* osmdb_relation_copy(osmdb_relation_t* self);
 void              osmdb_relation_delete(osmdb_relation_t** _self);
+int               osmdb_relation_export(osmdb_relation_t* self,
+                                        xml_ostream_t* os);
+int               osmdb_relation_size(osmdb_relation_t* self);
 int               osmdb_relation_member(osmdb_relation_t* self,
                                         const char** atts,
                                         int line);

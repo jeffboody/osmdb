@@ -23,6 +23,7 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 #include "libxmlstream/xml_istream.h"
 #include "osmdb_parser.h"
 
@@ -419,7 +420,7 @@ int osmdb_parse(const char* fname, void* priv,
 	self = osmdb_parser_new(priv, node_fn, way_fn, relation_fn);
 	if(self == NULL)
 	{
-		return NULL;
+		return 0;
 	}
 
 	if(xml_istream_parseGz((void*) self,

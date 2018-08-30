@@ -23,7 +23,9 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 #include "osmdb_node.h"
+#include "osmdb_util.h"
 
 #define LOG_TAG "osmdb"
 #include "libxmlstream/xml_log.h"
@@ -166,4 +168,58 @@ void osmdb_node_delete(osmdb_node_t** _self)
 		free(self);
 		*_self = NULL;
 	}
+}
+
+int osmdb_node_export(osmdb_node_t* self, xml_ostream_t* os)
+{
+	assert(self);
+	assert(os);
+
+	int ret = 1;
+	ret &= xml_ostream_begin(os, "node");
+	ret &= xml_ostream_attrf(os, "id", "%0.0lf", self->id);
+	ret &= xml_ostream_attrf(os, "lat", "%lf", self->lat);
+	ret &= xml_ostream_attrf(os, "lon", "%lf", self->lon);
+	if(self->name)
+	{
+		ret &= xml_ostream_attr(os, "name", self->name);
+	}
+	if(self->abrev)
+	{
+		ret &= xml_ostream_attr(os, "abrev", self->abrev);
+	}
+	if(self->ele)
+	{
+		ret &= xml_ostream_attrf(os, "ele", "%i", self->ele);
+	}
+	if(self->st)
+	{
+		ret &= xml_ostream_attr(os, "st",
+		                        osmdb_stCodeToAbrev(self->st));
+	}
+	if(self->class)
+	{
+		ret &= xml_ostream_attr(os, "class",
+		                        osmdb_classCodeToName(self->class));
+	}
+	ret &= xml_ostream_end(os);
+
+	return ret;
+}
+
+int osmdb_node_size(osmdb_node_t* self)
+{
+	assert(self);
+
+	int size = sizeof(osmdb_node_t);
+	if(self->name)
+	{
+		size += strlen(self->name);
+	}
+	if(self->abrev)
+	{
+		size += strlen(self->abrev);
+	}
+
+	return size;
 }

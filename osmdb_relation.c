@@ -23,7 +23,9 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 #include "osmdb_relation.h"
+#include "osmdb_util.h"
 
 #define LOG_TAG "osmdb"
 #include "libxmlstream/xml_log.h"
@@ -137,12 +139,84 @@ void osmdb_relation_delete(osmdb_relation_t** _self)
 	osmdb_relation_t* self = *_self;
 	if(self)
 	{
+		a3d_listitem_t* iter = a3d_list_head(self->members);
+		while(iter)
+		{
+			osmdb_member_t* m = (osmdb_member_t*)
+			                    a3d_list_remove(self->members, &iter);
+			free(m);
+		}
+
 		a3d_list_delete(&self->members);
 		free(self->name);
 		free(self->abrev);
 		free(self);
 		*_self = NULL;
 	}
+}
+
+int osmdb_relation_export(osmdb_relation_t* self,
+                          xml_ostream_t* os)
+{
+	assert(self);
+	assert(os);
+
+	int ret = 1;
+	ret &= xml_ostream_begin(os, "relation");
+	ret &= xml_ostream_attrf(os, "id", "%0.0lf", self->id);
+	if(self->name)
+	{
+		ret &= xml_ostream_attr(os, "name", self->name);
+	}
+	if(self->abrev)
+	{
+		ret &= xml_ostream_attr(os, "abrev", self->abrev);
+	}
+	if(self->class)
+	{
+		ret &= xml_ostream_attr(os, "class",
+		                        osmdb_classCodeToName(self->class));
+	}
+
+	a3d_listitem_t* iter = a3d_list_head(self->members);
+	while(iter)
+	{
+		osmdb_member_t* m = (osmdb_member_t*)
+		                    a3d_list_peekitem(iter);
+		ret &= xml_ostream_begin(os, "member");
+		ret &= xml_ostream_attr(os, "type",
+		                        osmdb_relationMemberCodeToType(m->type));
+		ret &= xml_ostream_attrf(os, "ref", "%0.0lf", m->ref);
+		if(m->role)
+		{
+			ret &= xml_ostream_attr(os, "role",
+			                        osmdb_relationMemberCodeToType(m->role));
+		}
+		ret &= xml_ostream_end(os);
+		iter = a3d_list_next(iter);
+	}
+
+	ret &= xml_ostream_end(os);
+
+	return ret;
+}
+
+int osmdb_relation_size(osmdb_relation_t* self)
+{
+	assert(self);
+
+	int size = sizeof(osmdb_relation_t);
+	if(self->name)
+	{
+		size += strlen(self->name);
+	}
+	if(self->abrev)
+	{
+		size += strlen(self->abrev);
+	}
+	size += sizeof(osmdb_member_t)*a3d_list_size(self->members);
+
+	return size;
 }
 
 int osmdb_relation_member(osmdb_relation_t* self,
@@ -199,7 +273,7 @@ int osmdb_relation_member(osmdb_relation_t* self,
 	if(a3d_list_append(self->members, NULL,
 	                   (const void*) member) == NULL)
 	{
-		goto fail_append:
+		goto fail_append;
 	}
 
 	// success

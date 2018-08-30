@@ -25,6 +25,12 @@
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
+#include <unistd.h>
+#include <errno.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include "osmdb_chunk.h"
 #include "osmdb_util.h"
 
 #define LOG_TAG "osmdb"
@@ -1339,4 +1345,66 @@ const char* osmdb_relationMemberCodeToRole(int code)
 		++idx;
 	}
 	return OSM_UTIL_RELATION_MEMBER_ROLE[0];
+}
+
+int osmdb_fileExists(const char* fname)
+{
+	assert(fname);
+
+	if(access(fname, F_OK) != 0)
+	{
+		return 0;
+	}
+	return 1;
+}
+
+int osmdb_mkdir(const char* path)
+{
+	assert(path);
+
+	int  len = strnlen(path, 255);
+	char dir[256];
+	int  i;
+	for(i = 0; i < len; ++i)
+	{
+		dir[i]     = path[i];
+		dir[i + 1] = '\0';
+
+		if(dir[i] == '/')
+		{
+			if(access(dir, R_OK) == 0)
+			{
+				// dir already exists
+				continue;
+			}
+
+			// try to mkdir
+			if(mkdir(dir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1)
+			{
+				if(errno == EEXIST)
+				{
+					// already exists
+				}
+				else
+				{
+					LOGE("mkdir %s failed", dir);
+					return 0;
+				}
+			}
+		}
+	}
+
+	return 1;
+}
+
+void osmdb_splitId(double id,
+                   double* idu, double* idl)
+{
+	assert(idu);
+	assert(idl);
+
+	// splits id to upper and lower digets
+	double s = (double) OSMDB_CHUNK_COUNT;
+	id = id/s;
+	*idl = s*modf(id, idu);
 }

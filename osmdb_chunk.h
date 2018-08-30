@@ -21,39 +21,37 @@
  *
  */
 
-#ifndef osmdb_util_H
-#define osmdb_util_H
+#ifndef osmdb_chunk_H
+#define osmdb_chunk_H
 
-// st conversions
-int         osmdb_stNameToCode(const char* name);
-int         osmdb_stAbrevToCode(const char* abrev);
-const char* osmdb_stCodeToName(int code);
-const char* osmdb_stCodeToAbrev(int code);
+#include "a3d/a3d_hashmap.h"
 
-// class conversions
-int         osmdb_classNameToCode(const char* name);
-int         osmdb_classKVToCode(const char* k, const char* v);
-const char* osmdb_classCodeToName(int code);
-int         osmdb_classCount(void);
+#define OSMDB_CHUNK_COUNT 100000
 
-// relation tag type conversions
-int         osmdb_relationTagTypeToCode(const char* type);
-const char* osmdb_relationTagCodeToType(int code);
+typedef struct
+{
+	const char* base;
+	double      idu;
+	int         type;
+	int         size;
+	int         dirty;
 
-// relation member type conversions
-int         osmdb_relationMemberTypeToCode(const char* type);
-const char* osmdb_relationMemberCodeToType(int code);
+	// map from idl to node/way/relation
+	a3d_hashmap_t* hash;
+} osmdb_chunk_t;
 
-// relation member role conversions
-int         osmdb_relationMemberRoleToCode(const char* role);
-const char* osmdb_relationMemberCodeToRole(int code);
-
-// file operations
-int osmdb_fileExists(const char* fname);
-int osmdb_mkdir(const char* path);
-
-// index/chunk id
-void osmdb_splitId(double id,
-                   double* idu, double* idl);
+osmdb_chunk_t* osmdb_chunk_new(const char* base,
+                               double idu, int type,
+                               int import, int* dsize);
+int            osmdb_chunk_delete(osmdb_chunk_t** _self,
+                                  int* dsize);
+const void*    osmdb_chunk_find(osmdb_chunk_t* self,
+                                double idl);
+int            osmdb_chunk_add(osmdb_chunk_t* self,
+                               const void* data,
+                               double idl, int dsize);
+void           osmdb_chunk_fname(const char* base,
+                                 int type, double idu,
+                                 char* fname);
 
 #endif
