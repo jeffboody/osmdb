@@ -311,6 +311,7 @@ osmdb_indexIter_t* osmdb_indexIter_next(osmdb_indexIter_t* self)
 					return osmdb_indexIter_next(self);
 				}
 
+				self->chunk_iter = a3d_hashmap_head(chunk->hash, &self->chunk_iterator);
 				self->de = readdir(self->dir);
 				return self;
 			}

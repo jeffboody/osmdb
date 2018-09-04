@@ -23,7 +23,10 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
+#include "libxmlstream/xml_istream.h"
 #include "osmdb_filter.h"
+#include "osmdb_util.h"
 
 #define LOG_TAG "osmdb"
 #include "libxmlstream/xml_log.h"
@@ -82,7 +85,7 @@ static int osmdb_filter_start(void* priv,
 
 	// add the class
 	if(a3d_hashmap_add(self->classes, &iterator,
-	                   (const void*) &OSMDB_CLASS_SELECTED,
+	                   (const void*) OSMDB_CLASS_SELECTED,
 	                   class) == 0)
 	{
 		return 0;
@@ -119,7 +122,7 @@ osmdb_filter_t* osmdb_filter_new(const char* fname)
 		return NULL;
 	}
 
-	a3d_hashmap_t* self->classes = a3d_hashmap_new();
+	self->classes = a3d_hashmap_new();
 	if(self->classes == NULL)
 	{
 		goto fail_classes;
@@ -188,7 +191,7 @@ int osmdb_filter_select(osmdb_filter_t* self,
 	}
 
 	a3d_hashmapIter_t iter;
-	return a3d_hashmap_find(self->classes, &iter, class);
+	return a3d_hashmap_find(self->classes, &iter, class) ? 1 : 0;
 }
 
 int osmdb_filter_selectNode(osmdb_filter_t* self,
@@ -199,7 +202,7 @@ int osmdb_filter_selectNode(osmdb_filter_t* self,
 
 	const char* class = osmdb_classCodeToName(node->class);
 	a3d_hashmapIter_t iter;
-	return a3d_hashmap_find(self->classes, &iter, class);
+	return a3d_hashmap_find(self->classes, &iter, class) ? 1 : 0;
 }
 
 int osmdb_filter_selectWay(osmdb_filter_t* self,
@@ -210,7 +213,7 @@ int osmdb_filter_selectWay(osmdb_filter_t* self,
 
 	const char* class = osmdb_classCodeToName(way->class);
 	a3d_hashmapIter_t iter;
-	return a3d_hashmap_find(self->classes, &iter, class);
+	return a3d_hashmap_find(self->classes, &iter, class) ? 1 : 0;
 }
 
 int osmdb_filter_selectRelation(osmdb_filter_t* self,
@@ -221,5 +224,5 @@ int osmdb_filter_selectRelation(osmdb_filter_t* self,
 
 	const char* class = osmdb_classCodeToName(relation->class);
 	a3d_hashmapIter_t iter;
-	return a3d_hashmap_find(self->classes, &iter, class);
+	return a3d_hashmap_find(self->classes, &iter, class) ? 1 : 0;
 }
