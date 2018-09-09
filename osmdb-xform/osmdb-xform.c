@@ -23,6 +23,7 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #define LOG_TAG "osmdb"
 #include "libxmlstream/xml_log.h"
@@ -31,6 +32,73 @@
 #include "../osmdb_relation.h"
 #include "../osmdb_index.h"
 #include "../osmdb_filter.h"
+
+/***********************************************************
+* private - args                                           *
+***********************************************************/
+
+typedef struct
+{
+	int         indexed;
+	const char* fname;
+	const char* input;
+	const char* output;
+} osmdb_Args_t;
+
+static int parseArgs(int argc, const char** argv,
+                     osmdb_Args_t* args)
+{
+	assert(args);
+
+	// initialize args
+	args->indexed = 1;
+	args->fname   = NULL;
+	args->input   = NULL;
+	args->output  = NULL;
+
+	// parse args
+	int i = 1;
+	while(i < argc)
+	{
+		if(strcmp(argv[i], "-tile") == 0)
+		{
+			args->indexed = 0;
+		}
+		else if(strcmp(argv[i], "-f") == 0)
+		{
+			++i;
+			if(i >= argc)
+			{
+				return 0;
+			}
+
+			args->fname = argv[i];
+		}
+		else if(args->input == NULL)
+		{
+			args->input = argv[i];
+		}
+		else if(args->output == NULL)
+		{
+			args->output = argv[i];
+		}
+		else
+		{
+			return 0;
+		}
+
+		++i;
+	}
+
+	// check required args
+	if((args->input  == NULL) ||
+	   (args->output == NULL))
+	{
+		return 0;
+	}
+
+	return 1;
+}
 
 /***********************************************************
 * private                                                  *
@@ -232,7 +300,7 @@ static int osmdb_xform(osmdb_filter_t* filter,
                        osmdb_index_t* iindex,
                        osmdb_index_t* oindex)
 {
-	assert(filter);
+	// filter is optional
 	assert(iindex);
 	assert(oindex);
 
@@ -244,10 +312,13 @@ static int osmdb_xform(osmdb_filter_t* filter,
 		osmdb_node_t* node = (osmdb_node_t*)
 		                     osmdb_indexIter_peek(iter);
 
-		if(osmdb_filter_selectNode(filter, node) == 0)
+		if(filter)
 		{
-			iter = osmdb_indexIter_next(iter);
-			continue;
+			if(osmdb_filter_selectNode(filter, node) == 0)
+			{
+				iter = osmdb_indexIter_next(iter);
+				continue;
+			}
 		}
 
 		osmdb_node_t* copy = osmdb_node_copy(node);
@@ -272,10 +343,13 @@ static int osmdb_xform(osmdb_filter_t* filter,
 		osmdb_way_t* way = (osmdb_way_t*)
 		                    osmdb_indexIter_peek(iter);
 
-		if(osmdb_filter_selectWay(filter, way) == 0)
+		if(filter)
 		{
-			iter = osmdb_indexIter_next(iter);
-			continue;
+			if(osmdb_filter_selectWay(filter, way) == 0)
+			{
+				iter = osmdb_indexIter_next(iter);
+				continue;
+			}
 		}
 
 		if(osmdb_addWayCopy(way, iindex, oindex) == 0)
@@ -293,10 +367,13 @@ static int osmdb_xform(osmdb_filter_t* filter,
 		osmdb_relation_t* relation = (osmdb_relation_t*)
 		                             osmdb_indexIter_peek(iter);
 
-		if(osmdb_filter_selectRelation(filter, relation) == 0)
+		if(filter)
 		{
-			iter = osmdb_indexIter_next(iter);
-			continue;
+			if(osmdb_filter_selectRelation(filter, relation) == 0)
+			{
+				iter = osmdb_indexIter_next(iter);
+				continue;
+			}
 		}
 
 		if(osmdb_addRelationCopy(relation, iindex, oindex) == 0)
@@ -320,32 +397,34 @@ static int osmdb_xform(osmdb_filter_t* filter,
 * public                                                   *
 ***********************************************************/
 
-int main(int argc, char** argv)
+int main(int argc, const char** argv)
 {
-	if(argc != 4)
+	osmdb_Args_t args;
+	if(parseArgs(argc, argv, &args) == 0)
 	{
-		LOGE("%s filter.xml in-path out-path", argv[0]);
+		LOGE("%s [-tile] [-f filter.xml] input output", argv[0]);
 		return EXIT_FAILURE;
 	}
 
-	const char* fname = argv[1];
-	const char* ipath = argv[2];
-	const char* opath = argv[3];
-
-	osmdb_filter_t* filter = osmdb_filter_new(fname);
-	if(filter == NULL)
+	// load the optional filter
+	osmdb_filter_t* filter = NULL;
+	if(args.fname)
 	{
-		LOGE("FAILURE");
-		return EXIT_FAILURE;
+		filter = osmdb_filter_new(args.fname);
+		if(filter == NULL)
+		{
+			LOGE("FAILURE");
+			return EXIT_FAILURE;
+		}
 	}
 
-	osmdb_index_t* iindex = osmdb_index_new(ipath);
+	osmdb_index_t* iindex = osmdb_index_new(args.input);
 	if(iindex == NULL)
 	{
 		goto fail_iindex;
 	}
 
-	osmdb_index_t* oindex = osmdb_index_new(opath);
+	osmdb_index_t* oindex = osmdb_index_new(args.output);
 	if(oindex == NULL)
 	{
 		goto fail_oindex;
