@@ -144,8 +144,7 @@ osmdb_chunk_nodeFn(void* priv,
 		return 0;
 	}
 
-	self->size  += osmdb_node_size(node);
-	self->dirty  = 1;
+	self->size += osmdb_node_size(node);
 	return 1;
 }
 
@@ -175,8 +174,7 @@ osmdb_chunk_wayFn(void* priv,
 		return 0;
 	}
 
-	self->size  += osmdb_way_size(way);
-	self->dirty  = 1;
+	self->size += osmdb_way_size(way);
 	return 1;
 }
 
@@ -206,8 +204,7 @@ osmdb_chunk_relationFn(void* priv,
 		return 0;
 	}
 
-	self->size  += osmdb_relation_size(relation);
-	self->dirty  = 1;
+	self->size += osmdb_relation_size(relation);
 	return 1;
 }
 
