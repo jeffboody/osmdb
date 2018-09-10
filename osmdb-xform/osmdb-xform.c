@@ -304,7 +304,7 @@ static int osmdb_xform(osmdb_filter_t* filter,
 	assert(iindex);
 	assert(oindex);
 
-	// filter nodes
+	// xform nodes
 	osmdb_indexIter_t* iter;
 	iter = osmdb_indexIter_new(iindex, OSMDB_TYPE_NODE);
 	while(iter)
@@ -336,7 +336,7 @@ static int osmdb_xform(osmdb_filter_t* filter,
 		iter = osmdb_indexIter_next(iter);
 	}
 
-	// filter ways
+	// xform ways
 	iter = osmdb_indexIter_new(iindex, OSMDB_TYPE_WAY);
 	while(iter)
 	{
@@ -360,7 +360,7 @@ static int osmdb_xform(osmdb_filter_t* filter,
 		iter = osmdb_indexIter_next(iter);
 	}
 
-	// filter relations
+	// xform relations
 	iter = osmdb_indexIter_new(iindex, OSMDB_TYPE_RELATION);
 	while(iter)
 	{
