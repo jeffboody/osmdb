@@ -298,7 +298,6 @@ osmdb_indexIter_t* osmdb_indexIter_next(osmdb_indexIter_t* self)
 
 				// get the chunk
 				osmdb_chunk_t* chunk;
-				self->chunk_iter = &self->chunk_iterator;
 				chunk = osmdb_index_getChunk(self->index, hash,
 				                             key, idu, self->type, 0);
 				if(chunk == NULL)
