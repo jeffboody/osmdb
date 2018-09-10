@@ -113,21 +113,20 @@ osmdb_index_trim(osmdb_index_t* self, int size,
 static osmdb_chunk_t*
 osmdb_index_getChunk(osmdb_index_t* self,
                      a3d_hashmap_t* hash,
-                     a3d_hashmapIter_t* hiter,
                      const char* key,
                      double idu, int type,
                      int find)
 {
 	assert(self);
 	assert(hash);
-	assert(hiter);
 	assert(key);
 
 	// check if chunk is already in hash
+	a3d_hashmapIter_t hiter;
 	osmdb_chunk_t*    chunk;
 	a3d_listitem_t*   iter;
 	iter = (a3d_listitem_t*)
-	       a3d_hashmap_find(hash, hiter, key);
+	       a3d_hashmap_find(hash, &hiter, key);
 	if(iter)
 	{
 		chunk = (osmdb_chunk_t*) a3d_list_peekitem(iter);
@@ -161,7 +160,7 @@ osmdb_index_getChunk(osmdb_index_t* self,
 			goto fail_append;
 		}
 
-		if(a3d_hashmap_add(hash, hiter,
+		if(a3d_hashmap_add(hash, &hiter,
 		                   (const void*) iter, key) == 0)
 		{
 			goto fail_add;
@@ -300,7 +299,7 @@ osmdb_indexIter_t* osmdb_indexIter_next(osmdb_indexIter_t* self)
 				// get the chunk
 				osmdb_chunk_t* chunk;
 				self->chunk_iter = &self->chunk_iterator;
-				chunk = osmdb_index_getChunk(self->index, hash, self->chunk_iter,
+				chunk = osmdb_index_getChunk(self->index, hash,
 				                             key, idu, self->type, 0);
 				if(chunk == NULL)
 				{
@@ -311,9 +310,13 @@ osmdb_indexIter_t* osmdb_indexIter_next(osmdb_indexIter_t* self)
 					return osmdb_indexIter_next(self);
 				}
 
+				// get the chunk iterator
 				self->chunk_iter = a3d_hashmap_head(chunk->hash, &self->chunk_iterator);
-				self->de = readdir(self->dir);
-				return self;
+				if(self->chunk_iter)
+				{
+					self->de = readdir(self->dir);
+					return self;
+				}
 			}
 		}
 
@@ -486,8 +489,7 @@ int osmdb_index_add(osmdb_index_t* self,
 
 	// get the chunk
 	osmdb_chunk_t* chunk;
-	a3d_hashmapIter_t hiter;
-	chunk = osmdb_index_getChunk(self, hash, &hiter,
+	chunk = osmdb_index_getChunk(self, hash,
 	                             key, idu, type, 0);
 	if(chunk == NULL)
 	{
@@ -545,8 +547,7 @@ const void* osmdb_index_find(osmdb_index_t* self,
 
 	// get the chunk
 	osmdb_chunk_t* chunk;
-	a3d_hashmapIter_t hiter;
-	chunk = osmdb_index_getChunk(self, hash, &hiter,
+	chunk = osmdb_index_getChunk(self, hash,
 	                             key, idu, type, 1);
 	if(chunk == NULL)
 	{
