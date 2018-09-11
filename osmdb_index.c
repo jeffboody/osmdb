@@ -36,7 +36,7 @@
 #define LOG_TAG "osmdb"
 #include "libxmlstream/xml_log.h"
 
-#define OSMDB_INDEX_SIZE 500*1024*1024
+#define OSMDB_INDEX_SIZE 100*1024*1024
 
 /***********************************************************
 * private                                                  *
