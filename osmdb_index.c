@@ -43,20 +43,16 @@
 ***********************************************************/
 
 static void
-osmdb_index_trim(osmdb_index_t* self, int size,
-                 a3d_listitem_t* exclude)
+osmdb_index_trim(osmdb_index_t* self, int size)
 {
-	// exclude may be NULL
 	assert(self);
 	assert(size >= 0);
 
-	while(self->size > size)
+	a3d_listitem_t* item = a3d_list_head(self->list);
+	while(item)
 	{
-		a3d_listitem_t* item = a3d_list_head(self->list);
-		if(item == exclude)
+		if(self->size <= size)
 		{
-			// exclude the last item added
-			// although this probably can't occur
 			return;
 		}
 
@@ -88,6 +84,11 @@ osmdb_index_trim(osmdb_index_t* self, int size,
 			snprintf(key, 256, "R%0.0lf", chunk->idu);
 		}
 
+		if(osmdb_chunk_locked(chunk))
+		{
+			return;
+		}
+
 		// remove the chunk
 		a3d_hashmapIter_t  iterator;
 		a3d_hashmapIter_t* iter = &iterator;
@@ -115,11 +116,13 @@ osmdb_index_getChunk(osmdb_index_t* self,
                      a3d_hashmap_t* hash,
                      const char* key,
                      double idu, int type,
-                     int find)
+                     int find,
+                     a3d_listitem_t** list_iter)
 {
 	assert(self);
 	assert(hash);
 	assert(key);
+	assert(list_iter);
 
 	// check if chunk is already in hash
 	a3d_hashmapIter_t hiter;
@@ -150,7 +153,7 @@ osmdb_index_getChunk(osmdb_index_t* self,
 		if(chunk == NULL)
 		{
 			self->err = 1;
-			return 0;
+			return NULL;
 		}
 
 		iter = a3d_list_append(self->list,
@@ -166,10 +169,11 @@ osmdb_index_getChunk(osmdb_index_t* self,
 			goto fail_add;
 		}
 		self->size += csize;
-		osmdb_index_trim(self, OSMDB_INDEX_SIZE, iter);
+		osmdb_index_trim(self, OSMDB_INDEX_SIZE);
 	}
 
 	// success
+	*list_iter = iter;
 	return chunk;
 
 	// failure
@@ -258,7 +262,15 @@ osmdb_indexIter_t* osmdb_indexIter_next(osmdb_indexIter_t* self)
 		self->chunk_iter = a3d_hashmap_next(self->chunk_iter);
 		if(self->chunk_iter)
 		{
+			a3d_list_moven(self->index->list, self->list_iter, NULL);
 			return self;
+		}
+		else
+		{
+			osmdb_chunk_t* chunk = (osmdb_chunk_t*)
+			                       a3d_list_peekitem(self->list_iter);
+			osmdb_chunk_unlock(chunk);
+			self->list_iter = NULL;
 		}
 	}
 
@@ -297,9 +309,11 @@ osmdb_indexIter_t* osmdb_indexIter_next(osmdb_indexIter_t* self)
 				}
 
 				// get the chunk
-				osmdb_chunk_t* chunk;
+				a3d_listitem_t* list_iter;
+				osmdb_chunk_t*  chunk;
 				chunk = osmdb_index_getChunk(self->index, hash,
-				                             key, idu, self->type, 0);
+				                             key, idu, self->type, 0,
+				                             &list_iter);
 				if(chunk == NULL)
 				{
 					LOGE("invalid name=%s", self->de->d_name);
@@ -313,6 +327,8 @@ osmdb_indexIter_t* osmdb_indexIter_next(osmdb_indexIter_t* self)
 				self->chunk_iter = a3d_hashmap_head(chunk->hash, &self->chunk_iterator);
 				if(self->chunk_iter)
 				{
+					self->list_iter = list_iter;
+					osmdb_chunk_lock(chunk);
 					self->de = readdir(self->dir);
 					return self;
 				}
@@ -410,7 +426,7 @@ int osmdb_index_delete(osmdb_index_t** _self)
 	osmdb_index_t* self = *_self;
 	if(self)
 	{
-		osmdb_index_trim(self, 0, NULL);
+		osmdb_index_trim(self, 0);
 		a3d_hashmap_delete(&self->hash_relations);
 		a3d_hashmap_delete(&self->hash_ways);
 		a3d_hashmap_delete(&self->hash_nodes);
@@ -487,9 +503,11 @@ int osmdb_index_add(osmdb_index_t* self,
 	}
 
 	// get the chunk
+	a3d_listitem_t* list_iter;
 	osmdb_chunk_t* chunk;
 	chunk = osmdb_index_getChunk(self, hash,
-	                             key, idu, type, 0);
+	                             key, idu, type, 0,
+	                             &list_iter);
 	if(chunk == NULL)
 	{
 		// nothing to undo for this failure
@@ -509,8 +527,7 @@ int osmdb_index_add(osmdb_index_t* self,
 		return 0;
 	}
 	self->size += dsize;
-	osmdb_index_trim(self, OSMDB_INDEX_SIZE,
-	                 a3d_list_tail(self->list));
+	osmdb_index_trim(self, OSMDB_INDEX_SIZE);
 
 	return 1;
 }
@@ -545,9 +562,11 @@ const void* osmdb_index_find(osmdb_index_t* self,
 	}
 
 	// get the chunk
+	a3d_listitem_t* list_iter;
 	osmdb_chunk_t* chunk;
 	chunk = osmdb_index_getChunk(self, hash,
-	                             key, idu, type, 1);
+	                             key, idu, type, 1,
+	                             &list_iter);
 	if(chunk == NULL)
 	{
 		// data not found or an error occurred in getChunk

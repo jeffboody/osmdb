@@ -252,11 +252,12 @@ osmdb_chunk_t* osmdb_chunk_new(const char* base,
 		goto fail_hash;
 	}
 
-	self->base  = base;
-	self->idu   = idu;
-	self->type  = type;
-	self->size  = 0;
-	self->dirty = 0;
+	self->base   = base;
+	self->idu    = idu;
+	self->type   = type;
+	self->size   = 0;
+	self->dirty  = 0;
+	self->locked = 0;
 
 	// optionally import chunk
 	if(import && (osmdb_chunk_import(self) == 0))
@@ -294,6 +295,27 @@ int osmdb_chunk_delete(osmdb_chunk_t** _self, int* dsize)
 		*_self = NULL;
 	}
 	return success;
+}
+
+void osmdb_chunk_lock(osmdb_chunk_t* self)
+{
+	assert(self);
+
+	self->locked = 1;
+}
+
+void osmdb_chunk_unlock(osmdb_chunk_t* self)
+{
+	assert(self);
+
+	self->locked = 0;
+}
+
+int osmdb_chunk_locked(osmdb_chunk_t* self)
+{
+	assert(self);
+
+	return self->locked;
 }
 
 const void* osmdb_chunk_find(osmdb_chunk_t* self, double idl)

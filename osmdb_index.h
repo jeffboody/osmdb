@@ -42,6 +42,7 @@ typedef struct
 	struct dirent* de;
 	a3d_hashmapIter_t  chunk_iterator;
 	a3d_hashmapIter_t* chunk_iter;
+	a3d_listitem_t*    list_iter;
 } osmdb_indexIter_t;
 
 osmdb_indexIter_t* osmdb_indexIter_new(struct osmdb_index_s* index,

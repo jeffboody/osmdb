@@ -35,6 +35,7 @@ typedef struct
 	int         type;
 	int         size;
 	int         dirty;
+	int         locked;
 
 	// map from idl to node/way/relation
 	a3d_hashmap_t* hash;
@@ -45,6 +46,9 @@ osmdb_chunk_t* osmdb_chunk_new(const char* base,
                                int import, int* dsize);
 int            osmdb_chunk_delete(osmdb_chunk_t** _self,
                                   int* dsize);
+void           osmdb_chunk_lock(osmdb_chunk_t* self);
+void           osmdb_chunk_unlock(osmdb_chunk_t* self);
+int            osmdb_chunk_locked(osmdb_chunk_t* self);
 const void*    osmdb_chunk_find(osmdb_chunk_t* self,
                                 double idl);
 int            osmdb_chunk_add(osmdb_chunk_t* self,
