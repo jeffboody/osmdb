@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <math.h>
 
 #define LOG_TAG "osmdb"
 #include "libxmlstream/xml_log.h"
@@ -306,9 +307,18 @@ static int osmdb_xform(osmdb_filter_t* filter,
 
 	// xform nodes
 	osmdb_indexIter_t* iter;
+	double cnt = 0.0;
 	iter = osmdb_indexIter_new(iindex, OSMDB_TYPE_NODE);
 	while(iter)
 	{
+		cnt += 1.0;
+		if(fmod(cnt, 100000.0) == 0.0)
+		{
+			LOGI("[N] %0.0lf", cnt);
+			osmdb_index_stats(oindex);
+			osmdb_index_stats(iindex);
+		}
+
 		osmdb_node_t* node = (osmdb_node_t*)
 		                     osmdb_indexIter_peek(iter);
 
@@ -335,11 +345,23 @@ static int osmdb_xform(osmdb_filter_t* filter,
 		}
 		iter = osmdb_indexIter_next(iter);
 	}
+	LOGI("[N] %0.0lf", cnt);
+	osmdb_index_stats(oindex);
+	osmdb_index_stats(iindex);
 
 	// xform ways
+	cnt = 0.0;
 	iter = osmdb_indexIter_new(iindex, OSMDB_TYPE_WAY);
 	while(iter)
 	{
+		cnt += 1.0;
+		if(fmod(cnt, 100000.0) == 0.0)
+		{
+			LOGI("[W] %0.0lf", cnt);
+			osmdb_index_stats(oindex);
+			osmdb_index_stats(iindex);
+		}
+
 		osmdb_way_t* way = (osmdb_way_t*)
 		                    osmdb_indexIter_peek(iter);
 
@@ -359,11 +381,23 @@ static int osmdb_xform(osmdb_filter_t* filter,
 
 		iter = osmdb_indexIter_next(iter);
 	}
+	LOGI("[W] %0.0lf", cnt);
+	osmdb_index_stats(oindex);
+	osmdb_index_stats(iindex);
 
 	// xform relations
+	cnt = 0.0;
 	iter = osmdb_indexIter_new(iindex, OSMDB_TYPE_RELATION);
 	while(iter)
 	{
+		cnt += 1.0;
+		if(fmod(cnt, 100000.0) == 0.0)
+		{
+			LOGI("[R] %0.0lf", cnt);
+			osmdb_index_stats(oindex);
+			osmdb_index_stats(iindex);
+		}
+
 		osmdb_relation_t* relation = (osmdb_relation_t*)
 		                             osmdb_indexIter_peek(iter);
 
@@ -383,6 +417,9 @@ static int osmdb_xform(osmdb_filter_t* filter,
 
 		iter = osmdb_indexIter_next(iter);
 	}
+	LOGI("[R] %0.0lf", cnt);
+	osmdb_index_stats(oindex);
+	osmdb_index_stats(iindex);
 
 	// success
 	return 1;

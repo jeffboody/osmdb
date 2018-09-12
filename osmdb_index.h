@@ -64,6 +64,21 @@ typedef struct osmdb_index_s
 	a3d_hashmap_t* hash_nodes;
 	a3d_hashmap_t* hash_ways;
 	a3d_hashmap_t* hash_relations;
+
+	// stats
+	double stats_hit;
+	double stats_miss;
+	double stats_evict;
+	double stats_add;
+	double stats_add_dt;
+	double stats_find;
+	double stats_find_dt;
+	double stats_get;
+	double stats_get_dt;
+	double stats_load;
+	double stats_load_dt;
+	double stats_trim;
+	double stats_trim_dt;
 } osmdb_index_t;
 
 osmdb_index_t*     osmdb_index_new(const char* base);
@@ -72,5 +87,6 @@ int                osmdb_index_add(osmdb_index_t* self,
                                    int type, const void* data);
 const void*        osmdb_index_find(osmdb_index_t* self,
                                     int type, double id);
+void               osmdb_index_stats(osmdb_index_t* self);
 
 #endif

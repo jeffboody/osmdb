@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include "a3d/a3d_timestamp.h"
 #include "osmdb_chunk.h"
 #include "osmdb_index.h"
 #include "osmdb_node.h"
@@ -54,6 +55,13 @@ osmdb_index_trim(osmdb_index_t* self, int size)
 		if(self->size <= size)
 		{
 			return;
+		}
+
+		double t0 = a3d_timestamp();
+		self->stats_trim += 1.0;
+		if(size > 0)
+		{
+			self->stats_evict += 1.0;
 		}
 
 		osmdb_chunk_t* chunk = (osmdb_chunk_t*)
@@ -86,6 +94,7 @@ osmdb_index_trim(osmdb_index_t* self, int size)
 
 		if(osmdb_chunk_locked(chunk))
 		{
+			self->stats_trim_dt += a3d_timestamp() - t0;
 			return;
 		}
 
@@ -96,6 +105,7 @@ osmdb_index_trim(osmdb_index_t* self, int size)
 		{
 			LOGE("invalid key=%s", key);
 			self->err = 1;
+			self->stats_trim_dt += a3d_timestamp() - t0;
 			return;
 		}
 		a3d_hashmap_remove(hash, &iter);
@@ -108,6 +118,7 @@ osmdb_index_trim(osmdb_index_t* self, int size)
 			self->err = 1;
 		}
 		self->size -= dsize;
+		self->stats_trim_dt += a3d_timestamp() - t0;
 	}
 }
 
@@ -124,6 +135,9 @@ osmdb_index_getChunk(osmdb_index_t* self,
 	assert(key);
 	assert(list_iter);
 
+	double t0 = a3d_timestamp();
+	self->stats_get += 1.0;
+
 	// check if chunk is already in hash
 	a3d_hashmapIter_t hiter;
 	osmdb_chunk_t*    chunk;
@@ -132,11 +146,14 @@ osmdb_index_getChunk(osmdb_index_t* self,
 	       a3d_hashmap_find(hash, &hiter, key);
 	if(iter)
 	{
+		self->stats_hit += 1.0;
 		chunk = (osmdb_chunk_t*) a3d_list_peekitem(iter);
 		a3d_list_moven(self->list, iter, NULL);
 	}
 	else
 	{
+		self->stats_miss += 1.0;
+
 		// import the chunk if it exists
 		char fname[256];
 		osmdb_chunk_fname(self->base, type, idu, fname);
@@ -144,7 +161,14 @@ osmdb_index_getChunk(osmdb_index_t* self,
 		if(find && (exists == 0))
 		{
 			// special case for find
+			self->stats_get_dt += a3d_timestamp() - t0;
 			return NULL;
+		}
+
+		double load_t0 = a3d_timestamp();
+		if(exists)
+		{
+			self->stats_load += 1.0;
 		}
 
 		int csize;
@@ -153,7 +177,13 @@ osmdb_index_getChunk(osmdb_index_t* self,
 		if(chunk == NULL)
 		{
 			self->err = 1;
+			self->stats_get_dt += a3d_timestamp() - t0;
 			return NULL;
+		}
+
+		if(exists)
+		{
+			self->stats_load_dt += a3d_timestamp() - load_t0;
 		}
 
 		iter = a3d_list_append(self->list,
@@ -174,6 +204,7 @@ osmdb_index_getChunk(osmdb_index_t* self,
 
 	// success
 	*list_iter = iter;
+	self->stats_get_dt += a3d_timestamp() - t0;
 	return chunk;
 
 	// failure
@@ -185,6 +216,7 @@ osmdb_index_getChunk(osmdb_index_t* self,
 		osmdb_chunk_delete(&chunk, &dsize);
 		self->err = 1;
 	}
+	self->stats_get_dt += a3d_timestamp() - t0;
 	return NULL;
 }
 
@@ -402,6 +434,18 @@ osmdb_index_t* osmdb_index_new(const char* base)
 	self->size = 0;
 	self->err  = 0;
 
+	self->stats_hit     = 0.0;
+	self->stats_miss    = 0.0;
+	self->stats_evict   = 0.0;
+	self->stats_add     = 0.0;
+	self->stats_add_dt  = 0.0;
+	self->stats_find    = 0.0;
+	self->stats_find_dt = 0.0;
+	self->stats_get     = 0.0;
+	self->stats_get_dt  = 0.0;
+	self->stats_trim    = 0.0;
+	self->stats_trim_dt = 0.0;
+
 	// success
 	return self;
 
@@ -432,6 +476,7 @@ int osmdb_index_delete(osmdb_index_t** _self)
 		a3d_hashmap_delete(&self->hash_nodes);
 		a3d_list_delete(&self->list);
 		err = self->err;
+		osmdb_index_stats(self);
 		free(self);
 		*_self = NULL;
 	}
@@ -444,6 +489,9 @@ int osmdb_index_add(osmdb_index_t* self,
 {
 	assert(self);
 	assert(data);
+
+	double t0 = a3d_timestamp();
+	self->stats_add += 1.0;
 
 	// get data/hash attributes
 	int    dsize;
@@ -499,6 +547,7 @@ int osmdb_index_add(osmdb_index_t* self,
 			osmdb_relation_delete(&relation);
 		}
 
+		self->stats_add_dt += a3d_timestamp() - t0;
 		return 1;
 	}
 
@@ -514,6 +563,7 @@ int osmdb_index_add(osmdb_index_t* self,
 		LOGE("invalid id=%0.0lf, idu=%0.0lf, idl=%0.0lf",
 		     id, idu, idl);
 		self->err = 1;
+		self->stats_add_dt += a3d_timestamp() - t0;
 		return 0;
 	}
 
@@ -524,11 +574,13 @@ int osmdb_index_add(osmdb_index_t* self,
 		LOGE("failure key=%s, type=%i, id=%0.0lf, idu=%0.0lf, idl=%0.0lf",
 		     key, type, id, idu, idl);
 		self->err = 1;
+		self->stats_add_dt += a3d_timestamp() - t0;
 		return 0;
 	}
 	self->size += dsize;
 	osmdb_index_trim(self, OSMDB_INDEX_SIZE);
 
+	self->stats_add_dt += a3d_timestamp() - t0;
 	return 1;
 }
 
@@ -536,6 +588,9 @@ const void* osmdb_index_find(osmdb_index_t* self,
                              int type, double id)
 {
 	assert(self);
+
+	double t0 = a3d_timestamp();
+	self->stats_find += 1.0;
 
 	// get hash attributes
 	double idu;
@@ -571,9 +626,26 @@ const void* osmdb_index_find(osmdb_index_t* self,
 	{
 		// data not found or an error occurred in getChunk
 		// don't set the err flag here
+		self->stats_find_dt += a3d_timestamp() - t0;
 		return NULL;
 	}
 
 	// find the data
-	return osmdb_chunk_find(chunk, idl);
+	const void* data = osmdb_chunk_find(chunk, idl);
+	self->stats_find_dt += a3d_timestamp() - t0;
+	return data;
+}
+
+void osmdb_index_stats(osmdb_index_t* self)
+{
+	assert(self);
+
+	LOGI("STATS: %s", self->base);
+	LOGI("HIT/MISS/EVICT: %0.0lf, %0.0lf, %0.0lf",
+	     self->stats_hit, self->stats_miss, self->stats_evict);
+	LOGI("ADD:  cnt=%0.0lf, dt=%lf", self->stats_add, self->stats_add_dt);
+	LOGI("FIND: cnt=%0.0lf, dt=%lf", self->stats_find, self->stats_find_dt);
+	LOGI("GET:  cnt=%0.0lf, dt=%lf", self->stats_get, self->stats_get_dt);
+	LOGI("LOAD: cnt=%0.0lf, dt=%lf", self->stats_load, self->stats_load_dt);
+	LOGI("TRIM: cnt=%0.0lf, dt=%lf", self->stats_trim, self->stats_trim_dt);
 }
