@@ -23,6 +23,7 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#include <math.h>
 
 #define LOG_TAG "osmdb"
 #include "libxmlstream/xml_log.h"
@@ -36,12 +37,23 @@
 * private                                                  *
 ***********************************************************/
 
+double stats_nodes     = 0.0;
+double stats_ways      = 0.0;
+double stats_relations = 0.0;
+
 static int nodeFn(void* priv, osmdb_node_t* node)
 {
 	assert(priv);
 	assert(node);
 
 	osmdb_index_t* index = (osmdb_index_t*) priv;
+
+	stats_nodes += 1.0;
+	if(fmod(stats_nodes, 100000.0) == 0.0)
+	{
+		osmdb_index_stats(index);
+	}
+
 	return osmdb_index_add(index, OSMDB_TYPE_NODE,
 	                       (const void*) node);
 }
@@ -52,6 +64,13 @@ static int wayFn(void* priv, osmdb_way_t* way)
 	assert(way);
 
 	osmdb_index_t* index = (osmdb_index_t*) priv;
+
+	stats_ways += 1.0;
+	if(fmod(stats_ways, 100000.0) == 0.0)
+	{
+		osmdb_index_stats(index);
+	}
+
 	return osmdb_index_add(index, OSMDB_TYPE_WAY,
 	                       (const void*) way);
 }
@@ -62,6 +81,13 @@ static int relationFn(void* priv, osmdb_relation_t* relation)
 	assert(relation);
 
 	osmdb_index_t* index = (osmdb_index_t*) priv;
+
+	stats_relations += 1.0;
+	if(fmod(stats_relations, 100000.0) == 0.0)
+	{
+		osmdb_index_stats(index);
+	}
+
 	return osmdb_index_add(index, OSMDB_TYPE_RELATION,
 	                       (const void*) relation);
 }
