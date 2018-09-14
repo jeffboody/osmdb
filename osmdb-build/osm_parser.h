@@ -67,6 +67,9 @@ typedef struct
 	a3d_list_t* rel_members;
 
 	// histogram of class types
+	double stats_nodes;
+	double stats_ways;
+	double stats_relations;
 	osm_classHistogram_t* histogram;
 } osm_parser_t;
 

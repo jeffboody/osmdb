@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <math.h>
 #include "libxmlstream/xml_istream.h"
 #include "libxmlstream/xml_ostream.h"
 #include "osm_parser.h"
@@ -640,6 +641,12 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 
 	// update histogram
 	++self->histogram[self->tag_class].nodes;
+	self->stats_nodes += 1.0;
+	if(fmod(self->stats_nodes, 100000.0) == 0.0)
+	{
+		LOGI("line=%i, nodes=%0.0lf, ways=%0.0lf, relations=%0.0lf",
+		     line, self->stats_nodes, self->stats_ways, self->stats_relations);
+	}
 
 	return 1;
 }
@@ -781,6 +788,12 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 
 	// update histogram
 	++self->histogram[self->tag_class].ways;
+	self->stats_ways += 1.0;
+	if(fmod(self->stats_ways, 100000.0) == 0.0)
+	{
+		LOGI("line=%i, nodes=%0.0lf, ways=%0.0lf, relations=%0.0lf",
+		     line, self->stats_nodes, self->stats_ways, self->stats_relations);
+	}
 
 	return 1;
 }
@@ -973,6 +986,12 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 
 	// update histogram
 	++self->histogram[self->tag_class].rels;
+	self->stats_relations += 1.0;
+	if(fmod(self->stats_relations, 100000.0) == 0.0)
+	{
+		LOGI("line=%i, nodes=%0.0lf, ways=%0.0lf, relations=%0.0lf",
+		     line, self->stats_nodes, self->stats_ways, self->stats_relations);
+	}
 
 	return 1;
 }
@@ -1156,6 +1175,8 @@ void osm_parser_delete(osm_parser_t** _self)
 	if(self)
 	{
 		// print histogram
+		LOGI("nodes=%0.0lf, ways=%0.0lf, relations=%0.0lf",
+		     self->stats_nodes, self->stats_ways, self->stats_relations);
 		int idx;
 		int cnt = osmdb_classCount();
 		for(idx = 0; idx < cnt; ++idx)
