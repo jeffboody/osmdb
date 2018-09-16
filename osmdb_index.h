@@ -55,6 +55,7 @@ typedef struct osmdb_index_s
 {
 	char base[256];
 	int  size_chunks;
+	int  size_tiles;
 	int  err;
 
 	// LRU cache of chunks
@@ -64,6 +65,12 @@ typedef struct osmdb_index_s
 	a3d_hashmap_t* hash_nodes;
 	a3d_hashmap_t* hash_ways;
 	a3d_hashmap_t* hash_relations;
+
+	// LRU cache of tiles
+	a3d_list_t* tiles;
+
+	// map from ZzoomXxYy to listitems
+	a3d_hashmap_t* hash_tiles;
 
 	// stats
 	double stats_hit;
@@ -85,6 +92,9 @@ osmdb_index_t*     osmdb_index_new(const char* base);
 int                osmdb_index_delete(osmdb_index_t** _self);
 int                osmdb_index_addChunk(osmdb_index_t* self,
                                         int type, const void* data);
+int                osmdb_index_addTile(osmdb_index_t* self,
+                                       int zoom, int x, int y,
+                                       int type, double id);
 const void*        osmdb_index_find(osmdb_index_t* self,
                                     int type, double id);
 void               osmdb_index_stats(osmdb_index_t* self);

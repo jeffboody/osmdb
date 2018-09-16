@@ -35,184 +35,103 @@
 #include "../osmdb_filter.h"
 
 /***********************************************************
-* private - args                                           *
+* private                                                  *
 ***********************************************************/
 
 typedef struct
 {
-	int         indexed;
-	const char* fname;
-	const char* input;
-	const char* output;
-} osmdb_Args_t;
+	int    pts;
+	double latT;
+	double lonL;
+	double latB;
+	double lonR;
+} osmdb_range_t;
 
-static int parseArgs(int argc, const char** argv,
-                     osmdb_Args_t* args)
+static void osmdb_range_init(osmdb_range_t* self)
 {
-	assert(args);
+	assert(self);
 
-	// initialize args
-	args->indexed = 1;
-	args->fname   = NULL;
-	args->input   = NULL;
-	args->output  = NULL;
-
-	// parse args
-	int i = 1;
-	while(i < argc)
-	{
-		if(strcmp(argv[i], "-tile") == 0)
-		{
-			args->indexed = 0;
-		}
-		else if(strcmp(argv[i], "-f") == 0)
-		{
-			++i;
-			if(i >= argc)
-			{
-				return 0;
-			}
-
-			args->fname = argv[i];
-		}
-		else if(args->input == NULL)
-		{
-			args->input = argv[i];
-		}
-		else if(args->output == NULL)
-		{
-			args->output = argv[i];
-		}
-		else
-		{
-			return 0;
-		}
-
-		++i;
-	}
-
-	// check required args
-	if((args->input  == NULL) ||
-	   (args->output == NULL))
-	{
-		return 0;
-	}
-
-	return 1;
+	self->pts  = 0;
+	self->latT = 0.0;
+	self->lonL = 0.0;
+	self->latB = 0.0;
+	self->lonR = 0.0;
 }
 
-/***********************************************************
-* private                                                  *
-***********************************************************/
-
-static int
-osmdb_addNodeCopy(osmdb_node_t* node,
-                  osmdb_index_t* iindex,
-                  osmdb_index_t* oindex)
+static void osmdb_range_addNode(osmdb_range_t* self,
+                                osmdb_node_t* node)
 {
+	assert(self);
 	assert(node);
-	assert(iindex);
-	assert(oindex);
 
-	osmdb_node_t* copy = osmdb_node_copy(node);
-	if(copy == NULL)
+	if(self->pts)
 	{
-		return 0;
-	}
+		if(node->lat > self->latT)
+		{
+			self->latT = node->lat;
+		}
+		else if(node->lat < self->latB)
+		{
+			self->latB = node->lat;
+		}
 
-	if(osmdb_index_add(oindex, OSMDB_TYPE_NODE,
-	                   (const void*) copy) == 0)
+		if(node->lon < self->lonL)
+		{
+			self->lonL = node->lon;
+		}
+		else if(node->lon > self->lonR)
+		{
+			self->lonR = node->lon;
+		}
+	}
+	else
 	{
-		goto fail_add;
+		self->latT = node->lat;
+		self->lonL = node->lon;
+		self->latB = node->lat;
+		self->lonR = node->lon;
 	}
-
-	// success
-	return 1;
-
-	// failure
-	fail_add:
-		osmdb_node_delete(&copy);
-	return 0;
+	++self->pts;
 }
 
-static int
-osmdb_addWayNodes(osmdb_way_t* way,
-                  osmdb_index_t* iindex,
-                  osmdb_index_t* oindex)
+static void osmdb_range_addWay(osmdb_range_t* self,
+                               osmdb_index_t* index,
+                               osmdb_way_t* way)
 {
+	assert(self);
+	assert(index);
 	assert(way);
-	assert(iindex);
-	assert(oindex);
+
+	osmdb_node_t* node;
 
 	a3d_listitem_t* iter = a3d_list_head(way->nds);
 	while(iter)
 	{
-		double*       ref = (double*) a3d_list_peekitem(iter);
-		osmdb_node_t* nd  = (osmdb_node_t*)
-		                    osmdb_index_find(iindex,
-		                                     OSMDB_TYPE_NODE,
-		                                     *ref);
-		if(nd == NULL)
+		double* ref = (double*)
+		              a3d_list_peekitem(iter);
+		node = (osmdb_node_t*)
+		       osmdb_index_find(index,
+		                        OSMDB_TYPE_NODE,
+		                        *ref);
+		if(node)
 		{
-			// assume node was cropped by osmosis
-			iter = a3d_list_next(iter);
-			continue;
-		}
-
-		if(osmdb_addNodeCopy(nd, iindex, oindex) == 0)
-		{
-			return 0;
+			osmdb_range_addNode(self, node);
 		}
 
 		iter = a3d_list_next(iter);
 	}
-
-	return 1;
 }
 
-static int
-osmdb_addWayCopy(osmdb_way_t* way,
-                 osmdb_index_t* iindex,
-                 osmdb_index_t* oindex)
+static void osmdb_range_addRelation(osmdb_range_t* self,
+                                    osmdb_index_t* index,
+                                    osmdb_relation_t* relation)
 {
-	assert(way);
-	assert(iindex);
-	assert(oindex);
-
-	osmdb_way_t* copy = osmdb_way_copy(way);
-	if(copy == NULL)
-	{
-		return 0;
-	}
-
-	if(osmdb_addWayNodes(copy, iindex, oindex) == 0)
-	{
-		goto fail_add;
-	}
-
-	if(osmdb_index_add(oindex, OSMDB_TYPE_WAY,
-	                   (const void*) copy) == 0)
-	{
-		goto fail_add;
-	}
-
-	// success
-	return 1;
-
-	// failure
-	fail_add:
-		osmdb_way_delete(&copy);
-	return 0;
-}
-
-static int
-osmdb_addRelationMembers(osmdb_relation_t* relation,
-                         osmdb_index_t* iindex,
-                         osmdb_index_t* oindex)
-{
+	assert(self);
+	assert(index);
 	assert(relation);
-	assert(iindex);
-	assert(oindex);
+
+	osmdb_node_t* node;
+	osmdb_way_t*  way;
 
 	a3d_listitem_t* iter = a3d_list_head(relation->members);
 	while(iter)
@@ -221,160 +140,119 @@ osmdb_addRelationMembers(osmdb_relation_t* relation,
 		                    a3d_list_peekitem(iter);
 		if(m->type == OSMDB_TYPE_NODE)
 		{
-			osmdb_node_t* nd  = (osmdb_node_t*)
-			                    osmdb_index_find(iindex,
-			                                     OSMDB_TYPE_NODE,
-			                                     m->ref);
-			if(nd == NULL)
+			node = (osmdb_node_t*)
+			       osmdb_index_find(index,
+			                        m->type,
+			                        m->ref);
+			if(node)
 			{
-				// assume node was cropped by osmosis
-				iter = a3d_list_next(iter);
-				continue;
-			}
-
-			if(osmdb_addNodeCopy(nd, iindex, oindex) == 0)
-			{
-				return 0;
+				osmdb_range_addNode(self, node);
 			}
 		}
 		else if(m->type == OSMDB_TYPE_WAY)
 		{
-			osmdb_way_t* way = (osmdb_way_t*)
-			                    osmdb_index_find(iindex,
-			                                     OSMDB_TYPE_WAY,
-			                                     m->ref);
-			if(way == NULL)
+			way = (osmdb_way_t*)
+			       osmdb_index_find(index,
+			                        m->type,
+			                        m->ref);
+			if(way)
 			{
-				// assume way was cropped by osmosis
-				iter = a3d_list_next(iter);
-				continue;
-			}
-
-			if(osmdb_addWayCopy(way, iindex, oindex) == 0)
-			{
-				return 0;
+				osmdb_range_addWay(self, index, way);
 			}
 		}
+		// ignore relation members
 
 		iter = a3d_list_next(iter);
 	}
-
-	return 1;
 }
 
-static int
-osmdb_addRelationCopy(osmdb_relation_t* relation,
-                      osmdb_index_t* iindex,
-                      osmdb_index_t* oindex)
+static int osmdb_range_addTile(osmdb_range_t* self,
+                               osmdb_index_t* index,
+		                       int type, double id)
 {
-	assert(relation);
-	assert(iindex);
-	assert(oindex);
+	assert(self);
+	assert(index);
 
-	osmdb_relation_t* copy = osmdb_relation_copy(relation);
-	if(copy == NULL)
-	{
-		return 0;
-	}
-
-	if(osmdb_addRelationMembers(copy, iindex, oindex) == 0)
-	{
-		goto fail_add;
-	}
-
-	if(osmdb_index_add(oindex, OSMDB_TYPE_RELATION,
-	                   (const void*) copy) == 0)
-	{
-		goto fail_add;
-	}
-
-	// success
-	return 1;
-
-	// failure
-	fail_add:
-		osmdb_relation_delete(&copy);
-	return 0;
+	// TODO - osmdb_range_addTile
+	int success = 1;
+	int zoom = 15;
+	int x    = 0;
+	int y    = 0;
+	success &= osmdb_index_addTile(index, zoom, x, y,
+	                               type, id);
+	return success;
 }
 
-static int osmdb_xform(osmdb_filter_t* filter,
-                       osmdb_index_t* iindex,
-                       osmdb_index_t* oindex)
+static int osmdb_tiler(osmdb_filter_t* filter,
+                       osmdb_index_t* index)
 {
-	// filter is optional
-	assert(iindex);
-	assert(oindex);
+	assert(filter);
+	assert(index);
 
-	// xform nodes
+	// tile nodes
 	osmdb_indexIter_t* iter;
 	double cnt = 0.0;
-	iter = osmdb_indexIter_new(iindex, OSMDB_TYPE_NODE);
+	iter = osmdb_indexIter_new(index, OSMDB_TYPE_NODE);
 	while(iter)
 	{
 		cnt += 1.0;
 		if(fmod(cnt, 100000.0) == 0.0)
 		{
 			LOGI("[N] %0.0lf", cnt);
-			osmdb_index_stats(oindex);
-			osmdb_index_stats(iindex);
+			osmdb_index_stats(index);
 		}
 
 		osmdb_node_t* node = (osmdb_node_t*)
 		                     osmdb_indexIter_peek(iter);
 
-		if(filter)
+		if(osmdb_filter_selectNode(filter, node) == 0)
 		{
-			if(osmdb_filter_selectNode(filter, node) == 0)
-			{
-				iter = osmdb_indexIter_next(iter);
-				continue;
-			}
+			iter = osmdb_indexIter_next(iter);
+			continue;
 		}
 
-		osmdb_node_t* copy = osmdb_node_copy(node);
-		if(copy == NULL)
+		osmdb_range_t range;
+		osmdb_range_init(&range);
+		osmdb_range_addNode(&range, node);
+		if(osmdb_range_addTile(&range, index,
+		                       OSMDB_TYPE_NODE,
+		                       node->id) == 0)
 		{
 			goto fail_add;
 		}
 
-		if(osmdb_index_add(oindex, OSMDB_TYPE_NODE,
-		                   (const void*) copy) == 0)
-		{
-			osmdb_node_delete(&copy);
-			goto fail_add;
-		}
 		iter = osmdb_indexIter_next(iter);
 	}
 	LOGI("[N] %0.0lf", cnt);
-	osmdb_index_stats(oindex);
-	osmdb_index_stats(iindex);
+	osmdb_index_stats(index);
 
-	// xform ways
+	// tile ways
 	cnt = 0.0;
-	iter = osmdb_indexIter_new(iindex, OSMDB_TYPE_WAY);
+	iter = osmdb_indexIter_new(index, OSMDB_TYPE_WAY);
 	while(iter)
 	{
 		cnt += 1.0;
 		if(fmod(cnt, 100000.0) == 0.0)
 		{
 			LOGI("[W] %0.0lf", cnt);
-			osmdb_index_stats(oindex);
-			osmdb_index_stats(iindex);
+			osmdb_index_stats(index);
 		}
 
 		osmdb_way_t* way = (osmdb_way_t*)
 		                    osmdb_indexIter_peek(iter);
 
-		if(filter)
+		if(osmdb_filter_selectWay(filter, way) == 0)
 		{
-			if(osmdb_filter_selectWay(filter, way) == 0)
-			{
-				iter = osmdb_indexIter_next(iter);
-				continue;
-			}
+			iter = osmdb_indexIter_next(iter);
+			continue;
 		}
 
-		if(osmdb_addWayCopy(way, iindex, oindex) == 0)
+		osmdb_range_t range;
+		osmdb_range_init(&range);
+		osmdb_range_addWay(&range, index, way);
+		if(osmdb_range_addTile(&range, index,
+		                       OSMDB_TYPE_WAY,
+		                       way->id) == 0)
 		{
 			goto fail_add;
 		}
@@ -382,35 +260,35 @@ static int osmdb_xform(osmdb_filter_t* filter,
 		iter = osmdb_indexIter_next(iter);
 	}
 	LOGI("[W] %0.0lf", cnt);
-	osmdb_index_stats(oindex);
-	osmdb_index_stats(iindex);
+	osmdb_index_stats(index);
 
-	// xform relations
+	// tile relations
 	cnt = 0.0;
-	iter = osmdb_indexIter_new(iindex, OSMDB_TYPE_RELATION);
+	iter = osmdb_indexIter_new(index, OSMDB_TYPE_RELATION);
 	while(iter)
 	{
 		cnt += 1.0;
 		if(fmod(cnt, 100000.0) == 0.0)
 		{
 			LOGI("[R] %0.0lf", cnt);
-			osmdb_index_stats(oindex);
-			osmdb_index_stats(iindex);
+			osmdb_index_stats(index);
 		}
 
 		osmdb_relation_t* relation = (osmdb_relation_t*)
 		                             osmdb_indexIter_peek(iter);
 
-		if(filter)
+		if(osmdb_filter_selectRelation(filter, relation) == 0)
 		{
-			if(osmdb_filter_selectRelation(filter, relation) == 0)
-			{
-				iter = osmdb_indexIter_next(iter);
-				continue;
-			}
+			iter = osmdb_indexIter_next(iter);
+			continue;
 		}
 
-		if(osmdb_addRelationCopy(relation, iindex, oindex) == 0)
+		osmdb_range_t range;
+		osmdb_range_init(&range);
+		osmdb_range_addRelation(&range, index, relation);
+		if(osmdb_range_addTile(&range, index,
+		                       OSMDB_TYPE_RELATION,
+		                       relation->id) == 0)
 		{
 			goto fail_add;
 		}
@@ -418,8 +296,7 @@ static int osmdb_xform(osmdb_filter_t* filter,
 		iter = osmdb_indexIter_next(iter);
 	}
 	LOGI("[R] %0.0lf", cnt);
-	osmdb_index_stats(oindex);
-	osmdb_index_stats(iindex);
+	osmdb_index_stats(index);
 
 	// success
 	return 1;
@@ -436,50 +313,36 @@ static int osmdb_xform(osmdb_filter_t* filter,
 
 int main(int argc, const char** argv)
 {
-	osmdb_Args_t args;
-	if(parseArgs(argc, argv, &args) == 0)
+	if(argc != 3)
 	{
-		LOGE("%s [-tile] [-f filter.xml] input output", argv[0]);
+		LOGE("%s filter.xml base", argv[0]);
+		return EXIT_FAILURE;
+	}
+	const char* fname  = argv[1];
+	const char* base   = argv[2];
+
+	// load the filter
+	osmdb_filter_t* filter = osmdb_filter_new(fname);
+	if(filter == NULL)
+	{
+		LOGE("FAILURE");
 		return EXIT_FAILURE;
 	}
 
-	// load the optional filter
-	osmdb_filter_t* filter = NULL;
-	if(args.fname)
+	osmdb_index_t* index = osmdb_index_new(base);
+	if(index == NULL)
 	{
-		filter = osmdb_filter_new(args.fname);
-		if(filter == NULL)
-		{
-			LOGE("FAILURE");
-			return EXIT_FAILURE;
-		}
+		goto fail_index;
 	}
 
-	osmdb_index_t* iindex = osmdb_index_new(args.input);
-	if(iindex == NULL)
+	if(osmdb_tiler(filter, index) == 0)
 	{
-		goto fail_iindex;
+		goto fail_tiler;
 	}
 
-	osmdb_index_t* oindex = osmdb_index_new(args.output);
-	if(oindex == NULL)
+	if(osmdb_index_delete(&index) == 0)
 	{
-		goto fail_oindex;
-	}
-
-	if(osmdb_xform(filter, iindex, oindex) == 0)
-	{
-		goto fail_xform;
-	}
-
-	if(osmdb_index_delete(&oindex) == 0)
-	{
-		goto fail_delete_oindex;
-	}
-
-	if(osmdb_index_delete(&iindex) == 0)
-	{
-		goto fail_delete_iindex;
+		goto fail_delete_index;
 	}
 
 	osmdb_filter_delete(&filter);
@@ -489,13 +352,10 @@ int main(int argc, const char** argv)
 	return EXIT_SUCCESS;
 
 	// failure
-	fail_delete_iindex:
-	fail_delete_oindex:
-	fail_xform:
-		osmdb_index_delete(&oindex);
-	fail_oindex:
-		osmdb_index_delete(&iindex);
-	fail_iindex:
+	fail_delete_index:
+	fail_tiler:
+		osmdb_index_delete(&index);
+	fail_index:
 		osmdb_filter_delete(&filter);
 		LOGE("FAILURE");
 	return EXIT_FAILURE;

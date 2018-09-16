@@ -575,6 +575,16 @@ int osmdb_index_addChunk(osmdb_index_t* self,
 	return 1;
 }
 
+int osmdb_index_addTile(osmdb_index_t* self,
+                        int zoom, int x, int y,
+                        int type, double id)
+{
+	assert(self);
+
+	// TODO - osmdb_index_addTile
+	return 1;
+}
+
 const void* osmdb_index_find(osmdb_index_t* self,
                              int type, double id)
 {
