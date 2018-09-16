@@ -54,8 +54,8 @@ static int nodeFn(void* priv, osmdb_node_t* node)
 		osmdb_index_stats(index);
 	}
 
-	return osmdb_index_add(index, OSMDB_TYPE_NODE,
-	                       (const void*) node);
+	return osmdb_index_addChunk(index, OSMDB_TYPE_NODE,
+	                            (const void*) node);
 }
 
 static int wayFn(void* priv, osmdb_way_t* way)
@@ -71,8 +71,8 @@ static int wayFn(void* priv, osmdb_way_t* way)
 		osmdb_index_stats(index);
 	}
 
-	return osmdb_index_add(index, OSMDB_TYPE_WAY,
-	                       (const void*) way);
+	return osmdb_index_addChunk(index, OSMDB_TYPE_WAY,
+	                            (const void*) way);
 }
 
 static int relationFn(void* priv, osmdb_relation_t* relation)
@@ -88,8 +88,8 @@ static int relationFn(void* priv, osmdb_relation_t* relation)
 		osmdb_index_stats(index);
 	}
 
-	return osmdb_index_add(index, OSMDB_TYPE_RELATION,
-	                       (const void*) relation);
+	return osmdb_index_addChunk(index, OSMDB_TYPE_RELATION,
+	                            (const void*) relation);
 }
 
 /***********************************************************

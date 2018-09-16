@@ -54,7 +54,7 @@ const void*        osmdb_indexIter_peek(osmdb_indexIter_t* self);
 typedef struct osmdb_index_s
 {
 	char base[256];
-	int  size;
+	int  size_chunks;
 	int  err;
 
 	// LRU cache of chunks
@@ -83,8 +83,8 @@ typedef struct osmdb_index_s
 
 osmdb_index_t*     osmdb_index_new(const char* base);
 int                osmdb_index_delete(osmdb_index_t** _self);
-int                osmdb_index_add(osmdb_index_t* self,
-                                   int type, const void* data);
+int                osmdb_index_addChunk(osmdb_index_t* self,
+                                        int type, const void* data);
 const void*        osmdb_index_find(osmdb_index_t* self,
                                     int type, double id);
 void               osmdb_index_stats(osmdb_index_t* self);

@@ -44,22 +44,22 @@
 ***********************************************************/
 
 static void
-osmdb_index_trim(osmdb_index_t* self, int size)
+osmdb_index_trim(osmdb_index_t* self, int size_chunks)
 {
 	assert(self);
-	assert(size >= 0);
+	assert(size_chunks >= 0);
 
 	a3d_listitem_t* item = a3d_list_head(self->chunks);
 	while(item)
 	{
-		if(self->size <= size)
+		if(self->size_chunks <= size_chunks)
 		{
 			return;
 		}
 
 		double t0 = a3d_timestamp();
 		self->stats_trim += 1.0;
-		if(size > 0)
+		if(size_chunks > 0)
 		{
 			self->stats_evict += 1.0;
 		}
@@ -115,7 +115,7 @@ osmdb_index_trim(osmdb_index_t* self, int size)
 		{
 			self->err = 1;
 		}
-		self->size -= dsize;
+		self->size_chunks -= dsize;
 		self->stats_trim_dt += a3d_timestamp() - t0;
 	}
 }
@@ -196,7 +196,7 @@ osmdb_index_getChunk(osmdb_index_t* self,
 		{
 			goto fail_add;
 		}
-		self->size += csize;
+		self->size_chunks += csize;
 		osmdb_index_trim(self, OSMDB_INDEX_SIZE);
 	}
 
@@ -427,9 +427,8 @@ osmdb_index_t* osmdb_index_new(const char* base)
 	}
 
 	snprintf(self->base, 256, "%s", base);
-	self->size = 0;
-	self->err  = 0;
-
+	self->size_chunks   = 0;
+	self->err           = 0;
 	self->stats_hit     = 0.0;
 	self->stats_miss    = 0.0;
 	self->stats_evict   = 0.0;
@@ -480,8 +479,8 @@ int osmdb_index_delete(osmdb_index_t** _self)
 	return err ? 0 : 1;
 }
 
-int osmdb_index_add(osmdb_index_t* self,
-                    int type, const void* data)
+int osmdb_index_addChunk(osmdb_index_t* self,
+                         int type, const void* data)
 {
 	assert(self);
 	assert(data);
@@ -569,7 +568,7 @@ int osmdb_index_add(osmdb_index_t* self,
 		self->stats_add_dt += a3d_timestamp() - t0;
 		return 0;
 	}
-	self->size += dsize;
+	self->size_chunks += dsize;
 	osmdb_index_trim(self, OSMDB_INDEX_SIZE);
 
 	self->stats_add_dt += a3d_timestamp() - t0;
