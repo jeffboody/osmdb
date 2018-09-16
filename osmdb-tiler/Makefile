@@ -1,4 +1,4 @@
-TARGET   = osmdb-xform
+TARGET   = osmdb-tiler
 CLASSES  = ../osmdb_filter ../osmdb_util ../osmdb_node ../osmdb_way ../osmdb_relation ../osmdb_chunk ../osmdb_index ../osmdb_parser
 SOURCE   = $(TARGET).c $(CLASSES:%=%.c)
 OBJECTS  = $(TARGET).o $(CLASSES:%=%.o)
