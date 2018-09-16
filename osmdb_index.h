@@ -58,9 +58,9 @@ typedef struct osmdb_index_s
 	int  err;
 
 	// LRU cache of chunks
-	a3d_list_t* list;
+	a3d_list_t* chunks;
 
-	// map from [N|W|R]<idu> to listitems
+	// map from <idu> to listitems
 	a3d_hashmap_t* hash_nodes;
 	a3d_hashmap_t* hash_ways;
 	a3d_hashmap_t* hash_relations;

@@ -49,7 +49,7 @@ osmdb_index_trim(osmdb_index_t* self, int size)
 	assert(self);
 	assert(size >= 0);
 
-	a3d_listitem_t* item = a3d_list_head(self->list);
+	a3d_listitem_t* item = a3d_list_head(self->chunks);
 	while(item)
 	{
 		if(self->size <= size)
@@ -79,18 +79,16 @@ osmdb_index_trim(osmdb_index_t* self, int size)
 		if(chunk->type == OSMDB_TYPE_NODE)
 		{
 			hash = self->hash_nodes;
-			snprintf(key, 256, "N%0.0lf", chunk->idu);
 		}
 		else if(chunk->type == OSMDB_TYPE_WAY)
 		{
 			hash = self->hash_ways;
-			snprintf(key, 256, "W%0.0lf", chunk->idu);
 		}
 		else
 		{
 			hash = self->hash_relations;
-			snprintf(key, 256, "R%0.0lf", chunk->idu);
 		}
+		snprintf(key, 256, "%0.0lf", chunk->idu);
 
 		if(osmdb_chunk_locked(chunk))
 		{
@@ -109,7 +107,7 @@ osmdb_index_trim(osmdb_index_t* self, int size)
 			return;
 		}
 		a3d_hashmap_remove(hash, &iter);
-		a3d_list_remove(self->list, &item);
+		a3d_list_remove(self->chunks, &item);
 
 		// delete the chunk
 		int dsize = 0;
@@ -148,7 +146,7 @@ osmdb_index_getChunk(osmdb_index_t* self,
 	{
 		self->stats_hit += 1.0;
 		chunk = (osmdb_chunk_t*) a3d_list_peekitem(iter);
-		a3d_list_moven(self->list, iter, NULL);
+		a3d_list_moven(self->chunks, iter, NULL);
 	}
 	else
 	{
@@ -186,7 +184,7 @@ osmdb_index_getChunk(osmdb_index_t* self,
 			self->stats_load_dt += a3d_timestamp() - load_t0;
 		}
 
-		iter = a3d_list_append(self->list,
+		iter = a3d_list_append(self->chunks,
 		                       NULL, (const void*) chunk);
 		if(iter == NULL)
 		{
@@ -209,7 +207,7 @@ osmdb_index_getChunk(osmdb_index_t* self,
 
 	// failure
 	fail_add:
-		a3d_list_remove(self->list, &iter);
+		a3d_list_remove(self->chunks, &iter);
 	fail_append:
 	{
 		int dsize;
@@ -294,7 +292,7 @@ osmdb_indexIter_t* osmdb_indexIter_next(osmdb_indexIter_t* self)
 		self->chunk_iter = a3d_hashmap_next(self->chunk_iter);
 		if(self->chunk_iter)
 		{
-			a3d_list_moven(self->index->list, self->list_iter, NULL);
+			a3d_list_moven(self->index->chunks, self->list_iter, NULL);
 			return self;
 		}
 		else
@@ -327,18 +325,16 @@ osmdb_indexIter_t* osmdb_indexIter_next(osmdb_indexIter_t* self)
 				if(self->type == OSMDB_TYPE_NODE)
 				{
 					hash = self->index->hash_nodes;
-					snprintf(key, 256, "N%0.0lf", idu);
 				}
 				else if(self->type == OSMDB_TYPE_WAY)
 				{
 					hash = self->index->hash_ways;
-					snprintf(key, 256, "W%0.0lf", idu);
 				}
 				else
 				{
 					hash = self->index->hash_relations;
-					snprintf(key, 256, "R%0.0lf", idu);
 				}
+				snprintf(key, 256, "%0.0lf", idu);
 
 				// get the chunk
 				a3d_listitem_t* list_iter;
@@ -406,10 +402,10 @@ osmdb_index_t* osmdb_index_new(const char* base)
 		return NULL;
 	}
 
-	self->list = a3d_list_new();
-	if(self->list == NULL)
+	self->chunks = a3d_list_new();
+	if(self->chunks == NULL)
 	{
-		goto fail_list;
+		goto fail_chunks;
 	}
 
 	self->hash_nodes = a3d_hashmap_new();
@@ -455,8 +451,8 @@ osmdb_index_t* osmdb_index_new(const char* base)
 	fail_ways:
 		a3d_hashmap_delete(&self->hash_nodes);
 	fail_nodes:
-		a3d_list_delete(&self->list);
-	fail_list:
+		a3d_list_delete(&self->chunks);
+	fail_chunks:
 		free(self);
 	return NULL;
 }
@@ -474,7 +470,7 @@ int osmdb_index_delete(osmdb_index_t** _self)
 		a3d_hashmap_delete(&self->hash_relations);
 		a3d_hashmap_delete(&self->hash_ways);
 		a3d_hashmap_delete(&self->hash_nodes);
-		a3d_list_delete(&self->list);
+		a3d_list_delete(&self->chunks);
 		err = self->err;
 		osmdb_index_stats(self);
 		free(self);
@@ -509,8 +505,6 @@ int osmdb_index_add(osmdb_index_t* self,
 		hash = self->hash_nodes;
 		id   = node->id;
 		dsize = osmdb_node_size(node);
-		osmdb_splitId(id, &idu, &idl);
-		snprintf(key, 256, "N%0.0lf", idu);
 	}
 	else if(type == OSMDB_TYPE_WAY)
 	{
@@ -518,8 +512,6 @@ int osmdb_index_add(osmdb_index_t* self,
 		hash = self->hash_ways;
 		id   = way->id;
 		dsize = osmdb_way_size(way);
-		osmdb_splitId(id, &idu, &idl);
-		snprintf(key, 256, "W%0.0lf", idu);
 	}
 	else
 	{
@@ -527,9 +519,9 @@ int osmdb_index_add(osmdb_index_t* self,
 		hash     = self->hash_relations;
 		id       = relation->id;
 		dsize = osmdb_relation_size(relation);
-		osmdb_splitId(id, &idu, &idl);
-		snprintf(key, 256, "R%0.0lf", idu);
 	}
+	osmdb_splitId(id, &idu, &idl);
+	snprintf(key, 256, "%0.0lf", idu);
 
 	// check if the data already exists
 	if(osmdb_index_find(self, type, id))
@@ -600,21 +592,17 @@ const void* osmdb_index_find(osmdb_index_t* self,
 	if(type == OSMDB_TYPE_NODE)
 	{
 		hash = self->hash_nodes;
-		osmdb_splitId(id, &idu, &idl);
-		snprintf(key, 256, "N%0.0lf", idu);
 	}
 	else if(type == OSMDB_TYPE_WAY)
 	{
 		hash = self->hash_ways;
-		osmdb_splitId(id, &idu, &idl);
-		snprintf(key, 256, "W%0.0lf", idu);
 	}
 	else
 	{
 		hash = self->hash_relations;
-		osmdb_splitId(id, &idu, &idl);
-		snprintf(key, 256, "R%0.0lf", idu);
 	}
+	osmdb_splitId(id, &idu, &idl);
+	snprintf(key, 256, "%0.0lf", idu);
 
 	// get the chunk
 	a3d_listitem_t* list_iter;
