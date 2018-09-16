@@ -26,6 +26,7 @@
 #include <math.h>
 
 #define LOG_TAG "osmdb"
+#include "a3d/a3d_timestamp.h"
 #include "libxmlstream/xml_log.h"
 #include "../osmdb_parser.h"
 #include "../osmdb_node.h"
@@ -98,6 +99,8 @@ static int relationFn(void* priv, osmdb_relation_t* relation)
 
 int main(int argc, char** argv)
 {
+	double t0 = a3d_timestamp();
+
 	if(argc != 3)
 	{
 		LOGE("%s in.osmdb.gz out-path", argv[0]);
@@ -121,17 +124,17 @@ int main(int argc, char** argv)
 
 	if(osmdb_index_delete(&index) == 0)
 	{
-		LOGE("FAILURE");
+		LOGE("FAILURE dt=%lf", a3d_timestamp() - t0);
 		return EXIT_FAILURE;
 	}
 
 	// success
-	LOGI("SUCCESS");
+	LOGE("SUCCESS dt=%lf", a3d_timestamp() - t0);
 	return EXIT_SUCCESS;
 
 	// failure
 	fail_parse:
 		osmdb_index_delete(&index);
-	LOGE("FAILURE");
+	LOGE("FAILURE dt=%lf", a3d_timestamp() - t0);
 	return EXIT_FAILURE;
 }

@@ -27,6 +27,7 @@
 #include <math.h>
 
 #define LOG_TAG "osmdb"
+#include "a3d/a3d_timestamp.h"
 #include "libxmlstream/xml_log.h"
 #include "../osmdb_node.h"
 #include "../osmdb_way.h"
@@ -313,6 +314,8 @@ static int osmdb_tiler(osmdb_filter_t* filter,
 
 int main(int argc, const char** argv)
 {
+	double t0 = a3d_timestamp();
+
 	if(argc != 3)
 	{
 		LOGE("%s filter.xml base", argv[0]);
@@ -325,7 +328,7 @@ int main(int argc, const char** argv)
 	osmdb_filter_t* filter = osmdb_filter_new(fname);
 	if(filter == NULL)
 	{
-		LOGE("FAILURE");
+		LOGI("FAILURE dt=%lf", a3d_timestamp() - t0);
 		return EXIT_FAILURE;
 	}
 
@@ -348,7 +351,7 @@ int main(int argc, const char** argv)
 	osmdb_filter_delete(&filter);
 
 	// success
-	LOGI("SUCCESS");
+	LOGI("SUCCESS dt=%lf", a3d_timestamp() - t0);
 	return EXIT_SUCCESS;
 
 	// failure
@@ -357,6 +360,6 @@ int main(int argc, const char** argv)
 		osmdb_index_delete(&index);
 	fail_index:
 		osmdb_filter_delete(&filter);
-		LOGE("FAILURE");
+		LOGI("FAILURE dt=%lf", a3d_timestamp() - t0);
 	return EXIT_FAILURE;
 }

@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include "a3d/a3d_timestamp.h"
 #include "libxmlstream/xml_istream.h"
 #include "libxmlstream/xml_ostream.h"
 #include "osm_parser.h"
@@ -37,6 +38,8 @@
 
 int main(int argc, char** argv)
 {
+	double t0 = a3d_timestamp();
+
 	if(argc != 3)
 	{
 		LOGE("%s in.osm out.osmdb.gz", argv[0]);
@@ -72,6 +75,7 @@ int main(int argc, char** argv)
 	xml_ostream_delete(&os);
 
 	// success
+	LOGI("SUCCESS dt=%lf", a3d_timestamp() - t0);
 	return EXIT_SUCCESS;
 
 	// failure
@@ -80,5 +84,6 @@ int main(int argc, char** argv)
 		osm_parser_delete(&parser);
 	fail_parser:
 		xml_ostream_delete(&os);
+	LOGI("FAILURE dt=%lf", a3d_timestamp() - t0);
 	return EXIT_FAILURE;
 }
