@@ -53,7 +53,8 @@ static int osmdb_filter_start(void* priv,
 		return 1;
 	}
 
-	const char* class = NULL;
+	const char* class  = NULL;
+	const char* levels = NULL;
 
 	// find atts
 	int idx0 = 0;
@@ -64,12 +65,17 @@ static int osmdb_filter_start(void* priv,
 		{
 			class = atts[idx1];
 		}
+		else if(strcmp(atts[idx0], "levels") == 0)
+		{
+			levels = atts[idx1];
+		}
 		idx0 += 2;
 		idx1 += 2;
 	}
 
 	// check for required atts
-	if(class == NULL)
+	if((class  == NULL) &&
+	   (levels == NULL))
 	{
 		LOGE("invalid line=%i", line);
 		return 0;
@@ -83,15 +89,66 @@ static int osmdb_filter_start(void* priv,
 		return 0;
 	}
 
-	// add the class
-	if(a3d_hashmap_add(self->classes, &iterator,
-	                   (const void*) OSMDB_CLASS_SELECTED,
-	                   class) == 0)
+	// create list
+	a3d_list_t* list = a3d_list_new();
+	if(list == NULL)
 	{
 		return 0;
 	}
 
+	// parse levels
+	int  zoom;
+	char str[256];
+	int  src = 0;
+	int  dst = 0;
+	while(1)
+	{
+		str[dst] = levels[src];
+		if((str[dst] == ',') || (str[dst] == '\0'))
+		{
+			// parse the zoom level
+			str[dst] = '\0';
+			zoom     = (int) strtol(str, NULL, 0);
+
+			// add zoom to list
+			if(a3d_list_append(list, NULL, (const void*) zoom) == NULL)
+			{
+				goto fail_add;
+			}
+
+			// end of string
+			if(levels[src] == '\0')
+			{
+				break;
+			}
+
+			// next character
+			dst = 0;
+			++src;
+			continue;
+		}
+
+		// next character
+		++dst;
+		++src;
+	}
+
+	// add the class
+	if(a3d_hashmap_add(self->classes, &iterator,
+	                   (const void*) list,
+	                   class) == 0)
+	{
+		goto fail_add;
+	}
+
+	// success
 	return 1;
+
+	// failure
+	fail_add:
+		a3d_list_discard(list);
+		a3d_list_delete(&list);
+	return 0;
 }
 
 static int osmdb_filter_end(void* priv,
@@ -104,6 +161,23 @@ static int osmdb_filter_end(void* priv,
 	assert(name);
 
 	return 1;
+}
+
+static void osmdb_filter_discard(osmdb_filter_t* self)
+{
+	assert(self);
+
+	a3d_hashmapIter_t  iterator;
+	a3d_hashmapIter_t* iter;
+	iter = a3d_hashmap_head(self->classes, &iterator);
+	while(iter)
+	{
+		a3d_list_t* list = (a3d_list_t*)
+		                   a3d_hashmap_remove(self->classes,
+		                                      &iter);
+		a3d_list_discard(list);
+		a3d_list_delete(&list);
+	}
 }
 
 /***********************************************************
@@ -141,7 +215,7 @@ osmdb_filter_t* osmdb_filter_new(const char* fname)
 
 	// failure
 	fail_parse:
-		a3d_hashmap_discard(self->classes);
+		osmdb_filter_discard(self);
 		a3d_hashmap_delete(&self->classes);
 	fail_classes:
 		free(self);
@@ -155,15 +229,15 @@ void osmdb_filter_delete(osmdb_filter_t** _self)
 	osmdb_filter_t* self = *_self;
 	if(self)
 	{
-		a3d_hashmap_discard(self->classes);
+		osmdb_filter_discard(self);
 		a3d_hashmap_delete(&self->classes);
 		free(self);
 		*_self = NULL;
 	}
 }
 
-int osmdb_filter_select(osmdb_filter_t* self,
-                        const char** atts, int line)
+a3d_list_t* osmdb_filter_select(osmdb_filter_t* self,
+                                const char** atts, int line)
 {
 	assert(self);
 	assert(atts);
@@ -191,38 +265,42 @@ int osmdb_filter_select(osmdb_filter_t* self,
 	}
 
 	a3d_hashmapIter_t iter;
-	return a3d_hashmap_find(self->classes, &iter, class) ? 1 : 0;
+	return (a3d_list_t*)
+	       a3d_hashmap_find(self->classes, &iter, class);
 }
 
-int osmdb_filter_selectNode(osmdb_filter_t* self,
-                            osmdb_node_t* node)
+a3d_list_t* osmdb_filter_selectNode(osmdb_filter_t* self,
+                                    osmdb_node_t* node)
 {
 	assert(self);
 	assert(node);
 
 	const char* class = osmdb_classCodeToName(node->class);
 	a3d_hashmapIter_t iter;
-	return a3d_hashmap_find(self->classes, &iter, class) ? 1 : 0;
+	return (a3d_list_t*)
+	       a3d_hashmap_find(self->classes, &iter, class);
 }
 
-int osmdb_filter_selectWay(osmdb_filter_t* self,
-                           osmdb_way_t* way)
+a3d_list_t* osmdb_filter_selectWay(osmdb_filter_t* self,
+                                   osmdb_way_t* way)
 {
 	assert(self);
 	assert(way);
 
 	const char* class = osmdb_classCodeToName(way->class);
 	a3d_hashmapIter_t iter;
-	return a3d_hashmap_find(self->classes, &iter, class) ? 1 : 0;
+	return (a3d_list_t*)
+	       a3d_hashmap_find(self->classes, &iter, class);
 }
 
-int osmdb_filter_selectRelation(osmdb_filter_t* self,
-                                osmdb_relation_t* relation)
+a3d_list_t* osmdb_filter_selectRelation(osmdb_filter_t* self,
+                                        osmdb_relation_t* relation)
 {
 	assert(self);
 	assert(relation);
 
 	const char* class = osmdb_classCodeToName(relation->class);
 	a3d_hashmapIter_t iter;
-	return a3d_hashmap_find(self->classes, &iter, class) ? 1 : 0;
+	return (a3d_list_t*)
+	       a3d_hashmap_find(self->classes, &iter, class);
 }

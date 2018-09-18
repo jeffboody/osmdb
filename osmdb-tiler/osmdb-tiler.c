@@ -169,10 +169,12 @@ static void osmdb_range_addRelation(osmdb_range_t* self,
 }
 
 static int osmdb_range_addTile(osmdb_range_t* self,
+                               a3d_list_t* levels,
                                osmdb_index_t* index,
 		                       int type, double id)
 {
 	assert(self);
+	assert(levels);
 	assert(index);
 
 	// ignore null range
@@ -181,32 +183,39 @@ static int osmdb_range_addTile(osmdb_range_t* self,
 		return 1;
 	}
 
-	// compute the range
-	float x0f;
-	float y0f;
-	float x1f;
-	float y1f;
-	int   zoom = 15;
-	terrain_coord2tile(self->latT, self->lonL,
-	                   zoom, &x0f, &y0f);
-	terrain_coord2tile(self->latB, self->lonR,
-	                   zoom, &x1f, &y1f);
-
-	// add id to range
 	int ret = 1;
-	int x;
-	int y;
-	int x0 = (int) x0f;
-	int x1 = (int) x1f;
-	int y0 = (int) y0f;
-	int y1 = (int) y1f;
-	for(y = y0; y >= y1; --y)
+	a3d_listitem_t* iter = a3d_list_head(levels);
+	while(iter)
 	{
-		for(x = x0; x <= x1; ++x)
+		int zoom = (int) a3d_list_peekitem(iter);
+
+		// compute the range
+		float x0f;
+		float y0f;
+		float x1f;
+		float y1f;
+		terrain_coord2tile(self->latT, self->lonL,
+		                   zoom, &x0f, &y0f);
+		terrain_coord2tile(self->latB, self->lonR,
+		                   zoom, &x1f, &y1f);
+
+		// add id to range
+		int x;
+		int y;
+		int x0 = (int) x0f;
+		int x1 = (int) x1f;
+		int y0 = (int) y0f;
+		int y1 = (int) y1f;
+		for(y = y0; y >= y1; --y)
 		{
-			ret &= osmdb_index_addTile(index, zoom, x, y,
-			                           type, id);
+			for(x = x0; x <= x1; ++x)
+			{
+				ret &= osmdb_index_addTile(index, zoom, x, y,
+				                           type, id);
+			}
 		}
+
+		iter = a3d_list_next(iter);
 	}
 	return ret;
 }
@@ -233,7 +242,8 @@ static int osmdb_tiler(osmdb_filter_t* filter,
 		osmdb_node_t* node = (osmdb_node_t*)
 		                     osmdb_indexIter_peek(iter);
 
-		if(osmdb_filter_selectNode(filter, node) == 0)
+		a3d_list_t* levels = osmdb_filter_selectNode(filter, node);
+		if(levels == NULL)
 		{
 			iter = osmdb_indexIter_next(iter);
 			continue;
@@ -242,7 +252,7 @@ static int osmdb_tiler(osmdb_filter_t* filter,
 		osmdb_range_t range;
 		osmdb_range_init(&range);
 		osmdb_range_addNode(&range, node);
-		if(osmdb_range_addTile(&range, index,
+		if(osmdb_range_addTile(&range, levels, index,
 		                       OSMDB_TYPE_NODE,
 		                       node->id) == 0)
 		{
@@ -269,7 +279,8 @@ static int osmdb_tiler(osmdb_filter_t* filter,
 		osmdb_way_t* way = (osmdb_way_t*)
 		                    osmdb_indexIter_peek(iter);
 
-		if(osmdb_filter_selectWay(filter, way) == 0)
+		a3d_list_t* levels = osmdb_filter_selectWay(filter, way);
+		if(levels == NULL)
 		{
 			iter = osmdb_indexIter_next(iter);
 			continue;
@@ -278,7 +289,7 @@ static int osmdb_tiler(osmdb_filter_t* filter,
 		osmdb_range_t range;
 		osmdb_range_init(&range);
 		osmdb_range_addWay(&range, index, way);
-		if(osmdb_range_addTile(&range, index,
+		if(osmdb_range_addTile(&range, levels, index,
 		                       OSMDB_TYPE_WAY,
 		                       way->id) == 0)
 		{
@@ -305,7 +316,8 @@ static int osmdb_tiler(osmdb_filter_t* filter,
 		osmdb_relation_t* relation = (osmdb_relation_t*)
 		                             osmdb_indexIter_peek(iter);
 
-		if(osmdb_filter_selectRelation(filter, relation) == 0)
+		a3d_list_t* levels = osmdb_filter_selectRelation(filter, relation);
+		if(levels == NULL)
 		{
 			iter = osmdb_indexIter_next(iter);
 			continue;
@@ -314,7 +326,7 @@ static int osmdb_tiler(osmdb_filter_t* filter,
 		osmdb_range_t range;
 		osmdb_range_init(&range);
 		osmdb_range_addRelation(&range, index, relation);
-		if(osmdb_range_addTile(&range, index,
+		if(osmdb_range_addTile(&range, levels, index,
 		                       OSMDB_TYPE_RELATION,
 		                       relation->id) == 0)
 		{
