@@ -29,6 +29,7 @@
 #define LOG_TAG "osmdb"
 #include "a3d/a3d_timestamp.h"
 #include "libxmlstream/xml_log.h"
+#include "terrain/terrain_util.h"
 #include "../osmdb_node.h"
 #include "../osmdb_way.h"
 #include "../osmdb_relation.h"
@@ -174,14 +175,40 @@ static int osmdb_range_addTile(osmdb_range_t* self,
 	assert(self);
 	assert(index);
 
-	// TODO - osmdb_range_addTile
-	int success = 1;
-	int zoom = 15;
-	int x    = 0;
-	int y    = 0;
-	success &= osmdb_index_addTile(index, zoom, x, y,
-	                               type, id);
-	return success;
+	// ignore null range
+	if(self->pts == 0)
+	{
+		return 1;
+	}
+
+	// compute the range
+	float x0f;
+	float y0f;
+	float x1f;
+	float y1f;
+	int   zoom = 15;
+	terrain_coord2tile(self->latT, self->lonL,
+	                   zoom, &x0f, &y0f);
+	terrain_coord2tile(self->latB, self->lonR,
+	                   zoom, &x1f, &y1f);
+
+	// add id to range
+	int ret = 1;
+	int x;
+	int y;
+	int x0 = (int) x0f;
+	int x1 = (int) x1f;
+	int y0 = (int) y0f;
+	int y1 = (int) y1f;
+	for(y = y0; y >= y1; --y)
+	{
+		for(x = x0; x <= x1; ++x)
+		{
+			ret &= osmdb_index_addTile(index, zoom, x, y,
+			                           type, id);
+		}
+	}
+	return ret;
 }
 
 static int osmdb_tiler(osmdb_filter_t* filter,

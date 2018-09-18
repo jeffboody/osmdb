@@ -73,19 +73,30 @@ typedef struct osmdb_index_s
 	a3d_hashmap_t* hash_tiles;
 
 	// stats
-	double stats_hit;
-	double stats_miss;
-	double stats_evict;
-	double stats_add;
-	double stats_add_dt;
-	double stats_find;
-	double stats_find_dt;
-	double stats_get;
-	double stats_get_dt;
-	double stats_load;
-	double stats_load_dt;
-	double stats_trim;
-	double stats_trim_dt;
+	double stats_chunk_hit;
+	double stats_chunk_miss;
+	double stats_chunk_evict;
+	double stats_chunk_add;
+	double stats_chunk_add_dt;
+	double stats_chunk_find;
+	double stats_chunk_find_dt;
+	double stats_chunk_get;
+	double stats_chunk_get_dt;
+	double stats_chunk_load;
+	double stats_chunk_load_dt;
+	double stats_chunk_trim;
+	double stats_chunk_trim_dt;
+	double stats_tile_hit;
+	double stats_tile_miss;
+	double stats_tile_evict;
+	double stats_tile_add;
+	double stats_tile_add_dt;
+	double stats_tile_get;
+	double stats_tile_get_dt;
+	double stats_tile_load;
+	double stats_tile_load_dt;
+	double stats_tile_trim;
+	double stats_tile_trim_dt;
 } osmdb_index_t;
 
 osmdb_index_t*     osmdb_index_new(const char* base);

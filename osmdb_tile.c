@@ -34,7 +34,6 @@
 #include "libxmlstream/xml_log.h"
 
 const int OSMDB_TILE_ONE = 1;
-#define OSMDB_TILE_SIZE 100*1024*1024
 
 /***********************************************************
 * private                                                  *
@@ -253,13 +252,12 @@ osmdb_tile_t* osmdb_tile_new(int zoom, int x, int y,
 		goto fail_hash_relations;
 	}
 
-	self->base   = base;
-	self->zoom   = zoom;
-	self->x      = x;
-	self->y      = y;
-	self->size   = 0;
-	self->dirty  = 0;
-	self->locked = 0;
+	self->base  = base;
+	self->zoom  = zoom;
+	self->x     = x;
+	self->y     = y;
+	self->size  = 0;
+	self->dirty = 0;
 
 	// optionally import tile
 	if(import && (osmdb_tile_import(self) == 0))
@@ -303,27 +301,6 @@ int osmdb_tile_delete(osmdb_tile_t** _self, int* dsize)
 		*_self = NULL;
 	}
 	return success;
-}
-
-void osmdb_tile_lock(osmdb_tile_t* self)
-{
-	assert(self);
-
-	self->locked = 1;
-}
-
-void osmdb_tile_unlock(osmdb_tile_t* self)
-{
-	assert(self);
-
-	self->locked = 0;
-}
-
-int osmdb_tile_locked(osmdb_tile_t* self)
-{
-	assert(self);
-
-	return self->locked;
 }
 
 int osmdb_tile_find(osmdb_tile_t* self,

@@ -34,7 +34,6 @@ typedef struct
 	int y;
 	int size;
 	int dirty;
-	int locked;
 
 	// map from id to const ONE
 	a3d_hashmap_t* hash_nodes;
@@ -47,9 +46,6 @@ osmdb_tile_t* osmdb_tile_new(int zoom, int x, int y,
                              int import, int* dsize);
 int           osmdb_tile_delete(osmdb_tile_t** _self,
                                 int* dsize);
-void          osmdb_tile_lock(osmdb_tile_t* self);
-void          osmdb_tile_unlock(osmdb_tile_t* self);
-int           osmdb_tile_locked(osmdb_tile_t* self);
 int           osmdb_tile_find(osmdb_tile_t* self,
                               int type, double id);
 int           osmdb_tile_add(osmdb_tile_t* self,
