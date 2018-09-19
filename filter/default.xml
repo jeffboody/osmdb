@@ -11,645 +11,673 @@
 	<select levels="15" class="aerialway:rope_tow" />
 	<select levels="15" class="aerialway:magic_carpet" />
 	<select levels="15" class="aerialway:zip_line" />
-	<select levels="15" class="aerialway:pylon" />
-	<select levels="15" class="aerialway:station" />
 	<select levels="15" class="aerialway:canopy" />
-	<select levels="15" class="aeroway:aerodrome" />
-	<select levels="15" class="aeroway:apron" />
+	<select levels="15" class="aerialway:station" />
+	<select levels="15" class="aerialway:pylon" />
+	<select levels="12,15" class="aeroway:aerodrome" />
+	<select levels="12,15" class="aeroway:apron" />
 	<select levels="15" class="aeroway:gate" />
 	<select levels="15" class="aeroway:hangar" />
 	<select levels="15" class="aeroway:helipad" />
-	<select levels="15" class="aeroway:heliport" />
-	<select levels="15" class="aeroway:navigationalaid" />
-	<select levels="15" class="aeroway:runway" />
-	<select levels="15" class="aeroway:spaceport" />
+	<select levels="12,15" class="aeroway:heliport" />
+	<select levels="12,15" class="aeroway:runway" />
+	<select levels="12,15" class="aeroway:spaceport" />
 	<select levels="15" class="aeroway:taxilane" />
 	<select levels="15" class="aeroway:taxiway" />
 	<select levels="15" class="aeroway:terminal" />
-	<select levels="15" class="aeroway:windsock" />
-	<select levels="15" class="amenity:bar" />
-	<select levels="15" class="amenity:bbq" />
-	<select levels="15" class="amenity:biergarten" />
-	<select levels="15" class="amenity:cafe" />
-	<select levels="15" class="amenity:drinking_water" />
-	<select levels="15" class="amenity:fast_food" />
-	<select levels="15" class="amenity:food_court" />
-	<select levels="15" class="amenity:ice_cream" />
-	<select levels="15" class="amenity:pub" />
-	<select levels="15" class="amenity:restaurant" />
-	<select levels="15" class="amenity:college" />
-	<select levels="15" class="amenity:kindergarten" />
-	<select levels="15" class="amenity:library" />
-	<select levels="15" class="amenity:archive" />
-	<select levels="15" class="amenity:public_bookcase" />
-	<select levels="15" class="amenity:school" />
-	<select levels="15" class="amenity:music_school" />
-	<select levels="15" class="amenity:driving_school" />
-	<select levels="15" class="amenity:language_school" />
-	<select levels="15" class="amenity:university" />
-	<select levels="15" class="amenity:research_institute" />
-	<select levels="15" class="amenity:bicycle_parking" />
-	<select levels="15" class="amenity:bicycle_repair_station" />
-	<select levels="15" class="amenity:bicycle_rental" />
-	<select levels="15" class="amenity:boat_rental" />
-	<select levels="15" class="amenity:boat_sharing" />
-	<select levels="15" class="amenity:buggy_parking" />
-	<select levels="15" class="amenity:bus_station" />
-	<select levels="15" class="amenity:car_rental" />
-	<select levels="15" class="amenity:car_sharing" />
-	<select levels="15" class="amenity:car_wash" />
-	<select levels="15" class="amenity:charging_station" />
-	<select levels="15" class="amenity:ferry_terminal" />
-	<select levels="15" class="amenity:fuel" />
-	<select levels="15" class="amenity:grit_bin" />
-	<select levels="15" class="amenity:motorcycle_parking" />
+	<!-- DISCARD AEROWAY
+		<select levels="15" class="aeroway:navigationalaid" />
+		<select levels="15" class="aeroway:windsock" />
+	-->
+	<select levels="15" class="amenity:bar" named="1" />
+	<select levels="15" class="amenity:bbq" named="1" />
+	<select levels="15" class="amenity:biergarten" named="1" />
+	<select levels="15" class="amenity:cafe" named="1" />
+	<select levels="15" class="amenity:fast_food" named="1" />
+	<select levels="15" class="amenity:food_court" named="1" />
+	<select levels="15" class="amenity:ice_cream" named="1" />
+	<select levels="15" class="amenity:pub" named="1" />
+	<select levels="15" class="amenity:restaurant" named="1" />
+	<select levels="12,15" class="amenity:college" named="1" />
+	<select levels="15" class="amenity:kindergarten" named="1" />
+	<select levels="15" class="amenity:library" named="1" />
+	<select levels="15" class="amenity:archive" named="1" />
+	<select levels="15" class="amenity:school" named="1" />
+	<select levels="15" class="amenity:music_school" named="1" />
+	<select levels="15" class="amenity:driving_school" named="1" />
+	<select levels="15" class="amenity:language_school" named="1" />
+	<select levels="12,15" class="amenity:university" named="1" />
+	<select levels="15" class="amenity:research_institute" named="1" />
+	<select levels="15" class="amenity:boat_rental" named="1" />
+	<select levels="15" class="amenity:boat_sharing" named="1" />
+	<select levels="15" class="amenity:bus_station" named="1" />
+	<select levels="15" class="amenity:car_rental" named="1" />
+	<select levels="15" class="amenity:car_sharing" named="1" />
+	<select levels="15" class="amenity:car_wash" named="1" />
+	<select levels="15" class="amenity:charging_station" named="1" />
+	<select levels="15" class="amenity:ferry_terminal" named="1" />
+	<select levels="15" class="amenity:fuel" named="1" />
+	<select levels="15" class="amenity:grit_bin" named="1" />
 	<select levels="15" class="amenity:parking" />
-	<select levels="15" class="amenity:parking_entrance" />
-	<select levels="15" class="amenity:parking_space" />
-	<select levels="15" class="amenity:taxi" />
-	<select levels="15" class="amenity:ticket_validator" />
+	<select levels="15" class="amenity:taxi" named="1" />
+	<select levels="15" class="amenity:ticket_validator" named="1" />
 	<select levels="15" class="amenity:atm" />
-	<select levels="15" class="amenity:bank" />
-	<select levels="15" class="amenity:bureau_de_change" />
-	<select levels="15" class="amenity:baby_hatch" />
-	<select levels="15" class="amenity:clinic" />
-	<select levels="15" class="amenity:dentist" />
-	<select levels="15" class="amenity:doctors" />
-	<select levels="15" class="amenity:hospital" />
-	<select levels="15" class="amenity:nursing_home" />
-	<select levels="15" class="amenity:pharmacy" />
-	<select levels="15" class="amenity:social_facility" />
-	<select levels="15" class="amenity:veterinary" />
-	<select levels="15" class="healthcare:blood_donation" />
-	<select levels="15" class="amenity:arts_centre" />
-	<select levels="15" class="amenity:brothel" />
-	<select levels="15" class="amenity:casino" />
-	<select levels="15" class="amenity:cinema" />
-	<select levels="15" class="amenity:community_centre" />
-	<select levels="15" class="amenity:fountain" />
-	<select levels="15" class="amenity:gambling" />
-	<select levels="15" class="amenity:nightclub" />
-	<select levels="15" class="amenity:planetarium" />
-	<select levels="15" class="amenity:social_centre" />
-	<select levels="15" class="amenity:stripclub" />
-	<select levels="15" class="amenity:studio" />
-	<select levels="15" class="amenity:swingerclub" />
-	<select levels="15" class="amenity:theatre" />
-	<select levels="15" class="amenity:animal_boarding" />
-	<select levels="15" class="amenity:animal_shelter" />
-	<select levels="15" class="amenity:baking_oven" />
-	<select levels="15" class="amenity:bench" />
-	<select levels="15" class="amenity:clock" />
-	<select levels="15" class="amenity:courthouse" />
-	<select levels="15" class="amenity:coworking_space" />
-	<select levels="15" class="amenity:crematorium" />
-	<select levels="15" class="amenity:crypt" />
-	<select levels="15" class="amenity:dive_centre" />
-	<select levels="15" class="amenity:dojo" />
-	<select levels="15" class="amenity:embassy" />
-	<select levels="15" class="amenity:fire_station" />
-	<select levels="15" class="amenity:game_feeding" />
-	<select levels="15" class="amenity:grave_yard" />
-	<select levels="15" class="amenity:hunting_stand" />
-	<select levels="15" class="amenity:internet_cafe" />
-	<select levels="15" class="amenity:kitchen" />
-	<select levels="15" class="amenity:kneipp_water_cure" />
-	<select levels="15" class="amenity:marketplace" />
-	<select levels="15" class="amenity:photo_booth" />
-	<select levels="15" class="amenity:place_of_warship" />
-	<select levels="15" class="amenity:police" />
-	<select levels="15" class="amenity:post_box" />
-	<select levels="15" class="amenity:post_office" />
-	<select levels="15" class="amenity:prison" />
-	<select levels="15" class="amenity:public_bath" />
+	<select levels="15" class="amenity:bank" named="1" />
+	<select levels="15" class="amenity:bureau_de_change" named="1" />
+	<select levels="15" class="amenity:clinic" named="1" />
+	<select levels="15" class="amenity:dentist" named="1" />
+	<select levels="15" class="amenity:doctors" named="1" />
+	<select levels="12,15" class="amenity:hospital" named="1" />
+	<select levels="15" class="amenity:nursing_home" named="1" />
+	<select levels="15" class="amenity:pharmacy" named="1" />
+	<select levels="15" class="amenity:social_facility" named="1" />
+	<select levels="15" class="amenity:veterinary" named="1" />
+	<select levels="15" class="amenity:arts_centre" named="1" />
+	<select levels="15" class="amenity:casino" named="1" />
+	<select levels="15" class="amenity:cinema" named="1" />
+	<select levels="15" class="amenity:community_centre" named="1" />
+	<select levels="15" class="amenity:gambling" named="1" />
+	<select levels="15" class="amenity:nightclub" named="1" />
+	<select levels="15" class="amenity:planetarium" named="1" />
+	<select levels="15" class="amenity:social_centre" named="1" />
+	<select levels="15" class="amenity:studio" named="1" />
+	<select levels="15" class="amenity:theatre" named="1" />
+	<select levels="15" class="amenity:animal_boarding" named="1" />
+	<select levels="15" class="amenity:animal_shelter" named="1" />
+	<select levels="15" class="amenity:baking_oven" named="1" />
+	<select levels="15" class="amenity:courthouse" named="1" />
+	<select levels="15" class="amenity:coworking_space" named="1" />
+	<select levels="15" class="amenity:crematorium" named="1" />
+	<select levels="15" class="amenity:crypt" named="1" />
+	<select levels="15" class="amenity:dive_centre" named="1" />
+	<select levels="15" class="amenity:dojo" named="1" />
+	<select levels="15" class="amenity:embassy" named="1" />
+	<select levels="15" class="amenity:fire_station" named="1" />
+	<select levels="15" class="amenity:grave_yard" named="1" />
+	<select levels="15" class="amenity:internet_cafe" named="1" />
+	<select levels="15" class="amenity:kitchen" named="1" />
+	<select levels="15" class="amenity:marketplace" named="1" />
+	<select levels="15" class="amenity:place_of_warship" named="1" />
+	<select levels="12,15" class="amenity:police" named="1" />
+	<select levels="15" class="amenity:post_office" named="1" />
+	<select levels="15" class="amenity:prison" named="1" />
 	<select levels="15" class="amenity:ranger_station" />
-	<select levels="15" class="amenity:recycling" />
 	<select levels="15" class="amenity:rescue_station" />
-	<select levels="15" class="amenity:sanitary_dump_station" />
 	<select levels="15" class="amenity:shelter" />
-	<select levels="15" class="amenity:shower" />
-	<select levels="15" class="amenity:table" />
-	<select levels="15" class="amenity:telephone" />
 	<select levels="15" class="amenity:toilets" />
-	<select levels="15" class="amenity:townhall" />
-	<select levels="15" class="amenity:vending_machine" />
-	<select levels="15" class="amenity:waste_basket" />
-	<select levels="15" class="amenity:waste_disposal" />
-	<select levels="15" class="amenity:waste_transfer_station" />
-	<select levels="15" class="amenity:watering_place" />
-	<select levels="15" class="amenity:water_point" />
-	<select levels="15" class="barrier:cable_barrier" />
-	<select levels="15" class="barrier:city_wall" />
-	<select levels="15" class="barrier:ditch" />
-	<select levels="15" class="barrier:fence" />
-	<select levels="15" class="barrier:guard_rail" />
-	<select levels="15" class="barrier:handrail" />
-	<select levels="15" class="barrier:hedge" />
-	<select levels="15" class="barrier:kerb" />
-	<select levels="15" class="barrier:retaining_wall" />
-	<select levels="15" class="barrier:tank_trap" />
-	<select levels="15" class="barrier:wall" />
-	<select levels="15" class="barrier:block" />
-	<select levels="15" class="barrier:bollard" />
-	<select levels="15" class="barrier:border_control" />
-	<select levels="15" class="barrier:bump_gate" />
-	<select levels="15" class="barrier:bus_trap" />
-	<select levels="15" class="barrier:cattle_grid" />
-	<select levels="15" class="barrier:chain" />
-	<select levels="15" class="barrier:cycle_barrier" />
-	<select levels="15" class="barrier:debris" />
-	<select levels="15" class="barrier:entrance" />
-	<select levels="15" class="barrier:full-height_turnstyle" />
-	<select levels="15" class="barrier:gate" />
-	<select levels="15" class="barrier:hampshire_gate" />
-	<select levels="15" class="barrier:height_restrictor" />
-	<select levels="15" class="barrier:horse_stile" />
-	<select levels="15" class="barrier:jersey_barrier" />
-	<select levels="15" class="barrier:kent_carriage_gap" />
-	<select levels="15" class="barrier:kissing_gate" />
-	<select levels="15" class="barrier:lift_gate" />
-	<select levels="15" class="barrier:log" />
-	<select levels="15" class="barrier:motorcycle_barrier" />
-	<select levels="15" class="barrier:rope" />
-	<select levels="15" class="barrier:sally_port" />
-	<select levels="15" class="barrier:spikes" />
-	<select levels="15" class="barrier:stile" />
-	<select levels="15" class="barrier:sump_buster" />
-	<select levels="15" class="barrier:swing_gate" />
-	<select levels="15" class="barrier:toll_booth" />
-	<select levels="15" class="barrier:turnstile" />
-	<select levels="15" class="barrier:yes" />
-	<select levels="15" class="boundary:administrative" />
-	<select levels="15" class="boundary:historic" />
-	<select levels="15" class="boundary:maritime" />
-	<select levels="15" class="boundary:national_park" />
-	<select levels="15" class="boundary:political" />
-	<select levels="15" class="boundary:postal_code" />
-	<select levels="15" class="boundary:religious_administration" />
-	<select levels="15" class="boundary:protected_area" />
-	<select levels="15" class="building:apartments" />
-	<select levels="15" class="building:farm" />
-	<select levels="15" class="building:hotel" />
-	<select levels="15" class="building:house" />
-	<select levels="15" class="building:detached" />
-	<select levels="15" class="building:residential" />
-	<select levels="15" class="building:dormatory" />
-	<select levels="15" class="building:terrace" />
-	<select levels="15" class="building:houseboat" />
-	<select levels="15" class="building:bungalow" />
-	<select levels="15" class="building:static_caravan" />
-	<select levels="15" class="building:cabin" />
-	<select levels="15" class="building:commercial" />
-	<select levels="15" class="building:office" />
-	<select levels="15" class="building:industrial" />
-	<select levels="15" class="building:retail" />
-	<select levels="15" class="building:warehouse" />
-	<select levels="15" class="building:kiosk" />
-	<select levels="15" class="building:religious" />
-	<select levels="15" class="building:cathedral" />
-	<select levels="15" class="building:chapel" />
-	<select levels="15" class="building:church" />
-	<select levels="15" class="building:mosque" />
-	<select levels="15" class="building:temple" />
-	<select levels="15" class="building:synagogue" />
-	<select levels="15" class="building:shrine" />
-	<select levels="15" class="building:bakehouse" />
-	<select levels="15" class="building:kindergarten" />
-	<select levels="15" class="building:civic" />
-	<select levels="15" class="building:hospital" />
-	<select levels="15" class="building:school" />
-	<select levels="15" class="building:stadium" />
-	<select levels="15" class="building:train_station" />
-	<select levels="15" class="building:transportation" />
-	<select levels="15" class="building:university" />
-	<select levels="15" class="building:grandstand" />
-	<select levels="15" class="building:public" />
-	<select levels="15" class="building:barn" />
-	<select levels="15" class="building:bridge" />
-	<select levels="15" class="building:bunker" />
-	<select levels="15" class="building:carport" />
-	<select levels="15" class="building:conservatory" />
-	<select levels="15" class="building:construction" />
-	<select levels="15" class="building:cowshed" />
-	<select levels="15" class="building:digester" />
-	<select levels="15" class="building:farm_auxilary" />
-	<select levels="15" class="building:garage" />
-	<select levels="15" class="building:garages" />
-	<select levels="15" class="building:garbage_shed" />
-	<select levels="15" class="building:greenhouse" />
-	<select levels="15" class="building:hangar" />
-	<select levels="15" class="building:hut" />
-	<select levels="15" class="building:pavilion" />
-	<select levels="15" class="building:parking" />
-	<select levels="15" class="building:riding_hall" />
-	<select levels="15" class="building:roof" />
-	<select levels="15" class="building:shed" />
-	<select levels="15" class="building:sports_hall" />
-	<select levels="15" class="building:stable" />
-	<select levels="15" class="building:sty" />
-	<select levels="15" class="building:transformer_tower" />
-	<select levels="15" class="building:service" />
+	<select levels="15" class="amenity:townhall" named="1" />
+	<!-- DISCARD AMENITY
+		<select levels="15" class="amenity:bicycle_parking" />
+		<select levels="15" class="amenity:bicycle_rental" />
+		<select levels="15" class="amenity:hunting_stand" />
+		<select levels="15" class="amenity:public_bookcase" />
+		<select levels="15" class="amenity:drinking_water" />
+		<select levels="15" class="amenity:bicycle_repair_station" />
+		<select levels="15" class="amenity:buggy_parking" />
+		<select levels="15" class="amenity:motorcycle_parking" />
+		<select levels="15" class="amenity:parking_entrance" />
+		<select levels="15" class="amenity:parking_space" />
+		<select levels="15" class="amenity:baby_hatch" />
+		<select levels="15" class="healthcare:blood_donation" />
+		<select levels="15" class="amenity:brothel" />
+		<select levels="15" class="amenity:fountain" />
+		<select levels="15" class="amenity:stripclub" />
+		<select levels="15" class="amenity:swingerclub" />
+		<select levels="15" class="amenity:bench" />
+		<select levels="15" class="amenity:clock" />
+		<select levels="15" class="amenity:game_feeding" />
+		<select levels="15" class="amenity:kneipp_water_cure" />
+		<select levels="15" class="amenity:photo_booth" />
+		<select levels="15" class="amenity:post_box" />
+		<select levels="15" class="amenity:public_bath" />
+		<select levels="15" class="amenity:recycling" />
+		<select levels="15" class="amenity:sanitary_dump_station" />
+		<select levels="15" class="amenity:shower" />
+		<select levels="15" class="amenity:table" />
+		<select levels="15" class="amenity:telephone" />
+		<select levels="15" class="amenity:vending_machine" />
+		<select levels="15" class="amenity:waste_basket" />
+		<select levels="15" class="amenity:waste_disposal" />
+		<select levels="15" class="amenity:waste_transfer_station" />
+		<select levels="15" class="amenity:watering_place" />
+		<select levels="15" class="amenity:water_point" />
+	-->
+	<!-- DISCARD BARRIER
+		<select levels="15" class="barrier:cable_barrier" />
+		<select levels="15" class="barrier:city_wall" />
+		<select levels="15" class="barrier:ditch" />
+		<select levels="15" class="barrier:fence" />
+		<select levels="15" class="barrier:guard_rail" />
+		<select levels="15" class="barrier:handrail" />
+		<select levels="15" class="barrier:hedge" />
+		<select levels="15" class="barrier:kerb" />
+		<select levels="15" class="barrier:retaining_wall" />
+		<select levels="15" class="barrier:tank_trap" />
+		<select levels="15" class="barrier:wall" />
+		<select levels="15" class="barrier:block" />
+		<select levels="15" class="barrier:bollard" />
+		<select levels="15" class="barrier:border_control" />
+		<select levels="15" class="barrier:bump_gate" />
+		<select levels="15" class="barrier:bus_trap" />
+		<select levels="15" class="barrier:cattle_grid" />
+		<select levels="15" class="barrier:chain" />
+		<select levels="15" class="barrier:cycle_barrier" />
+		<select levels="15" class="barrier:debris" />
+		<select levels="15" class="barrier:entrance" />
+		<select levels="15" class="barrier:full-height_turnstyle" />
+		<select levels="15" class="barrier:gate" />
+		<select levels="15" class="barrier:hampshire_gate" />
+		<select levels="15" class="barrier:height_restrictor" />
+		<select levels="15" class="barrier:horse_stile" />
+		<select levels="15" class="barrier:jersey_barrier" />
+		<select levels="15" class="barrier:kent_carriage_gap" />
+		<select levels="15" class="barrier:kissing_gate" />
+		<select levels="15" class="barrier:lift_gate" />
+		<select levels="15" class="barrier:log" />
+		<select levels="15" class="barrier:motorcycle_barrier" />
+		<select levels="15" class="barrier:rope" />
+		<select levels="15" class="barrier:sally_port" />
+		<select levels="15" class="barrier:spikes" />
+		<select levels="15" class="barrier:stile" />
+		<select levels="15" class="barrier:sump_buster" />
+		<select levels="15" class="barrier:swing_gate" />
+		<select levels="15" class="barrier:toll_booth" />
+		<select levels="15" class="barrier:turnstile" />
+		<select levels="15" class="barrier:yes" />
+	-->
+	<select levels="9,12,15" class="boundary:administrative" />
+	<select levels="9,12,15" class="boundary:historic" />
+	<select levels="9,12,15" class="boundary:maritime" />
+	<select levels="9,12,15" class="boundary:national_park" />
+	<select levels="9,12,15" class="boundary:political" />
+	<select levels="9,12,15" class="boundary:postal_code" />
+	<select levels="9,12,15" class="boundary:religious_administration" />
+	<select levels="9,12,15" class="boundary:protected_area" />
+	<select levels="15" class="building:apartments" named="1" />
+	<select levels="15" class="building:hotel" named="1" />
+	<select levels="15" class="building:residential" named="1" />
+	<select levels="15" class="building:dormatory" named="1" />
+	<select levels="15" class="building:terrace" named="1" />
+	<select levels="15" class="building:commercial" named="1" />
+	<select levels="15" class="building:office" named="1" />
+	<select levels="15" class="building:industrial" named="1" />
+	<select levels="15" class="building:retail" named="1" />
+	<select levels="15" class="building:warehouse" named="1" />
+	<select levels="15" class="building:religious" named="1" />
+	<select levels="15" class="building:cathedral" named="1" />
+	<select levels="15" class="building:chapel" named="1" />
+	<select levels="15" class="building:church" named="1" />
+	<select levels="15" class="building:mosque" named="1" />
+	<select levels="15" class="building:temple" named="1" />
+	<select levels="15" class="building:synagogue" named="1" />
+	<select levels="15" class="building:shrine" named="1" />
+	<select levels="15" class="building:bakehouse" named="1" />
+	<select levels="15" class="building:kindergarten" named="1" />
+	<select levels="15" class="building:civic" named="1" />
+	<select levels="15" class="building:hospital" named="1" />
+	<select levels="15" class="building:school" named="1" />
+	<select levels="15" class="building:stadium" named="1" />
+	<select levels="15" class="building:train_station" named="1" />
+	<select levels="15" class="building:transportation" named="1" />
+	<select levels="15" class="building:university" named="1" />
+	<select levels="15" class="building:bridge" named="1" />
+	<select levels="15" class="building:bunker" named="1" />
+	<select levels="15" class="building:conservatory" named="1" />
+	<select levels="15" class="building:garage" named="1" />
+	<select levels="15" class="building:garages" named="1" />
+	<select levels="15" class="building:greenhouse" named="1" />
+	<select levels="15" class="building:hangar" named="1" />
+	<select levels="15" class="building:pavilion" named="1" />
+	<select levels="15" class="building:parking" named="1" />
+	<select levels="15" class="building:riding_hall" named="1" />
+	<select levels="15" class="building:sports_hall" named="1" />
+	<select levels="15" class="building:stable" named="1" />
+	<select levels="15" class="building:service" named="1" />
 	<select levels="15" class="building:ruins" />
 	<select levels="15" class="building:water_tower" />
-	<select levels="15" class="building:yes" />
-	<select levels="15" class="craft:agricultural_engines" />
-	<select levels="15" class="craft:bakery" />
-	<select levels="15" class="craft:basket_maker" />
-	<select levels="15" class="craft:beekeeper" />
-	<select levels="15" class="craft:blacksmith" />
-	<select levels="15" class="craft:boatbuilder" />
-	<select levels="15" class="craft:bookbinder" />
-	<select levels="15" class="craft:brewery" />
-	<select levels="15" class="craft:builder" />
-	<select levels="15" class="craft:carpenter" />
-	<select levels="15" class="craft:carpet_layer" />
-	<select levels="15" class="craft:caterer" />
-	<select levels="15" class="craft:chimney_sweeper" />
-	<select levels="15" class="craft:clockmaker" />
-	<select levels="15" class="craft:confectionery" />
-	<select levels="15" class="craft:dental_technican" />
-	<select levels="15" class="craft:distillery" />
-	<select levels="15" class="craft:dressmaker" />
-	<select levels="15" class="craft:embroiderer" />
-	<select levels="15" class="craft:electrician" />
-	<select levels="15" class="craft:engraver" />
-	<select levels="15" class="craft:floorer" />
-	<select levels="15" class="craft:gardener" />
-	<select levels="15" class="craft:glaziery" />
-	<select levels="15" class="craft:handicraft" />
-	<select levels="15" class="craft:hvac" />
-	<select levels="15" class="craft:insulation" />
-	<select levels="15" class="craft:jeweller" />
-	<select levels="15" class="craft:joiner" />
-	<select levels="15" class="craft:key_cutter" />
-	<select levels="15" class="craft:locksmith" />
-	<select levels="15" class="craft:metal_construction" />
-	<select levels="15" class="craft:mint" />
-	<select levels="15" class="craft:optician" />
-	<select levels="15" class="craft:painter" />
-	<select levels="15" class="craft:parquet_layer" />"
-	<select levels="15" class="craft:photographer" />
-	<select levels="15" class="craft:photographic_laboratory" />
-	<select levels="15" class="craft:piano_tuner" />
-	<select levels="15" class="craft:plasterer" />
-	<select levels="15" class="craft:plumber" />
-	<select levels="15" class="craft:pottery" />
-	<select levels="15" class="craft:printmaker" />
-	<select levels="15" class="craft:rigger" />
-	<select levels="15" class="craft:roofer" />
-	<select levels="15" class="craft:saddler" />
-	<select levels="15" class="craft:sailmaker" />
-	<select levels="15" class="craft:sawmill" />
-	<select levels="15" class="craft:scaffolder" />
-	<select levels="15" class="craft:sculpter" />
-	<select levels="15" class="craft:shoemaker" />
-	<select levels="15" class="craft:stand_builder" />
-	<select levels="15" class="craft:stonemason" />
-	<select levels="15" class="craft:sun_protection" />
-	<select levels="15" class="craft:tailor" />
-	<select levels="15" class="craft:tiler" />
-	<select levels="15" class="craft:tinsmith" />
-	<select levels="15" class="craft:toolmaker" />
-	<select levels="15" class="craft:turner" />
-	<select levels="15" class="craft:upholsterer" />
-	<select levels="15" class="craft:watchmaker" />
-	<select levels="15" class="craft:window_construction" />
-	<select levels="15" class="craft:winery" />
-	<select levels="15" class="emergency:ambulance_station" />
-	<select levels="15" class="emergency:defibrillator" />
-	<select levels="15" class="emergency:first_aid_kit" />
+	<!-- DISCARD BUILDING
+		<select levels="15" class="building:farm" />
+		<select levels="15" class="building:house" />
+		<select levels="15" class="building:detached" />
+		<select levels="15" class="building:kiosk" />
+		<select levels="15" class="building:houseboat" />
+		<select levels="15" class="building:bungalow" />
+		<select levels="15" class="building:cabin" />
+		<select levels="15" class="building:static_caravan" />
+		<select levels="15" class="building:grandstand" />
+		<select levels="15" class="building:public" />
+		<select levels="15" class="building:barn" />
+		<select levels="15" class="building:carport" />
+		<select levels="15" class="building:construction" />
+		<select levels="15" class="building:cowshed" />
+		<select levels="15" class="building:digester" />
+		<select levels="15" class="building:farm_auxilary" />
+		<select levels="15" class="building:garbage_shed" />
+		<select levels="15" class="building:hut" />
+		<select levels="15" class="building:roof" />
+		<select levels="15" class="building:shed" />
+		<select levels="15" class="building:sty" />
+		<select levels="15" class="building:transformer_tower" />
+		<select levels="15" class="building:yes" />
+	-->
+	<select levels="15" class="craft:bakery" named="1" />
+	<select levels="15" class="craft:brewery" named="1" />
+	<select levels="15" class="craft:builder" named="1" />
+	<select levels="15" class="craft:carpenter" named="1" />
+	<select levels="15" class="craft:caterer" named="1" />
+	<select levels="15" class="craft:confectionery" named="1" />
+	<select levels="15" class="craft:dental_technican" named="1" />
+	<select levels="15" class="craft:electrician" named="1" />
+	<select levels="15" class="craft:gardener" named="1" />
+	<select levels="15" class="craft:locksmith" named="1" />
+	<select levels="15" class="craft:optician" named="1" />
+	<select levels="15" class="craft:painter" named="1" />
+	<select levels="15" class="craft:photographer" named="1" />
+	<select levels="15" class="craft:plumber" named="1" />
+	<select levels="15" class="craft:pottery" named="1" />
+	<select levels="15" class="craft:printmaker" named="1" />
+	<select levels="15" class="craft:sawmill" named="1" />
+	<select levels="15" class="craft:sculpter" named="1" />
+	<select levels="15" class="craft:winery" named="1" />
+	<!-- DISCARD CRAFT
+		<select levels="15" class="craft:agricultural_engines" />
+		<select levels="15" class="craft:basket_maker" />
+		<select levels="15" class="craft:beekeeper" />
+		<select levels="15" class="craft:blacksmith" />
+		<select levels="15" class="craft:boatbuilder" />
+		<select levels="15" class="craft:bookbinder" />
+		<select levels="15" class="craft:carpet_layer" />
+		<select levels="15" class="craft:chimney_sweeper" />
+		<select levels="15" class="craft:clockmaker" />
+		<select levels="15" class="craft:distillery" />
+		<select levels="15" class="craft:dressmaker" />
+		<select levels="15" class="craft:embroiderer" />
+		<select levels="15" class="craft:engraver" />
+		<select levels="15" class="craft:floorer" />
+		<select levels="15" class="craft:glaziery" />
+		<select levels="15" class="craft:handicraft" />
+		<select levels="15" class="craft:hvac" />
+		<select levels="15" class="craft:insulation" />
+		<select levels="15" class="craft:jeweller" />
+		<select levels="15" class="craft:joiner" />
+		<select levels="15" class="craft:key_cutter" />
+		<select levels="15" class="craft:metal_construction" />
+		<select levels="15" class="craft:mint" />
+		<select levels="15" class="craft:parquet_layer" />"
+		<select levels="15" class="craft:photographic_laboratory" />
+		<select levels="15" class="craft:piano_tuner" />
+		<select levels="15" class="craft:plasterer" />
+		<select levels="15" class="craft:rigger" />
+		<select levels="15" class="craft:roofer" />
+		<select levels="15" class="craft:saddler" />
+		<select levels="15" class="craft:sailmaker" />
+		<select levels="15" class="craft:scaffolder" />
+		<select levels="15" class="craft:shoemaker" />
+		<select levels="15" class="craft:stand_builder" />
+		<select levels="15" class="craft:stonemason" />
+		<select levels="15" class="craft:sun_protection" />
+		<select levels="15" class="craft:tailor" />
+		<select levels="15" class="craft:tiler" />
+		<select levels="15" class="craft:tinsmith" />
+		<select levels="15" class="craft:toolmaker" />
+		<select levels="15" class="craft:turner" />
+		<select levels="15" class="craft:upholsterer" />
+		<select levels="15" class="craft:watchmaker" />
+		<select levels="15" class="craft:window_construction" />
+	-->
 	<select levels="15" class="emergency:landing_site" />
-	<select levels="15" class="emergency:emergency_ward_entrance" />
-	<select levels="15" class="emergency:dry_riser_inlet" />
-	<select levels="15" class="emergency:fire_alarm_box" />
-	<select levels="15" class="emergency:fire_extinguisher" />
-	<select levels="15" class="emergency:fire_flapper" />
-	<select levels="15" class="emergency:fire_hose" />
-	<select levels="15" class="emergency:fire_hydrant" />
-	<select levels="15" class="emergency:water_tank" />
 	<select levels="15" class="emergency:fire_water_pond" />
-	<select levels="15" class="emergency:suction_point" />
 	<select levels="15" class="emergency:lifeguard" />
 	<select levels="15" class="emergency:lifeguard_base" />
 	<select levels="15" class="emergency:lifeguard_tower" />
 	<select levels="15" class="emergency:lifeguard_platform" />
-	<select levels="15" class="emergency:life_ring" />
 	<select levels="15" class="emergency:mountain_rescue" />
-	<select levels="15" class="emergency:ses_station" />
-	<select levels="15" class="emergency:assembly_point" />
-	<select levels="15" class="emergency:access_point" />
-	<select levels="15" class="emergency:phone" />
-	<select levels="15" class="emergency:rescue_box" />
-	<select levels="15" class="emergency:siren" />
-	<select levels="15" class="geological:moraine" />
-	<select levels="15" class="geological:outcrop" />
-	<select levels="15" class="geological:palaeontological_site" />
-	<select levels="15" class="highway:motorway" />
-	<select levels="15" class="highway:trunk" />
-	<select levels="15" class="highway:primary" />
-	<select levels="15" class="highway:secondary" />
-	<select levels="15" class="highway:tertiary" />
-	<select levels="15" class="highway:unclassified" />
-	<select levels="15" class="highway:residential" />
-	<select levels="15" class="highway:service" />
-	<select levels="15" class="highway:motorway_link" />
-	<select levels="15" class="highway:trunk_link" />
-	<select levels="15" class="highway:primary_link" />
-	<select levels="15" class="highway:secondary_link" />
-	<select levels="15" class="highway:tertiary_link" />
-	<select levels="15" class="highway:living_street" />
-	<select levels="15" class="highway:pedestrian" />
-	<select levels="15" class="highway:track" />
-	<select levels="15" class="highway:bus_guideway" />
-	<select levels="15" class="highway:escape" />
-	<select levels="15" class="highway:raceway" />
-	<select levels="15" class="highway:road" />
-	<select levels="15" class="highway:footway" />
-	<select levels="15" class="highway:bridleway" />
-	<select levels="15" class="highway:steps" />
-	<select levels="15" class="highway:path" />
-	<select levels="15" class="highway:cycleway" />
-	<select levels="15" class="highway:bus_stop" />
-	<select levels="15" class="highway:crossing" />
-	<select levels="15" class="highway:elevator" />
-	<select levels="15" class="highway:emergency_access_point" />
-	<select levels="15" class="highway:give_way" />
-	<select levels="15" class="highway:mini_roundabout" />
-	<select levels="15" class="highway:motorway_junction" />
-	<select levels="15" class="highway:passing_place" />
-	<select levels="15" class="highway:rest_area" />
-	<select levels="15" class="highway:speed_camera" />
-	<select levels="15" class="highway:street_lamp" />
-	<select levels="15" class="highway:services" />
-	<select levels="15" class="highway:stop" />
-	<select levels="15" class="highway:traffic_signals" />
-	<select levels="15" class="highway:turning_circle" />
-	<select levels="15" class="historic:aircraft" />
-	<select levels="15" class="historic:aqueduct" />
-	<select levels="15" class="historic:archaeological_site" />
-	<select levels="15" class="historic:battlefield" />
-	<select levels="15" class="historic:boundary_stone" />
-	<select levels="15" class="historic:building" />
-	<select levels="15" class="historic:cannon" />
-	<select levels="15" class="historic:castle" />
-	<select levels="15" class="historic:castle_wall" />
-	<select levels="15" class="historic:church" />
-	<select levels="15" class="historic:city_gate" />
-	<select levels="15" class="historic:citywalls" />
-	<select levels="15" class="historic:farm" />
-	<select levels="15" class="historic:fort" />
-	<select levels="15" class="historic:gallows" />
-	<select levels="15" class="historic:highwater_mark" />
-	<select levels="15" class="historic:locomotive" />
-	<select levels="15" class="historic:manor" />
-	<select levels="15" class="historic:memorial" />
-	<select levels="15" class="historic:milestone" />
-	<select levels="15" class="historic:monastery" />
-	<select levels="15" class="historic:monument" />
-	<select levels="15" class="historic:optical_telegraph" />
-	<select levels="15" class="historic:pillory" />
-	<select levels="15" class="historic:railway_car" />
-	<select levels="15" class="historic:ruins" />
-	<select levels="15" class="historic:rune_stone" />
-	<select levels="15" class="historic:ship" />
-	<select levels="15" class="historic:tomb" />
-	<select levels="15" class="historic:tower" />
-	<select levels="15" class="historic:wayside_cross" />
-	<select levels="15" class="historic:wayside_shrine" />
-	<select levels="15" class="historic:wreck" />
-	<select levels="15" class="historic:yes" />
-	<select levels="15" class="landuse:commercial" />
-	<select levels="15" class="landuse:construction" />
-	<select levels="15" class="landuse:industrial" />
-	<select levels="15" class="landuse:residential" />
-	<select levels="15" class="landuse:retail" />
-	<select levels="15" class="landuse:allotments" />
-	<select levels="15" class="landuse:basin" />
-	<select levels="15" class="landuse:brownfield" />
-	<select levels="15" class="landuse:cemetery" />
-	<select levels="15" class="landuse:depot" />
-	<select levels="15" class="landuse:farmland" />
-	<select levels="15" class="landuse:farmyard" />
-	<select levels="15" class="landuse:forest" />
-	<select levels="15" class="landuse:garages" />
-	<select levels="15" class="landuse:grass" />
-	<select levels="15" class="landuse:greenfield" />
-	<select levels="15" class="landuse:greenhouse_horticulture" />
-	<select levels="15" class="landuse:landfill" />
-	<select levels="15" class="landuse:meadow" />
-	<select levels="15" class="landuse:military" />
-	<select levels="15" class="landuse:orchard" />
-	<select levels="15" class="landuse:plant_nursery" />
-	<select levels="15" class="landuse:port" />
-	<select levels="15" class="landuse:quarry" />
-	<select levels="15" class="landuse:railway" />
-	<select levels="15" class="landuse:recreation_ground" />
-	<select levels="15" class="landuse:religious" />
-	<select levels="15" class="landuse:reservoir" />
+	<!-- DISCARD EMERGENCY
+		<select levels="15" class="emergency:ambulance_station" />
+		<select levels="15" class="emergency:life_ring" />
+		<select levels="15" class="emergency:defibrillator" />
+		<select levels="15" class="emergency:first_aid_kit" />
+		<select levels="15" class="emergency:emergency_ward_entrance" />
+		<select levels="15" class="emergency:dry_riser_inlet" />
+		<select levels="15" class="emergency:fire_alarm_box" />
+		<select levels="15" class="emergency:fire_extinguisher" />
+		<select levels="15" class="emergency:fire_flapper" />
+		<select levels="15" class="emergency:fire_hose" />
+		<select levels="15" class="emergency:fire_hydrant" />
+		<select levels="15" class="emergency:water_tank" />
+		<select levels="15" class="emergency:suction_point" />
+		<select levels="15" class="emergency:ses_station" />
+		<select levels="15" class="emergency:assembly_point" />
+		<select levels="15" class="emergency:access_point" />
+		<select levels="15" class="emergency:phone" />
+		<select levels="15" class="emergency:rescue_box" />
+		<select levels="15" class="emergency:siren" />
+	-->
+	<select levels="15" class="geological:palaeontological_site" named="1" />
+	<select levels="15" class="geological:moraine" named="1" />
+	<select levels="15" class="geological:outcrop" named="1" />
+	<select levels="6,9,12,15" class="highway:motorway" />
+	<select levels="6,9,12,15" class="highway:trunk" />
+	<select levels="6,9,12,15" class="highway:primary" />
+	<select levels="9,12,15" class="highway:secondary" />
+	<select levels="12,15" class="highway:tertiary" />
+	<select levels="12,15" class="highway:unclassified" />
+	<select levels="12,15" class="highway:residential" />
+	<select levels="12,15" class="highway:service" />
+	<select levels="12,15" class="highway:motorway_link" />
+	<select levels="12,15" class="highway:trunk_link" />
+	<select levels="12,15" class="highway:primary_link" />
+	<select levels="12,15" class="highway:secondary_link" />
+	<select levels="12,15" class="highway:tertiary_link" />
+	<select levels="12,15" class="highway:living_street" />
+	<select levels="12,15" class="highway:pedestrian" />
+	<select levels="12,15" class="highway:track" />
+	<select levels="12,15" class="highway:bus_guideway" />
+	<select levels="12,15" class="highway:escape" />
+	<select levels="12,15" class="highway:raceway" />
+	<select levels="12,15" class="highway:road" />
+	<select levels="12,15" class="highway:footway" />
+	<select levels="12,15" class="highway:bridleway" />
+	<select levels="12,15" class="highway:steps" />
+	<select levels="12,15" class="highway:path" />
+	<select levels="12,15" class="highway:cycleway" />
+	<select levels="12,15" class="highway:bus_stop" />
+	<select levels="12,15" class="highway:crossing" />
+	<select levels="12,15" class="highway:mini_roundabout" />
+	<select levels="12,15" class="highway:motorway_junction" />
+	<select levels="12,15" class="highway:passing_place" />
+	<select levels="12,15" class="highway:rest_area" />
+	<select levels="12,15" class="highway:services" />
+	<select levels="12,15" class="highway:stop" />
+	<select levels="12,15" class="highway:traffic_signals" />
+	<select levels="12,15" class="highway:turning_circle" />
+	<!-- DISCARD HIGHWAY
+		<select levels="15" class="highway:street_lamp" />
+		<select levels="15" class="highway:speed_camera" />
+		<select levels="15" class="highway:emergency_access_point" />
+		<select levels="15" class="highway:elevator" />
+		<select levels="15" class="highway:give_way" />
+	-->
+	<select levels="15" class="historic:aircraft" named="1" />
+	<select levels="15" class="historic:castle" named="1" />
+	<select levels="15" class="historic:castle_wall" named="1" />
+	<select levels="15" class="historic:church" named="1" />
+	<select levels="15" class="historic:fort" named="1" />
+	<select levels="15" class="historic:locomotive" named="1" />
+	<select levels="15" class="historic:manor" named="1" />
+	<select levels="15" class="historic:memorial" named="1" />
+	<select levels="15" class="historic:monastery" named="1" />
+	<select levels="15" class="historic:monument" named="1" />
+	<select levels="15" class="historic:railway_car" named="1" />
+	<select levels="15" class="historic:ruins" named="1" />
+	<select levels="15" class="historic:ship" named="1" />
+	<select levels="15" class="historic:tomb" named="1" />
+	<select levels="15" class="historic:tower" named="1" />
+	<select levels="15" class="historic:wreck" named="1" />
+	<!-- DISCARD HISTORIC
+		<select levels="15" class="historic:optical_telegraph" />
+		<select levels="15" class="historic:highwater_mark" />
+		<select levels="15" class="historic:gallows" />
+		<select levels="15" class="historic:aqueduct" />
+		<select levels="15" class="historic:archaeological_site" />
+		<select levels="15" class="historic:battlefield" />
+		<select levels="15" class="historic:boundary_stone" />
+		<select levels="15" class="historic:cannon" />
+		<select levels="15" class="historic:building" />
+		<select levels="15" class="historic:city_gate" />
+		<select levels="15" class="historic:citywalls" />
+		<select levels="15" class="historic:farm" />
+		<select levels="15" class="historic:milestone" />
+		<select levels="15" class="historic:pillory" />
+		<select levels="15" class="historic:rune_stone" />
+		<select levels="15" class="historic:wayside_cross" />
+		<select levels="15" class="historic:wayside_shrine" />
+		<select levels="15" class="historic:yes" />
+	-->
+	<select levels="12,15" class="landuse:commercial" />
+	<select levels="12,15" class="landuse:construction" />
+	<select levels="12,15" class="landuse:industrial" />
+	<select levels="12,15" class="landuse:residential" />
+	<select levels="12,15" class="landuse:retail" />
+	<select levels="12,15" class="landuse:allotments" />
+	<select levels="6,9,12,15" class="landuse:basin" />
+	<select levels="12,15" class="landuse:brownfield" named="1" />
+	<select levels="15" class="landuse:cemetery" named="1" />
+	<select levels="15" class="landuse:depot" named="1" />
+	<select levels="15" class="landuse:farmland" named="1" />
+	<select levels="15" class="landuse:farmyard" named="1" />
+	<select levels="6,9,12,15" class="landuse:forest" />
+	<select levels="15" class="landuse:garages" named="1" />
+	<select levels="6,9,12,15" class="landuse:grass" />
+	<select levels="12,15" class="landuse:greenfield" named="1" />
+	<select levels="15" class="landuse:greenhouse_horticulture" named="1" />
+	<select levels="15" class="landuse:landfill" named="1" />
+	<select levels="15" class="landuse:meadow" named="1" />
+	<select levels="6,9,12,15" class="landuse:military" />
+	<select levels="15" class="landuse:orchard" named="1" />
+	<select levels="15" class="landuse:plant_nursery" named="1" />
+	<select levels="12,15" class="landuse:port" />
+	<select levels="12,15" class="landuse:quarry" />
+	<select levels="12,15" class="landuse:railway" />
+	<select levels="15" class="landuse:recreation_ground" named="1" />
+	<select levels="15" class="landuse:religious" named="1" />
+	<select levels="6,9,12,15" class="landuse:reservoir" />
 	<select levels="15" class="landuse:salt_pond" />
-	<select levels="15" class="landuse:village_green" />
-	<select levels="15" class="landuse:vineyard" />
-	<select levels="15" class="leisure:adult_gaming_centre" />
-	<select levels="15" class="leisure:amusement_arcade" />
-	<select levels="15" class="leisure:beach_resort" />
-	<select levels="15" class="leisure:bandstand" />
-	<select levels="15" class="leisure:bird_hide" />
-	<select levels="15" class="leisure:common" />
-	<select levels="15" class="leisure:dance" />
-	<select levels="15" class="leisure:disc_golf_course" />
-	<select levels="15" class="leisure:dog_park" />
-	<select levels="15" class="leisure:escape_game" />
-	<select levels="15" class="leisure:firepit" />
-	<select levels="15" class="leisure:fishing" />
-	<select levels="15" class="leisure:fitness_centre" />
-	<select levels="15" class="leisure:fitness_station" />
-	<select levels="15" class="leisure:garden" />
-	<select levels="15" class="leisure:hackerspace" />
-	<select levels="15" class="leisure:horse_riding" />
-	<select levels="15" class="leisure:ice_rink" />
-	<select levels="15" class="leisure:marina" />
-	<select levels="15" class="leisure:minature_golf" />
-	<select levels="15" class="leisure:nature_reserve" />
-	<select levels="15" class="leisure:park" />
-	<select levels="15" class="leisure:picnic_table" />
-	<select levels="15" class="leisure:pitch" />
-	<select levels="15" class="leisure:playground" />
-	<select levels="15" class="leisure:slipway" />
-	<select levels="15" class="leisure:sports_centre" />
-	<select levels="15" class="leisure:stadium" />
-	<select levels="15" class="leisure:summer_camp" />
-	<select levels="15" class="leisure:swimming_area" />
-	<select levels="15" class="leisure:swimming_pool" />
-	<select levels="15" class="leisure:track" />
-	<select levels="15" class="leisure:water_park" />
-	<select levels="15" class="leisure:wildlife_hide" />
-	<select levels="15" class="man_made:adit" />
+	<select levels="15" class="landuse:village_green" named="1" />
+	<select levels="15" class="landuse:vineyard" named="1" />
+	<select levels="15" class="leisure:adult_gaming_centre" named="1" />
+	<select levels="15" class="leisure:amusement_arcade" named="1" />
+	<select levels="15" class="leisure:beach_resort" named="1" />
+	<select levels="15" class="leisure:bandstand" named="1" />
+	<select levels="15" class="leisure:common" named="1" />
+	<select levels="15" class="leisure:dance" named="1" />
+	<select levels="15" class="leisure:disc_golf_course" named="1" />
+	<select levels="15" class="leisure:dog_park" named="1" />
+	<select levels="15" class="leisure:escape_game" named="1" />
+	<select levels="15" class="leisure:fishing" named="1" />
+	<select levels="15" class="leisure:fitness_centre" named="1" />
+	<select levels="15" class="leisure:garden" named="1" />
+	<select levels="15" class="leisure:hackerspace" named="1" />
+	<select levels="15" class="leisure:horse_riding" named="1" />
+	<select levels="15" class="leisure:ice_rink" named="1" />
+	<select levels="15" class="leisure:marina" named="1" />
+	<select levels="15" class="leisure:minature_golf" named="1" />
+	<select levels="15" class="leisure:nature_reserve" named="1" />
+	<select levels="15" class="leisure:park" named="1" />
+	<select levels="15" class="leisure:pitch" named="1" />
+	<select levels="15" class="leisure:playground" named="1" />
+	<select levels="15" class="leisure:slipway" named="1" />
+	<select levels="15" class="leisure:sports_centre" named="1" />
+	<select levels="15" class="leisure:stadium" named="1" />
+	<select levels="15" class="leisure:summer_camp" named="1" />
+	<select levels="15" class="leisure:swimming_area" named="1" />
+	<select levels="15" class="leisure:swimming_pool" named="1" />
+	<select levels="15" class="leisure:track" named="1" />
+	<select levels="15" class="leisure:water_park" named="1" />
+	<!-- DISCARD LEISURE
+		<select levels="15" class="leisure:bird_hide" />
+		<select levels="15" class="leisure:firepit" />
+		<select levels="15" class="leisure:fitness_station" />
+		<select levels="15" class="leisure:picnic_table" />
+		<select levels="15" class="leisure:wildlife_hide" />
+	-->
 	<select levels="15" class="man_made:beacon" />
-	<select levels="15" class="man_made:breakwater" />
+	<select levels="15" class="man_made:breakwater" named="1" />
 	<select levels="15" class="man_made:bridge" />
-	<select levels="15" class="man_made:bunker_silo" />
-	<select levels="15" class="man_made:campanile" />
-	<select levels="15" class="man_made:chimney" />
 	<select levels="15" class="man_made:communications_tower" />
-	<select levels="15" class="man_made:crane" />
-	<select levels="15" class="man_made:cross" />
-	<select levels="15" class="man_made:cutline" />
-	<select levels="15" class="man_made:clearcut" />
-	<select levels="15" class="man_made:dovecote" />
-	<select levels="15" class="man_made:drinking_fountain" />
 	<select levels="15" class="man_made:dyke" />
-	<select levels="15" class="man_made:embankment" />
-	<select levels="15" class="man_made:flagpole" />
-	<select levels="15" class="man_made:gasometer" />
-	<select levels="15" class="man_made:groyne" />
-	<select levels="15" class="man_made:guy" />
-	<select levels="15" class="man_made:kiln" />
+	<select levels="15" class="man_made:gasometer" named="1" />
 	<select levels="15" class="man_made:lighthouse" />
-	<select levels="15" class="man_made:mast" />
-	<select levels="15" class="man_made:mineshaft" />
-	<select levels="15" class="man_made:monitoring_station" />
-	<select levels="15" class="man_made:obelisk" />
-	<select levels="15" class="man_made:observatory" />
-	<select levels="15" class="man_made:offshore_platform" />
-	<select levels="15" class="man_made:petroleum_well" />
+	<select levels="15" class="man_made:mineshaft" named="1" />
+	<select levels="15" class="man_made:monitoring_station" named="1" />
+	<select levels="15" class="man_made:obelisk" named="1" />
+	<select levels="15" class="man_made:observatory" named="1" />
+	<select levels="15" class="man_made:petroleum_well" named="1" />
 	<select levels="15" class="man_made:pier" />
 	<select levels="15" class="man_made:pipeline" />
-	<select levels="15" class="man_made:pumping_station" />
-	<select levels="15" class="man_made:reservoir_covered" />
+	<select levels="15" class="man_made:pumping_station" named="1" />
+	<select levels="15" class="man_made:reservoir_covered" named="1" />
 	<select levels="15" class="man_made:silo" />
-	<select levels="15" class="man_made:snow_fence" />
-	<select levels="15" class="man_made:snow_net" />
-	<select levels="15" class="man_made:storage_tank" />
-	<select levels="15" class="man_made:street_cabinet" />
-	<select levels="15" class="man_made:surveillance" />
-	<select levels="15" class="man_made:survey_point" />
 	<select levels="15" class="man_made:telescope" />
 	<select levels="15" class="man_made:tower" />
-	<select levels="15" class="man_made:wastewater_plant" />
+	<select levels="15" class="man_made:wastewater_plant" named="1" />
 	<select levels="15" class="man_made:watermill" />
 	<select levels="15" class="man_made:water_tower" />
-	<select levels="15" class="man_made:water_well" />
-	<select levels="15" class="man_made:water_tap" />
-	<select levels="15" class="man_made:water_works" />
-	<select levels="15" class="man_made:wildlife_crossing" />
+	<select levels="15" class="man_made:water_well" named="1" />
+	<select levels="15" class="man_made:water_works" named="1" />
 	<select levels="15" class="man_made:windmill" />
-	<select levels="15" class="man_made:works" />
-	<select levels="15" class="man_made:yes" />
-	<select levels="15" class="military:airfield" />
-	<select levels="15" class="military:ammunition" />
+	<!-- DISCARD MAN_MADE
+		<select levels="15" class="man_made:water_tap" />
+		<select levels="15" class="man_made:groyne" />
+		<select levels="15" class="man_made:kiln" />
+		<select levels="15" class="man_made:guy" />
+		<select levels="15" class="man_made:embankment" />
+		<select levels="15" class="man_made:flagpole" />
+		<select levels="15" class="man_made:adit" />
+		<select levels="15" class="man_made:bunker_silo" />
+		<select levels="15" class="man_made:campanile" />
+		<select levels="15" class="man_made:chimney" />
+		<select levels="15" class="man_made:crane" />
+		<select levels="15" class="man_made:cross" />
+		<select levels="15" class="man_made:cutline" />
+		<select levels="15" class="man_made:clearcut" />
+		<select levels="15" class="man_made:dovecote" />
+		<select levels="15" class="man_made:drinking_fountain" />
+		<select levels="15" class="man_made:mast" />
+		<select levels="15" class="man_made:offshore_platform" />
+		<select levels="15" class="man_made:snow_fence" />
+		<select levels="15" class="man_made:snow_net" />
+		<select levels="15" class="man_made:storage_tank" />
+		<select levels="15" class="man_made:street_cabinet" />
+		<select levels="15" class="man_made:surveillance" />
+		<select levels="15" class="man_made:survey_point" />
+		<select levels="15" class="man_made:wildlife_crossing" />
+		<select levels="15" class="man_made:works" />
+		<select levels="15" class="man_made:yes" />
+	-->
+	<select levels="12,15" class="military:airfield" />
 	<select levels="15" class="military:bunker" />
 	<select levels="15" class="military:barracks" />
 	<select levels="15" class="military:checkpoint" />
 	<select levels="15" class="military:danger_area" />
 	<select levels="15" class="military:naval_base" />
-	<select levels="15" class="military:nuclear_explosion_site" />
-	<select levels="15" class="military:obstacle_course" />
 	<select levels="15" class="military:office" />
 	<select levels="15" class="military:range" />
 	<select levels="15" class="military:training_area" />
-	<select levels="15" class="military:trench" />
 	<select levels="15" class="military:launchpad" />
-	<select levels="15" class="natural:wood" />
-	<select levels="15" class="natural:tree_row" />
-	<select levels="15" class="natural:tree" />
-	<select levels="15" class="natural:scrub" />
-	<select levels="15" class="natural:heath" />
-	<select levels="15" class="natural:moor" />
-	<select levels="15" class="natural:grassland" />
-	<select levels="15" class="natural:fell" />
-	<select levels="15" class="natural:bare_rock" />
-	<select levels="15" class="natural:scree" />
-	<select levels="15" class="natural:shingle" />
-	<select levels="15" class="natural:sand" />
-	<select levels="15" class="natural:mud" />
-	<select levels="15" class="natural:water" />
-	<select levels="15" class="natural:wetland" />
-	<select levels="15" class="natural:glacier" />
-	<select levels="15" class="natural:bay" />
-	<select levels="15" class="natural:cape" />
-	<select levels="15" class="natural:beach" />
-	<select levels="15" class="natural:coastline" />
-	<select levels="15" class="natural:spring" />
-	<select levels="15" class="natural:hot_spring" />
-	<select levels="15" class="natural:geyser" />
-	<select levels="15" class="natural:blowhole" />
-	<select levels="15" class="natural:peak" />
-	<select levels="15" class="natural:volcano" />
-	<select levels="15" class="natural:valley" />
-	<select levels="15" class="natural:ridge" />
-	<select levels="15" class="natural:arete" />
-	<select levels="15" class="natural:cliff" />
-	<select levels="15" class="natural:saddle" />
-	<select levels="15" class="natural:rock" />
-	<select levels="15" class="natural:stone" />
-	<select levels="15" class="natural:sinkhole" />
-	<select levels="15" class="natural:cave_entrance" />
-	<select levels="15" class="office:accountant" />
-	<select levels="15" class="office:adoption_agency" />
-	<select levels="15" class="office:advertising_agency" />
-	<select levels="15" class="office:architect" />
-	<select levels="15" class="office:association" />
-	<select levels="15" class="office:charity" />
-	<select levels="15" class="office:company" />
-	<select levels="15" class="office:educational_institution" />
-	<select levels="15" class="office:employment_agency" />
-	<select levels="15" class="office:energy_supplier" />
-	<select levels="15" class="office:estate_agent" />
-	<select levels="15" class="office:forestry" />
-	<select levels="15" class="office:foundation" />
-	<select levels="15" class="office:government" />
-	<select levels="15" class="office:guide" />
-	<select levels="15" class="office:healer" />
-	<select levels="15" class="office:insurance" />
-	<select levels="15" class="office:it" />
-	<select levels="15" class="office:lawyer" />
-	<select levels="15" class="office:logistics" />
-	<select levels="15" class="office:moving_company" />
-	<select levels="15" class="office:newspaper" />
-	<select levels="15" class="office:ngo" />
-	<select levels="15" class="office:notary" />
-	<select levels="15" class="office:physican" />
-	<select levels="15" class="office:political_party" />
-	<select levels="15" class="office:private_investigator" />
-	<select levels="15" class="office:property_management" />
-	<select levels="15" class="office:quango" />
-	<select levels="15" class="office:real_estate_agent" />
-	<select levels="15" class="office:religion" />
-	<select levels="15" class="office:research" />
-	<select levels="15" class="office:surveyor" />
-	<select levels="15" class="office:tax" />
-	<select levels="15" class="office:tax_advisor" />
-	<select levels="15" class="office:telecommunication" />
-	<select levels="15" class="office:therapist" />
-	<select levels="15" class="office:travel_agent" />
-	<select levels="15" class="office:water_utility" />
-	<select levels="15" class="office:yes" />
-	<select levels="15" class="place:country" />
-	<select levels="15" class="place:state" />
-	<select levels="15" class="place:region" />
-	<select levels="15" class="place:province" />
-	<select levels="15" class="place:district" />
-	<select levels="15" class="place:county" />
-	<select levels="15" class="place:municipality" />
-	<select levels="15" class="place:city" />
-	<select levels="15" class="place:borough" />
-	<select levels="15" class="place:suburb" />
-	<select levels="15" class="place:quarter" />
-	<select levels="15" class="place:neighbourhood" />
-	<select levels="15" class="place:city_block" />
-	<select levels="15" class="place:plot" />
-	<select levels="15" class="place:town" />
-	<select levels="15" class="place:village" />
-	<select levels="15" class="place:hamlet" />
-	<select levels="15" class="place:isolated_dwelling" />
-	<select levels="15" class="place:farm" />
-	<select levels="15" class="place:allotments" />
-	<select levels="15" class="place:continent" />
-	<select levels="15" class="place:archipelago" />
-	<select levels="15" class="place:island" />
-	<select levels="15" class="place:islet" />
-	<select levels="15" class="place:square" />
-	<select levels="15" class="place:locality" />
+	<!-- DISCARD MILITARY
+		<select levels="15" class="military:ammunition" />
+		<select levels="15" class="military:nuclear_explosion_site" />
+		<select levels="15" class="military:obstacle_course" />
+		<select levels="15" class="military:trench" />
+	-->
+	<select levels="15" class="natural:wood" named="1" />
+	<select levels="15" class="natural:scrub" named="1" />
+	<select levels="15" class="natural:heath" named="1" />
+	<select levels="15" class="natural:moor" named="1" />
+	<select levels="15" class="natural:grassland" named="1" />
+	<select levels="15" class="natural:fell" named="1" />
+	<select levels="15" class="natural:bare_rock" named="1" />
+	<select levels="15" class="natural:scree" named="1" />
+	<select levels="15" class="natural:shingle" named="1" />
+	<select levels="15" class="natural:sand" named="1" />
+	<select levels="15" class="natural:mud" named="1" />
+	<select levels="6,9,12,15" class="natural:water" />
+	<select levels="15" class="natural:wetland" named="1" />
+	<select levels="6,9,12,15" class="natural:glacier" />
+	<select levels="6,9,12,15" class="natural:bay" />
+	<select levels="6,9,12,15" class="natural:cape" />
+	<select levels="15" class="natural:beach" named="1" />
+	<select levels="15" class="natural:coastline" named="1" />
+	<select levels="15" class="natural:spring" named="1" />
+	<select levels="15" class="natural:hot_spring" named="1" />
+	<select levels="15" class="natural:geyser" named="1" />
+	<select levels="15" class="natural:blowhole" named="1" />
+	<select levels="9,12,15" class="natural:peak" />
+	<select levels="9,12,15" class="natural:volcano" />
+	<select levels="15" class="natural:valley" named="1" />
+	<select levels="15" class="natural:ridge" named="1" />
+	<select levels="15" class="natural:arete" named="1" />
+	<select levels="15" class="natural:cliff" named="1" />
+	<select levels="12,15" class="natural:saddle" />
+	<select levels="15" class="natural:rock" named="1" />
+	<select levels="15" class="natural:stone" named="1" />
+	<select levels="15" class="natural:sinkhole" named="1" />
+	<select levels="15" class="natural:cave_entrance" named="1" />
+	<!-- DISCARD NATURAL
+		<select levels="15" class="natural:tree_row" />
+		<select levels="15" class="natural:tree" />
+	-->
+	<select levels="15" class="office:accountant" named="1" />
+	<select levels="15" class="office:adoption_agency" named="1" />
+	<select levels="15" class="office:advertising_agency" named="1" />
+	<select levels="15" class="office:architect" named="1" />
+	<select levels="15" class="office:association" named="1" />
+	<select levels="15" class="office:charity" named="1" />
+	<select levels="15" class="office:company" named="1" />
+	<select levels="15" class="office:educational_institution" named="1" />
+	<select levels="15" class="office:employment_agency" named="1" />
+	<select levels="15" class="office:energy_supplier" named="1" />
+	<select levels="15" class="office:estate_agent" named="1" />
+	<select levels="15" class="office:forestry" named="1" />
+	<select levels="15" class="office:foundation" named="1" />
+	<select levels="15" class="office:government" named="1" />
+	<select levels="15" class="office:guide" named="1" />
+	<select levels="15" class="office:healer" named="1" />
+	<select levels="15" class="office:insurance" named="1" />
+	<select levels="15" class="office:it" named="1" />
+	<select levels="15" class="office:lawyer" named="1" />
+	<select levels="15" class="office:logistics" named="1" />
+	<select levels="15" class="office:moving_company" named="1" />
+	<select levels="15" class="office:newspaper" named="1" />
+	<select levels="15" class="office:ngo" named="1" />
+	<select levels="15" class="office:notary" named="1" />
+	<select levels="15" class="office:physican" named="1" />
+	<select levels="15" class="office:political_party" named="1" />
+	<select levels="15" class="office:private_investigator" named="1" />
+	<select levels="15" class="office:property_management" named="1" />
+	<select levels="15" class="office:quango" named="1" />
+	<select levels="15" class="office:real_estate_agent" named="1" />
+	<select levels="15" class="office:religion" named="1" />
+	<select levels="15" class="office:research" named="1" />
+	<select levels="15" class="office:surveyor" named="1" />
+	<select levels="15" class="office:tax" named="1" />
+	<select levels="15" class="office:tax_advisor" named="1" />
+	<select levels="15" class="office:telecommunication" named="1" />
+	<select levels="15" class="office:therapist" named="1" />
+	<select levels="15" class="office:travel_agent" named="1" />
+	<select levels="15" class="office:water_utility" named="1" />
+	<!-- DISCARD OFFICE
+		<select levels="15" class="office:yes" />
+	-->
+	<select levels="3,6,9" class="place:country" named="1" />
+	<select levels="9,12" class="place:state" named="1" />
+	<select levels="9,12" class="place:region" named="1" />
+	<select levels="9,12" class="place:province" named="1" />
+	<select levels="9,12" class="place:district" named="1" />
+	<select levels="9,12" class="place:county" named="1" />
+	<select levels="9,12" class="place:municipality" named="1" />
+	<select levels="9,12" class="place:city" named="1" />
+	<select levels="12" class="place:borough" named="1" />
+	<select levels="12" class="place:suburb" named="1" />
+	<select levels="12" class="place:quarter" named="1" />
+	<select levels="12" class="place:neighbourhood" named="1" />
+	<select levels="12,15" class="place:city_block" named="1" />
+	<select levels="12" class="place:town" named="1" />
+	<select levels="12" class="place:village" named="1" />
+	<select levels="12" class="place:hamlet" named="1" />
+	<select levels="3,6,9" class="place:continent" named="1" />
+	<select levels="9,12" class="place:archipelago" named="1" />
+	<select levels="6,9,12" class="place:island" />
+	<select levels="9,12,15" class="place:islet" />
+	<select levels="15" class="place:locality" named="1" />
+	<!-- DISCARD PLACE
+		<select levels="15" class="place:plot" />
+		<select levels="15" class="place:square" />
+		<select levels="15" class="place:isolated_dwelling" />
+		<select levels="15" class="place:farm" />
+		<select levels="15" class="place:allotments" />
+	-->
 	<select levels="15" class="power:plant" />
 	<select levels="15" class="power:cable" />
 	<select levels="15" class="power:compensator" />
@@ -701,285 +729,287 @@
 	<select levels="15" class="railway:roundhouse" />
 	<select levels="15" class="railway:traverser" />
 	<select levels="15" class="railway:wash" />
-	<select levels="15" class="shop:alcohol" />
-	<select levels="15" class="shop:bakery" />
-	<select levels="15" class="shop:beverages" />
-	<select levels="15" class="shop:brewing_supplies" />
-	<select levels="15" class="shop:butcher" />
-	<select levels="15" class="shop:cheese" />
-	<select levels="15" class="shop:chocolate" />
-	<select levels="15" class="shop:coffee" />
-	<select levels="15" class="shop:confectionery" />
-	<select levels="15" class="shop:convenience" />
-	<select levels="15" class="shop:deli" />
-	<select levels="15" class="shop:dairy" />
-	<select levels="15" class="shop:farm" />
-	<select levels="15" class="shop:frozen_food" />
-	<select levels="15" class="shop:greengrocier" />
-	<select levels="15" class="shop:health_food" />
-	<select levels="15" class="shop:ice_cream" />
-	<select levels="15" class="shop:pasta" />
-	<select levels="15" class="shop:pastry" />
-	<select levels="15" class="shop:seafood" />
-	<select levels="15" class="shop:spices" />
-	<select levels="15" class="shop:tea" />
-	<select levels="15" class="shop:water" />
-	<select levels="15" class="shop:department_store" />
-	<select levels="15" class="shop:general" />
-	<select levels="15" class="shop:kiosk" />
-	<select levels="15" class="shop:mall" />
-	<select levels="15" class="shop:supermarket" />
-	<select levels="15" class="shop:wholesale" />
-	<select levels="15" class="shop:baby_goods" />
-	<select levels="15" class="shop:bag" />
-	<select levels="15" class="shop:boutique" />
-	<select levels="15" class="shop:clothes" />
-	<select levels="15" class="shop:fabric" />
-	<select levels="15" class="shop:fashion" />
-	<select levels="15" class="shop:jewelry" />
-	<select levels="15" class="shop:leather" />
-	<select levels="15" class="shop:sewing" />
-	<select levels="15" class="shop:shoes" />
-	<select levels="15" class="shop:tailor" />
-	<select levels="15" class="shop:watches" />
-	<select levels="15" class="shop:charity" />
-	<select levels="15" class="shop:second_hand" />
-	<select levels="15" class="shop:variety_store" />
-	<select levels="15" class="shop:beauty" />
-	<select levels="15" class="shop:chemist" />
-	<select levels="15" class="shop:cosmetics" />
-	<select levels="15" class="shop:erotic" />
-	<select levels="15" class="shop:hairdresser" />
-	<select levels="15" class="shop:hairdresser_suply" />
-	<select levels="15" class="shop:hearing_aids" />
-	<select levels="15" class="shop:herbalist" />
-	<select levels="15" class="shop:massage" />
-	<select levels="15" class="shop:medical_supply" />
-	<select levels="15" class="shop:nutrition_supplements" />
-	<select levels="15" class="shop:optician" />
-	<select levels="15" class="shop:perfumery" />
-	<select levels="15" class="shop:tattoo" />
-	<select levels="15" class="shop:agrarian" />
-	<select levels="15" class="shop:appliance" />
-	<select levels="15" class="shop:bathroom_furnishing" />
-	<select levels="15" class="shop:doityourself" />
-	<select levels="15" class="shop:electrical" />
-	<select levels="15" class="shop:energy" />
-	<select levels="15" class="shop:fireplace" />
-	<select levels="15" class="shop:florist" />
-	<select levels="15" class="shop:garden_centre" />
-	<select levels="15" class="shop:garden_furniture" />
-	<select levels="15" class="shop:gas" />
-	<select levels="15" class="shop:glaziery" />
-	<select levels="15" class="shop:hardware" />
-	<select levels="15" class="shop:houseware" />
-	<select levels="15" class="shop:locksmith" />
-	<select levels="15" class="shop:paint" />
-	<select levels="15" class="shop:security" />
-	<select levels="15" class="shop:trade" />
-	<select levels="15" class="shop:antiques" />
-	<select levels="15" class="shop:bed" />
-	<select levels="15" class="shop:candles" />
-	<select levels="15" class="shop:carpet" />
-	<select levels="15" class="shop:curtain" />
-	<select levels="15" class="shop:doors" />
-	<select levels="15" class="shop:flooring" />
-	<select levels="15" class="shop:furniture" />
-	<select levels="15" class="shop:interior_decoration" />
-	<select levels="15" class="shop:kitchen" />
-	<select levels="15" class="shop:lamps" />
-	<select levels="15" class="shop:tiles" />
-	<select levels="15" class="shop:window_blind" />
-	<select levels="15" class="shop:computer" />
-	<select levels="15" class="shop:robot" />
-	<select levels="15" class="shop:electonics" />
-	<select levels="15" class="shop:hifi" />
-	<select levels="15" class="shop:mobile_phone" />
-	<select levels="15" class="shop:radiotechnics" />
-	<select levels="15" class="shop:vacuum_cleaner" />
-	<select levels="15" class="shop:atv" />
-	<select levels="15" class="shop:bicycle" />
-	<select levels="15" class="shop:boat" />
-	<select levels="15" class="shop:car" />
-	<select levels="15" class="shop:car_repair" />
-	<select levels="15" class="shop:car_parts" />
-	<select levels="15" class="shop:fuel" />
-	<select levels="15" class="shop:fishing" />
-	<select levels="15" class="shop:free_flying" />
-	<select levels="15" class="shop:hunting" />
-	<select levels="15" class="shop:jetski" />
-	<select levels="15" class="shop:motorcycle" />
-	<select levels="15" class="shop:outdoor" />
-	<select levels="15" class="shop:scuba_diving" />
-	<select levels="15" class="shop:ski" />
-	<select levels="15" class="shop:snowmobile" />
-	<select levels="15" class="shop:sports" />
-	<select levels="15" class="shop:swimming_pool" />
-	<select levels="15" class="shop:tyres" />
-	<select levels="15" class="shop:art" />
-	<select levels="15" class="shop:collector" />
-	<select levels="15" class="shop:craft" />
-	<select levels="15" class="shop:frame" />
-	<select levels="15" class="shop:games" />
-	<select levels="15" class="shop:model" />
-	<select levels="15" class="shop:music" />
-	<select levels="15" class="shop:musical_instrument" />
-	<select levels="15" class="shop:photo" />
-	<select levels="15" class="shop:camera" />
-	<select levels="15" class="shop:trophy" />
-	<select levels="15" class="shop:video" />
-	<select levels="15" class="shop:video_games" />
-	<select levels="15" class="shop:anime" />
-	<select levels="15" class="shop:books" />
-	<select levels="15" class="shop:gift" />
-	<select levels="15" class="shop:lottery" />
-	<select levels="15" class="shop:newsagent" />
-	<select levels="15" class="shop:stationery" />
-	<select levels="15" class="shop:ticket" />
-	<select levels="15" class="shop:bookmaker" />
-	<select levels="15" class="shop:copyshop" />
-	<select levels="15" class="shop:dry_cleaning" />
-	<select levels="15" class="shop:e-cigarette" />
-	<select levels="15" class="shop:funeral_directors" />
-	<select levels="15" class="shop:laundry" />
-	<select levels="15" class="shop:money_lender" />
-	<select levels="15" class="shop:party" />
-	<select levels="15" class="shop:pawnbroker" />
-	<select levels="15" class="shop:pet" />
-	<select levels="15" class="shop:pyrotechnics" />
-	<select levels="15" class="shop:religion" />
-	<select levels="15" class="shop:storage_rental" />
-	<select levels="15" class="shop:tobacco" />
-	<select levels="15" class="shop:toys" />
-	<select levels="15" class="shop:travel_agency" />
-	<select levels="15" class="shop:vacant" />
-	<select levels="15" class="shop:weapons" />
-	<select levels="15" class="sport:9pin" />
-	<select levels="15" class="sport:10pin" />
-	<select levels="15" class="sport:american_football" />
-	<select levels="15" class="sport:aikido" />
-	<select levels="15" class="sport:archery" />
-	<select levels="15" class="sport:athletics" />
-	<select levels="15" class="sport:australian_football" />
-	<select levels="15" class="sport:badminton" />
-	<select levels="15" class="sport:bandy" />
-	<select levels="15" class="sport:base" />
-	<select levels="15" class="sport:baseball" />
-	<select levels="15" class="sport:basketball" />
-	<select levels="15" class="sport:beachvolleyball" />
-	<select levels="15" class="sport:billards" />
-	<select levels="15" class="sport:bmx" />
-	<select levels="15" class="sport:bobsleigh" />
-	<select levels="15" class="sport:boules" />
-	<select levels="15" class="sport:bowls" />
-	<select levels="15" class="sport:boxing" />
-	<select levels="15" class="sport:canadian_football" />
-	<select levels="15" class="sport:canoe" />
-	<select levels="15" class="sport:chess" />
-	<select levels="15" class="sport:cliff_diving" />
-	<select levels="15" class="sport:climbing" />
-	<select levels="15" class="sport:climbing_adventure" />
-	<select levels="15" class="sport:cricket" />
-	<select levels="15" class="sport:croquet" />
-	<select levels="15" class="sport:curling" />
-	<select levels="15" class="sport:cycling" />
-	<select levels="15" class="sport:darts" />
-	<select levels="15" class="sport:dog_racing" />
-	<select levels="15" class="sport:equestrian" />
-	<select levels="15" class="sport:fencing" />
-	<select levels="15" class="sport:field_hockey" />
-	<select levels="15" class="sport:free_flying" />
-	<select levels="15" class="sport:futsal" />
-	<select levels="15" class="sport:gaelic_games" />
-	<select levels="15" class="sport:golf" />
-	<select levels="15" class="sport:gymnastics" />
-	<select levels="15" class="sport:handball" />
-	<select levels="15" class="sport:hapkido" />
-	<select levels="15" class="sport:horseshoes" />
-	<select levels="15" class="sport:horse_racing" />
-	<select levels="15" class="sport:ice_hockey" />
-	<select levels="15" class="sport:ice_skating" />
-	<select levels="15" class="sport:ice_stock" />
-	<select levels="15" class="sport:judo" />
-	<select levels="15" class="sport:karate" />
-	<select levels="15" class="sport:karting" />
-	<select levels="15" class="sport:kitesurfing" />
-	<select levels="15" class="sport:korfball" />
-	<select levels="15" class="sport:lacrosse" />
-	<select levels="15" class="sport:model_aerodrome" />
-	<select levels="15" class="sport:motocross" />
-	<select levels="15" class="sport:motor" />
-	<select levels="15" class="sport:multi" />
-	<select levels="15" class="sport:netball" />
-	<select levels="15" class="sport:obstacle_course" />
-	<select levels="15" class="sport:orienteering" />
-	<select levels="15" class="sport:paddle_tennis" />
-	<select levels="15" class="sport:padel" />
-	<select levels="15" class="sport:parachuting" />
-	<select levels="15" class="sport:paragliding" />
-	<select levels="15" class="sport:pelota" />
-	<select levels="15" class="sport:racquet" />
-	<select levels="15" class="sport:rc_car" />
-	<select levels="15" class="sport:roller_skating" />
-	<select levels="15" class="sport:rowing" />
-	<select levels="15" class="sport:rugby_league" />
-	<select levels="15" class="sport:rugby_union" />
-	<select levels="15" class="sport:running" />
-	<select levels="15" class="sport:sailing" />
-	<select levels="15" class="sport:scuba_diving" />
-	<select levels="15" class="sport:shooting" />
-	<select levels="15" class="sport:skateboard" />
-	<select levels="15" class="sport:soccer" />
-	<select levels="15" class="sport:sumo" />
-	<select levels="15" class="sport:surfing" />
-	<select levels="15" class="sport:swimming" />
-	<select levels="15" class="sport:table_tennis" />
-	<select levels="15" class="sport:table_soccer" />
-	<select levels="15" class="sport:taekwondo" />
-	<select levels="15" class="sport:tennis" />
-	<select levels="15" class="sport:toboggan" />
-	<select levels="15" class="sport:volleyball" />
-	<select levels="15" class="sport:water_polo" />
-	<select levels="15" class="sport:water_ski" />
-	<select levels="15" class="sport:weightlifting" />
-	<select levels="15" class="sport:wrestling" />
-	<select levels="15" class="sport:yoga" />
+	<select levels="15" class="shop:alcohol" named="1" />
+	<select levels="15" class="shop:bakery" named="1" />
+	<select levels="15" class="shop:beverages" named="1" />
+	<select levels="15" class="shop:brewing_supplies" named="1" />
+	<select levels="15" class="shop:butcher" named="1" />
+	<select levels="15" class="shop:cheese" named="1" />
+	<select levels="15" class="shop:chocolate" named="1" />
+	<select levels="15" class="shop:coffee" named="1" />
+	<select levels="15" class="shop:confectionery" named="1" />
+	<select levels="15" class="shop:convenience" named="1" />
+	<select levels="15" class="shop:deli" named="1" />
+	<select levels="15" class="shop:dairy" named="1" />
+	<select levels="15" class="shop:farm" named="1" />
+	<select levels="15" class="shop:frozen_food" named="1" />
+	<select levels="15" class="shop:greengrocier" named="1" />
+	<select levels="15" class="shop:health_food" named="1" />
+	<select levels="15" class="shop:ice_cream" named="1" />
+	<select levels="15" class="shop:pasta" named="1" />
+	<select levels="15" class="shop:pastry" named="1" />
+	<select levels="15" class="shop:seafood" named="1" />
+	<select levels="15" class="shop:spices" named="1" />
+	<select levels="15" class="shop:tea" named="1" />
+	<select levels="15" class="shop:water" named="1" />
+	<select levels="15" class="shop:department_store" named="1" />
+	<select levels="15" class="shop:general" named="1" />
+	<select levels="15" class="shop:kiosk" named="1" />
+	<select levels="15" class="shop:mall" named="1" />
+	<select levels="15" class="shop:supermarket" named="1" />
+	<select levels="15" class="shop:wholesale" named="1" />
+	<select levels="15" class="shop:baby_goods" named="1" />
+	<select levels="15" class="shop:bag" named="1" />
+	<select levels="15" class="shop:boutique" named="1" />
+	<select levels="15" class="shop:clothes" named="1" />
+	<select levels="15" class="shop:fabric" named="1" />
+	<select levels="15" class="shop:fashion" named="1" />
+	<select levels="15" class="shop:jewelry" named="1" />
+	<select levels="15" class="shop:leather" named="1" />
+	<select levels="15" class="shop:sewing" named="1" />
+	<select levels="15" class="shop:shoes" named="1" />
+	<select levels="15" class="shop:tailor" named="1" />
+	<select levels="15" class="shop:watches" named="1" />
+	<select levels="15" class="shop:charity" named="1" />
+	<select levels="15" class="shop:second_hand" named="1" />
+	<select levels="15" class="shop:variety_store" named="1" />
+	<select levels="15" class="shop:beauty" named="1" />
+	<select levels="15" class="shop:chemist" named="1" />
+	<select levels="15" class="shop:cosmetics" named="1" />
+	<select levels="15" class="shop:hairdresser" named="1" />
+	<select levels="15" class="shop:hairdresser_suply" named="1" />
+	<select levels="15" class="shop:hearing_aids" named="1" />
+	<select levels="15" class="shop:massage" named="1" />
+	<select levels="15" class="shop:nutrition_supplements" named="1" />
+	<select levels="15" class="shop:optician" named="1" />
+	<select levels="15" class="shop:perfumery" named="1" />
+	<select levels="15" class="shop:agrarian" named="1" />
+	<select levels="15" class="shop:appliance" named="1" />
+	<select levels="15" class="shop:bathroom_furnishing" named="1" />
+	<select levels="15" class="shop:doityourself" named="1" />
+	<select levels="15" class="shop:electrical" named="1" />
+	<select levels="15" class="shop:energy" named="1" />
+	<select levels="15" class="shop:fireplace" named="1" />
+	<select levels="15" class="shop:florist" named="1" />
+	<select levels="15" class="shop:garden_centre" named="1" />
+	<select levels="15" class="shop:garden_furniture" named="1" />
+	<select levels="15" class="shop:gas" named="1" />
+	<select levels="15" class="shop:glaziery" named="1" />
+	<select levels="15" class="shop:hardware" named="1" />
+	<select levels="15" class="shop:houseware" named="1" />
+	<select levels="15" class="shop:locksmith" named="1" />
+	<select levels="15" class="shop:paint" named="1" />
+	<select levels="15" class="shop:security" named="1" />
+	<select levels="15" class="shop:trade" named="1" />
+	<select levels="15" class="shop:antiques" named="1" />
+	<select levels="15" class="shop:bed" named="1" />
+	<select levels="15" class="shop:candles" named="1" />
+	<select levels="15" class="shop:carpet" named="1" />
+	<select levels="15" class="shop:curtain" named="1" />
+	<select levels="15" class="shop:doors" named="1" />
+	<select levels="15" class="shop:flooring" named="1" />
+	<select levels="15" class="shop:furniture" named="1" />
+	<select levels="15" class="shop:interior_decoration" named="1" />
+	<select levels="15" class="shop:kitchen" named="1" />
+	<select levels="15" class="shop:lamps" named="1" />
+	<select levels="15" class="shop:tiles" named="1" />
+	<select levels="15" class="shop:window_blind" named="1" />
+	<select levels="15" class="shop:computer" named="1" />
+	<select levels="15" class="shop:robot" named="1" />
+	<select levels="15" class="shop:electonics" named="1" />
+	<select levels="15" class="shop:hifi" named="1" />
+	<select levels="15" class="shop:mobile_phone" named="1" />
+	<select levels="15" class="shop:radiotechnics" named="1" />
+	<select levels="15" class="shop:vacuum_cleaner" named="1" />
+	<select levels="15" class="shop:atv" named="1" />
+	<select levels="15" class="shop:bicycle" named="1" />
+	<select levels="15" class="shop:boat" named="1" />
+	<select levels="15" class="shop:car" named="1" />
+	<select levels="15" class="shop:car_repair" named="1" />
+	<select levels="15" class="shop:car_parts" named="1" />
+	<select levels="15" class="shop:fuel" named="1" />
+	<select levels="15" class="shop:fishing" named="1" />
+	<select levels="15" class="shop:free_flying" named="1" />
+	<select levels="15" class="shop:hunting" named="1" />
+	<select levels="15" class="shop:jetski" named="1" />
+	<select levels="15" class="shop:motorcycle" named="1" />
+	<select levels="15" class="shop:outdoor" named="1" />
+	<select levels="15" class="shop:scuba_diving" named="1" />
+	<select levels="15" class="shop:ski" named="1" />
+	<select levels="15" class="shop:snowmobile" named="1" />
+	<select levels="15" class="shop:sports" named="1" />
+	<select levels="15" class="shop:swimming_pool" named="1" />
+	<select levels="15" class="shop:tyres" named="1" />
+	<select levels="15" class="shop:art" named="1" />
+	<select levels="15" class="shop:collector" named="1" />
+	<select levels="15" class="shop:craft" named="1" />
+	<select levels="15" class="shop:frame" named="1" />
+	<select levels="15" class="shop:games" named="1" />
+	<select levels="15" class="shop:model" named="1" />
+	<select levels="15" class="shop:music" named="1" />
+	<select levels="15" class="shop:musical_instrument" named="1" />
+	<select levels="15" class="shop:photo" named="1" />
+	<select levels="15" class="shop:camera" named="1" />
+	<select levels="15" class="shop:trophy" named="1" />
+	<select levels="15" class="shop:video" named="1" />
+	<select levels="15" class="shop:video_games" named="1" />
+	<select levels="15" class="shop:anime" named="1" />
+	<select levels="15" class="shop:books" named="1" />
+	<select levels="15" class="shop:gift" named="1" />
+	<select levels="15" class="shop:lottery" named="1" />
+	<select levels="15" class="shop:newsagent" named="1" />
+	<select levels="15" class="shop:stationery" named="1" />
+	<select levels="15" class="shop:ticket" named="1" />
+	<select levels="15" class="shop:bookmaker" named="1" />
+	<select levels="15" class="shop:copyshop" named="1" />
+	<select levels="15" class="shop:dry_cleaning" named="1" />
+	<select levels="15" class="shop:funeral_directors" named="1" />
+	<select levels="15" class="shop:laundry" named="1" />
+	<select levels="15" class="shop:money_lender" named="1" />
+	<select levels="15" class="shop:party" named="1" />
+	<select levels="15" class="shop:pawnbroker" named="1" />
+	<select levels="15" class="shop:pet" named="1" />
+	<select levels="15" class="shop:pyrotechnics" named="1" />
+	<select levels="15" class="shop:religion" named="1" />
+	<select levels="15" class="shop:storage_rental" named="1" />
+	<select levels="15" class="shop:toys" named="1" />
+	<select levels="15" class="shop:travel_agency" named="1" />
+	<select levels="15" class="shop:vacant" named="1" />
+	<!--
+		<select levels="15" class="shop:herbalist" />
+		<select levels="15" class="shop:medical_supply" />
+		<select levels="15" class="shop:tattoo" />
+		<select levels="15" class="shop:e-cigarette" />
+		<select levels="15" class="shop:tobacco" />
+		<select levels="15" class="shop:erotic" />
+		<select levels="15" class="shop:weapons" />
+	-->
+	<select levels="15" class="sport:9pin" named="1" />
+	<select levels="15" class="sport:10pin" named="1" />
+	<select levels="15" class="sport:american_football" named="1" />
+	<select levels="15" class="sport:aikido" named="1" />
+	<select levels="15" class="sport:archery" named="1" />
+	<select levels="15" class="sport:athletics" named="1" />
+	<select levels="15" class="sport:australian_football" named="1" />
+	<select levels="15" class="sport:badminton" named="1" />
+	<select levels="15" class="sport:bandy" named="1" />
+	<select levels="15" class="sport:base" named="1" />
+	<select levels="15" class="sport:baseball" named="1" />
+	<select levels="15" class="sport:basketball" named="1" />
+	<select levels="15" class="sport:beachvolleyball" named="1" />
+	<select levels="15" class="sport:billards" named="1" />
+	<select levels="15" class="sport:bmx" named="1" />
+	<select levels="15" class="sport:bobsleigh" named="1" />
+	<select levels="15" class="sport:boules" named="1" />
+	<select levels="15" class="sport:bowls" named="1" />
+	<select levels="15" class="sport:boxing" named="1" />
+	<select levels="15" class="sport:canadian_football" named="1" />
+	<select levels="15" class="sport:canoe" named="1" />
+	<select levels="15" class="sport:chess" named="1" />
+	<select levels="15" class="sport:cliff_diving" named="1" />
+	<select levels="15" class="sport:climbing" named="1" />
+	<select levels="15" class="sport:climbing_adventure" named="1" />
+	<select levels="15" class="sport:cricket" named="1" />
+	<select levels="15" class="sport:croquet" named="1" />
+	<select levels="15" class="sport:curling" named="1" />
+	<select levels="15" class="sport:cycling" named="1" />
+	<select levels="15" class="sport:darts" named="1" />
+	<select levels="15" class="sport:dog_racing" named="1" />
+	<select levels="15" class="sport:equestrian" named="1" />
+	<select levels="15" class="sport:fencing" named="1" />
+	<select levels="15" class="sport:field_hockey" named="1" />
+	<select levels="15" class="sport:free_flying" named="1" />
+	<select levels="15" class="sport:futsal" named="1" />
+	<select levels="15" class="sport:gaelic_games" named="1" />
+	<select levels="15" class="sport:golf" named="1" />
+	<select levels="15" class="sport:gymnastics" named="1" />
+	<select levels="15" class="sport:handball" named="1" />
+	<select levels="15" class="sport:hapkido" named="1" />
+	<select levels="15" class="sport:horseshoes" named="1" />
+	<select levels="15" class="sport:horse_racing" named="1" />
+	<select levels="15" class="sport:ice_hockey" named="1" />
+	<select levels="15" class="sport:ice_skating" named="1" />
+	<select levels="15" class="sport:ice_stock" named="1" />
+	<select levels="15" class="sport:judo" named="1" />
+	<select levels="15" class="sport:karate" named="1" />
+	<select levels="15" class="sport:karting" named="1" />
+	<select levels="15" class="sport:kitesurfing" named="1" />
+	<select levels="15" class="sport:korfball" named="1" />
+	<select levels="15" class="sport:lacrosse" named="1" />
+	<select levels="15" class="sport:model_aerodrome" named="1" />
+	<select levels="15" class="sport:motocross" named="1" />
+	<select levels="15" class="sport:motor" named="1" />
+	<select levels="15" class="sport:multi" named="1" />
+	<select levels="15" class="sport:netball" named="1" />
+	<select levels="15" class="sport:obstacle_course" named="1" />
+	<select levels="15" class="sport:orienteering" named="1" />
+	<select levels="15" class="sport:paddle_tennis" named="1" />
+	<select levels="15" class="sport:padel" named="1" />
+	<select levels="15" class="sport:parachuting" named="1" />
+	<select levels="15" class="sport:paragliding" named="1" />
+	<select levels="15" class="sport:pelota" named="1" />
+	<select levels="15" class="sport:racquet" named="1" />
+	<select levels="15" class="sport:rc_car" named="1" />
+	<select levels="15" class="sport:roller_skating" named="1" />
+	<select levels="15" class="sport:rowing" named="1" />
+	<select levels="15" class="sport:rugby_league" named="1" />
+	<select levels="15" class="sport:rugby_union" named="1" />
+	<select levels="15" class="sport:running" named="1" />
+	<select levels="15" class="sport:sailing" named="1" />
+	<select levels="15" class="sport:scuba_diving" named="1" />
+	<select levels="15" class="sport:shooting" named="1" />
+	<select levels="15" class="sport:skateboard" named="1" />
+	<select levels="15" class="sport:soccer" named="1" />
+	<select levels="15" class="sport:sumo" named="1" />
+	<select levels="15" class="sport:surfing" named="1" />
+	<select levels="15" class="sport:swimming" named="1" />
+	<select levels="15" class="sport:table_tennis" named="1" />
+	<select levels="15" class="sport:table_soccer" named="1" />
+	<select levels="15" class="sport:taekwondo" named="1" />
+	<select levels="15" class="sport:tennis" named="1" />
+	<select levels="15" class="sport:toboggan" named="1" />
+	<select levels="15" class="sport:volleyball" named="1" />
+	<select levels="15" class="sport:water_polo" named="1" />
+	<select levels="15" class="sport:water_ski" named="1" />
+	<select levels="15" class="sport:weightlifting" named="1" />
+	<select levels="15" class="sport:wrestling" named="1" />
+	<select levels="15" class="sport:yoga" named="1" />
 	<select levels="15" class="tourism:alpine_hut" />
-	<select levels="15" class="tourism:apartment" />
-	<select levels="15" class="tourism:aquarium" />
-	<select levels="15" class="tourism:artwork" />
-	<select levels="15" class="tourism:attraction" />
+	<select levels="15" class="tourism:apartment" named="1" />
+	<select levels="15" class="tourism:aquarium" named="1" />
+	<select levels="15" class="tourism:artwork" named="1" />
+	<select levels="15" class="tourism:attraction" named="1" />
 	<select levels="15" class="tourism:camp_site" />
 	<select levels="15" class="tourism:caravan_site" />
-	<select levels="15" class="tourism:chalet" />
-	<select levels="15" class="tourism:gallery" />
-	<select levels="15" class="tourism:guest_house" />
-	<select levels="15" class="tourism:hostel" />
-	<select levels="15" class="tourism:hotel" />
+	<select levels="15" class="tourism:chalet" named="1" />
+	<select levels="15" class="tourism:gallery" named="1" />
+	<select levels="15" class="tourism:guest_house" named="1" />
+	<select levels="15" class="tourism:hostel" named="1" />
+	<select levels="15" class="tourism:hotel" named="1" />
 	<select levels="15" class="tourism:information" />
-	<select levels="15" class="tourism:motel" />
-	<select levels="15" class="tourism:museum" />
+	<select levels="15" class="tourism:motel" named="1" />
+	<select levels="15" class="tourism:museum" named="1" />
 	<select levels="15" class="tourism:picnic_site" />
-	<select levels="15" class="tourism:theme_park" />
+	<select levels="15" class="tourism:theme_park" named="1" />
 	<select levels="15" class="tourism:viewpoint" />
 	<select levels="15" class="tourism:wilderness_hut" />
-	<select levels="15" class="tourism:zoo" />
-	<select levels="15" class="tourism:yes" />
-	<select levels="15" class="waterway:river" />
-	<select levels="15" class="waterway:riverbank" />
+	<select levels="15" class="tourism:zoo" named="1" />
+	<select levels="15" class="tourism:yes" named="1" />
+	<select levels="6,9,12,15" class="waterway:river" />
+	<select levels="6,9,12,15" class="waterway:riverbank" />
 	<select levels="15" class="waterway:stream" />
 	<select levels="15" class="waterway:wadi" />
 	<select levels="15" class="waterway:drystream" />
-	<select levels="15" class="waterway:canal" />
+	<select levels="9,12,15" class="waterway:canal" />
 	<select levels="15" class="waterway:drain" />
 	<select levels="15" class="waterway:ditch" />
 	<select levels="15" class="waterway:fairway" />
 	<select levels="15" class="waterway:dock" />
 	<select levels="15" class="waterway:boatyard" />
-	<select levels="15" class="waterway:dam" />
+	<select levels="9,12,15" class="waterway:dam" />
 	<select levels="15" class="waterway:weir" />
 	<select levels="15" class="waterway:stream_end" />
-	<select levels="15" class="waterway:waterfall" />
+	<select levels="9,12,15" class="waterway:waterfall" />
 	<select levels="15" class="waterway:lock_gate" />
 	<select levels="15" class="waterway:turning_point" />
 	<select levels="15" class="waterway:water_point" />
