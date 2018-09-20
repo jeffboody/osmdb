@@ -4,7 +4,7 @@ SOURCE   = $(TARGET).c $(CLASSES:%=%.c)
 OBJECTS  = $(TARGET).o $(CLASSES:%=%.o)
 HFILES   = $(CLASSES:%=%.h)
 OPT      = -O2 -Wall
-CFLAGS   = $(OPT) -I.
+CFLAGS   = $(OPT) -I. -Wno-int-to-void-pointer-cast
 LDFLAGS  = -Lterrain -lterrain -La3d -la3d -Llibxmlstream -lxmlstream -Llibexpat/expat/lib -lexpat -lm -lz
 CCC      = gcc
 

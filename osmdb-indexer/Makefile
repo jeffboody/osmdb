@@ -1,5 +1,5 @@
 TARGET   = osmdb-indexer
-CLASSES  = ../osmdb_util ../osmdb_node ../osmdb_way ../osmdb_relation ../osmdb_chunk ../osmdb_index ../osmdb_parser
+CLASSES  = ../osmdb_util ../osmdb_node ../osmdb_way ../osmdb_relation ../osmdb_chunk ../osmdb_tile ../osmdb_index ../osmdb_parser
 SOURCE   = $(TARGET).c $(CLASSES:%=%.c)
 OBJECTS  = $(TARGET).o $(CLASSES:%=%.o)
 HFILES   = $(CLASSES:%=%.h)
