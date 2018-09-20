@@ -32,14 +32,12 @@
 
 typedef struct
 {
-	// map from class name to zoom levels
-	a3d_hashmap_t* classes;
+	// map from class name to filter masks
+	a3d_hashmap_t* masks;
 } osmdb_filter_t;
 
 osmdb_filter_t* osmdb_filter_new(const char* fname);
 void            osmdb_filter_delete(osmdb_filter_t** _self);
-a3d_list_t*     osmdb_filter_select(osmdb_filter_t* self,
-                                    const char** atts, int line);
 a3d_list_t*     osmdb_filter_selectNode(osmdb_filter_t* self,
                                         osmdb_node_t* node);
 a3d_list_t*     osmdb_filter_selectWay(osmdb_filter_t* self,
