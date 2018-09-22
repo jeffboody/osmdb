@@ -26,7 +26,7 @@
 
 #include "a3d/a3d_hashmap.h"
 
-#define OSMDB_CHUNK_COUNT 100000
+#define OSMDB_CHUNK_COUNT 10000
 
 typedef struct
 {

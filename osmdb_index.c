@@ -38,8 +38,8 @@
 #define LOG_TAG "osmdb"
 #include "libxmlstream/xml_log.h"
 
-#define OSMDB_CHUNK_SIZE 100*1024*1024
-#define OSMDB_TILE_SIZE  1000000
+#define OSMDB_CHUNK_SIZE 250*1024*1024
+#define OSMDB_TILE_SIZE  2500000
 
 /***********************************************************
 * private                                                  *
