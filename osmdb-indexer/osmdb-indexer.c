@@ -52,6 +52,7 @@ static int nodeFn(void* priv, osmdb_node_t* node)
 	stats_nodes += 1.0;
 	if(fmod(stats_nodes, 100000.0) == 0.0)
 	{
+		LOGI("[N] %0.0lf", stats_nodes);
 		osmdb_index_stats(index);
 	}
 
@@ -69,6 +70,7 @@ static int wayFn(void* priv, osmdb_way_t* way)
 	stats_ways += 1.0;
 	if(fmod(stats_ways, 100000.0) == 0.0)
 	{
+		LOGI("[W] %0.0lf", stats_ways);
 		osmdb_index_stats(index);
 	}
 
@@ -86,6 +88,7 @@ static int relationFn(void* priv, osmdb_relation_t* relation)
 	stats_relations += 1.0;
 	if(fmod(stats_relations, 100000.0) == 0.0)
 	{
+		LOGI("[R] %0.0lf", stats_relations);
 		osmdb_index_stats(index);
 	}
 
