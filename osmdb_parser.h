@@ -34,10 +34,19 @@ typedef int (*osmdb_parser_wayFn)(void* priv,
                                   osmdb_way_t* way);
 typedef int (*osmdb_parser_relationFn)(void* priv,
                                        osmdb_relation_t* relation);
+typedef int (*osmdb_parser_nodeRefFn)(void* priv,
+                                      double ref);
+typedef int (*osmdb_parser_wayRefFn)(void* priv,
+                                     double ref);
+typedef int (*osmdb_parser_relationRefFn)(void* priv,
+                                          double ref);
 
 int osmdb_parse(const char* fname, void* priv,
                 osmdb_parser_nodeFn node_fn,
                 osmdb_parser_wayFn way_fn,
-                osmdb_parser_relationFn relation_fn);
+                osmdb_parser_relationFn relation_fn,
+                osmdb_parser_nodeRefFn nref_fn,
+                osmdb_parser_wayRefFn wref_fn,
+                osmdb_parser_relationRefFn rref_fn);
 
 #endif

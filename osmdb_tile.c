@@ -24,11 +24,11 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
-#include "libxmlstream/xml_istream.h"
 #include "libxmlstream/xml_ostream.h"
 #include "osmdb_tile.h"
 #include "osmdb_util.h"
 #include "osmdb_index.h"
+#include "osmdb_parser.h"
 
 #define LOG_TAG "osmdb"
 #include "libxmlstream/xml_log.h"
@@ -120,61 +120,45 @@ static int osmdb_tile_finish(osmdb_tile_t* self)
 	return success;
 }
 
-static int osmdb_tile_startFn(void* priv,
-                              int line,
-                              const char* name,
-                              const char** atts)
+static int nodeFn(void* priv, osmdb_node_t* node)
 {
 	assert(priv);
-	assert(name);
-	assert(atts);
+	assert(node);
 
-	osmdb_tile_t* self = (osmdb_tile_t*) priv;
+	// nodes not allowed in tiles
+	return 1;
+}
 
-	a3d_hashmap_t* hash = NULL;
-	if(strcmp(name, "n") == 0)
-	{
-		hash = self->hash_nodes;
-	}
-	else if(strcmp(name, "w") == 0)
-	{
-		hash = self->hash_ways;
-	}
-	else if(strcmp(name, "r") == 0)
-	{
-		hash = self->hash_relations;
-	}
+static int wayFn(void* priv, osmdb_way_t* way)
+{
+	assert(priv);
+	assert(way);
 
-	// ignore unsupported element types
-	if(hash == NULL)
-	{
-		return 1;
-	}
+	// ways not allowed in tiles
+	return 0;
+}
 
-	int i = 0;
-	int j = 1;
-	const char* ref = NULL;
-	while(atts[i] && atts[j])
-	{
-		if(strcmp(atts[i], "ref") == 0)
-		{
-			ref = atts[j];
-			break;
-		}
-		i += 2;
-		j += 2;
-	}
+static int relationFn(void* priv,
+                      osmdb_relation_t* relation)
+{
+	assert(priv);
+	assert(relation);
 
-	if(ref == NULL)
-	{
-		LOGE("invalid line=%i", line);
-		return 0;
-	}
+	// relations not allowed in tiles
+	return 0;
+}
+
+static int nodeRefFn(void* priv, double ref)
+{
+	assert(priv);
+
+	osmdb_tile_t*  self = (osmdb_tile_t*) priv;
+	a3d_hashmap_t* hash = self->hash_nodes;
 
 	a3d_hashmapIter_t iter;
-	if(a3d_hashmap_add(hash, &iter,
-	                   (const void*) &OSMDB_TILE_ONE,
-	                   ref) == 0)
+	if(a3d_hashmap_addf(hash, &iter,
+	                    (const void*) &OSMDB_TILE_ONE,
+	                    "%0.0lf", ref) == 0)
 	{
 		return 0;
 	}
@@ -183,14 +167,40 @@ static int osmdb_tile_startFn(void* priv,
 	return 1;
 }
 
-static int osmdb_tile_endFn(void* priv,
-                            int line,
-                            const char* name,
-                            const char* content)
+static int wayRefFn(void* priv, double ref)
 {
-	// content may be NULL
 	assert(priv);
-	assert(name);
+
+	osmdb_tile_t*  self = (osmdb_tile_t*) priv;
+	a3d_hashmap_t* hash = self->hash_ways;
+
+	a3d_hashmapIter_t iter;
+	if(a3d_hashmap_addf(hash, &iter,
+	                    (const void*) &OSMDB_TILE_ONE,
+	                    "%0.0lf", ref) == 0)
+	{
+		return 0;
+	}
+	++self->size;
+
+	return 1;
+}
+
+static int relationRefFn(void* priv, double ref)
+{
+	assert(priv);
+
+	osmdb_tile_t*  self = (osmdb_tile_t*) priv;
+	a3d_hashmap_t* hash = self->hash_relations;
+
+	a3d_hashmapIter_t iter;
+	if(a3d_hashmap_addf(hash, &iter,
+	                    (const void*) &OSMDB_TILE_ONE,
+	                    "%0.0lf", ref) == 0)
+	{
+		return 0;
+	}
+	++self->size;
 
 	return 1;
 }
@@ -203,10 +213,10 @@ static int osmdb_tile_import(osmdb_tile_t* self)
 	osmdb_tile_fname(self->base,
 	                 self->zoom, self->x, self->y,
 	                 fname);
-	if(xml_istream_parseGz((void*) self,
-                           osmdb_tile_startFn,
-                           osmdb_tile_endFn,
-                           fname) == 0)
+
+	if(osmdb_parse(fname, (void*) self,
+	               nodeFn, wayFn, relationFn,
+	               nodeRefFn, wayRefFn, relationRefFn) == 0)
 	{
 		osmdb_tile_finish(self);
 		return 0;
@@ -370,6 +380,7 @@ void osmdb_tile_fname(const char* base,
 	assert(base);
 	assert(fname);
 
+	// TODO - change to file.osmdb.gz
 	snprintf(fname, 256, "%s/tile/%i/%i/%i.osmtile.gz",
 	         base, zoom, x, y);
 }

@@ -37,6 +37,9 @@
 #define OSMDB_STATE_OSMDB_WAY_ND      4
 #define OSMDB_STATE_OSMDB_REL         5
 #define OSMDB_STATE_OSMDB_REL_MEMBER  6
+#define OSMDB_STATE_OSMDB_NODE_REF    7
+#define OSMDB_STATE_OSMDB_WAY_REF     8
+#define OSMDB_STATE_OSMDB_REL_REF     9
 #define OSMDB_STATE_DONE             -1
 
 /***********************************************************
@@ -49,9 +52,12 @@ typedef struct
 
 	// callbacks
 	void* priv;
-	osmdb_parser_nodeFn     node_fn;
-	osmdb_parser_wayFn      way_fn;
-	osmdb_parser_relationFn relation_fn;
+	osmdb_parser_nodeFn        node_fn;
+	osmdb_parser_wayFn         way_fn;
+	osmdb_parser_relationFn    relation_fn;
+	osmdb_parser_nodeRefFn     nref_fn;
+	osmdb_parser_wayRefFn      wref_fn;
+	osmdb_parser_relationRefFn rref_fn;
 
 	// temporary data
 	union
@@ -252,15 +258,153 @@ osmdb_parser_endOsmRelMember(osmdb_parser_t* self, int line,
 	return 1;
 }
 
+static int
+osmdb_parser_beginOsmNodeRef(osmdb_parser_t* self, int line,
+                             const char** atts)
+{
+	assert(self);
+	assert(atts);
+
+	self->state = OSMDB_STATE_OSMDB_NODE_REF;
+
+	const char* ref = NULL;
+
+	int idx0 = 0;
+	int idx1 = 1;
+	while(atts[idx0] && atts[idx1])
+	{
+		if(strcmp(atts[idx0], "ref") == 0)
+		{
+			ref = atts[idx1];
+			break;
+		}
+
+		idx0 += 2;
+		idx1 += 2;
+	}
+
+	if(ref == NULL)
+	{
+		return 0;
+	}
+
+	return self->nref_fn(self->priv, strtod(ref, NULL));
+}
+
+static int
+osmdb_parser_endOsmNodeRef(osmdb_parser_t* self, int line,
+                           const char* content)
+{
+	// content may be NULL
+	assert(self);
+
+	self->state = OSMDB_STATE_OSMDB;
+	return 1;
+}
+
+static int
+osmdb_parser_beginOsmWayRef(osmdb_parser_t* self, int line,
+                            const char** atts)
+{
+	assert(self);
+	assert(atts);
+
+	self->state = OSMDB_STATE_OSMDB_WAY_REF;
+
+	const char* ref = NULL;
+
+	int idx0 = 0;
+	int idx1 = 1;
+	while(atts[idx0] && atts[idx1])
+	{
+		if(strcmp(atts[idx0], "ref") == 0)
+		{
+			ref = atts[idx1];
+			break;
+		}
+
+		idx0 += 2;
+		idx1 += 2;
+	}
+
+	if(ref == NULL)
+	{
+		return 0;
+	}
+
+	return self->wref_fn(self->priv, strtod(ref, NULL));
+}
+
+static int
+osmdb_parser_endOsmWayRef(osmdb_parser_t* self, int line,
+                          const char* content)
+{
+	// content may be NULL
+	assert(self);
+
+	self->state = OSMDB_STATE_OSMDB;
+	return 1;
+}
+
+static int
+osmdb_parser_beginOsmRelationRef(osmdb_parser_t* self, int line,
+                                 const char** atts)
+{
+	assert(self);
+	assert(atts);
+
+	self->state = OSMDB_STATE_OSMDB_REL_REF;
+
+	const char* ref = NULL;
+
+	int idx0 = 0;
+	int idx1 = 1;
+	while(atts[idx0] && atts[idx1])
+	{
+		if(strcmp(atts[idx0], "ref") == 0)
+		{
+			ref = atts[idx1];
+			break;
+		}
+
+		idx0 += 2;
+		idx1 += 2;
+	}
+
+	if(ref == NULL)
+	{
+		return 0;
+	}
+
+	return self->rref_fn(self->priv, strtod(ref, NULL));
+}
+
+static int
+osmdb_parser_endOsmRelationRef(osmdb_parser_t* self, int line,
+                               const char* content)
+{
+	// content may be NULL
+	assert(self);
+
+	self->state = OSMDB_STATE_OSMDB;
+	return 1;
+}
+
 static osmdb_parser_t*
 osmdb_parser_new(void* priv,
                  osmdb_parser_nodeFn node_fn,
                  osmdb_parser_wayFn way_fn,
-                 osmdb_parser_relationFn relation_fn)
+                 osmdb_parser_relationFn relation_fn,
+                 osmdb_parser_nodeRefFn nref_fn,
+                 osmdb_parser_wayRefFn wref_fn,
+                 osmdb_parser_relationRefFn rref_fn)
 {
 	assert(node_fn);
 	assert(way_fn);
 	assert(relation_fn);
+	assert(nref_fn);
+	assert(wref_fn);
+	assert(rref_fn);
 
 	osmdb_parser_t* self = (osmdb_parser_t*)
 	                       calloc(1, sizeof(osmdb_parser_t));
@@ -274,6 +418,9 @@ osmdb_parser_new(void* priv,
 	self->node_fn     = node_fn;
 	self->way_fn      = way_fn;
 	self->relation_fn = relation_fn;
+	self->nref_fn     = nref_fn;
+	self->wref_fn     = wref_fn;
+	self->rref_fn     = rref_fn;
 
 	return self;
 }
@@ -319,7 +466,9 @@ static int osmdb_parser_start(void* priv,
 	int state = self->state;
 	if(state == OSMDB_STATE_INIT)
 	{
-		if(strcmp(name, "osmdb") == 0)
+		// TODO - remove osmtile
+		if((strcmp(name, "osmdb") == 0) ||
+		   (strcmp(name, "osmtile") == 0))
 		{
 			return osmdb_parser_beginOsm(self, line, atts);
 		}
@@ -337,6 +486,18 @@ static int osmdb_parser_start(void* priv,
 		else if(strcmp(name, "relation") == 0)
 		{
 			return osmdb_parser_beginOsmRel(self, line, atts);
+		}
+		else if(strcmp(name, "n") == 0)
+		{
+			return osmdb_parser_beginOsmNodeRef(self, line, atts);
+		}
+		else if(strcmp(name, "w") == 0)
+		{
+			return osmdb_parser_beginOsmWayRef(self, line, atts);
+		}
+		else if(strcmp(name, "r") == 0)
+		{
+			return osmdb_parser_beginOsmRelationRef(self, line, atts);
 		}
 	}
 	else if(state == OSMDB_STATE_OSMDB_WAY)
@@ -395,6 +556,18 @@ static int osmdb_parser_end(void* priv,
 	{
 		return osmdb_parser_endOsmRelMember(self, line, content);
 	}
+	else if(state == OSMDB_STATE_OSMDB_NODE_REF)
+	{
+		return osmdb_parser_endOsmNodeRef(self, line, content);
+	}
+	else if(state == OSMDB_STATE_OSMDB_WAY_REF)
+	{
+		return osmdb_parser_endOsmWayRef(self, line, content);
+	}
+	else if(state == OSMDB_STATE_OSMDB_REL_REF)
+	{
+		return osmdb_parser_endOsmRelationRef(self, line, content);
+	}
 
 	LOGE("state=%i, name=%s, line=%i",
 	     state, name, line);
@@ -408,16 +581,23 @@ static int osmdb_parser_end(void* priv,
 int osmdb_parse(const char* fname, void* priv,
                 osmdb_parser_nodeFn node_fn,
                 osmdb_parser_wayFn way_fn,
-                osmdb_parser_relationFn relation_fn)
+                osmdb_parser_relationFn relation_fn,
+                osmdb_parser_nodeRefFn nref_fn,
+                osmdb_parser_wayRefFn wref_fn,
+                osmdb_parser_relationRefFn rref_fn)
 {
 	// priv may be NULL
 	assert(fname);
 	assert(node_fn);
 	assert(way_fn);
 	assert(relation_fn);
+	assert(nref_fn);
+	assert(wref_fn);
+	assert(rref_fn);
 
 	osmdb_parser_t* self;
-	self = osmdb_parser_new(priv, node_fn, way_fn, relation_fn);
+	self = osmdb_parser_new(priv, node_fn, way_fn, relation_fn,
+	                        nref_fn, wref_fn, rref_fn);
 	if(self == NULL)
 	{
 		return 0;
