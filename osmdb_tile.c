@@ -62,7 +62,7 @@ static int osmdb_tile_finish(osmdb_tile_t* self)
 		}
 		else
 		{
-			success &= xml_ostream_begin(os, "osmtile");
+			success &= xml_ostream_begin(os, "osmdb");
 		}
 	}
 
@@ -380,7 +380,6 @@ void osmdb_tile_fname(const char* base,
 	assert(base);
 	assert(fname);
 
-	// TODO - change to file.osmdb.gz
-	snprintf(fname, 256, "%s/tile/%i/%i/%i.osmtile.gz",
+	snprintf(fname, 256, "%s/tile/%i/%i/%i.osmdb.gz",
 	         base, zoom, x, y);
 }

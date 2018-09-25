@@ -466,9 +466,7 @@ static int osmdb_parser_start(void* priv,
 	int state = self->state;
 	if(state == OSMDB_STATE_INIT)
 	{
-		// TODO - remove osmtile
-		if((strcmp(name, "osmdb") == 0) ||
-		   (strcmp(name, "osmtile") == 0))
+		if(strcmp(name, "osmdb") == 0)
 		{
 			return osmdb_parser_beginOsm(self, line, atts);
 		}
