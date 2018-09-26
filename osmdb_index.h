@@ -27,6 +27,7 @@
 #include <dirent.h>
 #include "a3d/a3d_list.h"
 #include "a3d/a3d_hashmap.h"
+#include "libxmlstream/xml_ostream.h"
 
 #define OSMDB_TYPE_NODE     1
 #define OSMDB_TYPE_WAY      2
@@ -91,6 +92,8 @@ typedef struct osmdb_index_s
 	double stats_tile_evict;
 	double stats_tile_add;
 	double stats_tile_add_dt;
+	double stats_tile_make;
+	double stats_tile_make_dt;
 	double stats_tile_get;
 	double stats_tile_get_dt;
 	double stats_tile_load;
@@ -106,6 +109,9 @@ int                osmdb_index_addChunk(osmdb_index_t* self,
 int                osmdb_index_addTile(osmdb_index_t* self,
                                        int zoom, int x, int y,
                                        int type, double id);
+int                osmdb_index_makeTile(osmdb_index_t* self,
+                                        int zoom, int x, int y,
+                                        xml_ostream_t* os);
 const void*        osmdb_index_find(osmdb_index_t* self,
                                     int type, double id);
 void               osmdb_index_stats(osmdb_index_t* self);

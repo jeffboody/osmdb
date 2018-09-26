@@ -534,6 +534,292 @@ const void* osmdb_indexIter_peek(osmdb_indexIter_t* self)
 	return a3d_hashmap_val(self->chunk_iter);
 }
 
+static int
+osmdb_index_gatherNode(osmdb_index_t* self, double id,
+	                   a3d_hashmap_t* hash_nodes)
+{
+	assert(self);
+	assert(hash_nodes);
+
+	// check if id already included
+	a3d_hashmapIter_t iter;
+	if(a3d_hashmap_findf(hash_nodes, &iter, "%0.0lf", id))
+	{
+		return 1;
+	}
+
+	// node may not exist due to osmosis
+	osmdb_node_t* node;
+	node = (osmdb_node_t*)
+	       osmdb_index_find(self, OSMDB_TYPE_NODE, id);
+	if(node == NULL)
+	{
+		return 1;
+	}
+
+	osmdb_node_t* copy = osmdb_node_copy(node);
+	if(copy == NULL)
+	{
+		return 0;
+	}
+
+	if(a3d_hashmap_addf(hash_nodes, &iter,
+	                    (const void*) copy,
+	                    "%0.0lf", id) == 0)
+	{
+		goto fail_add;
+	}
+
+	// succcess
+	return 1;
+
+	// failure
+	fail_add:
+		osmdb_node_delete(&copy);
+	return 0;
+}
+
+static int
+osmdb_index_gatherWay(osmdb_index_t* self, double id,
+	                  a3d_hashmap_t* hash_nodes,
+	                  a3d_hashmap_t* hash_ways)
+{
+	assert(self);
+	assert(hash_nodes);
+	assert(hash_ways);
+
+	// check if id already included
+	a3d_hashmapIter_t iterator;
+	if(a3d_hashmap_findf(hash_ways, &iterator,
+	                     "%0.0lf", id))
+	{
+		return 1;
+	}
+
+	// way may not exist due to osmosis
+	osmdb_way_t* way;
+	way = (osmdb_way_t*)
+	      osmdb_index_find(self, OSMDB_TYPE_WAY, id);
+	if(way == NULL)
+	{
+		return 1;
+	}
+
+	osmdb_way_t* copy = osmdb_way_copy(way);
+	if(copy == NULL)
+	{
+		return 0;
+	}
+
+	// gather nds
+	a3d_listitem_t* iter = a3d_list_head(copy->nds);
+	while(iter)
+	{
+		double* ref = (double*)
+		              a3d_list_peekitem(iter);
+		if(osmdb_index_gatherNode(self, *ref,
+		                          hash_nodes) == 0)
+		{
+			goto fail_gather;
+		}
+		iter = a3d_list_next(iter);
+	}
+
+	if(a3d_hashmap_addf(hash_ways, &iterator,
+	                    (const void*) copy,
+	                    "%0.0lf", id) == 0)
+	{
+		goto fail_add;
+	}
+
+	// succcess
+	return 1;
+
+	// failure
+	fail_gather:
+	fail_add:
+		osmdb_way_delete(&copy);
+	return 0;
+}
+
+static int
+osmdb_index_gatherRelation(osmdb_index_t* self, double id,
+	                   a3d_hashmap_t* hash_nodes,
+	                   a3d_hashmap_t* hash_ways,
+	                   a3d_hashmap_t* hash_relations)
+{
+	assert(self);
+	assert(hash_nodes);
+	assert(hash_ways);
+	assert(hash_relations);
+
+	// check if id already included
+	a3d_hashmapIter_t iterator;
+	if(a3d_hashmap_findf(hash_relations, &iterator,
+	                     "%0.0lf", id))
+	{
+		return 1;
+	}
+
+	// relation may not exist due to osmosis
+	osmdb_relation_t* relation;
+	relation = (osmdb_relation_t*)
+	           osmdb_index_find(self, OSMDB_TYPE_RELATION, id);
+	if(relation == NULL)
+	{
+		return 1;
+	}
+
+	osmdb_relation_t* copy = osmdb_relation_copy(relation);
+	if(copy == NULL)
+	{
+		return 0;
+	}
+
+	// gather members
+	a3d_listitem_t* iter = a3d_list_head(copy->members);
+	while(iter)
+	{
+		osmdb_member_t* m = (osmdb_member_t*)
+		              a3d_list_peekitem(iter);
+		if(m->type == OSMDB_TYPE_NODE)
+		{
+			if(osmdb_index_gatherNode(self, m->ref,
+			                          hash_nodes) == 0)
+			{
+				goto fail_gather;
+			}
+		}
+		else if(m->type == OSMDB_TYPE_WAY)
+		{
+			if(osmdb_index_gatherWay(self, m->ref,
+			                         hash_nodes,
+			                         hash_ways) == 0)
+			{
+				goto fail_gather;
+			}
+		}
+		iter = a3d_list_next(iter);
+	}
+
+	if(a3d_hashmap_addf(hash_ways, &iterator,
+	                    (const void*) copy,
+	                    "%0.0lf", id) == 0)
+	{
+		goto fail_add;
+	}
+
+	// succcess
+	return 1;
+
+	// failure
+	fail_gather:
+	fail_add:
+		osmdb_relation_delete(&copy);
+	return 0;
+}
+
+static int
+osmdb_index_gatherTile(osmdb_index_t* self, osmdb_tile_t* tile,
+	                   a3d_hashmap_t* hash_nodes,
+	                   a3d_hashmap_t* hash_ways,
+	                   a3d_hashmap_t* hash_relations)
+{
+	assert(self);
+	assert(tile);
+	assert(hash_nodes);
+	assert(hash_ways);
+	assert(hash_relations);
+
+	a3d_hashmapIter_t  iterator;
+	a3d_hashmapIter_t* iter;
+	iter = a3d_hashmap_head(tile->hash_nodes, &iterator);
+	while(iter)
+	{
+		double* ref = (double*)
+		              a3d_hashmap_val(iter);
+
+		if(osmdb_index_gatherNode(self, *ref, hash_nodes) == 0)
+		{
+			goto fail_nodes;
+		}
+
+		iter = a3d_hashmap_next(iter);
+	}
+
+	iter = a3d_hashmap_head(tile->hash_ways, &iterator);
+	while(iter)
+	{
+		double* ref = (double*)
+		              a3d_hashmap_val(iter);
+
+		if(osmdb_index_gatherWay(self, *ref,
+		                         hash_nodes, hash_ways) == 0)
+		{
+			goto fail_ways;
+		}
+
+		iter = a3d_hashmap_next(iter);
+	}
+
+	iter = a3d_hashmap_head(tile->hash_relations, &iterator);
+	while(iter)
+	{
+		double* ref = (double*)
+		              a3d_hashmap_val(iter);
+
+		if(osmdb_index_gatherRelation(self, *ref, hash_nodes,
+		                              hash_ways, hash_relations) == 0)
+		{
+			goto fail_relations;
+		}
+
+		iter = a3d_hashmap_next(iter);
+	}
+
+	// success
+	return 1;
+
+	// failure
+	fail_relations:
+	{
+		iter = a3d_hashmap_head(tile->hash_relations, &iterator);
+		while(iter)
+		{
+			osmdb_relation_t* relation;
+			relation = (osmdb_relation_t*)
+			           a3d_hashmap_remove(hash_relations,
+			                              &iter);
+			osmdb_relation_delete(&relation);
+		}
+	}
+	fail_ways:
+	{
+		iter = a3d_hashmap_head(tile->hash_ways, &iterator);
+		while(iter)
+		{
+			osmdb_way_t* way;
+			way = (osmdb_way_t*)
+			      a3d_hashmap_remove(hash_ways,
+			                         &iter);
+			osmdb_way_delete(&way);
+		}
+	}
+	fail_nodes:
+	{
+		iter = a3d_hashmap_head(tile->hash_nodes, &iterator);
+		while(iter)
+		{
+			osmdb_node_t* node;
+			node = (osmdb_node_t*)
+			       a3d_hashmap_remove(hash_nodes,
+			                          &iter);
+			osmdb_node_delete(&node);
+		}
+	}
+	return 0;
+}
+
 /***********************************************************
 * public - osmdb_index_t                                   *
 ***********************************************************/
@@ -606,6 +892,8 @@ osmdb_index_t* osmdb_index_new(const char* base)
 	self->stats_tile_evict    = 0.0;
 	self->stats_tile_add      = 0.0;
 	self->stats_tile_add_dt   = 0.0;
+	self->stats_tile_make     = 0.0;
+	self->stats_tile_make_dt  = 0.0;
 	self->stats_tile_get      = 0.0;
 	self->stats_tile_get_dt   = 0.0;
 	self->stats_tile_trim     = 0.0;
@@ -802,6 +1090,123 @@ int osmdb_index_addTile(osmdb_index_t* self,
 	return 1;
 }
 
+int osmdb_index_makeTile(osmdb_index_t* self,
+                         int zoom, int x, int y,
+                         xml_ostream_t* os)
+{
+	assert(self);
+	assert(os);
+
+	double t0 = a3d_timestamp();
+	self->stats_tile_make += 1.0;
+
+	char key[256];
+	snprintf(key, 256, "Z%iX%iY%i", zoom, x, y);
+
+	// get the tile
+	a3d_listitem_t* list_iter;
+	osmdb_tile_t* tile;
+	tile = osmdb_index_getTile(self, zoom, x, y,
+	                           key, &list_iter);
+	if(tile == NULL)
+	{
+		// this error doesn't affect the consistency
+		// of the database so don't set the err flag
+		LOGE("invalid key=%s", key);
+		self->stats_tile_make_dt += a3d_timestamp() - t0;
+		return 0;
+	}
+
+	// allocate temporary hashes
+	// which are needed to avoid duplicate entries
+	a3d_hashmap_t* hash_nodes = a3d_hashmap_new();
+	if(hash_nodes == NULL)
+	{
+		goto fail_nodes;
+	}
+
+	a3d_hashmap_t* hash_ways = a3d_hashmap_new();
+	if(hash_ways == NULL)
+	{
+		goto fail_ways;
+	}
+
+	a3d_hashmap_t* hash_relations = a3d_hashmap_new();
+	if(hash_relations == NULL)
+	{
+		goto fail_relations;
+	}
+
+	if(osmdb_index_gatherTile(self, tile,
+	                          hash_nodes, hash_ways,
+	                          hash_relations) == 0)
+	{
+		goto fail_gather;
+	}
+
+	// stream data
+	int ret = xml_ostream_begin(os, "osmdb");
+
+	a3d_hashmapIter_t  iterator;
+	a3d_hashmapIter_t* iter;
+	iter = a3d_hashmap_head(hash_nodes, &iterator);
+	while(iter)
+	{
+		osmdb_node_t* node = (osmdb_node_t*)
+		                     a3d_hashmap_remove(hash_nodes, &iter);
+		ret &= osmdb_node_export(node, os);
+		osmdb_node_delete(&node);
+	}
+
+	iter = a3d_hashmap_head(hash_ways, &iterator);
+	while(iter)
+	{
+		osmdb_way_t* way = (osmdb_way_t*)
+		                   a3d_hashmap_remove(hash_ways, &iter);
+		ret &= osmdb_way_export(way, os);
+		osmdb_way_delete(&way);
+	}
+
+	iter = a3d_hashmap_head(hash_relations, &iterator);
+	while(iter)
+	{
+		osmdb_relation_t* relation;
+		relation = (osmdb_relation_t*)
+		           a3d_hashmap_remove(hash_relations, &iter);
+		ret &= osmdb_relation_export(relation, os);
+		osmdb_relation_delete(&relation);
+	}
+
+	ret &= xml_ostream_end(os);
+
+	// check if stream is complete
+	if((ret == 0) || (xml_ostream_complete(os) == 0))
+	{
+		goto fail_os;
+	}
+
+	a3d_hashmap_delete(&hash_relations);
+	a3d_hashmap_delete(&hash_ways);
+	a3d_hashmap_delete(&hash_nodes);
+
+	self->stats_tile_make_dt += a3d_timestamp() - t0;
+
+	// success
+	return 1;
+
+	// failure
+	fail_os:
+	fail_gather:
+		a3d_hashmap_delete(&hash_relations);
+	fail_relations:
+		a3d_hashmap_delete(&hash_ways);
+	fail_ways:
+		a3d_hashmap_delete(&hash_nodes);
+	fail_nodes:
+		self->stats_tile_make_dt += a3d_timestamp() - t0;
+	return 0;
+}
+
 const void* osmdb_index_find(osmdb_index_t* self,
                              int type, double id)
 {
@@ -867,6 +1272,7 @@ void osmdb_index_stats(osmdb_index_t* self)
 	LOGI("HIT/MISS/EVICT: %0.0lf, %0.0lf, %0.0lf",
 	     self->stats_tile_hit, self->stats_tile_miss, self->stats_tile_evict);
 	LOGI("ADD:  cnt=%0.0lf, dt=%lf", self->stats_tile_add, self->stats_tile_add_dt);
+	LOGI("MAKE: cnt=%0.0lf, dt=%lf", self->stats_tile_make, self->stats_tile_make_dt);
 	LOGI("GET:  cnt=%0.0lf, dt=%lf", self->stats_tile_get, self->stats_tile_get_dt);
 	LOGI("LOAD: cnt=%0.0lf, dt=%lf", self->stats_tile_load, self->stats_tile_load_dt);
 	LOGI("TRIM: cnt=%0.0lf, dt=%lf", self->stats_tile_trim, self->stats_tile_trim_dt);
