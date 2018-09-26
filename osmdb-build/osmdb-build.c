@@ -42,7 +42,7 @@ int main(int argc, char** argv)
 
 	if(argc != 3)
 	{
-		LOGE("%s in.osm out.osmdb.gz", argv[0]);
+		LOGE("%s in.osm out.xmlz", argv[0]);
 		return EXIT_FAILURE;
 	}
 

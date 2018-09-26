@@ -114,7 +114,7 @@ int main(int argc, char** argv)
 
 	if(argc != 3)
 	{
-		LOGE("%s in.osmdb.gz out-path", argv[0]);
+		LOGE("%s in.xmlz out-path", argv[0]);
 		return EXIT_FAILURE;
 	}
 

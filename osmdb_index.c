@@ -460,7 +460,7 @@ osmdb_indexIter_t* osmdb_indexIter_next(osmdb_indexIter_t* self)
 			char name[256];
 			snprintf(name, 256, "%s", self->de->d_name);
 
-			char* ext = strstr(name, ".osmdb.gz");
+			char* ext = strstr(name, ".xmlz");
 			if(ext)
 			{
 				// extract idu from name

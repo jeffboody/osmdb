@@ -366,17 +366,17 @@ void osmdb_chunk_fname(const char* base,
 
 	if(type == OSMDB_TYPE_NODE)
 	{
-		snprintf(fname, 256, "%s/node/%0.0lf.osmdb.gz",
+		snprintf(fname, 256, "%s/node/%0.0lf.xmlz",
 		         base, idu);
 	}
 	else if(type == OSMDB_TYPE_WAY)
 	{
-		snprintf(fname, 256, "%s/way/%0.0lf.osmdb.gz",
+		snprintf(fname, 256, "%s/way/%0.0lf.xmlz",
 		         base, idu);
 	}
 	else
 	{
-		snprintf(fname, 256, "%s/relation/%0.0lf.osmdb.gz",
+		snprintf(fname, 256, "%s/relation/%0.0lf.xmlz",
 		         base, idu);
 	}
 }

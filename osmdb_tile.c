@@ -380,6 +380,6 @@ void osmdb_tile_fname(const char* base,
 	assert(base);
 	assert(fname);
 
-	snprintf(fname, 256, "%s/tile/%i/%i/%i.osmdb.gz",
+	snprintf(fname, 256, "%s/tile/%i/%i/%i.xmlz",
 	         base, zoom, x, y);
 }
