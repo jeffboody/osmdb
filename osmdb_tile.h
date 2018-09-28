@@ -24,7 +24,7 @@
 #ifndef osmdb_tile_H
 #define osmdb_tile_H
 
-#include "a3d/a3d_hashmap.h"
+#include "../a3d/a3d_hashmap.h"
 
 typedef struct
 {

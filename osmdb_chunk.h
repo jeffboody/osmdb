@@ -24,7 +24,7 @@
 #ifndef osmdb_chunk_H
 #define osmdb_chunk_H
 
-#include "a3d/a3d_hashmap.h"
+#include "../a3d/a3d_hashmap.h"
 
 #define OSMDB_CHUNK_COUNT 10000
 

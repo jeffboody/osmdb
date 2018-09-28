@@ -24,8 +24,8 @@
 #ifndef osmdb_relation_H
 #define osmdb_relation_H
 
-#include "a3d/a3d_list.h"
-#include "libxmlstream/xml_ostream.h"
+#include "../a3d/a3d_list.h"
+#include "../libxmlstream/xml_ostream.h"
 
 typedef struct
 {

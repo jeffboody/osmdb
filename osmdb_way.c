@@ -28,7 +28,7 @@
 #include "osmdb_util.h"
 
 #define LOG_TAG "osmdb"
-#include "libxmlstream/xml_log.h"
+#include "../libxmlstream/xml_log.h"
 
 /***********************************************************
 * public                                                   *

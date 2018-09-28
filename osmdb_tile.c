@@ -24,14 +24,14 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
-#include "libxmlstream/xml_ostream.h"
+#include "../libxmlstream/xml_ostream.h"
 #include "osmdb_tile.h"
 #include "osmdb_util.h"
 #include "osmdb_index.h"
 #include "osmdb_parser.h"
 
 #define LOG_TAG "osmdb"
-#include "libxmlstream/xml_log.h"
+#include "../libxmlstream/xml_log.h"
 
 const int OSMDB_TILE_ONE = 1;
 

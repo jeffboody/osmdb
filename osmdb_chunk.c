@@ -30,10 +30,10 @@
 #include "osmdb_index.h"
 #include "osmdb_parser.h"
 #include "osmdb_util.h"
-#include "libxmlstream/xml_ostream.h"
+#include "../libxmlstream/xml_ostream.h"
 
 #define LOG_TAG "osmdb"
-#include "libxmlstream/xml_log.h"
+#include "../libxmlstream/xml_log.h"
 
 /***********************************************************
 * private                                                  *

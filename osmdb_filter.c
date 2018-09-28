@@ -24,12 +24,12 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
-#include "libxmlstream/xml_istream.h"
+#include "../libxmlstream/xml_istream.h"
 #include "osmdb_filter.h"
 #include "osmdb_util.h"
 
 #define LOG_TAG "osmdb"
-#include "libxmlstream/xml_log.h"
+#include "../libxmlstream/xml_log.h"
 
 #define OSMDB_CLASS_SELECTED 1
 

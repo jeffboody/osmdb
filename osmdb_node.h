@@ -24,7 +24,7 @@
 #ifndef osmdb_node_H
 #define osmdb_node_H
 
-#include "libxmlstream/xml_ostream.h"
+#include "../libxmlstream/xml_ostream.h"
 
 typedef struct
 {

@@ -24,11 +24,11 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
-#include "libxmlstream/xml_istream.h"
+#include "../libxmlstream/xml_istream.h"
 #include "osmdb_parser.h"
 
 #define LOG_TAG "osmdb"
-#include "libxmlstream/xml_log.h"
+#include "../libxmlstream/xml_log.h"
 
 #define OSMDB_STATE_INIT              0
 #define OSMDB_STATE_OSMDB             1

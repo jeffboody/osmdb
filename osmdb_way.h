@@ -24,8 +24,8 @@
 #ifndef osmdb_way_H
 #define osmdb_way_H
 
-#include "a3d/a3d_list.h"
-#include "libxmlstream/xml_ostream.h"
+#include "../a3d/a3d_list.h"
+#include "../libxmlstream/xml_ostream.h"
 
 typedef struct
 {

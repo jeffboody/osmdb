@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "a3d/a3d_timestamp.h"
+#include "../a3d/a3d_timestamp.h"
 #include "osmdb_chunk.h"
 #include "osmdb_tile.h"
 #include "osmdb_index.h"
@@ -36,7 +36,7 @@
 #include "osmdb_util.h"
 
 #define LOG_TAG "osmdb"
-#include "libxmlstream/xml_log.h"
+#include "../libxmlstream/xml_log.h"
 
 #define OSMDB_CHUNK_SIZE 250*1024*1024
 #define OSMDB_TILE_SIZE  2500000

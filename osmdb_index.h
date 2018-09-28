@@ -25,9 +25,9 @@
 #define osmdb_index_H
 
 #include <dirent.h>
-#include "a3d/a3d_list.h"
-#include "a3d/a3d_hashmap.h"
-#include "libxmlstream/xml_ostream.h"
+#include "../a3d/a3d_list.h"
+#include "../a3d/a3d_hashmap.h"
+#include "../libxmlstream/xml_ostream.h"
 
 #define OSMDB_TYPE_NODE     1
 #define OSMDB_TYPE_WAY      2
