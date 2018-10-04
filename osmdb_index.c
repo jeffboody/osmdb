@@ -736,10 +736,9 @@ osmdb_index_gatherTile(osmdb_index_t* self, osmdb_tile_t* tile,
 	iter = a3d_hashmap_head(tile->hash_nodes, &iterator);
 	while(iter)
 	{
-		double* ref = (double*)
-		              a3d_hashmap_val(iter);
+		double ref = strtod(a3d_hashmap_key(iter), NULL);
 
-		if(osmdb_index_gatherNode(self, *ref, hash_nodes) == 0)
+		if(osmdb_index_gatherNode(self, ref, hash_nodes) == 0)
 		{
 			goto fail_nodes;
 		}
@@ -750,10 +749,9 @@ osmdb_index_gatherTile(osmdb_index_t* self, osmdb_tile_t* tile,
 	iter = a3d_hashmap_head(tile->hash_ways, &iterator);
 	while(iter)
 	{
-		double* ref = (double*)
-		              a3d_hashmap_val(iter);
+		double ref = strtod(a3d_hashmap_key(iter), NULL);
 
-		if(osmdb_index_gatherWay(self, *ref,
+		if(osmdb_index_gatherWay(self, ref,
 		                         hash_nodes, hash_ways) == 0)
 		{
 			goto fail_ways;
@@ -765,10 +763,9 @@ osmdb_index_gatherTile(osmdb_index_t* self, osmdb_tile_t* tile,
 	iter = a3d_hashmap_head(tile->hash_relations, &iterator);
 	while(iter)
 	{
-		double* ref = (double*)
-		              a3d_hashmap_val(iter);
+		double ref = strtod(a3d_hashmap_key(iter), NULL);
 
-		if(osmdb_index_gatherRelation(self, *ref, hash_nodes,
+		if(osmdb_index_gatherRelation(self, ref, hash_nodes,
 		                              hash_ways, hash_relations) == 0)
 		{
 			goto fail_relations;
