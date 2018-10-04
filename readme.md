@@ -39,8 +39,12 @@ reformat osm data (e.g.)
 
 	unaccent UTF-8 < US48-base.osm > US48-unaccent.osm
 	./bin/clean-symbols.sh US48-unaccent.osm US48-clean.osm
-	./build-osm2/build-osm2 US48-clean.osm US48.osm2 | tee US48-log.txt
+	osmdb-build US48-clean.osm US48.xmlz | tee build.log
+	osmdb-indexer US48.xmlz US48-osmdb | tee indexer.log
+	osmdb-tiler filter/default.xml US48-osmdb | tee tiler.log
 
 	unaccent UTF-8 < Boulder-base.osm > Boulder-unaccent.osm
 	./bin/clean-symbols.sh Boulder-unaccent.osm Boulder-clean.osm
-	./build-osm2/build/osm2 Boulder-clean.osm Boulder.osm2 | tee Boulder-log.txt
+	osmdb-build Boulder-clean.osm Boulder.xmlz | tee build.log
+	osmdb-indexer Boulder.xmlz Boulder-osmdb | tee indexer.log
+	osmdb-tiler filter/default.xml Boulder-osmdb | tee tiler.log
