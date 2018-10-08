@@ -206,7 +206,7 @@ static int osmdb_range_addTile(osmdb_range_t* self,
 		int x1 = (int) x1f;
 		int y0 = (int) y0f;
 		int y1 = (int) y1f;
-		for(y = y0; y >= y1; --y)
+		for(y = y0; y <= y1; ++y)
 		{
 			for(x = x0; x <= x1; ++x)
 			{
