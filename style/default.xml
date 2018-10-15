@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osmdb>
+	<layer name="water" />
+	<layer name="ground" />
+	<layer name="trail" />
+	<layer name="track" />
+	<layer name="residential" />
+	<layer name="tertiary" />
+	<layer name="secondary" />
+	<layer name="railway" />
+	<layer name="primary" />
+	<layer name="trunk" />
+	<layer name="motorway" />
+	<layer name="taxiway" />
+	<layer name="runway" />
+	<layer name="building" />
+	<layer name="helipad" />
+	<layer name="air" />
+
+	<color name="white"          val="FFFFFFFF" />
+	<color name="white:halo"     val="FFFFFF7F" />
+	<color name="black"          val="000000FF" />
+	<color name="black:halo"     val="0000007F" />
+	<color name="ltgray"         val="D7D7D7FF" />
+	<color name="ltgray:halo"    val="D7D7D77F" />
+	<color name="gray"           val="7F7F7FFF" />
+	<color name="gray:halo"      val="7F7F7F7F" />
+	<color name="runway"         val="314DB2FF" />
+	<color name="runway:halo"    val="314DB27F" />
+	<color name="brown"          val="AE7547FF" />
+	<color name="brown:halo"     val="AE75477F" />
+	<color name="red"            val="FF0000FF" />
+	<color name="red:halo"       val="FF00007F" />
+	<color name="motorway"       val="FFA023FF" />
+	<color name="motorway:halo"  val="FFA0237F" />
+	<color name="trunk"          val="F0B923FF" />
+	<color name="trunk:halo"     val="F0B9237F" />
+	<color name="primary"        val="F0B923FF" />
+	<color name="primary:halo"   val="F0B9237F" />
+	<color name="secondary"      val="E8EA2FFF" />
+	<color name="secondary:halo" val="E8EA2F7F" />
+	<color name="tertiary"       val="FDFFA0FF" />
+	<color name="tertiary:halo"  val="FDFFA07F" />
+	<color name="trail"          val="2BA62B7F" />
+	<color name="track"          val="DEC49BFF" />
+	<color name="river"          val="4788D9BF" />
+	<color name="lake"           val="4788D9BF" />
+	<color name="glacier"        val="9BDFE07F" />
+
+	<line name="default"        color1="black"  />
+	<line name="ltgray"         color1="ltgray" />
+	<line name="white"          color1="white" />
+	<line name="gray"           color1="gray" />
+	<line name="brown"          color1="brown" />
+	<line name="red"            color1="red" />
+	<line name="aerialway"      mode="dashed,striped" color1="gray" color2="white:halo" />
+	<line name="motorway"       color1="motorway"  width="3.5" />
+	<line name="trunk"          color1="trunk"     width="3.5" />
+	<line name="primary"        color1="primary"   width="3.5" />
+	<line name="secondary"      color1="secondary" width="2.75" />
+	<line name="tertiary"       color1="tertiary"  width="2.75" />
+	<line name="motorway_link"  color1="motorway"  width="2.5" />
+	<line name="trunk_link"     color1="trunk"     width="2.5" />
+	<line name="primary_link"   color1="primary"   width="2.5" />
+	<line name="secondary_link" color1="secondary" width="1.5" />
+	<line name="tertiary_link"  color1="tertiary"  width="1.5" />
+	<line name="road"           color1="white"     width="1.75" />
+	<line name="runway"         mode="dashed,striped" color1="white" color2="runway" width="4.0" />
+	<line name="taxiway"        color1="runway" width="1.5" />
+	<line name="trail"          mode="dashed,striped" color1="white" color2="trail" />
+	<line name="track"          color1="track" />
+	<line name="railway"        mode="dashed,striped" color1="gray"  color2="ltgray" />
+	<line name="river"          color1="river" width="3.0" />
+	<line name="stream"         color1="river" width="1.5" />
+
+	<poly name="white:halo"  color="white:halo" />
+	<poly name="ltgray:halo" color="ltgray:halo" />
+	<poly name="gray:halo"   color="gray:halo" />
+	<poly name="brown:halo"  color="brown:halo" />
+	<poly name="aerialway"   color="gray:halo" />
+	<poly name="helipad"     color="gray:halo" />
+	<poly name="glacier"     color="glacier" />
+	<poly name="water"       color="lake" />
+	<poly name="red"         color="red" />
+
+	<class name="aerialway:cable_car"    layer="ground"      line="aerialway" />
+	<class name="aerialway:gondola"      layer="air"         line="aerialway" />
+	<class name="aerialway:chair_lift"   layer="air"         line="aerialway" />
+	<class name="aerialway:mixed_lift"   layer="ground"      line="aerialway" />
+	<class name="aerialway:drag_lift"    layer="ground"      line="aerialway" />
+	<class name="aerialway:t-bar"        layer="ground"      line="aerialway" />
+	<class name="aerialway:j-bar"        layer="ground"      line="aerialway" />
+	<class name="aerialway:platter"      layer="ground"      line="aerialway" />
+	<class name="aerialway:rope_tow"     layer="ground"      line="aerialway" />
+	<class name="aerialway:magic_carpet" layer="ground"      line="aerialway" />
+	<class name="aerialway:zip_line"     layer="air"         line="aerialway" />
+	<class name="aerialway:canopy"       layer="air"         line="aerialway" />
+	<class name="aerialway:station"      layer="building"    poly="brown:halo" />
+	<class name="aeroway:helipad"        layer="helipad"     poly="helipad" />
+	<class name="aeroway:runway"         layer="runway"      line="runway" />
+	<class name="aeroway:taxilane"       layer="taxiway"     line="taxiway" />
+	<class name="aeroway:taxiway"        layer="taxiway"     line="taxiway" />
+	<class name="aeroway:terminal"       layer="building"    poly="brown:halo" />
+	<class name="emergency:landing_site" layer="ground"      poly="gray:halo" />
+	<class name="highway:motorway"       layer="motorway"    line="motorway" />
+	<class name="highway:trunk"          layer="trunk"       line="trunk" />
+	<class name="highway:primary"        layer="primary"     line="primary" />
+	<class name="highway:secondary"      layer="secondary"   line="secondary" />
+	<class name="highway:tertiary"       layer="tertiary"    line="tertiary" />
+	<class name="highway:unclassified"   layer="residential" line="road" />
+	<class name="highway:residential"    layer="residential" line="road" />
+	<class name="highway:motorway_link"  layer="trunk"       line="motorway_link" />
+	<class name="highway:trunk_link"     layer="primary"     line="trunk_link" />
+	<class name="highway:primary_link"   layer="secondary"   line="primary_link" />
+	<class name="highway:secondary_link" layer="tertiary"    line="secondary_link" />
+	<class name="highway:tertiary_link"  layer="residential" line="tertiary_link" />
+	<class name="highway:living_street"  layer="trail"       line="ltgray" />
+	<class name="highway:pedestrian"     layer="trail"       line="ltgray" />
+	<class name="highway:track"          layer="track"       line="track" />
+	<class name="highway:escape"         layer="ground"      line="road" />
+	<class name="highway:raceway"        layer="ground"      line="road" />
+	<class name="highway:road"           layer="residential" line="road" />
+	<class name="highway:footway"        layer="trail"       line="trail" />
+	<class name="highway:bridleway"      layer="trail"       line="trail" />
+	<class name="highway:steps"          layer="trail"       line="trail" />
+	<class name="highway:path"           layer="trail"       line="trail" />
+	<class name="highway:cycleway"       layer="trail"       line="trail" />
+	<class name="highway:rest_area"      layer="ground"      poly="white:halo" />
+	<class name="man_made:bridge"        layer="ground"      poly="white:halo"/>
+	<class name="natural:water"          layer="water"       poly="water" />
+	<class name="natural:bay"            layer="water"       poly="water" />
+	<class name="natural:glacier"        layer="water"       poly="glacier" />
+	<class name="landuse:reservoir"      layer="water"       poly="water" />
+	<class name="landuse:salt_pond"      layer="water"       poly="water" />
+	<class name="landuse:basin"          layer="water"       poly="water" />
+	<class name="waterway:river"         layer="water"       line="river" />
+	<class name="waterway:riverbank"     layer="water"       poly="water" />
+	<class name="waterway:stream"        layer="water"       line="stream" />
+	<class name="waterway:canal"         layer="water"       line="stream" />
+	<class name="waterway:ditch"         layer="water"       line="stream" />
+	<class name="waterway:drain"         layer="water"       line="stream" />
+	<class name="railway:funicular"      layer="railway"     line="railway" />
+	<class name="railway:light_rail"     layer="railway"     line="railway" />
+	<class name="railway:monorail"       layer="railway"     line="railway" />
+	<class name="railway:narrow_gauge"   layer="railway"     line="railway" />
+	<class name="railway:preserved"      layer="railway"     line="railway" />
+	<class name="railway:rail"           layer="railway"     line="railway" />
+	<class name="railway:subway"         layer="railway"     line="railway" />
+	<class name="railway:tram"           layer="railway"     line="railway" />
+</osmdb>
