@@ -90,6 +90,7 @@ osmdb_relation_t* osmdb_relation_new(const char** atts, int line)
 		goto fail_members;
 	}
 
+	self->refcount = 0;
 	self->id = strtod(id, NULL);
 
 	if(name)
@@ -207,6 +208,7 @@ osmdb_relation_t* osmdb_relation_copy(osmdb_relation_t* self)
 		copy->abrev = NULL;
 	}
 
+	copy->refcount = 0;
 	copy->id    = self->id;
 	copy->class = self->class;
 
@@ -254,6 +256,21 @@ void osmdb_relation_delete(osmdb_relation_t** _self)
 		free(self);
 		*_self = NULL;
 	}
+}
+
+void osmdb_relation_incref(osmdb_relation_t* self)
+{
+	assert(self);
+
+	++self->refcount;
+}
+
+int osmdb_relation_decref(osmdb_relation_t* self)
+{
+	assert(self);
+
+	--self->refcount;
+	return (self->refcount == 0) ? 1 : 0;
 }
 
 int osmdb_relation_export(osmdb_relation_t* self,

@@ -104,6 +104,7 @@ osmdb_node_t* osmdb_node_new(const char** atts, int line)
 		return NULL;
 	}
 
+	self->refcount = 0;
 	self->id  = strtod(id, NULL);
 	self->lat = strtod(lat, NULL);
 	self->lon = strtod(lon, NULL);
@@ -198,6 +199,7 @@ osmdb_node_t* osmdb_node_copy(osmdb_node_t* self)
 		copy->abrev = NULL;
 	}
 
+	copy->refcount = 0;
 	copy->id    = self->id;
 	copy->lat   = self->lat;
 	copy->lon   = self->lon;
@@ -228,6 +230,21 @@ void osmdb_node_delete(osmdb_node_t** _self)
 		free(self);
 		*_self = NULL;
 	}
+}
+
+void osmdb_node_incref(osmdb_node_t* self)
+{
+	assert(self);
+
+	++self->refcount;
+}
+
+int osmdb_node_decref(osmdb_node_t* self)
+{
+	assert(self);
+
+	--self->refcount;
+	return (self->refcount == 0) ? 1 : 0;
 }
 
 int osmdb_node_export(osmdb_node_t* self, xml_ostream_t* os)

@@ -90,6 +90,7 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 		goto fail_nds;
 	}
 
+	self->refcount = 0;
 	self->id = strtod(id, NULL);
 
 	if(name)
@@ -203,6 +204,7 @@ osmdb_way_t* osmdb_way_copy(osmdb_way_t* self)
 		copy->abrev = NULL;
 	}
 
+	copy->refcount = 0;
 	copy->id    = self->id;
 	copy->class = self->class;
 
@@ -250,6 +252,21 @@ void osmdb_way_delete(osmdb_way_t** _self)
 		free(self);
 		*_self = NULL;
 	}
+}
+
+void osmdb_way_incref(osmdb_way_t* self)
+{
+	assert(self);
+
+	++self->refcount;
+}
+
+int osmdb_way_decref(osmdb_way_t* self)
+{
+	assert(self);
+
+	--self->refcount;
+	return (self->refcount == 0) ? 1 : 0;
 }
 
 int osmdb_way_export(osmdb_way_t* self, xml_ostream_t* os)

@@ -28,6 +28,7 @@
 
 typedef struct
 {
+	int    refcount;
 	double id;
 	double lat;
 	double lon;
@@ -41,6 +42,8 @@ typedef struct
 osmdb_node_t* osmdb_node_new(const char** atts, int line);
 osmdb_node_t* osmdb_node_copy(osmdb_node_t* self);
 void          osmdb_node_delete(osmdb_node_t** _self);
+void          osmdb_node_incref(osmdb_node_t* self);
+int           osmdb_node_decref(osmdb_node_t* self);
 int           osmdb_node_export(osmdb_node_t* self,
                                 xml_ostream_t* os);
 int           osmdb_node_size(osmdb_node_t* self);
