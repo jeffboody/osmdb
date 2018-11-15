@@ -3,7 +3,7 @@ CLASSES  = osmdb_index osmdb_chunk osmdb_parser osmdb_style osmdb_util osmdb_nod
 SOURCE   = $(CLASSES:%=%.c)
 OBJECTS  = $(SOURCE:.c=.o)
 HFILES   = $(CLASSES:%=%.h)
-OPT      = -O2 -Wall
+OPT      = -O2 -Wall -Wno-format-truncation
 CFLAGS   = $(OPT) -I. -DA3D_GL2
 LDFLAGS  = -lm
 AR       = ar
