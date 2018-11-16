@@ -780,7 +780,7 @@ osmdb_index_gatherTile(osmdb_index_t* self, osmdb_tile_t* tile,
 	// failure
 	fail_relations:
 	{
-		iter = a3d_hashmap_head(tile->hash_relations, &iterator);
+		iter = a3d_hashmap_head(hash_relations, &iterator);
 		while(iter)
 		{
 			osmdb_relation_t* relation;
@@ -792,7 +792,7 @@ osmdb_index_gatherTile(osmdb_index_t* self, osmdb_tile_t* tile,
 	}
 	fail_ways:
 	{
-		iter = a3d_hashmap_head(tile->hash_ways, &iterator);
+		iter = a3d_hashmap_head(hash_ways, &iterator);
 		while(iter)
 		{
 			osmdb_way_t* way;
@@ -804,7 +804,7 @@ osmdb_index_gatherTile(osmdb_index_t* self, osmdb_tile_t* tile,
 	}
 	fail_nodes:
 	{
-		iter = a3d_hashmap_head(tile->hash_nodes, &iterator);
+		iter = a3d_hashmap_head(hash_nodes, &iterator);
 		while(iter)
 		{
 			osmdb_node_t* node;
