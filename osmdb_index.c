@@ -702,7 +702,7 @@ osmdb_index_gatherRelation(osmdb_index_t* self, double id,
 		iter = a3d_list_next(iter);
 	}
 
-	if(a3d_hashmap_addf(hash_ways, &iterator,
+	if(a3d_hashmap_addf(hash_relations, &iterator,
 	                    (const void*) copy,
 	                    "%0.0lf", id) == 0)
 	{
