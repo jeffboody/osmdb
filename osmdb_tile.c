@@ -126,7 +126,7 @@ static int nodeFn(void* priv, osmdb_node_t* node)
 	assert(node);
 
 	// nodes not allowed in tiles
-	return 1;
+	return 0;
 }
 
 static int wayFn(void* priv, osmdb_way_t* way)
