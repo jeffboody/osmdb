@@ -136,10 +136,8 @@ osmdb_chunk_nodeFn(void* priv,
 	double idl;
 	osmdb_splitId(node->id, &idu, &idl);
 
-	a3d_hashmapIter_t iter;
-	if(a3d_hashmap_addf(self->hash, &iter,
-	                        (const void*) node,
-	                        "%0.0lf", idl) == 0)
+	if(a3d_hashmap_addf(self->hash, (const void*) node,
+	                    "%0.0lf", idl) == 0)
 	{
 		return 0;
 	}
@@ -166,10 +164,8 @@ osmdb_chunk_wayFn(void* priv,
 	double idl;
 	osmdb_splitId(way->id, &idu, &idl);
 
-	a3d_hashmapIter_t iter;
-	if(a3d_hashmap_addf(self->hash, &iter,
-	                        (const void*) way,
-	                        "%0.0lf", idl) == 0)
+	if(a3d_hashmap_addf(self->hash, (const void*) way,
+	                    "%0.0lf", idl) == 0)
 	{
 		return 0;
 	}
@@ -196,10 +192,8 @@ osmdb_chunk_relationFn(void* priv,
 	double idl;
 	osmdb_splitId(relation->id, &idu, &idl);
 
-	a3d_hashmapIter_t iter;
-	if(a3d_hashmap_addf(self->hash, &iter,
-	                        (const void*) relation,
-	                        "%0.0lf", idl) == 0)
+	if(a3d_hashmap_addf(self->hash, (const void*) relation,
+	                    "%0.0lf", idl) == 0)
 	{
 		return 0;
 	}
@@ -345,9 +339,8 @@ int osmdb_chunk_add(osmdb_chunk_t* self,
 	assert(self);
 	assert(data);
 
-	a3d_hashmapIter_t iterator;
-	if(a3d_hashmap_addf(self->hash, &iterator,
-	                    data, "%0.0f", idl) == 0)
+	if(a3d_hashmap_addf(self->hash, data,
+	                    "%0.0f", idl) == 0)
 	{
 		return 0;
 	}

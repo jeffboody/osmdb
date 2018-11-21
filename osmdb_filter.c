@@ -193,8 +193,7 @@ static int osmdb_filter_start(void* priv,
 	}
 
 	// add the filter mask
-	if(a3d_hashmap_add(self->masks, &iterator,
-	                   (const void*) fm,
+	if(a3d_hashmap_add(self->masks, (const void*) fm,
 	                   class) == 0)
 	{
 		goto fail_add;

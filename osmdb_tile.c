@@ -155,8 +155,7 @@ static int nodeRefFn(void* priv, double ref)
 	osmdb_tile_t*  self = (osmdb_tile_t*) priv;
 	a3d_hashmap_t* hash = self->hash_nodes;
 
-	a3d_hashmapIter_t iter;
-	if(a3d_hashmap_addf(hash, &iter,
+	if(a3d_hashmap_addf(hash,
 	                    (const void*) &OSMDB_TILE_ONE,
 	                    "%0.0lf", ref) == 0)
 	{
@@ -174,8 +173,7 @@ static int wayRefFn(void* priv, double ref)
 	osmdb_tile_t*  self = (osmdb_tile_t*) priv;
 	a3d_hashmap_t* hash = self->hash_ways;
 
-	a3d_hashmapIter_t iter;
-	if(a3d_hashmap_addf(hash, &iter,
+	if(a3d_hashmap_addf(hash,
 	                    (const void*) &OSMDB_TILE_ONE,
 	                    "%0.0lf", ref) == 0)
 	{
@@ -193,8 +191,7 @@ static int relationRefFn(void* priv, double ref)
 	osmdb_tile_t*  self = (osmdb_tile_t*) priv;
 	a3d_hashmap_t* hash = self->hash_relations;
 
-	a3d_hashmapIter_t iter;
-	if(a3d_hashmap_addf(hash, &iter,
+	if(a3d_hashmap_addf(hash,
 	                    (const void*) &OSMDB_TILE_ONE,
 	                    "%0.0lf", ref) == 0)
 	{
@@ -360,8 +357,7 @@ int osmdb_tile_add(osmdb_tile_t* self,
 		hash = self->hash_relations;
 	}
 
-	a3d_hashmapIter_t iter;
-	if(a3d_hashmap_addf(hash, &iter,
+	if(a3d_hashmap_addf(hash,
 	                    (const void*) &OSMDB_TILE_ONE,
 	                    "%0.0lf", id) == 0)
 	{

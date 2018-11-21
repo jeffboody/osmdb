@@ -184,8 +184,7 @@ osmdb_style_beginOsmLayer(osmdb_style_t* self,
 	}
 	*layerp = a3d_hashmap_size(self->layers);
 
-	a3d_hashmapIter_t iter;
-	if(a3d_hashmap_add(self->layers, &iter,
+	if(a3d_hashmap_add(self->layers,
 	                   (const void*) layerp, name) == 0)
 	{
 		goto fail_add;
@@ -248,8 +247,7 @@ osmdb_style_beginOsmColor(osmdb_style_t* self,
 		return 0;
 	}
 
-	a3d_hashmapIter_t iter;
-	if(a3d_hashmap_add(self->colors, &iter,
+	if(a3d_hashmap_add(self->colors,
 	                   (const void*) c, name) == 0)
 	{
 		goto fail_add;
@@ -364,7 +362,7 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 	linep->color1 = c1;
 	linep->color2 = c2;
 
-	if(a3d_hashmap_add(self->lines, &iter,
+	if(a3d_hashmap_add(self->lines,
 	                   (const void*) linep, name) == 0)
 	{
 		goto fail_add;
@@ -437,7 +435,7 @@ osmdb_style_beginOsmPoly(osmdb_style_t* self,
 	}
 	poly->color = c;
 
-	if(a3d_hashmap_add(self->polys, &iter,
+	if(a3d_hashmap_add(self->polys,
 	                   (const void*) poly, name) == 0)
 	{
 		goto fail_add;
@@ -547,7 +545,7 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 	class->line  = linep;
 	class->poly  = polyp;
 
-	if(a3d_hashmap_add(self->classes, &iter,
+	if(a3d_hashmap_add(self->classes,
 	                   (const void*) class, name) == 0)
 	{
 		goto fail_add;

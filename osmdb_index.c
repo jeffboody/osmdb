@@ -251,8 +251,8 @@ osmdb_index_getChunk(osmdb_index_t* self,
 			goto fail_append;
 		}
 
-		if(a3d_hashmap_add(hash, &hiter,
-		                   (const void*) iter, key) == 0)
+		if(a3d_hashmap_add(hash, (const void*) iter,
+		                   key) == 0)
 		{
 			goto fail_add;
 		}
@@ -339,7 +339,7 @@ osmdb_index_getTile(osmdb_index_t* self,
 			goto fail_append;
 		}
 
-		if(a3d_hashmap_add(self->hash_tiles, &hiter,
+		if(a3d_hashmap_add(self->hash_tiles,
 		                   (const void*) iter, key) == 0)
 		{
 			goto fail_add;
@@ -563,7 +563,7 @@ osmdb_index_gatherNode(osmdb_index_t* self, double id,
 		return 0;
 	}
 
-	if(a3d_hashmap_addf(hash_nodes, &iter,
+	if(a3d_hashmap_addf(hash_nodes,
 	                    (const void*) copy,
 	                    "%0.0lf", id) == 0)
 	{
@@ -625,7 +625,7 @@ osmdb_index_gatherWay(osmdb_index_t* self, double id,
 		iter = a3d_list_next(iter);
 	}
 
-	if(a3d_hashmap_addf(hash_ways, &iterator,
+	if(a3d_hashmap_addf(hash_ways,
 	                    (const void*) copy,
 	                    "%0.0lf", id) == 0)
 	{
@@ -702,7 +702,7 @@ osmdb_index_gatherRelation(osmdb_index_t* self, double id,
 		iter = a3d_list_next(iter);
 	}
 
-	if(a3d_hashmap_addf(hash_relations, &iterator,
+	if(a3d_hashmap_addf(hash_relations,
 	                    (const void*) copy,
 	                    "%0.0lf", id) == 0)
 	{
