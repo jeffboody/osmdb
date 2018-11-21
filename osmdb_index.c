@@ -882,6 +882,8 @@ osmdb_index_t* osmdb_index_new(const char* base)
 	self->stats_chunk_find_dt = 0.0;
 	self->stats_chunk_get     = 0.0;
 	self->stats_chunk_get_dt  = 0.0;
+	self->stats_chunk_load    = 0.0;
+	self->stats_chunk_load_dt = 0.0;
 	self->stats_chunk_trim    = 0.0;
 	self->stats_chunk_trim_dt = 0.0;
 	self->stats_tile_hit      = 0.0;
@@ -893,6 +895,8 @@ osmdb_index_t* osmdb_index_new(const char* base)
 	self->stats_tile_make_dt  = 0.0;
 	self->stats_tile_get      = 0.0;
 	self->stats_tile_get_dt   = 0.0;
+	self->stats_tile_load     = 0.0;
+	self->stats_tile_load_dt  = 0.0;
 	self->stats_tile_trim     = 0.0;
 	self->stats_tile_trim_dt  = 0.0;
 
