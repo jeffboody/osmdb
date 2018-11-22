@@ -39,7 +39,6 @@ typedef struct
 } osmdb_way_t;
 
 osmdb_way_t* osmdb_way_new(const char** atts, int line);
-osmdb_way_t* osmdb_way_copy(osmdb_way_t* self);
 void         osmdb_way_delete(osmdb_way_t** _self);
 void         osmdb_way_incref(osmdb_way_t* self);
 int          osmdb_way_decref(osmdb_way_t* self);

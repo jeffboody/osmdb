@@ -157,67 +157,6 @@ osmdb_node_t* osmdb_node_new(const char** atts, int line)
 	return NULL;
 }
 
-osmdb_node_t* osmdb_node_copy(osmdb_node_t* self)
-{
-	assert(self);
-
-	osmdb_node_t* copy = (osmdb_node_t*)
-	                     malloc(sizeof(osmdb_node_t));
-	if(copy == NULL)
-	{
-		LOGE("malloc failed");
-		return NULL;
-	}
-
-	if(self->name)
-	{
-		int len = strlen(self->name) + 1;
-		copy->name = (char*) malloc(len*sizeof(char));
-		if(copy->name == NULL)
-		{
-			goto fail_name;
-		}
-		snprintf(copy->name, len, "%s", self->name);
-	}
-	else
-	{
-		copy->name = NULL;
-	}
-
-	if(self->abrev)
-	{
-		int len = strlen(self->abrev) + 1;
-		copy->abrev = (char*) malloc(len*sizeof(char));
-		if(copy->abrev == NULL)
-		{
-			goto fail_abrev;
-		}
-		snprintf(copy->abrev, len, "%s", self->abrev);
-	}
-	else
-	{
-		copy->abrev = NULL;
-	}
-
-	copy->refcount = 0;
-	copy->id    = self->id;
-	copy->lat   = self->lat;
-	copy->lon   = self->lon;
-	copy->ele   = self->ele;
-	copy->st    = self->st;
-	copy->class = self->class;
-
-	// succcess
-	return copy;
-
-	// failure
-	fail_abrev:
-		free(self->name);
-	fail_name:
-		free(copy);
-	return NULL;
-}
-
 void osmdb_node_delete(osmdb_node_t** _self)
 {
 	assert(_self);

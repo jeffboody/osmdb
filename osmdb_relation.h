@@ -46,7 +46,6 @@ typedef struct
 } osmdb_relation_t;
 
 osmdb_relation_t* osmdb_relation_new(const char** atts, int line);
-osmdb_relation_t* osmdb_relation_copy(osmdb_relation_t* self);
 void              osmdb_relation_delete(osmdb_relation_t** _self);
 void              osmdb_relation_incref(osmdb_relation_t* self);
 int               osmdb_relation_decref(osmdb_relation_t* self);
