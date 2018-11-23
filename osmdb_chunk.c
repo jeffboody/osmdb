@@ -202,15 +202,6 @@ osmdb_chunk_relationFn(void* priv,
 	return 1;
 }
 
-static int
-osmdb_chunk_refFn(void* priv, double ref)
-{
-	assert(priv);
-
-	// refs not allowed in chunks
-	return 0;
-}
-
 static int osmdb_chunk_import(osmdb_chunk_t* self)
 {
 	assert(self);
@@ -221,10 +212,7 @@ static int osmdb_chunk_import(osmdb_chunk_t* self)
 	if(osmdb_parse(fname, (void*) self,
                    osmdb_chunk_nodeFn,
                    osmdb_chunk_wayFn,
-                   osmdb_chunk_relationFn,
-                   osmdb_chunk_refFn,
-                   osmdb_chunk_refFn,
-                   osmdb_chunk_refFn) == 0)
+                   osmdb_chunk_relationFn) == 0)
 	{
 		osmdb_chunk_finish(self);
 		return 0;

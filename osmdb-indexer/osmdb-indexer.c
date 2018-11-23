@@ -96,14 +96,6 @@ static int relationFn(void* priv, osmdb_relation_t* relation)
 	                            (const void*) relation);
 }
 
-static int refFn(void* priv, double ref)
-{
-	assert(priv);
-
-	// refs not allowed in indexer
-	return 0;
-}
-
 /***********************************************************
 * public                                                   *
 ***********************************************************/
@@ -128,8 +120,7 @@ int main(int argc, char** argv)
 	}
 
 	if(osmdb_parse(fname, (void*) index,
-	               nodeFn, wayFn, relationFn,
-	               refFn, refFn, refFn) == 0)
+	               nodeFn, wayFn, relationFn) == 0)
 	{
 		goto fail_parse;
 	}

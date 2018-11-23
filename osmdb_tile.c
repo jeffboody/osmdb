@@ -120,34 +120,6 @@ static int osmdb_tile_finish(osmdb_tile_t* self)
 	return success;
 }
 
-static int nodeFn(void* priv, osmdb_node_t* node)
-{
-	assert(priv);
-	assert(node);
-
-	// nodes not allowed in tiles
-	return 0;
-}
-
-static int wayFn(void* priv, osmdb_way_t* way)
-{
-	assert(priv);
-	assert(way);
-
-	// ways not allowed in tiles
-	return 0;
-}
-
-static int relationFn(void* priv,
-                      osmdb_relation_t* relation)
-{
-	assert(priv);
-	assert(relation);
-
-	// relations not allowed in tiles
-	return 0;
-}
-
 static int nodeRefFn(void* priv, double ref)
 {
 	assert(priv);
@@ -211,9 +183,8 @@ static int osmdb_tile_import(osmdb_tile_t* self)
 	                 self->zoom, self->x, self->y,
 	                 fname);
 
-	if(osmdb_parse(fname, (void*) self,
-	               nodeFn, wayFn, relationFn,
-	               nodeRefFn, wayRefFn, relationRefFn) == 0)
+	if(osmdb_parseRefs(fname, (void*) self,
+	                   nodeRefFn, wayRefFn, relationRefFn) == 0)
 	{
 		osmdb_tile_finish(self);
 		return 0;

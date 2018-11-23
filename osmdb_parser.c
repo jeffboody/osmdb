@@ -69,6 +69,42 @@ typedef struct
 } osmdb_parser_t;
 
 static int
+osmdb_parser_defaultNodeFn(void* priv, osmdb_node_t* node)
+{
+	assert(priv);
+	assert(node);
+
+	return 0;
+}
+
+static int
+osmdb_parser_defaultWayFn(void* priv, osmdb_way_t* way)
+{
+	assert(priv);
+	assert(way);
+
+	return 0;
+}
+
+static int
+osmdb_parser_defaultRelationFn(void* priv,
+                               osmdb_relation_t* relation)
+{
+	assert(priv);
+	assert(relation);
+
+	return 0;
+}
+
+static int
+osmdb_parser_defaultRefFn(void* priv, double ref)
+{
+	assert(priv);
+
+	return 0;
+}
+
+static int
 osmdb_parser_beginOsm(osmdb_parser_t* self, int line,
                       const char** atts)
 {
@@ -579,22 +615,59 @@ static int osmdb_parser_end(void* priv,
 int osmdb_parse(const char* fname, void* priv,
                 osmdb_parser_nodeFn node_fn,
                 osmdb_parser_wayFn way_fn,
-                osmdb_parser_relationFn relation_fn,
-                osmdb_parser_nodeRefFn nref_fn,
-                osmdb_parser_wayRefFn wref_fn,
-                osmdb_parser_relationRefFn rref_fn)
+                osmdb_parser_relationFn relation_fn)
 {
 	// priv may be NULL
 	assert(fname);
 	assert(node_fn);
 	assert(way_fn);
 	assert(relation_fn);
+
+	osmdb_parser_t* self;
+	self = osmdb_parser_new(priv, node_fn, way_fn, relation_fn,
+	                        osmdb_parser_defaultRefFn,
+	                        osmdb_parser_defaultRefFn,
+	                        osmdb_parser_defaultRefFn);
+	if(self == NULL)
+	{
+		return 0;
+	}
+
+	if(xml_istream_parseGz((void*) self,
+	                       osmdb_parser_start,
+	                       osmdb_parser_end,
+	                       fname) == 0)
+	{
+		goto fail_parse;
+	}
+
+	osmdb_parser_delete(&self);
+
+	// success
+	return 1;
+
+	// failure
+	fail_parse:
+		osmdb_parser_delete(&self);
+	return 0;
+}
+
+int osmdb_parseRefs(const char* fname, void* priv,
+                    osmdb_parser_nodeRefFn nref_fn,
+                    osmdb_parser_wayRefFn wref_fn,
+                    osmdb_parser_relationRefFn rref_fn)
+{
+	// priv may be NULL
+	assert(fname);
 	assert(nref_fn);
 	assert(wref_fn);
 	assert(rref_fn);
 
 	osmdb_parser_t* self;
-	self = osmdb_parser_new(priv, node_fn, way_fn, relation_fn,
+	self = osmdb_parser_new(priv,
+	                        osmdb_parser_defaultNodeFn,
+	                        osmdb_parser_defaultWayFn,
+	                        osmdb_parser_defaultRelationFn,
 	                        nref_fn, wref_fn, rref_fn);
 	if(self == NULL)
 	{

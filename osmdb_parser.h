@@ -44,9 +44,11 @@ typedef int (*osmdb_parser_relationRefFn)(void* priv,
 int osmdb_parse(const char* fname, void* priv,
                 osmdb_parser_nodeFn node_fn,
                 osmdb_parser_wayFn way_fn,
-                osmdb_parser_relationFn relation_fn,
-                osmdb_parser_nodeRefFn nref_fn,
-                osmdb_parser_wayRefFn wref_fn,
-                osmdb_parser_relationRefFn rref_fn);
+                osmdb_parser_relationFn relation_fn);
+
+int osmdb_parseRefs(const char* fname, void* priv,
+                    osmdb_parser_nodeRefFn nref_fn,
+                    osmdb_parser_wayRefFn wref_fn,
+                    osmdb_parser_relationRefFn rref_fn);
 
 #endif
