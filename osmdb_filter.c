@@ -37,48 +37,86 @@
 * private                                                  *
 ***********************************************************/
 
-typedef struct
+static osmdb_filterInfo_t*
+osmdb_filterInfo_new(int zoom, const char* flags)
 {
-	int named;
-	a3d_list_t* levels;
-} osmdb_filterMask_t;
+	// flags may be NULL
 
-static osmdb_filterMask_t* osmdb_filterMask_new(void)
-{
-	osmdb_filterMask_t* self = (osmdb_filterMask_t*)
-	                           malloc(sizeof(osmdb_filterMask_t));
+	osmdb_filterInfo_t* self = (osmdb_filterInfo_t*)
+	                           malloc(sizeof(osmdb_filterInfo_t));
 	if(self == NULL)
 	{
 		LOGE("malloc failed");
 		return NULL;
 	}
 
-	self->levels = a3d_list_new();
-	if(self->levels == NULL)
+	// parse flags
+	int named  = 0;
+	int center = 0;
+	if(flags)
 	{
-		goto fail_levels;
+		char str[256];
+		int  src = 0;
+		int  dst = 0;
+		while(dst < 256)
+		{
+			str[dst] = flags[src];
+			if((str[dst] == ' ') || (str[dst] == '\t'))
+			{
+				// discard whitespace
+				++src;
+				continue;
+			}
+			else if((str[dst] == ',') || (str[dst] == '\0'))
+			{
+				// parse the flag
+				str[dst] = '\0';
+				if(strcmp(str, "center") == 0)
+				{
+					center = 1;
+				}
+				else if(strcmp(str, "named") == 0)
+				{
+					named = 1;
+				}
+				else
+				{
+					LOGW("unknown flag=%s", src);
+				}
+
+				// end of string
+				if(flags[src] == '\0')
+				{
+					break;
+				}
+
+				// next character
+				dst = 0;
+				++src;
+				continue;
+			}
+
+			// next character
+			++dst;
+			++src;
+		}
 	}
 
-	self->named = 0;
+	self->zoom   = zoom;
+	self->center = center;
+	self->named  = named;
 
-	// success
 	return self;
-
-	// failure
-	fail_levels:
-		free(self);
-	return NULL;
 }
 
-static void osmdb_filterMask_delete(osmdb_filterMask_t** _self)
+static void
+osmdb_filterInfo_delete(osmdb_filterInfo_t** _self)
 {
 	assert(_self);
 
-	osmdb_filterMask_t* self = *_self;
+	osmdb_filterInfo_t* self = *_self;
 	if(self)
 	{
-		a3d_list_discard(self->levels);
-		a3d_list_delete(&self->levels);
 		free(self);
 		*_self = NULL;
 	}
@@ -100,9 +138,9 @@ static int osmdb_filter_start(void* priv,
 		return 1;
 	}
 
-	const char* class  = NULL;
-	const char* levels = NULL;
-	const char* named  = NULL;
+	int         zoom  = -1;
+	const char* class = NULL;
+	const char* flags = NULL;
 
 	// find atts
 	int idx0 = 0;
@@ -113,21 +151,20 @@ static int osmdb_filter_start(void* priv,
 		{
 			class = atts[idx1];
 		}
-		else if(strcmp(atts[idx0], "levels") == 0)
+		else if(strcmp(atts[idx0], "zoom") == 0)
 		{
-			levels = atts[idx1];
+			zoom = (int) strtol(atts[idx1], NULL, 0);
 		}
-		else if(strcmp(atts[idx0], "named") == 0)
+		else if(strcmp(atts[idx0], "flags") == 0)
 		{
-			named = atts[idx1];
+			flags = atts[idx1];
 		}
 		idx0 += 2;
 		idx1 += 2;
 	}
 
 	// check for required atts
-	if((class  == NULL) &&
-	   (levels == NULL))
+	if((class == NULL) || (zoom < 0))
 	{
 		LOGE("invalid line=%i", line);
 		return 0;
@@ -135,65 +172,22 @@ static int osmdb_filter_start(void* priv,
 
 	// check for duplicates
 	a3d_hashmapIter_t iterator;
-	if(a3d_hashmap_find(self->masks, &iterator, class))
+	if(a3d_hashmap_find(self->info, &iterator, class))
 	{
 		LOGE("duplicate line=%i", line);
 		return 0;
 	}
 
-	// create filter mask
-	osmdb_filterMask_t* fm = osmdb_filterMask_new();
-	if(fm == NULL)
+	// create filter info
+	osmdb_filterInfo_t* info;
+	info = osmdb_filterInfo_new(zoom, flags);
+	if(info == NULL)
 	{
 		return 0;
 	}
 
-	// parse levels
-	int  zoom;
-	char str[256];
-	int  src = 0;
-	int  dst = 0;
-	while(1)
-	{
-		str[dst] = levels[src];
-		if((str[dst] == ',') || (str[dst] == '\0'))
-		{
-			// parse the zoom level
-			str[dst] = '\0';
-			zoom     = (int) strtol(str, NULL, 0);
-
-			// add zoom to levels
-			if(a3d_list_append(fm->levels, NULL,
-			                   (const void*) zoom) == NULL)
-			{
-				goto fail_add;
-			}
-
-			// end of string
-			if(levels[src] == '\0')
-			{
-				break;
-			}
-
-			// next character
-			dst = 0;
-			++src;
-			continue;
-		}
-
-		// next character
-		++dst;
-		++src;
-	}
-
-	// check if the named flag is set
-	if(named)
-	{
-		fm->named = (int) strtol(named, NULL, 0);
-	}
-
-	// add the filter mask
-	if(a3d_hashmap_add(self->masks, (const void*) fm,
+	// add the filter info
+	if(a3d_hashmap_add(self->info, (const void*) info,
 	                   class) == 0)
 	{
 		goto fail_add;
@@ -204,7 +198,7 @@ static int osmdb_filter_start(void* priv,
 
 	// failure
 	fail_add:
-		osmdb_filterMask_delete(&fm);
+		osmdb_filterInfo_delete(&info);
 	return 0;
 }
 
@@ -226,13 +220,13 @@ static void osmdb_filter_discard(osmdb_filter_t* self)
 
 	a3d_hashmapIter_t  iterator;
 	a3d_hashmapIter_t* iter;
-	iter = a3d_hashmap_head(self->masks, &iterator);
+	iter = a3d_hashmap_head(self->info, &iterator);
 	while(iter)
 	{
-		osmdb_filterMask_t* fm = (osmdb_filterMask_t*)
-		                         a3d_hashmap_remove(self->masks,
-		                                            &iter);
-		osmdb_filterMask_delete(&fm);
+		osmdb_filterInfo_t* info = (osmdb_filterInfo_t*)
+		                           a3d_hashmap_remove(self->info,
+		                                              &iter);
+		osmdb_filterInfo_delete(&info);
 	}
 }
 
@@ -252,10 +246,10 @@ osmdb_filter_t* osmdb_filter_new(const char* fname)
 		return NULL;
 	}
 
-	self->masks = a3d_hashmap_new();
-	if(self->masks == NULL)
+	self->info = a3d_hashmap_new();
+	if(self->info == NULL)
 	{
-		goto fail_masks;
+		goto fail_info;
 	}
 
 	if(xml_istream_parse((void*) self,
@@ -272,8 +266,8 @@ osmdb_filter_t* osmdb_filter_new(const char* fname)
 	// failure
 	fail_parse:
 		osmdb_filter_discard(self);
-		a3d_hashmap_delete(&self->masks);
-	fail_masks:
+		a3d_hashmap_delete(&self->info);
+	fail_info:
 		free(self);
 	return NULL;
 }
@@ -286,14 +280,15 @@ void osmdb_filter_delete(osmdb_filter_t** _self)
 	if(self)
 	{
 		osmdb_filter_discard(self);
-		a3d_hashmap_delete(&self->masks);
+		a3d_hashmap_delete(&self->info);
 		free(self);
 		*_self = NULL;
 	}
 }
 
-a3d_list_t* osmdb_filter_selectNode(osmdb_filter_t* self,
-                                    osmdb_node_t* node)
+osmdb_filterInfo_t*
+osmdb_filter_selectNode(osmdb_filter_t* self,
+                        osmdb_node_t* node)
 {
 	assert(self);
 	assert(node);
@@ -301,25 +296,26 @@ a3d_list_t* osmdb_filter_selectNode(osmdb_filter_t* self,
 	const char* class = osmdb_classCodeToName(node->class);
 
 	a3d_hashmapIter_t iter;
-	osmdb_filterMask_t* fm = (osmdb_filterMask_t*)
-	                         a3d_hashmap_find(self->masks,
-	                                          &iter, class);
-	if(fm == NULL)
+	osmdb_filterInfo_t* info = (osmdb_filterInfo_t*)
+	                           a3d_hashmap_find(self->info,
+	                                            &iter, class);
+	if(info == NULL)
 	{
 		return NULL;
 	}
 
 	// reject unnamed nodes
-	if(fm->named && (node->name == NULL))
+	if(info->named && (node->name == NULL))
 	{
 		return NULL;
 	}
 
-	return fm->levels;
+	return info;
 }
 
-a3d_list_t* osmdb_filter_selectWay(osmdb_filter_t* self,
-                                   osmdb_way_t* way)
+osmdb_filterInfo_t*
+osmdb_filter_selectWay(osmdb_filter_t* self,
+                       osmdb_way_t* way)
 {
 	assert(self);
 	assert(way);
@@ -327,25 +323,26 @@ a3d_list_t* osmdb_filter_selectWay(osmdb_filter_t* self,
 	const char* class = osmdb_classCodeToName(way->class);
 
 	a3d_hashmapIter_t iter;
-	osmdb_filterMask_t* fm = (osmdb_filterMask_t*)
-	                         a3d_hashmap_find(self->masks,
-	                                          &iter, class);
-	if(fm == NULL)
+	osmdb_filterInfo_t* info = (osmdb_filterInfo_t*)
+	                           a3d_hashmap_find(self->info,
+	                                            &iter, class);
+	if(info == NULL)
 	{
 		return NULL;
 	}
 
 	// reject unnamed ways
-	if(fm->named && (way->name == NULL))
+	if(info->named && (way->name == NULL))
 	{
 		return NULL;
 	}
 
-	return fm->levels;
+	return info;
 }
 
-a3d_list_t* osmdb_filter_selectRelation(osmdb_filter_t* self,
-                                        osmdb_relation_t* relation)
+osmdb_filterInfo_t*
+osmdb_filter_selectRelation(osmdb_filter_t* self,
+                            osmdb_relation_t* relation)
 {
 	assert(self);
 	assert(relation);
@@ -353,19 +350,19 @@ a3d_list_t* osmdb_filter_selectRelation(osmdb_filter_t* self,
 	const char* class = osmdb_classCodeToName(relation->class);
 
 	a3d_hashmapIter_t iter;
-	osmdb_filterMask_t* fm = (osmdb_filterMask_t*)
-	                         a3d_hashmap_find(self->masks,
-	                                          &iter, class);
-	if(fm == NULL)
+	osmdb_filterInfo_t* info = (osmdb_filterInfo_t*)
+	                           a3d_hashmap_find(self->info,
+	                                            &iter, class);
+	if(info == NULL)
 	{
 		return NULL;
 	}
 
 	// reject unnamed relations
-	if(fm->named && (relation->name == NULL))
+	if(info->named && (relation->name == NULL))
 	{
 		return NULL;
 	}
 
-	return fm->levels;
+	return info;
 }

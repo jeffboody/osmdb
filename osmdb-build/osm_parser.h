@@ -43,7 +43,9 @@ typedef struct
 typedef struct
 {
 	int state;
-	xml_ostream_t* os;
+	xml_ostream_t* os_nodes;
+	xml_ostream_t* os_ways;
+	xml_ostream_t* os_relations;
 
 	// attributes
 	double attr_id;
@@ -66,6 +68,15 @@ typedef struct
 	// rel members
 	a3d_list_t* rel_members;
 
+	// class constants
+	int class_none;
+	int building_yes;
+	int barrier_yes;
+	int office_yes;
+	int historic_yes;
+	int man_made_yes;
+	int tourism_yes;
+
 	// histogram of class types
 	double stats_nodes;
 	double stats_ways;
@@ -73,7 +84,9 @@ typedef struct
 	osm_classHistogram_t* histogram;
 } osm_parser_t;
 
-osm_parser_t* osm_parser_new(xml_ostream_t* os);
+osm_parser_t* osm_parser_new(xml_ostream_t* os_nodes,
+                             xml_ostream_t* os_ways,
+                             xml_ostream_t* os_relations);
 void          osm_parser_delete(osm_parser_t** _self);
 int           osm_parser_start(void* priv, int line,
                                const char* name,

@@ -38,6 +38,8 @@ typedef struct
 {
 	int    refcount;
 	double id;
+	double lat;
+	double lon;
 	char*  name;
 	char*  abrev;
 	int    class;
@@ -46,6 +48,8 @@ typedef struct
 } osmdb_relation_t;
 
 osmdb_relation_t* osmdb_relation_new(const char** atts, int line);
+osmdb_relation_t* osmdb_relation_copyCenter(osmdb_relation_t* self,
+                                            double lat, double lon);
 void              osmdb_relation_delete(osmdb_relation_t** _self);
 void              osmdb_relation_incref(osmdb_relation_t* self);
 int               osmdb_relation_decref(osmdb_relation_t* self);

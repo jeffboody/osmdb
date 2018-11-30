@@ -1,1017 +1,1027 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <filter>
-	<select levels="12" class="aerialway:cable_car" />
-	<select levels="12" class="aerialway:gondola" />
-	<select levels="12" class="aerialway:chair_lift" />
-	<select levels="12" class="aerialway:mixed_lift" />
-	<select levels="12" class="aerialway:drag_lift" />
-	<select levels="12" class="aerialway:t-bar" />
-	<select levels="12" class="aerialway:j-bar" />
-	<select levels="12" class="aerialway:platter" />
-	<select levels="12" class="aerialway:rope_tow" />
-	<select levels="12" class="aerialway:magic_carpet" />
-	<select levels="12" class="aerialway:zip_line" />
-	<select levels="12" class="aerialway:canopy" />
-	<select levels="12" class="aerialway:station" />
-	<select levels="12" class="aerialway:pylon" />
-	<select levels="12" class="aeroway:aerodrome" />
-	<select levels="12" class="aeroway:apron" />
-	<select levels="12" class="aeroway:gate" />
-	<select levels="12" class="aeroway:hangar" />
-	<select levels="12" class="aeroway:helipad" />
-	<select levels="12" class="aeroway:heliport" />
-	<select levels="12" class="aeroway:runway" />
-	<select levels="12" class="aeroway:spaceport" />
-	<select levels="12" class="aeroway:taxilane" />
-	<select levels="12" class="aeroway:taxiway" />
-	<select levels="12" class="aeroway:terminal" />
+	<select class="aerialway:cable_car"    zoom="12" />
+	<select class="aerialway:gondola"      zoom="12" />
+	<select class="aerialway:chair_lift"   zoom="12" />
+	<select class="aerialway:mixed_lift"   zoom="12" />
+	<select class="aerialway:drag_lift"    zoom="12" />
+	<select class="aerialway:t-bar"        zoom="12" />
+	<select class="aerialway:j-bar"        zoom="12" />
+	<select class="aerialway:platter"      zoom="12" />
+	<select class="aerialway:rope_tow"     zoom="12" />
+	<select class="aerialway:magic_carpet" zoom="12" />
+	<select class="aerialway:zip_line"     zoom="12" />
+	<select class="aerialway:canopy"       zoom="12" />
+	<select class="aerialway:station"      zoom="12" flags="named,center" />
+	<select class="aerialway:pylon"        zoom="12" flags="center" />
+	<select class="aeroway:aerodrome"      zoom="12" flags="named,center" />
+	<select class="aeroway:gate"           zoom="12" flags="center" />
+	<select class="aeroway:helipad"        zoom="12" flags="center" />
+	<select class="aeroway:heliport"       zoom="12" flags="named,center" />
+	<select class="aeroway:runway"         zoom="12" />
+	<select class="aeroway:spaceport"      zoom="12" flags="named,center" />
+	<select class="aeroway:taxilane"       zoom="12" />
+	<select class="aeroway:taxiway"        zoom="12" />
+	<select class="aeroway:terminal"       zoom="12" flags="named,center" />
 	<!-- DISCARD AEROWAY
-		<select levels="12" class="aeroway:navigationalaid" />
-		<select levels="12" class="aeroway:windsock" />
+		<select class="aeroway:apron" />
+		<select class="aeroway:hangar" />
+		<select class="aeroway:navigationalaid" />
+		<select class="aeroway:windsock" />
 	-->
-	<select levels="12" class="amenity:bar" named="1" />
-	<select levels="12" class="amenity:bbq" named="1" />
-	<select levels="12" class="amenity:biergarten" named="1" />
-	<select levels="12" class="amenity:cafe" named="1" />
-	<select levels="12" class="amenity:fast_food" named="1" />
-	<select levels="12" class="amenity:food_court" named="1" />
-	<select levels="12" class="amenity:ice_cream" named="1" />
-	<select levels="12" class="amenity:pub" named="1" />
-	<select levels="12" class="amenity:restaurant" named="1" />
-	<select levels="12" class="amenity:college" named="1" />
-	<select levels="12" class="amenity:kindergarten" named="1" />
-	<select levels="12" class="amenity:library" named="1" />
-	<select levels="12" class="amenity:archive" named="1" />
-	<select levels="12" class="amenity:school" named="1" />
-	<select levels="12" class="amenity:music_school" named="1" />
-	<select levels="12" class="amenity:driving_school" named="1" />
-	<select levels="12" class="amenity:language_school" named="1" />
-	<select levels="12" class="amenity:university" named="1" />
-	<select levels="12" class="amenity:research_institute" named="1" />
-	<select levels="12" class="amenity:boat_rental" named="1" />
-	<select levels="12" class="amenity:boat_sharing" named="1" />
-	<select levels="12" class="amenity:bus_station" named="1" />
-	<select levels="12" class="amenity:car_rental" named="1" />
-	<select levels="12" class="amenity:car_sharing" named="1" />
-	<select levels="12" class="amenity:car_wash" named="1" />
-	<select levels="12" class="amenity:charging_station" named="1" />
-	<select levels="12" class="amenity:ferry_terminal" named="1" />
-	<select levels="12" class="amenity:fuel" named="1" />
-	<select levels="12" class="amenity:grit_bin" named="1" />
-	<select levels="12" class="amenity:parking" />
-	<select levels="12" class="amenity:taxi" named="1" />
-	<select levels="12" class="amenity:ticket_validator" named="1" />
-	<select levels="12" class="amenity:atm" />
-	<select levels="12" class="amenity:bank" named="1" />
-	<select levels="12" class="amenity:bureau_de_change" named="1" />
-	<select levels="12" class="amenity:clinic" named="1" />
-	<select levels="12" class="amenity:dentist" named="1" />
-	<select levels="12" class="amenity:doctors" named="1" />
-	<select levels="12" class="amenity:hospital" named="1" />
-	<select levels="12" class="amenity:nursing_home" named="1" />
-	<select levels="12" class="amenity:pharmacy" named="1" />
-	<select levels="12" class="amenity:social_facility" named="1" />
-	<select levels="12" class="amenity:veterinary" named="1" />
-	<select levels="12" class="amenity:arts_centre" named="1" />
-	<select levels="12" class="amenity:casino" named="1" />
-	<select levels="12" class="amenity:cinema" named="1" />
-	<select levels="12" class="amenity:community_centre" named="1" />
-	<select levels="12" class="amenity:gambling" named="1" />
-	<select levels="12" class="amenity:nightclub" named="1" />
-	<select levels="12" class="amenity:planetarium" named="1" />
-	<select levels="12" class="amenity:social_centre" named="1" />
-	<select levels="12" class="amenity:studio" named="1" />
-	<select levels="12" class="amenity:theatre" named="1" />
-	<select levels="12" class="amenity:animal_boarding" named="1" />
-	<select levels="12" class="amenity:animal_shelter" named="1" />
-	<select levels="12" class="amenity:baking_oven" named="1" />
-	<select levels="12" class="amenity:courthouse" named="1" />
-	<select levels="12" class="amenity:coworking_space" named="1" />
-	<select levels="12" class="amenity:crematorium" named="1" />
-	<select levels="12" class="amenity:crypt" named="1" />
-	<select levels="12" class="amenity:dive_centre" named="1" />
-	<select levels="12" class="amenity:dojo" named="1" />
-	<select levels="12" class="amenity:embassy" named="1" />
-	<select levels="12" class="amenity:fire_station" named="1" />
-	<select levels="12" class="amenity:grave_yard" named="1" />
-	<select levels="12" class="amenity:internet_cafe" named="1" />
-	<select levels="12" class="amenity:kitchen" named="1" />
-	<select levels="12" class="amenity:marketplace" named="1" />
-	<select levels="12" class="amenity:place_of_warship" named="1" />
-	<select levels="12" class="amenity:police" named="1" />
-	<select levels="12" class="amenity:post_office" named="1" />
-	<select levels="12" class="amenity:prison" named="1" />
-	<select levels="12" class="amenity:ranger_station" />
-	<select levels="12" class="amenity:rescue_station" />
-	<select levels="12" class="amenity:shelter" />
-	<select levels="12" class="amenity:toilets" />
-	<select levels="12" class="amenity:townhall" named="1" />
+	<select class="amenity:bar"                zoom="12" flags="named,center" />
+	<select class="amenity:bbq"                zoom="12" flags="named,center" />
+	<select class="amenity:biergarten"         zoom="12" flags="named,center" />
+	<select class="amenity:cafe"               zoom="12" flags="named,center" />
+	<select class="amenity:fast_food"          zoom="12" flags="named,center" />
+	<select class="amenity:food_court"         zoom="12" flags="named,center" />
+	<select class="amenity:ice_cream"          zoom="12" flags="named,center" />
+	<select class="amenity:pub"                zoom="12" flags="named,center" />
+	<select class="amenity:restaurant"         zoom="12" flags="named,center" />
+	<select class="amenity:college"            zoom="12" flags="named,center" />
+	<select class="amenity:kindergarten"       zoom="12" flags="named,center" />
+	<select class="amenity:library"            zoom="12" flags="named,center" />
+	<select class="amenity:archive"            zoom="12" flags="named,center" />
+	<select class="amenity:school"             zoom="12" flags="named,center" />
+	<select class="amenity:music_school"       zoom="12" flags="named,center" />
+	<select class="amenity:driving_school"     zoom="12" flags="named,center" />
+	<select class="amenity:language_school"    zoom="12" flags="named,center" />
+	<select class="amenity:university"         zoom="12" flags="named,center" />
+	<select class="amenity:research_institute" zoom="12" flags="named,center" />
+	<select class="amenity:boat_rental"        zoom="12" flags="named,center" />
+	<select class="amenity:boat_sharing"       zoom="12" flags="named,center" />
+	<select class="amenity:bus_station"        zoom="12" flags="named,center" />
+	<select class="amenity:car_rental"         zoom="12" flags="named,center" />
+	<select class="amenity:car_sharing"        zoom="12" flags="named,center" />
+	<select class="amenity:car_wash"           zoom="12" flags="named,center" />
+	<select class="amenity:charging_station"   zoom="12" flags="named,center" />
+	<select class="amenity:ferry_terminal"     zoom="12" flags="named,center" />
+	<select class="amenity:fuel"               zoom="12" flags="named,center" />
+	<select class="amenity:grit_bin"           zoom="12" flags="named,center" />
+	<select class="amenity:parking"            zoom="12" flags="center" />
+	<select class="amenity:taxi"               zoom="12" flags="named,center" />
+	<select class="amenity:ticket_validator"   zoom="12" flags="named,center" />
+	<select class="amenity:atm"                zoom="12" flags="center" />
+	<select class="amenity:bank"               zoom="12" flags="named,center" />
+	<select class="amenity:bureau_de_change"   zoom="12" flags="named,center" />
+	<select class="amenity:clinic"             zoom="12" flags="named,center" />
+	<select class="amenity:dentist"            zoom="12" flags="named,center" />
+	<select class="amenity:doctors"            zoom="12" flags="named,center" />
+	<select class="amenity:hospital"           zoom="12" flags="named,center" />
+	<select class="amenity:nursing_home"       zoom="12" flags="named,center" />
+	<select class="amenity:pharmacy"           zoom="12" flags="named,center" />
+	<select class="amenity:social_facility"    zoom="12" flags="named,center" />
+	<select class="amenity:veterinary"         zoom="12" flags="named,center" />
+	<select class="amenity:arts_centre"        zoom="12" flags="named,center" />
+	<select class="amenity:casino"             zoom="12" flags="named,center" />
+	<select class="amenity:cinema"             zoom="12" flags="named,center" />
+	<select class="amenity:community_centre"   zoom="12" flags="named,center" />
+	<select class="amenity:gambling"           zoom="12" flags="named,center" />
+	<select class="amenity:nightclub"          zoom="12" flags="named,center" />
+	<select class="amenity:planetarium"        zoom="12" flags="named,center" />
+	<select class="amenity:social_centre"      zoom="12" flags="named,center" />
+	<select class="amenity:studio"             zoom="12" flags="named,center" />
+	<select class="amenity:theatre"            zoom="12" flags="named,center" />
+	<select class="amenity:animal_boarding"    zoom="12" flags="named,center" />
+	<select class="amenity:animal_shelter"     zoom="12" flags="named,center" />
+	<select class="amenity:baking_oven"        zoom="12" flags="named,center" />
+	<select class="amenity:courthouse"         zoom="12" flags="named,center" />
+	<select class="amenity:coworking_space"    zoom="12" flags="named,center" />
+	<select class="amenity:crematorium"        zoom="12" flags="named,center" />
+	<select class="amenity:crypt"              zoom="12" flags="named,center" />
+	<select class="amenity:dive_centre"        zoom="12" flags="named,center" />
+	<select class="amenity:dojo"               zoom="12" flags="named,center" />
+	<select class="amenity:embassy"            zoom="12" flags="named,center" />
+	<select class="amenity:fire_station"       zoom="12" flags="named,center" />
+	<select class="amenity:grave_yard"         zoom="12" flags="named,center" />
+	<select class="amenity:internet_cafe"      zoom="12" flags="named,center" />
+	<select class="amenity:kitchen"            zoom="12" flags="named,center" />
+	<select class="amenity:marketplace"        zoom="12" flags="named,center" />
+	<select class="amenity:place_of_warship"   zoom="12" flags="named,center" />
+	<select class="amenity:police"             zoom="12" flags="named,center" />
+	<select class="amenity:post_office"        zoom="12" flags="named,center" />
+	<select class="amenity:prison"             zoom="12" flags="named,center" />
+	<select class="amenity:ranger_station"     zoom="12" flags="center" />
+	<select class="amenity:rescue_station"     zoom="12" flags="center" />
+	<select class="amenity:shelter"            zoom="12" flags="center" />
+	<select class="amenity:toilets"            zoom="12" flags="center" />
+	<select class="amenity:townhall"           zoom="12" flags="named,center" />
 	<!-- DISCARD AMENITY
-		<select levels="12" class="amenity:bicycle_parking" />
-		<select levels="12" class="amenity:bicycle_rental" />
-		<select levels="12" class="amenity:hunting_stand" />
-		<select levels="12" class="amenity:public_bookcase" />
-		<select levels="12" class="amenity:drinking_water" />
-		<select levels="12" class="amenity:bicycle_repair_station" />
-		<select levels="12" class="amenity:buggy_parking" />
-		<select levels="12" class="amenity:motorcycle_parking" />
-		<select levels="12" class="amenity:parking_entrance" />
-		<select levels="12" class="amenity:parking_space" />
-		<select levels="12" class="amenity:baby_hatch" />
-		<select levels="12" class="healthcare:blood_donation" />
-		<select levels="12" class="amenity:brothel" />
-		<select levels="12" class="amenity:fountain" />
-		<select levels="12" class="amenity:stripclub" />
-		<select levels="12" class="amenity:swingerclub" />
-		<select levels="12" class="amenity:bench" />
-		<select levels="12" class="amenity:clock" />
-		<select levels="12" class="amenity:game_feeding" />
-		<select levels="12" class="amenity:kneipp_water_cure" />
-		<select levels="12" class="amenity:photo_booth" />
-		<select levels="12" class="amenity:post_box" />
-		<select levels="12" class="amenity:public_bath" />
-		<select levels="12" class="amenity:recycling" />
-		<select levels="12" class="amenity:sanitary_dump_station" />
-		<select levels="12" class="amenity:shower" />
-		<select levels="12" class="amenity:table" />
-		<select levels="12" class="amenity:telephone" />
-		<select levels="12" class="amenity:vending_machine" />
-		<select levels="12" class="amenity:waste_basket" />
-		<select levels="12" class="amenity:waste_disposal" />
-		<select levels="12" class="amenity:waste_transfer_station" />
-		<select levels="12" class="amenity:watering_place" />
-		<select levels="12" class="amenity:water_point" />
+		<select class="amenity:bicycle_parking" />
+		<select class="amenity:bicycle_rental" />
+		<select class="amenity:hunting_stand" />
+		<select class="amenity:public_bookcase" />
+		<select class="amenity:drinking_water" />
+		<select class="amenity:bicycle_repair_station" />
+		<select class="amenity:buggy_parking" />
+		<select class="amenity:motorcycle_parking" />
+		<select class="amenity:parking_entrance" />
+		<select class="amenity:parking_space" />
+		<select class="amenity:baby_hatch" />
+		<select class="healthcare:blood_donation" />
+		<select class="amenity:brothel" />
+		<select class="amenity:fountain" />
+		<select class="amenity:stripclub" />
+		<select class="amenity:swingerclub" />
+		<select class="amenity:bench" />
+		<select class="amenity:clock" />
+		<select class="amenity:game_feeding" />
+		<select class="amenity:kneipp_water_cure" />
+		<select class="amenity:photo_booth" />
+		<select class="amenity:post_box" />
+		<select class="amenity:public_bath" />
+		<select class="amenity:recycling" />
+		<select class="amenity:sanitary_dump_station" />
+		<select class="amenity:shower" />
+		<select class="amenity:table" />
+		<select class="amenity:telephone" />
+		<select class="amenity:vending_machine" />
+		<select class="amenity:waste_basket" />
+		<select class="amenity:waste_disposal" />
+		<select class="amenity:waste_transfer_station" />
+		<select class="amenity:watering_place" />
+		<select class="amenity:water_point" />
 	-->
 	<!-- DISCARD BARRIER
-		<select levels="12" class="barrier:cable_barrier" />
-		<select levels="12" class="barrier:city_wall" />
-		<select levels="12" class="barrier:ditch" />
-		<select levels="12" class="barrier:fence" />
-		<select levels="12" class="barrier:guard_rail" />
-		<select levels="12" class="barrier:handrail" />
-		<select levels="12" class="barrier:hedge" />
-		<select levels="12" class="barrier:kerb" />
-		<select levels="12" class="barrier:retaining_wall" />
-		<select levels="12" class="barrier:tank_trap" />
-		<select levels="12" class="barrier:wall" />
-		<select levels="12" class="barrier:block" />
-		<select levels="12" class="barrier:bollard" />
-		<select levels="12" class="barrier:border_control" />
-		<select levels="12" class="barrier:bump_gate" />
-		<select levels="12" class="barrier:bus_trap" />
-		<select levels="12" class="barrier:cattle_grid" />
-		<select levels="12" class="barrier:chain" />
-		<select levels="12" class="barrier:cycle_barrier" />
-		<select levels="12" class="barrier:debris" />
-		<select levels="12" class="barrier:entrance" />
-		<select levels="12" class="barrier:full-height_turnstyle" />
-		<select levels="12" class="barrier:gate" />
-		<select levels="12" class="barrier:hampshire_gate" />
-		<select levels="12" class="barrier:height_restrictor" />
-		<select levels="12" class="barrier:horse_stile" />
-		<select levels="12" class="barrier:jersey_barrier" />
-		<select levels="12" class="barrier:kent_carriage_gap" />
-		<select levels="12" class="barrier:kissing_gate" />
-		<select levels="12" class="barrier:lift_gate" />
-		<select levels="12" class="barrier:log" />
-		<select levels="12" class="barrier:motorcycle_barrier" />
-		<select levels="12" class="barrier:rope" />
-		<select levels="12" class="barrier:sally_port" />
-		<select levels="12" class="barrier:spikes" />
-		<select levels="12" class="barrier:stile" />
-		<select levels="12" class="barrier:sump_buster" />
-		<select levels="12" class="barrier:swing_gate" />
-		<select levels="12" class="barrier:toll_booth" />
-		<select levels="12" class="barrier:turnstile" />
-		<select levels="12" class="barrier:yes" />
+		<select class="barrier:cable_barrier" />
+		<select class="barrier:city_wall" />
+		<select class="barrier:ditch" />
+		<select class="barrier:fence" />
+		<select class="barrier:guard_rail" />
+		<select class="barrier:handrail" />
+		<select class="barrier:hedge" />
+		<select class="barrier:kerb" />
+		<select class="barrier:retaining_wall" />
+		<select class="barrier:tank_trap" />
+		<select class="barrier:wall" />
+		<select class="barrier:block" />
+		<select class="barrier:bollard" />
+		<select class="barrier:border_control" />
+		<select class="barrier:bump_gate" />
+		<select class="barrier:bus_trap" />
+		<select class="barrier:cattle_grid" />
+		<select class="barrier:chain" />
+		<select class="barrier:cycle_barrier" />
+		<select class="barrier:debris" />
+		<select class="barrier:entrance" />
+		<select class="barrier:full-height_turnstyle" />
+		<select class="barrier:gate" />
+		<select class="barrier:hampshire_gate" />
+		<select class="barrier:height_restrictor" />
+		<select class="barrier:horse_stile" />
+		<select class="barrier:jersey_barrier" />
+		<select class="barrier:kent_carriage_gap" />
+		<select class="barrier:kissing_gate" />
+		<select class="barrier:lift_gate" />
+		<select class="barrier:log" />
+		<select class="barrier:motorcycle_barrier" />
+		<select class="barrier:rope" />
+		<select class="barrier:sally_port" />
+		<select class="barrier:spikes" />
+		<select class="barrier:stile" />
+		<select class="barrier:sump_buster" />
+		<select class="barrier:swing_gate" />
+		<select class="barrier:toll_booth" />
+		<select class="barrier:turnstile" />
+		<select class="barrier:yes" />
 	-->
-	<select levels="9,12" class="boundary:administrative" />
-	<select levels="9,12" class="boundary:historic" />
-	<select levels="9,12" class="boundary:maritime" />
-	<select levels="9,12" class="boundary:national_park" />
-	<select levels="9,12" class="boundary:political" />
-	<select levels="9,12" class="boundary:postal_code" />
-	<select levels="9,12" class="boundary:religious_administration" />
-	<select levels="9,12" class="boundary:protected_area" />
-	<select levels="12" class="building:apartments" named="1" />
-	<select levels="12" class="building:hotel" named="1" />
-	<select levels="12" class="building:residential" named="1" />
-	<select levels="12" class="building:dormatory" named="1" />
-	<select levels="12" class="building:terrace" named="1" />
-	<select levels="12" class="building:commercial" named="1" />
-	<select levels="12" class="building:office" named="1" />
-	<select levels="12" class="building:industrial" named="1" />
-	<select levels="12" class="building:retail" named="1" />
-	<select levels="12" class="building:warehouse" named="1" />
-	<select levels="12" class="building:religious" named="1" />
-	<select levels="12" class="building:cathedral" named="1" />
-	<select levels="12" class="building:chapel" named="1" />
-	<select levels="12" class="building:church" named="1" />
-	<select levels="12" class="building:mosque" named="1" />
-	<select levels="12" class="building:temple" named="1" />
-	<select levels="12" class="building:synagogue" named="1" />
-	<select levels="12" class="building:shrine" named="1" />
-	<select levels="12" class="building:bakehouse" named="1" />
-	<select levels="12" class="building:kindergarten" named="1" />
-	<select levels="12" class="building:civic" named="1" />
-	<select levels="12" class="building:hospital" named="1" />
-	<select levels="12" class="building:school" named="1" />
-	<select levels="12" class="building:stadium" named="1" />
-	<select levels="12" class="building:train_station" named="1" />
-	<select levels="12" class="building:transportation" named="1" />
-	<select levels="12" class="building:university" named="1" />
-	<select levels="12" class="building:bridge" named="1" />
-	<select levels="12" class="building:bunker" named="1" />
-	<select levels="12" class="building:conservatory" named="1" />
-	<select levels="12" class="building:garage" named="1" />
-	<select levels="12" class="building:garages" named="1" />
-	<select levels="12" class="building:greenhouse" named="1" />
-	<select levels="12" class="building:hangar" named="1" />
-	<select levels="12" class="building:pavilion" named="1" />
-	<select levels="12" class="building:parking" named="1" />
-	<select levels="12" class="building:riding_hall" named="1" />
-	<select levels="12" class="building:sports_hall" named="1" />
-	<select levels="12" class="building:stable" named="1" />
-	<select levels="12" class="building:service" named="1" />
-	<select levels="12" class="building:ruins" />
-	<select levels="12" class="building:water_tower" />
+	<select class="boundary:national_park"  zoom="9" />
+	<select class="boundary:protected_area" zoom="9" />
+	<!-- DISCARD BOUNDARY
+		<select class="boundary:administrative" />
+		<select class="boundary:historic" />
+		<select class="boundary:maritime" />
+		<select class="boundary:political" />
+		<select class="boundary:postal_code" />
+		<select class="boundary:religious_administration" />
+	-->
+	<select class="building:apartments"     zoom="12" flags="named,center" />
+	<select class="building:hotel"          zoom="12" flags="named,center" />
+	<select class="building:residential"    zoom="12" flags="named,center" />
+	<select class="building:dormatory"      zoom="12" flags="named,center" />
+	<select class="building:terrace"        zoom="12" flags="named,center" />
+	<select class="building:commercial"     zoom="12" flags="named,center" />
+	<select class="building:office"         zoom="12" flags="named,center" />
+	<select class="building:industrial"     zoom="12" flags="named,center" />
+	<select class="building:retail"         zoom="12" flags="named,center" />
+	<select class="building:warehouse"      zoom="12" flags="named,center" />
+	<select class="building:religious"      zoom="12" flags="named,center" />
+	<select class="building:cathedral"      zoom="12" flags="named,center" />
+	<select class="building:chapel"         zoom="12" flags="named,center" />
+	<select class="building:church"         zoom="12" flags="named,center" />
+	<select class="building:mosque"         zoom="12" flags="named,center" />
+	<select class="building:temple"         zoom="12" flags="named,center" />
+	<select class="building:synagogue"      zoom="12" flags="named,center" />
+	<select class="building:shrine"         zoom="12" flags="named,center" />
+	<select class="building:bakehouse"      zoom="12" flags="named,center" />
+	<select class="building:kindergarten"   zoom="12" flags="named,center" />
+	<select class="building:civic"          zoom="12" flags="named,center" />
+	<select class="building:hospital"       zoom="12" flags="named,center" />
+	<select class="building:school"         zoom="12" flags="named,center" />
+	<select class="building:stadium"        zoom="12" flags="named,center" />
+	<select class="building:train_station"  zoom="12" flags="named,center" />
+	<select class="building:transportation" zoom="12" flags="named,center" />
+	<select class="building:university"     zoom="12" flags="named,center" />
+	<select class="building:bridge"         zoom="12" flags="named,center" />
+	<select class="building:bunker"         zoom="12" flags="named,center" />
+	<select class="building:conservatory"   zoom="12" flags="named,center" />
+	<select class="building:garage"         zoom="12" flags="named,center" />
+	<select class="building:garages"        zoom="12" flags="named,center" />
+	<select class="building:greenhouse"     zoom="12" flags="named,center" />
+	<select class="building:hangar"         zoom="12" flags="named,center" />
+	<select class="building:pavilion"       zoom="12" flags="named,center" />
+	<select class="building:parking"        zoom="12" flags="named,center" />
+	<select class="building:riding_hall"    zoom="12" flags="named,center" />
+	<select class="building:sports_hall"    zoom="12" flags="named,center" />
+	<select class="building:stable"         zoom="12" flags="named,center" />
+	<select class="building:service"        zoom="12" flags="named,center" />
+	<select class="building:ruins"          zoom="12" flags="center" />
+	<select class="building:water_tower"    zoom="12" flags="center" />
+	<select class="building:public"         zoom="12" flags="named,center" />
+	<select class="building:yes"            zoom="12" flags="named,center" />
 	<!-- DISCARD BUILDING
-		<select levels="12" class="building:farm" />
-		<select levels="12" class="building:house" />
-		<select levels="12" class="building:detached" />
-		<select levels="12" class="building:kiosk" />
-		<select levels="12" class="building:houseboat" />
-		<select levels="12" class="building:bungalow" />
-		<select levels="12" class="building:cabin" />
-		<select levels="12" class="building:static_caravan" />
-		<select levels="12" class="building:grandstand" />
-		<select levels="12" class="building:public" />
-		<select levels="12" class="building:barn" />
-		<select levels="12" class="building:carport" />
-		<select levels="12" class="building:construction" />
-		<select levels="12" class="building:cowshed" />
-		<select levels="12" class="building:digester" />
-		<select levels="12" class="building:farm_auxilary" />
-		<select levels="12" class="building:garbage_shed" />
-		<select levels="12" class="building:hut" />
-		<select levels="12" class="building:roof" />
-		<select levels="12" class="building:shed" />
-		<select levels="12" class="building:sty" />
-		<select levels="12" class="building:transformer_tower" />
-		<select levels="12" class="building:yes" />
+		<select class="building:farm" />
+		<select class="building:house" />
+		<select class="building:detached" />
+		<select class="building:kiosk" />
+		<select class="building:houseboat" />
+		<select class="building:bungalow" />
+		<select class="building:cabin" />
+		<select class="building:static_caravan" />
+		<select class="building:grandstand" />
+		<select class="building:barn" />
+		<select class="building:carport" />
+		<select class="building:construction" />
+		<select class="building:cowshed" />
+		<select class="building:digester" />
+		<select class="building:farm_auxilary" />
+		<select class="building:garbage_shed" />
+		<select class="building:hut" />
+		<select class="building:roof" />
+		<select class="building:shed" />
+		<select class="building:sty" />
+		<select class="building:transformer_tower" />
 	-->
-	<select levels="12" class="craft:bakery" named="1" />
-	<select levels="12" class="craft:brewery" named="1" />
-	<select levels="12" class="craft:builder" named="1" />
-	<select levels="12" class="craft:carpenter" named="1" />
-	<select levels="12" class="craft:caterer" named="1" />
-	<select levels="12" class="craft:confectionery" named="1" />
-	<select levels="12" class="craft:dental_technican" named="1" />
-	<select levels="12" class="craft:electrician" named="1" />
-	<select levels="12" class="craft:gardener" named="1" />
-	<select levels="12" class="craft:locksmith" named="1" />
-	<select levels="12" class="craft:optician" named="1" />
-	<select levels="12" class="craft:painter" named="1" />
-	<select levels="12" class="craft:photographer" named="1" />
-	<select levels="12" class="craft:plumber" named="1" />
-	<select levels="12" class="craft:pottery" named="1" />
-	<select levels="12" class="craft:printmaker" named="1" />
-	<select levels="12" class="craft:sawmill" named="1" />
-	<select levels="12" class="craft:sculpter" named="1" />
-	<select levels="12" class="craft:winery" named="1" />
+	<select class="craft:bakery"           zoom="12" flags="named,center" />
+	<select class="craft:brewery"          zoom="12" flags="named,center" />
+	<select class="craft:builder"          zoom="12" flags="named,center" />
+	<select class="craft:carpenter"        zoom="12" flags="named,center" />
+	<select class="craft:caterer"          zoom="12" flags="named,center" />
+	<select class="craft:confectionery"    zoom="12" flags="named,center" />
+	<select class="craft:dental_technican" zoom="12" flags="named,center" />
+	<select class="craft:electrician"      zoom="12" flags="named,center" />
+	<select class="craft:gardener"         zoom="12" flags="named,center" />
+	<select class="craft:locksmith"        zoom="12" flags="named,center" />
+	<select class="craft:optician"         zoom="12" flags="named,center" />
+	<select class="craft:painter"          zoom="12" flags="named,center" />
+	<select class="craft:photographer"     zoom="12" flags="named,center" />
+	<select class="craft:plumber"          zoom="12" flags="named,center" />
+	<select class="craft:pottery"          zoom="12" flags="named,center" />
+	<select class="craft:printmaker"       zoom="12" flags="named,center" />
+	<select class="craft:sawmill"          zoom="12" flags="named,center" />
+	<select class="craft:sculpter"         zoom="12" flags="named,center" />
+	<select class="craft:winery"           zoom="12" flags="named,center" />
 	<!-- DISCARD CRAFT
-		<select levels="12" class="craft:agricultural_engines" />
-		<select levels="12" class="craft:basket_maker" />
-		<select levels="12" class="craft:beekeeper" />
-		<select levels="12" class="craft:blacksmith" />
-		<select levels="12" class="craft:boatbuilder" />
-		<select levels="12" class="craft:bookbinder" />
-		<select levels="12" class="craft:carpet_layer" />
-		<select levels="12" class="craft:chimney_sweeper" />
-		<select levels="12" class="craft:clockmaker" />
-		<select levels="12" class="craft:distillery" />
-		<select levels="12" class="craft:dressmaker" />
-		<select levels="12" class="craft:embroiderer" />
-		<select levels="12" class="craft:engraver" />
-		<select levels="12" class="craft:floorer" />
-		<select levels="12" class="craft:glaziery" />
-		<select levels="12" class="craft:handicraft" />
-		<select levels="12" class="craft:hvac" />
-		<select levels="12" class="craft:insulation" />
-		<select levels="12" class="craft:jeweller" />
-		<select levels="12" class="craft:joiner" />
-		<select levels="12" class="craft:key_cutter" />
-		<select levels="12" class="craft:metal_construction" />
-		<select levels="12" class="craft:mint" />
-		<select levels="12" class="craft:parquet_layer" />"
-		<select levels="12" class="craft:photographic_laboratory" />
-		<select levels="12" class="craft:piano_tuner" />
-		<select levels="12" class="craft:plasterer" />
-		<select levels="12" class="craft:rigger" />
-		<select levels="12" class="craft:roofer" />
-		<select levels="12" class="craft:saddler" />
-		<select levels="12" class="craft:sailmaker" />
-		<select levels="12" class="craft:scaffolder" />
-		<select levels="12" class="craft:shoemaker" />
-		<select levels="12" class="craft:stand_builder" />
-		<select levels="12" class="craft:stonemason" />
-		<select levels="12" class="craft:sun_protection" />
-		<select levels="12" class="craft:tailor" />
-		<select levels="12" class="craft:tiler" />
-		<select levels="12" class="craft:tinsmith" />
-		<select levels="12" class="craft:toolmaker" />
-		<select levels="12" class="craft:turner" />
-		<select levels="12" class="craft:upholsterer" />
-		<select levels="12" class="craft:watchmaker" />
-		<select levels="12" class="craft:window_construction" />
+		<select class="craft:agricultural_engines" />
+		<select class="craft:basket_maker" />
+		<select class="craft:beekeeper" />
+		<select class="craft:blacksmith" />
+		<select class="craft:boatbuilder" />
+		<select class="craft:bookbinder" />
+		<select class="craft:carpet_layer" />
+		<select class="craft:chimney_sweeper" />
+		<select class="craft:clockmaker" />
+		<select class="craft:distillery" />
+		<select class="craft:dressmaker" />
+		<select class="craft:embroiderer" />
+		<select class="craft:engraver" />
+		<select class="craft:floorer" />
+		<select class="craft:glaziery" />
+		<select class="craft:handicraft" />
+		<select class="craft:hvac" />
+		<select class="craft:insulation" />
+		<select class="craft:jeweller" />
+		<select class="craft:joiner" />
+		<select class="craft:key_cutter" />
+		<select class="craft:metal_construction" />
+		<select class="craft:mint" />
+		<select class="craft:parquet_layer"" />
+		<select class="craft:photographic_laboratory" />
+		<select class="craft:piano_tuner" />
+		<select class="craft:plasterer" />
+		<select class="craft:rigger" />
+		<select class="craft:roofer" />
+		<select class="craft:saddler" />
+		<select class="craft:sailmaker" />
+		<select class="craft:scaffolder" />
+		<select class="craft:shoemaker" />
+		<select class="craft:stand_builder" />
+		<select class="craft:stonemason" />
+		<select class="craft:sun_protection" />
+		<select class="craft:tailor" />
+		<select class="craft:tiler" />
+		<select class="craft:tinsmith" />
+		<select class="craft:toolmaker" />
+		<select class="craft:turner" />
+		<select class="craft:upholsterer" />
+		<select class="craft:watchmaker" />
+		<select class="craft:window_construction" />
 	-->
-	<select levels="12" class="emergency:landing_site" />
-	<select levels="12" class="emergency:fire_water_pond" />
-	<select levels="12" class="emergency:lifeguard" />
-	<select levels="12" class="emergency:lifeguard_base" />
-	<select levels="12" class="emergency:lifeguard_tower" />
-	<select levels="12" class="emergency:lifeguard_platform" />
-	<select levels="12" class="emergency:mountain_rescue" />
+	<select class="emergency:landing_site"       zoom="12" />
+	<select class="emergency:fire_water_pond"    zoom="12" />
+	<select class="emergency:lifeguard"          zoom="12" flags="center" />
+	<select class="emergency:lifeguard_base"     zoom="12" flags="center" />
+	<select class="emergency:lifeguard_tower"    zoom="12" flags="center" />
+	<select class="emergency:lifeguard_platform" zoom="12" flags="center" />
+	<select class="emergency:mountain_rescue"    zoom="12" flags="center" />
 	<!-- DISCARD EMERGENCY
-		<select levels="12" class="emergency:ambulance_station" />
-		<select levels="12" class="emergency:life_ring" />
-		<select levels="12" class="emergency:defibrillator" />
-		<select levels="12" class="emergency:first_aid_kit" />
-		<select levels="12" class="emergency:emergency_ward_entrance" />
-		<select levels="12" class="emergency:dry_riser_inlet" />
-		<select levels="12" class="emergency:fire_alarm_box" />
-		<select levels="12" class="emergency:fire_extinguisher" />
-		<select levels="12" class="emergency:fire_flapper" />
-		<select levels="12" class="emergency:fire_hose" />
-		<select levels="12" class="emergency:fire_hydrant" />
-		<select levels="12" class="emergency:water_tank" />
-		<select levels="12" class="emergency:suction_point" />
-		<select levels="12" class="emergency:ses_station" />
-		<select levels="12" class="emergency:assembly_point" />
-		<select levels="12" class="emergency:access_point" />
-		<select levels="12" class="emergency:phone" />
-		<select levels="12" class="emergency:rescue_box" />
-		<select levels="12" class="emergency:siren" />
+		<select class="emergency:ambulance_station" />
+		<select class="emergency:life_ring" />
+		<select class="emergency:defibrillator" />
+		<select class="emergency:first_aid_kit" />
+		<select class="emergency:emergency_ward_entrance" />
+		<select class="emergency:dry_riser_inlet" />
+		<select class="emergency:fire_alarm_box" />
+		<select class="emergency:fire_extinguisher" />
+		<select class="emergency:fire_flapper" />
+		<select class="emergency:fire_hose" />
+		<select class="emergency:fire_hydrant" />
+		<select class="emergency:water_tank" />
+		<select class="emergency:suction_point" />
+		<select class="emergency:ses_station" />
+		<select class="emergency:assembly_point" />
+		<select class="emergency:access_point" />
+		<select class="emergency:phone" />
+		<select class="emergency:rescue_box" />
+		<select class="emergency:siren" />
 	-->
-	<select levels="12" class="geological:palaeontological_site" named="1" />
-	<select levels="12" class="geological:moraine" named="1" />
-	<select levels="12" class="geological:outcrop" named="1" />
-	<select levels="6,9,12" class="highway:motorway" />
-	<select levels="6,9,12" class="highway:trunk" />
-	<select levels="6,9,12" class="highway:primary" />
-	<select levels="9,12" class="highway:secondary" />
-	<select levels="12" class="highway:tertiary" />
-	<select levels="12" class="highway:unclassified" />
-	<select levels="12" class="highway:residential" />
-	<select levels="12" class="highway:service" />
-	<select levels="12" class="highway:motorway_link" />
-	<select levels="12" class="highway:trunk_link" />
-	<select levels="12" class="highway:primary_link" />
-	<select levels="12" class="highway:secondary_link" />
-	<select levels="12" class="highway:tertiary_link" />
-	<select levels="12" class="highway:living_street" />
-	<select levels="12" class="highway:pedestrian" />
-	<select levels="12" class="highway:track" />
-	<select levels="12" class="highway:bus_guideway" />
-	<select levels="12" class="highway:escape" />
-	<select levels="12" class="highway:raceway" />
-	<select levels="12" class="highway:road" />
-	<select levels="12" class="highway:footway" />
-	<select levels="12" class="highway:bridleway" />
-	<select levels="12" class="highway:steps" />
-	<select levels="12" class="highway:path" />
-	<select levels="12" class="highway:cycleway" />
-	<select levels="12" class="highway:bus_stop" />
-	<select levels="12" class="highway:crossing" />
-	<select levels="12" class="highway:mini_roundabout" />
-	<select levels="12" class="highway:motorway_junction" />
-	<select levels="12" class="highway:passing_place" />
-	<select levels="12" class="highway:rest_area" />
-	<select levels="12" class="highway:services" />
-	<select levels="12" class="highway:stop" />
-	<select levels="12" class="highway:traffic_signals" />
-	<select levels="12" class="highway:turning_circle" />
+	<select class="geological:palaeontological_site" zoom="12" flags="named" />
+	<select class="geological:moraine"               zoom="12" flags="named" />
+	<select class="geological:outcrop"               zoom="12" flags="named" />
+	<select class="highway:motorway"                 zoom="6" />
+	<select class="highway:trunk"                    zoom="6" />
+	<select class="highway:primary"                  zoom="9" />
+	<select class="highway:secondary"                zoom="9" />
+	<select class="highway:tertiary"                 zoom="12" />
+	<select class="highway:unclassified"             zoom="12" />
+	<select class="highway:residential"              zoom="12" />
+	<select class="highway:motorway_link"            zoom="12" />
+	<select class="highway:trunk_link"               zoom="12" />
+	<select class="highway:primary_link"             zoom="12" />
+	<select class="highway:secondary_link"           zoom="12" />
+	<select class="highway:tertiary_link"            zoom="12" />
+	<select class="highway:living_street"            zoom="12" />
+	<select class="highway:pedestrian"               zoom="12" />
+	<select class="highway:track"                    zoom="12" />
+	<select class="highway:bus_guideway"             zoom="12" />
+	<select class="highway:escape"                   zoom="12" />
+	<select class="highway:raceway"                  zoom="12" />
+	<select class="highway:road"                     zoom="12" />
+	<select class="highway:footway"                  zoom="12" />
+	<select class="highway:bridleway"                zoom="12" />
+	<select class="highway:steps"                    zoom="12" />
+	<select class="highway:path"                     zoom="12" />
+	<select class="highway:cycleway"                 zoom="12" />
+	<select class="highway:bus_stop"                 zoom="12" flags="center" />
+	<select class="highway:mini_roundabout"          zoom="12" />
+	<select class="highway:motorway_junction"        zoom="12" />
+	<select class="highway:passing_place"            zoom="12" />
+	<select class="highway:rest_area"                zoom="12" />
+	<select class="highway:services"                 zoom="12" />
+	<select class="highway:turning_circle"           zoom="12" />
 	<!-- DISCARD HIGHWAY
-		<select levels="12" class="highway:street_lamp" />
-		<select levels="12" class="highway:speed_camera" />
-		<select levels="12" class="highway:emergency_access_point" />
-		<select levels="12" class="highway:elevator" />
-		<select levels="12" class="highway:give_way" />
+		<select class="highway:stop" />
+		<select class="highway:traffic_signals" />
+		<select class="highway:crossing" />
+		<select class="highway:service" />
+		<select class="highway:street_lamp" />
+		<select class="highway:speed_camera" />
+		<select class="highway:emergency_access_point" />
+		<select class="highway:elevator" />
+		<select class="highway:give_way" />
 	-->
-	<select levels="12" class="historic:aircraft" named="1" />
-	<select levels="12" class="historic:castle" named="1" />
-	<select levels="12" class="historic:castle_wall" named="1" />
-	<select levels="12" class="historic:church" named="1" />
-	<select levels="12" class="historic:fort" named="1" />
-	<select levels="12" class="historic:locomotive" named="1" />
-	<select levels="12" class="historic:manor" named="1" />
-	<select levels="12" class="historic:memorial" named="1" />
-	<select levels="12" class="historic:monastery" named="1" />
-	<select levels="12" class="historic:monument" named="1" />
-	<select levels="12" class="historic:railway_car" named="1" />
-	<select levels="12" class="historic:ruins" named="1" />
-	<select levels="12" class="historic:ship" named="1" />
-	<select levels="12" class="historic:tomb" named="1" />
-	<select levels="12" class="historic:tower" named="1" />
-	<select levels="12" class="historic:wreck" named="1" />
+	<select class="historic:aircraft"    zoom="12" flags="named,center" />
+	<select class="historic:castle"      zoom="12" flags="named,center" />
+	<select class="historic:castle_wall" zoom="12" flags="named,center" />
+	<select class="historic:church"      zoom="12" flags="named,center" />
+	<select class="historic:fort"        zoom="12" flags="named,center" />
+	<select class="historic:locomotive"  zoom="12" flags="named,center" />
+	<select class="historic:manor"       zoom="12" flags="named,center" />
+	<select class="historic:memorial"    zoom="12" flags="named,center" />
+	<select class="historic:monastery"   zoom="12" flags="named,center" />
+	<select class="historic:monument"    zoom="12" flags="named,center" />
+	<select class="historic:railway_car" zoom="12" flags="named,center" />
+	<select class="historic:ruins"       zoom="12" flags="named,center" />
+	<select class="historic:ship"        zoom="12" flags="named,center" />
+	<select class="historic:tomb"        zoom="12" flags="named,center" />
+	<select class="historic:tower"       zoom="12" flags="named,center" />
+	<select class="historic:wreck"       zoom="12" flags="named,center" />
 	<!-- DISCARD HISTORIC
-		<select levels="12" class="historic:optical_telegraph" />
-		<select levels="12" class="historic:highwater_mark" />
-		<select levels="12" class="historic:gallows" />
-		<select levels="12" class="historic:aqueduct" />
-		<select levels="12" class="historic:archaeological_site" />
-		<select levels="12" class="historic:battlefield" />
-		<select levels="12" class="historic:boundary_stone" />
-		<select levels="12" class="historic:cannon" />
-		<select levels="12" class="historic:building" />
-		<select levels="12" class="historic:city_gate" />
-		<select levels="12" class="historic:citywalls" />
-		<select levels="12" class="historic:farm" />
-		<select levels="12" class="historic:milestone" />
-		<select levels="12" class="historic:pillory" />
-		<select levels="12" class="historic:rune_stone" />
-		<select levels="12" class="historic:wayside_cross" />
-		<select levels="12" class="historic:wayside_shrine" />
-		<select levels="12" class="historic:yes" />
+		<select class="historic:optical_telegraph" />
+		<select class="historic:highwater_mark" />
+		<select class="historic:gallows" />
+		<select class="historic:aqueduct" />
+		<select class="historic:archaeological_site" />
+		<select class="historic:battlefield" />
+		<select class="historic:boundary_stone" />
+		<select class="historic:cannon" />
+		<select class="historic:building" />
+		<select class="historic:city_gate" />
+		<select class="historic:citywalls" />
+		<select class="historic:farm" />
+		<select class="historic:milestone" />
+		<select class="historic:pillory" />
+		<select class="historic:rune_stone" />
+		<select class="historic:wayside_cross" />
+		<select class="historic:wayside_shrine" />
+		<select class="historic:yes" />
 	-->
-	<select levels="12" class="landuse:commercial" />
-	<select levels="12" class="landuse:construction" />
-	<select levels="12" class="landuse:industrial" />
-	<select levels="12" class="landuse:residential" />
-	<select levels="12" class="landuse:retail" />
-	<select levels="12" class="landuse:allotments" />
-	<select levels="6,9,12" class="landuse:basin" />
-	<select levels="12" class="landuse:brownfield" named="1" />
-	<select levels="12" class="landuse:cemetery" named="1" />
-	<select levels="12" class="landuse:depot" named="1" />
-	<select levels="12" class="landuse:farmland" named="1" />
-	<select levels="12" class="landuse:farmyard" named="1" />
-	<select levels="6,9,12" class="landuse:forest" />
-	<select levels="12" class="landuse:garages" named="1" />
-	<select levels="6,9,12" class="landuse:grass" />
-	<select levels="12" class="landuse:greenfield" named="1" />
-	<select levels="12" class="landuse:greenhouse_horticulture" named="1" />
-	<select levels="12" class="landuse:landfill" named="1" />
-	<select levels="12" class="landuse:meadow" named="1" />
-	<select levels="6,9,12" class="landuse:military" />
-	<select levels="12" class="landuse:orchard" named="1" />
-	<select levels="12" class="landuse:plant_nursery" named="1" />
-	<select levels="12" class="landuse:port" />
-	<select levels="12" class="landuse:quarry" />
-	<select levels="12" class="landuse:railway" />
-	<select levels="12" class="landuse:recreation_ground" named="1" />
-	<select levels="12" class="landuse:religious" named="1" />
-	<select levels="6,9,12" class="landuse:reservoir" />
-	<select levels="12" class="landuse:salt_pond" />
-	<select levels="12" class="landuse:village_green" named="1" />
-	<select levels="12" class="landuse:vineyard" named="1" />
-	<select levels="12" class="leisure:adult_gaming_centre" named="1" />
-	<select levels="12" class="leisure:amusement_arcade" named="1" />
-	<select levels="12" class="leisure:beach_resort" named="1" />
-	<select levels="12" class="leisure:bandstand" named="1" />
-	<select levels="12" class="leisure:common" named="1" />
-	<select levels="12" class="leisure:dance" named="1" />
-	<select levels="12" class="leisure:disc_golf_course" named="1" />
-	<select levels="12" class="leisure:dog_park" named="1" />
-	<select levels="12" class="leisure:escape_game" named="1" />
-	<select levels="12" class="leisure:fishing" named="1" />
-	<select levels="12" class="leisure:fitness_centre" named="1" />
-	<select levels="12" class="leisure:garden" named="1" />
-	<select levels="12" class="leisure:hackerspace" named="1" />
-	<select levels="12" class="leisure:horse_riding" named="1" />
-	<select levels="12" class="leisure:ice_rink" named="1" />
-	<select levels="12" class="leisure:marina" named="1" />
-	<select levels="12" class="leisure:minature_golf" named="1" />
-	<select levels="12" class="leisure:nature_reserve" named="1" />
-	<select levels="12" class="leisure:park" named="1" />
-	<select levels="12" class="leisure:pitch" named="1" />
-	<select levels="12" class="leisure:playground" named="1" />
-	<select levels="12" class="leisure:slipway" named="1" />
-	<select levels="12" class="leisure:sports_centre" named="1" />
-	<select levels="12" class="leisure:stadium" named="1" />
-	<select levels="12" class="leisure:summer_camp" named="1" />
-	<select levels="12" class="leisure:swimming_area" named="1" />
-	<select levels="12" class="leisure:swimming_pool" named="1" />
-	<select levels="12" class="leisure:track" named="1" />
-	<select levels="12" class="leisure:water_park" named="1" />
+	<select class="landuse:reservoir"         zoom="6" />
+	<select class="landuse:salt_pond"         zoom="12" />
+	<select class="landuse:basin"             zoom="6" />
+	<select class="landuse:cemetery"          zoom="12" flags="named,center" />
+	<select class="landuse:military"          zoom="12" flags="named,center" />
+	<select class="landuse:commercial"        zoom="12" flags="named,center" />
+	<select class="landuse:industrial"        zoom="12" flags="named,center" />
+	<select class="landuse:residential"       zoom="12" flags="named,center" />
+	<select class="landuse:retail"            zoom="12" flags="named,center" />
+	<select class="landuse:quarry"            zoom="12" flags="named,center" />
+	<select class="landuse:recreation_ground" zoom="12" flags="named,center" />
+	<select class="landuse:forest"            zoom="9" />
+	<!-- DISCARD LANDUSE
+		<select class="landuse:construction" />
+		<select class="landuse:allotments" />
+		<select class="landuse:brownfield" />
+		<select class="landuse:depot" />
+		<select class="landuse:farmland" />
+		<select class="landuse:farmyard" />
+		<select class="landuse:garages" />
+		<select class="landuse:grass" />
+		<select class="landuse:greenfield" />
+		<select class="landuse:greenhouse_horticulture" />
+		<select class="landuse:landfill" />
+		<select class="landuse:meadow" />
+		<select class="landuse:orchard" />
+		<select class="landuse:plant_nursery" />
+		<select class="landuse:port" />
+		<select class="landuse:railway" />
+		<select class="landuse:religious" />
+		<select class="landuse:village_green" />
+		<select class="landuse:vineyard" />
+	-->
+	<select class="leisure:adult_gaming_centre"     zoom="12" flags="named,center" />
+	<select class="leisure:amusement_arcade"        zoom="12" flags="named,center" />
+	<select class="leisure:beach_resort"            zoom="12" flags="named,center" />
+	<select class="leisure:bandstand"               zoom="12" flags="named,center" />
+	<select class="leisure:common"                  zoom="12" flags="named,center" />
+	<select class="leisure:dance"                   zoom="12" flags="named,center" />
+	<select class="leisure:disc_golf_course"        zoom="12" flags="named,center" />
+	<select class="leisure:dog_park"                zoom="12" flags="named,center" />
+	<select class="leisure:escape_game"             zoom="12" flags="named,center" />
+	<select class="leisure:fishing"                 zoom="12" flags="named,center" />
+	<select class="leisure:fitness_centre"          zoom="12" flags="named,center" />
+	<select class="leisure:garden"                  zoom="12" flags="named,center" />
+	<select class="leisure:hackerspace"             zoom="12" flags="named,center" />
+	<select class="leisure:horse_riding"            zoom="12" flags="named,center" />
+	<select class="leisure:ice_rink"                zoom="12" flags="named,center" />
+	<select class="leisure:marina"                  zoom="12" flags="named,center" />
+	<select class="leisure:minature_golf"           zoom="12" flags="named,center" />
+	<select class="leisure:nature_reserve"          zoom="9" />
+	<select class="leisure:park"                    zoom="12" flags="named,center" />
+	<select class="leisure:pitch"                   zoom="12" flags="named,center" />
+	<select class="leisure:playground"              zoom="12" flags="named,center" />
+	<select class="leisure:slipway"                 zoom="12" flags="named,center" />
+	<select class="leisure:sports_centre"           zoom="12" flags="named,center" />
+	<select class="leisure:stadium"                 zoom="12" flags="named,center" />
+	<select class="leisure:summer_camp"             zoom="12" flags="named,center" />
+	<select class="leisure:swimming_area"           zoom="12" flags="named,center" />
+	<select class="leisure:swimming_pool"           zoom="12" flags="named,center" />
+	<select class="leisure:track"                   zoom="12" flags="named,center" />
+	<select class="leisure:water_park"              zoom="12" flags="named,center" />
 	<!-- DISCARD LEISURE
-		<select levels="12" class="leisure:bird_hide" />
-		<select levels="12" class="leisure:firepit" />
-		<select levels="12" class="leisure:fitness_station" />
-		<select levels="12" class="leisure:picnic_table" />
-		<select levels="12" class="leisure:wildlife_hide" />
+		<select class="leisure:bird_hide" />
+		<select class="leisure:firepit" />
+		<select class="leisure:fitness_station" />
+		<select class="leisure:picnic_table" />
+		<select class="leisure:wildlife_hide" />
 	-->
-	<select levels="12" class="man_made:beacon" />
-	<select levels="12" class="man_made:breakwater" named="1" />
-	<select levels="12" class="man_made:bridge" />
-	<select levels="12" class="man_made:communications_tower" />
-	<select levels="12" class="man_made:dyke" />
-	<select levels="12" class="man_made:gasometer" named="1" />
-	<select levels="12" class="man_made:lighthouse" />
-	<select levels="12" class="man_made:mineshaft" named="1" />
-	<select levels="12" class="man_made:monitoring_station" named="1" />
-	<select levels="12" class="man_made:obelisk" named="1" />
-	<select levels="12" class="man_made:observatory" named="1" />
-	<select levels="12" class="man_made:petroleum_well" named="1" />
-	<select levels="12" class="man_made:pier" />
-	<select levels="12" class="man_made:pipeline" />
-	<select levels="12" class="man_made:pumping_station" named="1" />
-	<select levels="12" class="man_made:reservoir_covered" named="1" />
-	<select levels="12" class="man_made:silo" />
-	<select levels="12" class="man_made:telescope" />
-	<select levels="12" class="man_made:tower" />
-	<select levels="12" class="man_made:wastewater_plant" named="1" />
-	<select levels="12" class="man_made:watermill" />
-	<select levels="12" class="man_made:water_tower" />
-	<select levels="12" class="man_made:water_well" named="1" />
-	<select levels="12" class="man_made:water_works" named="1" />
-	<select levels="12" class="man_made:windmill" />
+	<select class="man_made:beacon"               zoom="12" flags="center" />
+	<select class="man_made:breakwater"           zoom="12" />
+	<select class="man_made:bridge"               zoom="12" />
+	<select class="man_made:communications_tower" zoom="12" flags="center" />
+	<select class="man_made:dyke"                 zoom="12" />
+	<select class="man_made:gasometer"            zoom="12" flags="center" />
+	<select class="man_made:lighthouse"           zoom="12" flags="center" />
+	<select class="man_made:mineshaft"            zoom="12" flags="named,center" />
+	<select class="man_made:monitoring_station"   zoom="12" flags="named,center" />
+	<select class="man_made:obelisk"              zoom="12" flags="named,center" />
+	<select class="man_made:observatory"          zoom="12" flags="named,center" />
+	<select class="man_made:petroleum_well"       zoom="12" flags="named,center" />
+	<select class="man_made:pier"                 zoom="12" />
+	<select class="man_made:pipeline"             zoom="12" />
+	<select class="man_made:pumping_station"      zoom="12" flags="named,center" />
+	<select class="man_made:reservoir_covered"    zoom="12" flags="named" />
+	<select class="man_made:silo"                 zoom="12" flags="center" />
+	<select class="man_made:telescope"            zoom="12" flags="center" />
+	<select class="man_made:tower"                zoom="12" flags="center" />
+	<select class="man_made:wastewater_plant"     zoom="12" flags="named,center" />
+	<select class="man_made:watermill"            zoom="12" flags="center"/>
+	<select class="man_made:water_tower"          zoom="12" flags="center"/>
+	<select class="man_made:water_well"           zoom="12" flags="named,center" />
+	<select class="man_made:water_works"          zoom="12" flags="named,center" />
+	<select class="man_made:windmill"             zoom="12" flags="center"/>
 	<!-- DISCARD MAN_MADE
-		<select levels="12" class="man_made:water_tap" />
-		<select levels="12" class="man_made:groyne" />
-		<select levels="12" class="man_made:kiln" />
-		<select levels="12" class="man_made:guy" />
-		<select levels="12" class="man_made:embankment" />
-		<select levels="12" class="man_made:flagpole" />
-		<select levels="12" class="man_made:adit" />
-		<select levels="12" class="man_made:bunker_silo" />
-		<select levels="12" class="man_made:campanile" />
-		<select levels="12" class="man_made:chimney" />
-		<select levels="12" class="man_made:crane" />
-		<select levels="12" class="man_made:cross" />
-		<select levels="12" class="man_made:cutline" />
-		<select levels="12" class="man_made:clearcut" />
-		<select levels="12" class="man_made:dovecote" />
-		<select levels="12" class="man_made:drinking_fountain" />
-		<select levels="12" class="man_made:mast" />
-		<select levels="12" class="man_made:offshore_platform" />
-		<select levels="12" class="man_made:snow_fence" />
-		<select levels="12" class="man_made:snow_net" />
-		<select levels="12" class="man_made:storage_tank" />
-		<select levels="12" class="man_made:street_cabinet" />
-		<select levels="12" class="man_made:surveillance" />
-		<select levels="12" class="man_made:survey_point" />
-		<select levels="12" class="man_made:wildlife_crossing" />
-		<select levels="12" class="man_made:works" />
-		<select levels="12" class="man_made:yes" />
+		<select class="man_made:water_tap" />
+		<select class="man_made:groyne" />
+		<select class="man_made:kiln" />
+		<select class="man_made:guy" />
+		<select class="man_made:embankment" />
+		<select class="man_made:flagpole" />
+		<select class="man_made:adit" />
+		<select class="man_made:bunker_silo" />
+		<select class="man_made:campanile" />
+		<select class="man_made:chimney" />
+		<select class="man_made:crane" />
+		<select class="man_made:cross" />
+		<select class="man_made:cutline" />
+		<select class="man_made:clearcut" />
+		<select class="man_made:dovecote" />
+		<select class="man_made:drinking_fountain" />
+		<select class="man_made:mast" />
+		<select class="man_made:offshore_platform" />
+		<select class="man_made:snow_fence" />
+		<select class="man_made:snow_net" />
+		<select class="man_made:storage_tank" />
+		<select class="man_made:street_cabinet" />
+		<select class="man_made:surveillance" />
+		<select class="man_made:survey_point" />
+		<select class="man_made:wildlife_crossing" />
+		<select class="man_made:works" />
+		<select class="man_made:yes" />
 	-->
-	<select levels="12" class="military:airfield" />
-	<select levels="12" class="military:bunker" />
-	<select levels="12" class="military:barracks" />
-	<select levels="12" class="military:checkpoint" />
-	<select levels="12" class="military:danger_area" />
-	<select levels="12" class="military:naval_base" />
-	<select levels="12" class="military:office" />
-	<select levels="12" class="military:range" />
-	<select levels="12" class="military:training_area" />
-	<select levels="12" class="military:launchpad" />
+	<select class="military:airfield"      zoom="12" />
+	<select class="military:bunker"        zoom="12" flags="named,center" />
+	<select class="military:barracks"      zoom="12" flags="named,center" />
+	<select class="military:danger_area"   zoom="12" />
+	<select class="military:naval_base"    zoom="12" flags="named,center" />
+	<select class="military:office"        zoom="12" flags="named,center" />
+	<select class="military:range"         zoom="12" flags="named,center" />
+	<select class="military:training_area" zoom="12" flags="named,center" />
+	<select class="military:launchpad"     zoom="12" flags="named,center" />
+	<select class="military:ammunition"    zoom="12" flags="named,center" />
 	<!-- DISCARD MILITARY
-		<select levels="12" class="military:ammunition" />
-		<select levels="12" class="military:nuclear_explosion_site" />
-		<select levels="12" class="military:obstacle_course" />
-		<select levels="12" class="military:trench" />
+		<select class="military:checkpoint" />
+		<select class="military:nuclear_explosion_site" />
+		<select class="military:obstacle_course" />
+		<select class="military:trench" />
 	-->
-	<select levels="12" class="natural:wood" named="1" />
-	<select levels="12" class="natural:scrub" named="1" />
-	<select levels="12" class="natural:heath" named="1" />
-	<select levels="12" class="natural:moor" named="1" />
-	<select levels="12" class="natural:grassland" named="1" />
-	<select levels="12" class="natural:fell" named="1" />
-	<select levels="12" class="natural:bare_rock" named="1" />
-	<select levels="12" class="natural:scree" named="1" />
-	<select levels="12" class="natural:shingle" named="1" />
-	<select levels="12" class="natural:sand" named="1" />
-	<select levels="12" class="natural:mud" named="1" />
-	<select levels="6,9,12" class="natural:water" />
-	<select levels="12" class="natural:wetland" named="1" />
-	<select levels="6,9,12" class="natural:glacier" />
-	<select levels="6,9,12" class="natural:bay" />
-	<select levels="6,9,12" class="natural:cape" />
-	<select levels="12" class="natural:beach" named="1" />
-	<select levels="12" class="natural:coastline" named="1" />
-	<select levels="12" class="natural:spring" named="1" />
-	<select levels="12" class="natural:hot_spring" named="1" />
-	<select levels="12" class="natural:geyser" named="1" />
-	<select levels="12" class="natural:blowhole" named="1" />
-	<select levels="9,12" class="natural:peak" />
-	<select levels="9,12" class="natural:volcano" />
-	<select levels="12" class="natural:valley" named="1" />
-	<select levels="12" class="natural:ridge" named="1" />
-	<select levels="12" class="natural:arete" named="1" />
-	<select levels="12" class="natural:cliff" named="1" />
-	<select levels="12" class="natural:saddle" />
-	<select levels="12" class="natural:rock" named="1" />
-	<select levels="12" class="natural:stone" named="1" />
-	<select levels="12" class="natural:sinkhole" named="1" />
-	<select levels="12" class="natural:cave_entrance" named="1" />
+	<select class="natural:wood"          zoom="9" />
+	<select class="natural:scrub"         zoom="12" flags="named,center" />
+	<select class="natural:heath"         zoom="12" flags="named,center" />
+	<select class="natural:moor"          zoom="12" flags="named,center" />
+	<select class="natural:grassland"     zoom="12" flags="named,center" />
+	<select class="natural:fell"          zoom="12" flags="named,center" />
+	<select class="natural:bare_rock"     zoom="12" flags="named,center" />
+	<select class="natural:scree"         zoom="12" flags="named,center" />
+	<select class="natural:shingle"       zoom="12" flags="named,center" />
+	<select class="natural:sand"          zoom="12" flags="named,center" />
+	<select class="natural:mud"           zoom="12" flags="named,center" />
+	<select class="natural:water"         zoom="9" />
+	<select class="natural:wetland"       zoom="12" flags="named,center" />
+	<select class="natural:glacier"       zoom="9" />
+	<select class="natural:bay"           zoom="9" />
+	<select class="natural:cape"          zoom="9" />
+	<select class="natural:beach"         zoom="12" flags="named,center" />
+	<select class="natural:coastline"     zoom="12" flags="named,center" />
+	<select class="natural:spring"        zoom="12" flags="named,center" />
+	<select class="natural:hot_spring"    zoom="12" flags="named,center" />
+	<select class="natural:geyser"        zoom="12" flags="named,center" />
+	<select class="natural:blowhole"      zoom="12" flags="named,center" />
+	<select class="natural:peak"          zoom="9" />
+	<select class="natural:volcano"       zoom="9" />
+	<select class="natural:valley"        zoom="12" flags="named,center" />
+	<select class="natural:ridge"         zoom="12" flags="named,center" />
+	<select class="natural:arete"         zoom="12" flags="named,center" />
+	<select class="natural:cliff"         zoom="12" flags="named" />
+	<select class="natural:saddle"        zoom="12" flags="named" />
+	<select class="natural:rock"          zoom="12" flags="named,center" />
+	<select class="natural:stone"         zoom="12" flags="named,center" />
+	<select class="natural:sinkhole"      zoom="12" flags="named,center" />
+	<select class="natural:cave_entrance" zoom="12" flags="named,center" />
 	<!-- DISCARD NATURAL
-		<select levels="12" class="natural:tree_row" />
-		<select levels="12" class="natural:tree" />
+		<select class="natural:tree_row" />
+		<select class="natural:tree" />
 	-->
-	<select levels="12" class="office:accountant" named="1" />
-	<select levels="12" class="office:adoption_agency" named="1" />
-	<select levels="12" class="office:advertising_agency" named="1" />
-	<select levels="12" class="office:architect" named="1" />
-	<select levels="12" class="office:association" named="1" />
-	<select levels="12" class="office:charity" named="1" />
-	<select levels="12" class="office:company" named="1" />
-	<select levels="12" class="office:educational_institution" named="1" />
-	<select levels="12" class="office:employment_agency" named="1" />
-	<select levels="12" class="office:energy_supplier" named="1" />
-	<select levels="12" class="office:estate_agent" named="1" />
-	<select levels="12" class="office:forestry" named="1" />
-	<select levels="12" class="office:foundation" named="1" />
-	<select levels="12" class="office:government" named="1" />
-	<select levels="12" class="office:guide" named="1" />
-	<select levels="12" class="office:healer" named="1" />
-	<select levels="12" class="office:insurance" named="1" />
-	<select levels="12" class="office:it" named="1" />
-	<select levels="12" class="office:lawyer" named="1" />
-	<select levels="12" class="office:logistics" named="1" />
-	<select levels="12" class="office:moving_company" named="1" />
-	<select levels="12" class="office:newspaper" named="1" />
-	<select levels="12" class="office:ngo" named="1" />
-	<select levels="12" class="office:notary" named="1" />
-	<select levels="12" class="office:physican" named="1" />
-	<select levels="12" class="office:political_party" named="1" />
-	<select levels="12" class="office:private_investigator" named="1" />
-	<select levels="12" class="office:property_management" named="1" />
-	<select levels="12" class="office:quango" named="1" />
-	<select levels="12" class="office:real_estate_agent" named="1" />
-	<select levels="12" class="office:religion" named="1" />
-	<select levels="12" class="office:research" named="1" />
-	<select levels="12" class="office:surveyor" named="1" />
-	<select levels="12" class="office:tax" named="1" />
-	<select levels="12" class="office:tax_advisor" named="1" />
-	<select levels="12" class="office:telecommunication" named="1" />
-	<select levels="12" class="office:therapist" named="1" />
-	<select levels="12" class="office:travel_agent" named="1" />
-	<select levels="12" class="office:water_utility" named="1" />
-	<!-- DISCARD OFFICE
-		<select levels="12" class="office:yes" />
-	-->
-	<select levels="3,6,9" class="place:country" named="1" />
-	<select levels="9,12" class="place:state" named="1" />
-	<select levels="9,12" class="place:region" named="1" />
-	<select levels="9,12" class="place:province" named="1" />
-	<select levels="9,12" class="place:district" named="1" />
-	<select levels="9,12" class="place:county" named="1" />
-	<select levels="9,12" class="place:municipality" named="1" />
-	<select levels="9,12" class="place:city" named="1" />
-	<select levels="12" class="place:borough" named="1" />
-	<select levels="12" class="place:suburb" named="1" />
-	<select levels="12" class="place:quarter" named="1" />
-	<select levels="12" class="place:neighbourhood" named="1" />
-	<select levels="12" class="place:city_block" named="1" />
-	<select levels="12" class="place:town" named="1" />
-	<select levels="12" class="place:village" named="1" />
-	<select levels="12" class="place:hamlet" named="1" />
-	<select levels="3,6,9" class="place:continent" named="1" />
-	<select levels="9,12" class="place:archipelago" named="1" />
-	<select levels="6,9,12" class="place:island" />
-	<select levels="9,12" class="place:islet" />
-	<select levels="12" class="place:locality" named="1" />
+	<select class="office:accountant"              zoom="12" flags="named,center" />
+	<select class="office:adoption_agency"         zoom="12" flags="named,center" />
+	<select class="office:advertising_agency"      zoom="12" flags="named,center" />
+	<select class="office:architect"               zoom="12" flags="named,center" />
+	<select class="office:association"             zoom="12" flags="named,center" />
+	<select class="office:charity"                 zoom="12" flags="named,center" />
+	<select class="office:company"                 zoom="12" flags="named,center" />
+	<select class="office:educational_institution" zoom="12" flags="named,center" />
+	<select class="office:employment_agency"       zoom="12" flags="named,center" />
+	<select class="office:energy_supplier"         zoom="12" flags="named,center" />
+	<select class="office:estate_agent"            zoom="12" flags="named,center" />
+	<select class="office:forestry"                zoom="12" flags="named,center" />
+	<select class="office:foundation"              zoom="12" flags="named,center" />
+	<select class="office:government"              zoom="12" flags="named,center" />
+	<select class="office:guide"                   zoom="12" flags="named,center" />
+	<select class="office:healer"                  zoom="12" flags="named,center" />
+	<select class="office:insurance"               zoom="12" flags="named,center" />
+	<select class="office:it"                      zoom="12" flags="named,center" />
+	<select class="office:lawyer"                  zoom="12" flags="named,center" />
+	<select class="office:logistics"               zoom="12" flags="named,center" />
+	<select class="office:moving_company"          zoom="12" flags="named,center" />
+	<select class="office:newspaper"               zoom="12" flags="named,center" />
+	<select class="office:ngo"                     zoom="12" flags="named,center" />
+	<select class="office:notary"                  zoom="12" flags="named,center" />
+	<select class="office:physican"                zoom="12" flags="named,center" />
+	<select class="office:political_party"         zoom="12" flags="named,center" />
+	<select class="office:private_investigator"    zoom="12" flags="named,center" />
+	<select class="office:property_management"     zoom="12" flags="named,center" />
+	<select class="office:quango"                  zoom="12" flags="named,center" />
+	<select class="office:real_estate_agent"       zoom="12" flags="named,center" />
+	<select class="office:religion"                zoom="12" flags="named,center" />
+	<select class="office:research"                zoom="12" flags="named,center" />
+	<select class="office:surveyor"                zoom="12" flags="named,center" />
+	<select class="office:tax"                     zoom="12" flags="named,center" />
+	<select class="office:tax_advisor"             zoom="12" flags="named,center" />
+	<select class="office:telecommunication"       zoom="12" flags="named,center" />
+	<select class="office:therapist"               zoom="12" flags="named,center" />
+	<select class="office:travel_agent"            zoom="12" flags="named,center" />
+	<select class="office:water_utility"           zoom="12" flags="named,center" />
+	<select class="office:yes"                     zoom="12" flags="named,center" />
+	<select class="place:country"       zoom="3"  flags="named,center" />
+	<select class="place:state"         zoom="6"  flags="named,center" />
+	<select class="place:municipality"  zoom="9"  flags="named,center" />
+	<select class="place:city"          zoom="9"  flags="named,center" />
+	<select class="place:suburb"        zoom="12" flags="named,center" />
+	<select class="place:neighbourhood" zoom="12" flags="named,center" />
+	<select class="place:town"          zoom="12" flags="named,center" />
+	<select class="place:village"       zoom="12" flags="named,center" />
+	<select class="place:hamlet"        zoom="12" flags="named,center" />
+	<select class="place:continent"     zoom="3"  flags="named,center" />
+	<select class="place:island"        zoom="6"  flags="named,center" />
+	<select class="place:islet"         zoom="9"  flags="named,center" />
+	<select class="place:locality"      zoom="12" flags="named,center" />
 	<!-- DISCARD PLACE
-		<select levels="12" class="place:plot" />
-		<select levels="12" class="place:square" />
-		<select levels="12" class="place:isolated_dwelling" />
-		<select levels="12" class="place:farm" />
-		<select levels="12" class="place:allotments" />
+		<select class="place:archipelago" />
+		<select class="place:city_block" />
+		<select class="place:quarter" />
+		<select class="place:borough" />
+		<select class="place:county" />
+		<select class="place:district" />
+		<select class="place:region" />
+		<select class="place:province" />
+		<select class="place:plot" />
+		<select class="place:square" />
+		<select class="place:isolated_dwelling" />
+		<select class="place:farm" />
+		<select class="place:allotments" />
 	-->
-	<select levels="12" class="power:plant" />
-	<select levels="12" class="power:cable" />
-	<select levels="12" class="power:compensator" />
-	<select levels="12" class="power:convertor" />
-	<select levels="12" class="power:generator" />
-	<select levels="12" class="power:heliostat" />
-	<select levels="12" class="power:insulator" />
-	<select levels="12" class="power:line" />
-	<select levels="12" class="line:busbar" />
-	<select levels="12" class="line:bay" />
-	<select levels="12" class="power:minor_line" />
-	<select levels="12" class="power:pole" />
-	<select levels="12" class="power:portal" />
-	<select levels="12" class="power:catenary_mast" />
-	<select levels="12" class="power:substation" />
-	<select levels="12" class="power:switch" />
-	<select levels="12" class="power:terminal" />
-	<select levels="12" class="power:tower" />
-	<select levels="12" class="power:transformer" />
-	<select levels="12" class="public_transport:stop_position" />
-	<select levels="12" class="public_transport:platform" />
-	<select levels="12" class="public_transport:station" />
-	<select levels="12" class="public_transport:stop_area" />
-	<select levels="12" class="railway:abandoned" />
-	<select levels="12" class="railway:construction" />
-	<select levels="12" class="railway:disused" />
-	<select levels="12" class="railway:funicular" />
-	<select levels="12" class="railway:light_rail" />
-	<select levels="12" class="railway:minature" />
-	<select levels="12" class="railway:monorail" />
-	<select levels="12" class="railway:narrow_gauge" />
-	<select levels="12" class="railway:preserved" />
-	<select levels="12" class="railway:rail" />
-	<select levels="12" class="railway:subway" />
-	<select levels="12" class="railway:tram" />
-	<select levels="12" class="railway:halt" />
-	<select levels="12" class="railway:platform" />
-	<select levels="12" class="railway:station" />
-	<select levels="12" class="railway:subway_entrance" />
-	<select levels="12" class="railway:tram_stop" />
-	<select levels="12" class="railway:buffer_stop" />
-	<select levels="12" class="railway:derail" />
-	<select levels="12" class="railway:crossing" />
-	<select levels="12" class="railway:level_crossing" />
-	<select levels="12" class="railway:signal" />
-	<select levels="12" class="railway:switch" />
-	<select levels="12" class="railway:railway_crossing" />
-	<select levels="12" class="railway:turntable" />
-	<select levels="12" class="railway:roundhouse" />
-	<select levels="12" class="railway:traverser" />
-	<select levels="12" class="railway:wash" />
-	<select levels="12" class="shop:alcohol" named="1" />
-	<select levels="12" class="shop:bakery" named="1" />
-	<select levels="12" class="shop:beverages" named="1" />
-	<select levels="12" class="shop:brewing_supplies" named="1" />
-	<select levels="12" class="shop:butcher" named="1" />
-	<select levels="12" class="shop:cheese" named="1" />
-	<select levels="12" class="shop:chocolate" named="1" />
-	<select levels="12" class="shop:coffee" named="1" />
-	<select levels="12" class="shop:confectionery" named="1" />
-	<select levels="12" class="shop:convenience" named="1" />
-	<select levels="12" class="shop:deli" named="1" />
-	<select levels="12" class="shop:dairy" named="1" />
-	<select levels="12" class="shop:farm" named="1" />
-	<select levels="12" class="shop:frozen_food" named="1" />
-	<select levels="12" class="shop:greengrocier" named="1" />
-	<select levels="12" class="shop:health_food" named="1" />
-	<select levels="12" class="shop:ice_cream" named="1" />
-	<select levels="12" class="shop:pasta" named="1" />
-	<select levels="12" class="shop:pastry" named="1" />
-	<select levels="12" class="shop:seafood" named="1" />
-	<select levels="12" class="shop:spices" named="1" />
-	<select levels="12" class="shop:tea" named="1" />
-	<select levels="12" class="shop:water" named="1" />
-	<select levels="12" class="shop:department_store" named="1" />
-	<select levels="12" class="shop:general" named="1" />
-	<select levels="12" class="shop:kiosk" named="1" />
-	<select levels="12" class="shop:mall" named="1" />
-	<select levels="12" class="shop:supermarket" named="1" />
-	<select levels="12" class="shop:wholesale" named="1" />
-	<select levels="12" class="shop:baby_goods" named="1" />
-	<select levels="12" class="shop:bag" named="1" />
-	<select levels="12" class="shop:boutique" named="1" />
-	<select levels="12" class="shop:clothes" named="1" />
-	<select levels="12" class="shop:fabric" named="1" />
-	<select levels="12" class="shop:fashion" named="1" />
-	<select levels="12" class="shop:jewelry" named="1" />
-	<select levels="12" class="shop:leather" named="1" />
-	<select levels="12" class="shop:sewing" named="1" />
-	<select levels="12" class="shop:shoes" named="1" />
-	<select levels="12" class="shop:tailor" named="1" />
-	<select levels="12" class="shop:watches" named="1" />
-	<select levels="12" class="shop:charity" named="1" />
-	<select levels="12" class="shop:second_hand" named="1" />
-	<select levels="12" class="shop:variety_store" named="1" />
-	<select levels="12" class="shop:beauty" named="1" />
-	<select levels="12" class="shop:chemist" named="1" />
-	<select levels="12" class="shop:cosmetics" named="1" />
-	<select levels="12" class="shop:hairdresser" named="1" />
-	<select levels="12" class="shop:hairdresser_suply" named="1" />
-	<select levels="12" class="shop:hearing_aids" named="1" />
-	<select levels="12" class="shop:massage" named="1" />
-	<select levels="12" class="shop:nutrition_supplements" named="1" />
-	<select levels="12" class="shop:optician" named="1" />
-	<select levels="12" class="shop:perfumery" named="1" />
-	<select levels="12" class="shop:agrarian" named="1" />
-	<select levels="12" class="shop:appliance" named="1" />
-	<select levels="12" class="shop:bathroom_furnishing" named="1" />
-	<select levels="12" class="shop:doityourself" named="1" />
-	<select levels="12" class="shop:electrical" named="1" />
-	<select levels="12" class="shop:energy" named="1" />
-	<select levels="12" class="shop:fireplace" named="1" />
-	<select levels="12" class="shop:florist" named="1" />
-	<select levels="12" class="shop:garden_centre" named="1" />
-	<select levels="12" class="shop:garden_furniture" named="1" />
-	<select levels="12" class="shop:gas" named="1" />
-	<select levels="12" class="shop:glaziery" named="1" />
-	<select levels="12" class="shop:hardware" named="1" />
-	<select levels="12" class="shop:houseware" named="1" />
-	<select levels="12" class="shop:locksmith" named="1" />
-	<select levels="12" class="shop:paint" named="1" />
-	<select levels="12" class="shop:security" named="1" />
-	<select levels="12" class="shop:trade" named="1" />
-	<select levels="12" class="shop:antiques" named="1" />
-	<select levels="12" class="shop:bed" named="1" />
-	<select levels="12" class="shop:candles" named="1" />
-	<select levels="12" class="shop:carpet" named="1" />
-	<select levels="12" class="shop:curtain" named="1" />
-	<select levels="12" class="shop:doors" named="1" />
-	<select levels="12" class="shop:flooring" named="1" />
-	<select levels="12" class="shop:furniture" named="1" />
-	<select levels="12" class="shop:interior_decoration" named="1" />
-	<select levels="12" class="shop:kitchen" named="1" />
-	<select levels="12" class="shop:lamps" named="1" />
-	<select levels="12" class="shop:tiles" named="1" />
-	<select levels="12" class="shop:window_blind" named="1" />
-	<select levels="12" class="shop:computer" named="1" />
-	<select levels="12" class="shop:robot" named="1" />
-	<select levels="12" class="shop:electonics" named="1" />
-	<select levels="12" class="shop:hifi" named="1" />
-	<select levels="12" class="shop:mobile_phone" named="1" />
-	<select levels="12" class="shop:radiotechnics" named="1" />
-	<select levels="12" class="shop:vacuum_cleaner" named="1" />
-	<select levels="12" class="shop:atv" named="1" />
-	<select levels="12" class="shop:bicycle" named="1" />
-	<select levels="12" class="shop:boat" named="1" />
-	<select levels="12" class="shop:car" named="1" />
-	<select levels="12" class="shop:car_repair" named="1" />
-	<select levels="12" class="shop:car_parts" named="1" />
-	<select levels="12" class="shop:fuel" named="1" />
-	<select levels="12" class="shop:fishing" named="1" />
-	<select levels="12" class="shop:free_flying" named="1" />
-	<select levels="12" class="shop:hunting" named="1" />
-	<select levels="12" class="shop:jetski" named="1" />
-	<select levels="12" class="shop:motorcycle" named="1" />
-	<select levels="12" class="shop:outdoor" named="1" />
-	<select levels="12" class="shop:scuba_diving" named="1" />
-	<select levels="12" class="shop:ski" named="1" />
-	<select levels="12" class="shop:snowmobile" named="1" />
-	<select levels="12" class="shop:sports" named="1" />
-	<select levels="12" class="shop:swimming_pool" named="1" />
-	<select levels="12" class="shop:tyres" named="1" />
-	<select levels="12" class="shop:art" named="1" />
-	<select levels="12" class="shop:collector" named="1" />
-	<select levels="12" class="shop:craft" named="1" />
-	<select levels="12" class="shop:frame" named="1" />
-	<select levels="12" class="shop:games" named="1" />
-	<select levels="12" class="shop:model" named="1" />
-	<select levels="12" class="shop:music" named="1" />
-	<select levels="12" class="shop:musical_instrument" named="1" />
-	<select levels="12" class="shop:photo" named="1" />
-	<select levels="12" class="shop:camera" named="1" />
-	<select levels="12" class="shop:trophy" named="1" />
-	<select levels="12" class="shop:video" named="1" />
-	<select levels="12" class="shop:video_games" named="1" />
-	<select levels="12" class="shop:anime" named="1" />
-	<select levels="12" class="shop:books" named="1" />
-	<select levels="12" class="shop:gift" named="1" />
-	<select levels="12" class="shop:lottery" named="1" />
-	<select levels="12" class="shop:newsagent" named="1" />
-	<select levels="12" class="shop:stationery" named="1" />
-	<select levels="12" class="shop:ticket" named="1" />
-	<select levels="12" class="shop:bookmaker" named="1" />
-	<select levels="12" class="shop:copyshop" named="1" />
-	<select levels="12" class="shop:dry_cleaning" named="1" />
-	<select levels="12" class="shop:funeral_directors" named="1" />
-	<select levels="12" class="shop:laundry" named="1" />
-	<select levels="12" class="shop:money_lender" named="1" />
-	<select levels="12" class="shop:party" named="1" />
-	<select levels="12" class="shop:pawnbroker" named="1" />
-	<select levels="12" class="shop:pet" named="1" />
-	<select levels="12" class="shop:pyrotechnics" named="1" />
-	<select levels="12" class="shop:religion" named="1" />
-	<select levels="12" class="shop:storage_rental" named="1" />
-	<select levels="12" class="shop:toys" named="1" />
-	<select levels="12" class="shop:travel_agency" named="1" />
-	<select levels="12" class="shop:vacant" named="1" />
+	<select class="power:plant"      zoom="12" flags="named,center" />
+	<select class="power:line"       zoom="12" />
+	<select class="power:minor_line" zoom="12" />
+	<select class="power:pole"       zoom="12" flags="center" />
+	<select class="power:substation" zoom="12" flags="named,center" />
+	<select class="power:tower"      zoom="12" flags="center" />
+	<!-- DISCARD POWER
+		<select class="power:portal" />
+		<select class="power:catenary_mast" />
+		<select class="power:switch" />
+		<select class="power:terminal" />
+		<select class="power:transformer" />
+		<select class="line:busbar" />
+		<select class="line:bay" />
+		<select class="power:cable" />
+		<select class="power:compensator" />
+		<select class="power:convertor" />
+		<select class="power:generator" />
+		<select class="power:heliostat" />
+		<select class="power:insulator" />
+	-->
+	<!-- DISCARD PUBLIC_TRANSPORT
+		<select class="public_transport:stop_position" />
+		<select class="public_transport:platform"      />
+		<select class="public_transport:station"       />
+		<select class="public_transport:stop_area"     />
+	-->
+	<select class="railway:disused"      zoom="12" />
+	<select class="railway:minature"     zoom="12" />
+	<select class="railway:funicular"    zoom="12" />
+	<select class="railway:light_rail"   zoom="12" />
+	<select class="railway:monorail"     zoom="12" />
+	<select class="railway:narrow_gauge" zoom="12" />
+	<select class="railway:preserved"    zoom="12" />
+	<select class="railway:rail"         zoom="12" />
+	<select class="railway:subway"       zoom="12" />
+	<select class="railway:tram"         zoom="12" />
+	<select class="railway:platform"     zoom="12" />
+	<select class="railway:station"      zoom="12" flags="named,center" />
+	<!-- DISCARD RAILWAY
+		<select class="railway:halt" />
+		<select class="railway:railway_crossing" />
+		<select class="railway:switch" />
+		<select class="railway:derail" />
+		<select class="railway:subway_entrance" />
+		<select class="railway:abandoned" />
+		<select class="railway:construction" />
+		<select class="railway:tram_stop" />
+		<select class="railway:buffer_stop" />
+		<select class="railway:crossing" />
+		<select class="railway:level_crossing" />
+		<select class="railway:signal" />
+		<select class="railway:turntable" />
+		<select class="railway:roundhouse" />
+		<select class="railway:traverser" />
+		<select class="railway:wash" />
+	-->
+	<select class="shop:alcohol"                   zoom="12" flags="named,center" />
+	<select class="shop:bakery"                    zoom="12" flags="named,center" />
+	<select class="shop:beverages"                 zoom="12" flags="named,center" />
+	<select class="shop:brewing_supplies"          zoom="12" flags="named,center" />
+	<select class="shop:butcher"                   zoom="12" flags="named,center" />
+	<select class="shop:cheese"                    zoom="12" flags="named,center" />
+	<select class="shop:chocolate"                 zoom="12" flags="named,center" />
+	<select class="shop:coffee"                    zoom="12" flags="named,center" />
+	<select class="shop:confectionery"             zoom="12" flags="named,center" />
+	<select class="shop:convenience"               zoom="12" flags="named,center" />
+	<select class="shop:deli"                      zoom="12" flags="named,center" />
+	<select class="shop:dairy"                     zoom="12" flags="named,center" />
+	<select class="shop:farm"                      zoom="12" flags="named,center" />
+	<select class="shop:frozen_food"               zoom="12" flags="named,center" />
+	<select class="shop:greengrocier"              zoom="12" flags="named,center" />
+	<select class="shop:health_food"               zoom="12" flags="named,center" />
+	<select class="shop:ice_cream"                 zoom="12" flags="named,center" />
+	<select class="shop:pasta"                     zoom="12" flags="named,center" />
+	<select class="shop:pastry"                    zoom="12" flags="named,center" />
+	<select class="shop:seafood"                   zoom="12" flags="named,center" />
+	<select class="shop:spices"                    zoom="12" flags="named,center" />
+	<select class="shop:tea"                       zoom="12" flags="named,center" />
+	<select class="shop:water"                     zoom="12" flags="named,center" />
+	<select class="shop:department_store"          zoom="12" flags="named,center" />
+	<select class="shop:general"                   zoom="12" flags="named,center" />
+	<select class="shop:kiosk"                     zoom="12" flags="named,center" />
+	<select class="shop:mall"                      zoom="12" flags="named,center" />
+	<select class="shop:supermarket"               zoom="12" flags="named,center" />
+	<select class="shop:wholesale"                 zoom="12" flags="named,center" />
+	<select class="shop:baby_goods"                zoom="12" flags="named,center" />
+	<select class="shop:bag"                       zoom="12" flags="named,center" />
+	<select class="shop:boutique"                  zoom="12" flags="named,center" />
+	<select class="shop:clothes"                   zoom="12" flags="named,center" />
+	<select class="shop:fabric"                    zoom="12" flags="named,center" />
+	<select class="shop:fashion"                   zoom="12" flags="named,center" />
+	<select class="shop:jewelry"                   zoom="12" flags="named,center" />
+	<select class="shop:leather"                   zoom="12" flags="named,center" />
+	<select class="shop:sewing"                    zoom="12" flags="named,center" />
+	<select class="shop:shoes"                     zoom="12" flags="named,center" />
+	<select class="shop:tailor"                    zoom="12" flags="named,center" />
+	<select class="shop:watches"                   zoom="12" flags="named,center" />
+	<select class="shop:charity"                   zoom="12" flags="named,center" />
+	<select class="shop:second_hand"               zoom="12" flags="named,center" />
+	<select class="shop:variety_store"             zoom="12" flags="named,center" />
+	<select class="shop:beauty"                    zoom="12" flags="named,center" />
+	<select class="shop:chemist"                   zoom="12" flags="named,center" />
+	<select class="shop:cosmetics"                 zoom="12" flags="named,center" />
+	<select class="shop:hairdresser"               zoom="12" flags="named,center" />
+	<select class="shop:hairdresser_suply"         zoom="12" flags="named,center" />
+	<select class="shop:hearing_aids"              zoom="12" flags="named,center" />
+	<select class="shop:massage"                   zoom="12" flags="named,center" />
+	<select class="shop:nutrition_supplements"     zoom="12" flags="named,center" />
+	<select class="shop:optician"                  zoom="12" flags="named,center" />
+	<select class="shop:perfumery"                 zoom="12" flags="named,center" />
+	<select class="shop:agrarian"                  zoom="12" flags="named,center" />
+	<select class="shop:appliance"                 zoom="12" flags="named,center" />
+	<select class="shop:bathroom_furnishing"       zoom="12" flags="named,center" />
+	<select class="shop:doityourself"              zoom="12" flags="named,center" />
+	<select class="shop:electrical"                zoom="12" flags="named,center" />
+	<select class="shop:energy"                    zoom="12" flags="named,center" />
+	<select class="shop:fireplace"                 zoom="12" flags="named,center" />
+	<select class="shop:florist"                   zoom="12" flags="named,center" />
+	<select class="shop:garden_centre"             zoom="12" flags="named,center" />
+	<select class="shop:garden_furniture"          zoom="12" flags="named,center" />
+	<select class="shop:gas"                       zoom="12" flags="named,center" />
+	<select class="shop:glaziery"                  zoom="12" flags="named,center" />
+	<select class="shop:hardware"                  zoom="12" flags="named,center" />
+	<select class="shop:houseware"                 zoom="12" flags="named,center" />
+	<select class="shop:locksmith"                 zoom="12" flags="named,center" />
+	<select class="shop:paint"                     zoom="12" flags="named,center" />
+	<select class="shop:security"                  zoom="12" flags="named,center" />
+	<select class="shop:trade"                     zoom="12" flags="named,center" />
+	<select class="shop:antiques"                  zoom="12" flags="named,center" />
+	<select class="shop:bed"                       zoom="12" flags="named,center" />
+	<select class="shop:candles"                   zoom="12" flags="named,center" />
+	<select class="shop:carpet"                    zoom="12" flags="named,center" />
+	<select class="shop:curtain"                   zoom="12" flags="named,center" />
+	<select class="shop:doors"                     zoom="12" flags="named,center" />
+	<select class="shop:flooring"                  zoom="12" flags="named,center" />
+	<select class="shop:furniture"                 zoom="12" flags="named,center" />
+	<select class="shop:interior_decoration"       zoom="12" flags="named,center" />
+	<select class="shop:kitchen"                   zoom="12" flags="named,center" />
+	<select class="shop:lamps"                     zoom="12" flags="named,center" />
+	<select class="shop:tiles"                     zoom="12" flags="named,center" />
+	<select class="shop:window_blind"              zoom="12" flags="named,center" />
+	<select class="shop:computer"                  zoom="12" flags="named,center" />
+	<select class="shop:robot"                     zoom="12" flags="named,center" />
+	<select class="shop:electonics"                zoom="12" flags="named,center" />
+	<select class="shop:hifi"                      zoom="12" flags="named,center" />
+	<select class="shop:mobile_phone"              zoom="12" flags="named,center" />
+	<select class="shop:radiotechnics"             zoom="12" flags="named,center" />
+	<select class="shop:vacuum_cleaner"            zoom="12" flags="named,center" />
+	<select class="shop:atv"                       zoom="12" flags="named,center" />
+	<select class="shop:bicycle"                   zoom="12" flags="named,center" />
+	<select class="shop:boat"                      zoom="12" flags="named,center" />
+	<select class="shop:car"                       zoom="12" flags="named,center" />
+	<select class="shop:car_repair"                zoom="12" flags="named,center" />
+	<select class="shop:car_parts"                 zoom="12" flags="named,center" />
+	<select class="shop:fuel"                      zoom="12" flags="named,center" />
+	<select class="shop:fishing"                   zoom="12" flags="named,center" />
+	<select class="shop:free_flying"               zoom="12" flags="named,center" />
+	<select class="shop:hunting"                   zoom="12" flags="named,center" />
+	<select class="shop:jetski"                    zoom="12" flags="named,center" />
+	<select class="shop:motorcycle"                zoom="12" flags="named,center" />
+	<select class="shop:outdoor"                   zoom="12" flags="named,center" />
+	<select class="shop:scuba_diving"              zoom="12" flags="named,center" />
+	<select class="shop:ski"                       zoom="12" flags="named,center" />
+	<select class="shop:snowmobile"                zoom="12" flags="named,center" />
+	<select class="shop:sports"                    zoom="12" flags="named,center" />
+	<select class="shop:swimming_pool"             zoom="12" flags="named,center" />
+	<select class="shop:tyres"                     zoom="12" flags="named,center" />
+	<select class="shop:art"                       zoom="12" flags="named,center" />
+	<select class="shop:collector"                 zoom="12" flags="named,center" />
+	<select class="shop:craft"                     zoom="12" flags="named,center" />
+	<select class="shop:frame"                     zoom="12" flags="named,center" />
+	<select class="shop:games"                     zoom="12" flags="named,center" />
+	<select class="shop:model"                     zoom="12" flags="named,center" />
+	<select class="shop:music"                     zoom="12" flags="named,center" />
+	<select class="shop:musical_instrument"        zoom="12" flags="named,center" />
+	<select class="shop:photo"                     zoom="12" flags="named,center" />
+	<select class="shop:camera"                    zoom="12" flags="named,center" />
+	<select class="shop:trophy"                    zoom="12" flags="named,center" />
+	<select class="shop:video"                     zoom="12" flags="named,center" />
+	<select class="shop:video_games"               zoom="12" flags="named,center" />
+	<select class="shop:anime"                     zoom="12" flags="named,center" />
+	<select class="shop:books"                     zoom="12" flags="named,center" />
+	<select class="shop:gift"                      zoom="12" flags="named,center" />
+	<select class="shop:lottery"                   zoom="12" flags="named,center" />
+	<select class="shop:newsagent"                 zoom="12" flags="named,center" />
+	<select class="shop:stationery"                zoom="12" flags="named,center" />
+	<select class="shop:ticket"                    zoom="12" flags="named,center" />
+	<select class="shop:bookmaker"                 zoom="12" flags="named,center" />
+	<select class="shop:copyshop"                  zoom="12" flags="named,center" />
+	<select class="shop:dry_cleaning"              zoom="12" flags="named,center" />
+	<select class="shop:funeral_directors"         zoom="12" flags="named,center" />
+	<select class="shop:laundry"                   zoom="12" flags="named,center" />
+	<select class="shop:money_lender"              zoom="12" flags="named,center" />
+	<select class="shop:party"                     zoom="12" flags="named,center" />
+	<select class="shop:pawnbroker"                zoom="12" flags="named,center" />
+	<select class="shop:pet"                       zoom="12" flags="named,center" />
+	<select class="shop:pyrotechnics"              zoom="12" flags="named,center" />
+	<select class="shop:religion"                  zoom="12" flags="named,center" />
+	<select class="shop:storage_rental"            zoom="12" flags="named,center" />
+	<select class="shop:toys"                      zoom="12" flags="named,center" />
+	<select class="shop:travel_agency"             zoom="12" flags="named,center" />
+	<select class="shop:vacant"                    zoom="12" flags="named,center" />
 	<!--
-		<select levels="12" class="shop:herbalist" />
-		<select levels="12" class="shop:medical_supply" />
-		<select levels="12" class="shop:tattoo" />
-		<select levels="12" class="shop:e-cigarette" />
-		<select levels="12" class="shop:tobacco" />
-		<select levels="12" class="shop:erotic" />
-		<select levels="12" class="shop:weapons" />
+		<select class="shop:herbalist" />
+		<select class="shop:medical_supply" />
+		<select class="shop:tattoo" />
+		<select class="shop:e-cigarette" />
+		<select class="shop:tobacco" />
+		<select class="shop:erotic" />
+		<select class="shop:weapons" />
 	-->
-	<select levels="12" class="sport:9pin" named="1" />
-	<select levels="12" class="sport:10pin" named="1" />
-	<select levels="12" class="sport:american_football" named="1" />
-	<select levels="12" class="sport:aikido" named="1" />
-	<select levels="12" class="sport:archery" named="1" />
-	<select levels="12" class="sport:athletics" named="1" />
-	<select levels="12" class="sport:australian_football" named="1" />
-	<select levels="12" class="sport:badminton" named="1" />
-	<select levels="12" class="sport:bandy" named="1" />
-	<select levels="12" class="sport:base" named="1" />
-	<select levels="12" class="sport:baseball" named="1" />
-	<select levels="12" class="sport:basketball" named="1" />
-	<select levels="12" class="sport:beachvolleyball" named="1" />
-	<select levels="12" class="sport:billards" named="1" />
-	<select levels="12" class="sport:bmx" named="1" />
-	<select levels="12" class="sport:bobsleigh" named="1" />
-	<select levels="12" class="sport:boules" named="1" />
-	<select levels="12" class="sport:bowls" named="1" />
-	<select levels="12" class="sport:boxing" named="1" />
-	<select levels="12" class="sport:canadian_football" named="1" />
-	<select levels="12" class="sport:canoe" named="1" />
-	<select levels="12" class="sport:chess" named="1" />
-	<select levels="12" class="sport:cliff_diving" named="1" />
-	<select levels="12" class="sport:climbing" named="1" />
-	<select levels="12" class="sport:climbing_adventure" named="1" />
-	<select levels="12" class="sport:cricket" named="1" />
-	<select levels="12" class="sport:croquet" named="1" />
-	<select levels="12" class="sport:curling" named="1" />
-	<select levels="12" class="sport:cycling" named="1" />
-	<select levels="12" class="sport:darts" named="1" />
-	<select levels="12" class="sport:dog_racing" named="1" />
-	<select levels="12" class="sport:equestrian" named="1" />
-	<select levels="12" class="sport:fencing" named="1" />
-	<select levels="12" class="sport:field_hockey" named="1" />
-	<select levels="12" class="sport:free_flying" named="1" />
-	<select levels="12" class="sport:futsal" named="1" />
-	<select levels="12" class="sport:gaelic_games" named="1" />
-	<select levels="12" class="sport:golf" named="1" />
-	<select levels="12" class="sport:gymnastics" named="1" />
-	<select levels="12" class="sport:handball" named="1" />
-	<select levels="12" class="sport:hapkido" named="1" />
-	<select levels="12" class="sport:horseshoes" named="1" />
-	<select levels="12" class="sport:horse_racing" named="1" />
-	<select levels="12" class="sport:ice_hockey" named="1" />
-	<select levels="12" class="sport:ice_skating" named="1" />
-	<select levels="12" class="sport:ice_stock" named="1" />
-	<select levels="12" class="sport:judo" named="1" />
-	<select levels="12" class="sport:karate" named="1" />
-	<select levels="12" class="sport:karting" named="1" />
-	<select levels="12" class="sport:kitesurfing" named="1" />
-	<select levels="12" class="sport:korfball" named="1" />
-	<select levels="12" class="sport:lacrosse" named="1" />
-	<select levels="12" class="sport:model_aerodrome" named="1" />
-	<select levels="12" class="sport:motocross" named="1" />
-	<select levels="12" class="sport:motor" named="1" />
-	<select levels="12" class="sport:multi" named="1" />
-	<select levels="12" class="sport:netball" named="1" />
-	<select levels="12" class="sport:obstacle_course" named="1" />
-	<select levels="12" class="sport:orienteering" named="1" />
-	<select levels="12" class="sport:paddle_tennis" named="1" />
-	<select levels="12" class="sport:padel" named="1" />
-	<select levels="12" class="sport:parachuting" named="1" />
-	<select levels="12" class="sport:paragliding" named="1" />
-	<select levels="12" class="sport:pelota" named="1" />
-	<select levels="12" class="sport:racquet" named="1" />
-	<select levels="12" class="sport:rc_car" named="1" />
-	<select levels="12" class="sport:roller_skating" named="1" />
-	<select levels="12" class="sport:rowing" named="1" />
-	<select levels="12" class="sport:rugby_league" named="1" />
-	<select levels="12" class="sport:rugby_union" named="1" />
-	<select levels="12" class="sport:running" named="1" />
-	<select levels="12" class="sport:sailing" named="1" />
-	<select levels="12" class="sport:scuba_diving" named="1" />
-	<select levels="12" class="sport:shooting" named="1" />
-	<select levels="12" class="sport:skateboard" named="1" />
-	<select levels="12" class="sport:soccer" named="1" />
-	<select levels="12" class="sport:sumo" named="1" />
-	<select levels="12" class="sport:surfing" named="1" />
-	<select levels="12" class="sport:swimming" named="1" />
-	<select levels="12" class="sport:table_tennis" named="1" />
-	<select levels="12" class="sport:table_soccer" named="1" />
-	<select levels="12" class="sport:taekwondo" named="1" />
-	<select levels="12" class="sport:tennis" named="1" />
-	<select levels="12" class="sport:toboggan" named="1" />
-	<select levels="12" class="sport:volleyball" named="1" />
-	<select levels="12" class="sport:water_polo" named="1" />
-	<select levels="12" class="sport:water_ski" named="1" />
-	<select levels="12" class="sport:weightlifting" named="1" />
-	<select levels="12" class="sport:wrestling" named="1" />
-	<select levels="12" class="sport:yoga" named="1" />
-	<select levels="12" class="tourism:alpine_hut" />
-	<select levels="12" class="tourism:apartment" named="1" />
-	<select levels="12" class="tourism:aquarium" named="1" />
-	<select levels="12" class="tourism:artwork" named="1" />
-	<select levels="12" class="tourism:attraction" named="1" />
-	<select levels="12" class="tourism:camp_site" />
-	<select levels="12" class="tourism:caravan_site" />
-	<select levels="12" class="tourism:chalet" named="1" />
-	<select levels="12" class="tourism:gallery" named="1" />
-	<select levels="12" class="tourism:guest_house" named="1" />
-	<select levels="12" class="tourism:hostel" named="1" />
-	<select levels="12" class="tourism:hotel" named="1" />
-	<select levels="12" class="tourism:information" />
-	<select levels="12" class="tourism:motel" named="1" />
-	<select levels="12" class="tourism:museum" named="1" />
-	<select levels="12" class="tourism:picnic_site" />
-	<select levels="12" class="tourism:theme_park" named="1" />
-	<select levels="12" class="tourism:viewpoint" />
-	<select levels="12" class="tourism:wilderness_hut" />
-	<select levels="12" class="tourism:zoo" named="1" />
-	<select levels="12" class="tourism:yes" named="1" />
-	<select levels="6,9,12" class="waterway:river" />
-	<select levels="6,9,12" class="waterway:riverbank" />
-	<select levels="12" class="waterway:stream" />
-	<select levels="12" class="waterway:wadi" />
-	<select levels="12" class="waterway:drystream" />
-	<select levels="9,12" class="waterway:canal" />
-	<select levels="12" class="waterway:drain" />
-	<select levels="12" class="waterway:ditch" />
-	<select levels="12" class="waterway:fairway" />
-	<select levels="12" class="waterway:dock" />
-	<select levels="12" class="waterway:boatyard" />
-	<select levels="9,12" class="waterway:dam" />
-	<select levels="12" class="waterway:weir" />
-	<select levels="12" class="waterway:stream_end" />
-	<select levels="9,12" class="waterway:waterfall" />
-	<select levels="12" class="waterway:lock_gate" />
-	<select levels="12" class="waterway:turning_point" />
-	<select levels="12" class="waterway:water_point" />
-	<select levels="12" class="waterway:fuel" />
+	<select class="sport:9pin"                zoom="12" flags="named,center" />
+	<select class="sport:10pin"               zoom="12" flags="named,center" />
+	<select class="sport:american_football"   zoom="12" flags="named,center" />
+	<select class="sport:aikido"              zoom="12" flags="named,center" />
+	<select class="sport:archery"             zoom="12" flags="named,center" />
+	<select class="sport:athletics"           zoom="12" flags="named,center" />
+	<select class="sport:australian_football" zoom="12" flags="named,center" />
+	<select class="sport:badminton"           zoom="12" flags="named,center" />
+	<select class="sport:bandy"               zoom="12" flags="named,center" />
+	<select class="sport:base"                zoom="12" flags="named,center" />
+	<select class="sport:baseball"            zoom="12" flags="named,center" />
+	<select class="sport:basketball"          zoom="12" flags="named,center" />
+	<select class="sport:beachvolleyball"     zoom="12" flags="named,center" />
+	<select class="sport:billards"            zoom="12" flags="named,center" />
+	<select class="sport:bmx"                 zoom="12" flags="named,center" />
+	<select class="sport:bobsleigh"           zoom="12" flags="named,center" />
+	<select class="sport:boules"              zoom="12" flags="named,center" />
+	<select class="sport:bowls"               zoom="12" flags="named,center" />
+	<select class="sport:boxing"              zoom="12" flags="named,center" />
+	<select class="sport:canadian_football"   zoom="12" flags="named,center" />
+	<select class="sport:canoe"               zoom="12" flags="named,center" />
+	<select class="sport:chess"               zoom="12" flags="named,center" />
+	<select class="sport:cliff_diving"        zoom="12" flags="named,center" />
+	<select class="sport:climbing"            zoom="12" flags="named,center" />
+	<select class="sport:climbing_adventure"  zoom="12" flags="named,center" />
+	<select class="sport:cricket"             zoom="12" flags="named,center" />
+	<select class="sport:croquet"             zoom="12" flags="named,center" />
+	<select class="sport:curling"             zoom="12" flags="named,center" />
+	<select class="sport:cycling"             zoom="12" flags="named,center" />
+	<select class="sport:darts"               zoom="12" flags="named,center" />
+	<select class="sport:dog_racing"          zoom="12" flags="named,center" />
+	<select class="sport:equestrian"          zoom="12" flags="named,center" />
+	<select class="sport:fencing"             zoom="12" flags="named,center" />
+	<select class="sport:field_hockey"        zoom="12" flags="named,center" />
+	<select class="sport:free_flying"         zoom="12" flags="named,center" />
+	<select class="sport:futsal"              zoom="12" flags="named,center" />
+	<select class="sport:gaelic_games"        zoom="12" flags="named,center" />
+	<select class="sport:golf"                zoom="12" flags="named,center" />
+	<select class="sport:gymnastics"          zoom="12" flags="named,center" />
+	<select class="sport:handball"            zoom="12" flags="named,center" />
+	<select class="sport:hapkido"             zoom="12" flags="named,center" />
+	<select class="sport:horseshoes"          zoom="12" flags="named,center" />
+	<select class="sport:horse_racing"        zoom="12" flags="named,center" />
+	<select class="sport:ice_hockey"          zoom="12" flags="named,center" />
+	<select class="sport:ice_skating"         zoom="12" flags="named,center" />
+	<select class="sport:ice_stock"           zoom="12" flags="named,center" />
+	<select class="sport:judo"                zoom="12" flags="named,center" />
+	<select class="sport:karate"              zoom="12" flags="named,center" />
+	<select class="sport:karting"             zoom="12" flags="named,center" />
+	<select class="sport:kitesurfing"         zoom="12" flags="named,center" />
+	<select class="sport:korfball"            zoom="12" flags="named,center" />
+	<select class="sport:lacrosse"            zoom="12" flags="named,center" />
+	<select class="sport:model_aerodrome"     zoom="12" flags="named,center" />
+	<select class="sport:motocross"           zoom="12" flags="named,center" />
+	<select class="sport:motor"               zoom="12" flags="named,center" />
+	<select class="sport:multi"               zoom="12" flags="named,center" />
+	<select class="sport:netball"             zoom="12" flags="named,center" />
+	<select class="sport:obstacle_course"     zoom="12" flags="named,center" />
+	<select class="sport:orienteering"        zoom="12" flags="named,center" />
+	<select class="sport:paddle_tennis"       zoom="12" flags="named,center" />
+	<select class="sport:padel"               zoom="12" flags="named,center" />
+	<select class="sport:parachuting"         zoom="12" flags="named,center" />
+	<select class="sport:paragliding"         zoom="12" flags="named,center" />
+	<select class="sport:pelota"              zoom="12" flags="named,center" />
+	<select class="sport:racquet"             zoom="12" flags="named,center" />
+	<select class="sport:rc_car"              zoom="12" flags="named,center" />
+	<select class="sport:roller_skating"      zoom="12" flags="named,center" />
+	<select class="sport:rowing"              zoom="12" flags="named,center" />
+	<select class="sport:rugby_league"        zoom="12" flags="named,center" />
+	<select class="sport:rugby_union"         zoom="12" flags="named,center" />
+	<select class="sport:running"             zoom="12" flags="named,center" />
+	<select class="sport:sailing"             zoom="12" flags="named,center" />
+	<select class="sport:scuba_diving"        zoom="12" flags="named,center" />
+	<select class="sport:shooting"            zoom="12" flags="named,center" />
+	<select class="sport:skateboard"          zoom="12" flags="named,center" />
+	<select class="sport:soccer"              zoom="12" flags="named,center" />
+	<select class="sport:sumo"                zoom="12" flags="named,center" />
+	<select class="sport:surfing"             zoom="12" flags="named,center" />
+	<select class="sport:swimming"            zoom="12" flags="named,center" />
+	<select class="sport:table_tennis"        zoom="12" flags="named,center" />
+	<select class="sport:table_soccer"        zoom="12" flags="named,center" />
+	<select class="sport:taekwondo"           zoom="12" flags="named,center" />
+	<select class="sport:tennis"              zoom="12" flags="named,center" />
+	<select class="sport:toboggan"            zoom="12" flags="named,center" />
+	<select class="sport:volleyball"          zoom="12" flags="named,center" />
+	<select class="sport:water_polo"          zoom="12" flags="named,center" />
+	<select class="sport:water_ski"           zoom="12" flags="named,center" />
+	<select class="sport:weightlifting"       zoom="12" flags="named,center" />
+	<select class="sport:wrestling"           zoom="12" flags="named,center" />
+	<select class="sport:yoga"                zoom="12" flags="named,center" />
+	<select class="tourism:alpine_hut"        zoom="12" flags="center" />
+	<select class="tourism:apartment"         zoom="12" flags="named,center" />
+	<select class="tourism:aquarium"          zoom="12" flags="named,center" />
+	<select class="tourism:artwork"           zoom="12" flags="named,center" />
+	<select class="tourism:attraction"        zoom="12" flags="named,center" />
+	<select class="tourism:camp_site"         zoom="12" flags="center" />
+	<select class="tourism:caravan_site"      zoom="12" flags="center" />
+	<select class="tourism:chalet"            zoom="12" flags="named,center" />
+	<select class="tourism:gallery"           zoom="12" flags="named,center" />
+	<select class="tourism:guest_house"       zoom="12" flags="named,center" />
+	<select class="tourism:hostel"            zoom="12" flags="named,center" />
+	<select class="tourism:hotel"             zoom="12" flags="named,center" />
+	<select class="tourism:information"       zoom="12" flags="center" />
+	<select class="tourism:motel"             zoom="12" flags="named,center" />
+	<select class="tourism:museum"            zoom="12" flags="named,center" />
+	<select class="tourism:picnic_site"       zoom="12" flags="center" />
+	<select class="tourism:theme_park"        zoom="12" flags="named,center" />
+	<select class="tourism:viewpoint"         zoom="12" flags="center" />
+	<select class="tourism:wilderness_hut"    zoom="12" flags="center" />
+	<select class="tourism:zoo"               zoom="12" flags="named,center" />
+	<select class="tourism:yes"               zoom="12" flags="named,center" />
+	<select class="waterway:river"            zoom="6" />
+	<select class="waterway:riverbank"        zoom="6" />
+	<select class="waterway:stream"           zoom="12" />
+	<select class="waterway:wadi"             zoom="12" />
+	<select class="waterway:drystream"        zoom="12" />
+	<select class="waterway:canal"            zoom="9" />
+	<select class="waterway:drain"            zoom="12" />
+	<select class="waterway:ditch"            zoom="12" />
+	<select class="waterway:fairway"          zoom="12" />
+	<select class="waterway:dock"             zoom="12" flags="named,center" />
+	<select class="waterway:boatyard"         zoom="12" flags="named,center" />
+	<select class="waterway:dam"              zoom="9" />
+	<select class="waterway:weir"             zoom="12" />
+	<select class="waterway:waterfall"        zoom="9" />
+	<!-- DISCARD WATERWAY
+		<select class="waterway:turning_point" />
+		<select class="waterway:water_point" />
+		<select class="waterway:fuel" />
+		<select class="waterway:lock_gate" />
+		<select class="waterway:stream_end" />
+	-->
 </filter>

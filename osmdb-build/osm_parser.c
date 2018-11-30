@@ -523,7 +523,9 @@ osm_parser_beginOsm(osm_parser_t* self, int line,
 	assert(atts);
 
 	self->state = OSM_STATE_OSM;
-	xml_ostream_begin(self->os, "osmdb");
+	xml_ostream_begin(self->os_nodes, "osmdb");
+	xml_ostream_begin(self->os_ways, "osmdb");
+	xml_ostream_begin(self->os_relations, "osmdb");
 
 	return 1;
 }
@@ -536,7 +538,9 @@ osm_parser_endOsm(osm_parser_t* self, int line,
 	assert(self);
 
 	self->state = OSM_STATE_DONE;
-	xml_ostream_end(self->os);
+	xml_ostream_end(self->os_relations);
+	xml_ostream_end(self->os_ways);
+	xml_ostream_end(self->os_nodes);
 
 	return 1;
 }
@@ -573,7 +577,7 @@ osm_parser_beginOsmNode(osm_parser_t* self, int line,
 	assert(atts);
 
 	self->state = OSM_STATE_OSM_NODE;
-	xml_ostream_begin(self->os, "node");
+	xml_ostream_begin(self->os_nodes, "node");
 	osm_parser_init(self);
 
 	int i = 0;
@@ -609,35 +613,35 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 
 	self->state = OSM_STATE_OSM;
 
-	xml_ostream_attrf(self->os, "id", "%0.0lf", self->attr_id);
+	xml_ostream_attrf(self->os_nodes, "id", "%0.0lf", self->attr_id);
 	if((self->attr_lat != 0.0) || (self->attr_lon != 0.0))
 	{
-		xml_ostream_attrf(self->os, "lat", "%lf", self->attr_lat);
-		xml_ostream_attrf(self->os, "lon", "%lf", self->attr_lon);
+		xml_ostream_attrf(self->os_nodes, "lat", "%lf", self->attr_lat);
+		xml_ostream_attrf(self->os_nodes, "lon", "%lf", self->attr_lon);
 	}
 	if(self->tag_name[0] != '\0')
 	{
-		xml_ostream_attr(self->os, "name", self->tag_name);
+		xml_ostream_attr(self->os_nodes, "name", self->tag_name);
 	}
 	if(self->tag_abrev[0] != '\0')
 	{
-		xml_ostream_attr(self->os, "abrev", self->tag_abrev);
+		xml_ostream_attr(self->os_nodes, "abrev", self->tag_abrev);
 	}
 	if(self->tag_ele)
 	{
-		xml_ostream_attrf(self->os, "ele", "%i", self->tag_ele);
+		xml_ostream_attrf(self->os_nodes, "ele", "%i", self->tag_ele);
 	}
 	if(self->tag_st)
 	{
-		xml_ostream_attr(self->os, "st",
+		xml_ostream_attr(self->os_nodes, "st",
 		                 osmdb_stCodeToAbrev(self->tag_st));
 	}
 	if(self->tag_class)
 	{
-		xml_ostream_attr(self->os, "class",
+		xml_ostream_attr(self->os_nodes, "class",
 		                 osmdb_classCodeToName(self->tag_class));
 	}
-	xml_ostream_end(self->os);
+	xml_ostream_end(self->os_nodes);
 
 	// update histogram
 	++self->histogram[self->tag_class].nodes;
@@ -674,7 +678,17 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 			int  class = osmdb_classKVToCode(atts[j], atts[n]);
 			if(class)
 			{
-				self->tag_class = class;
+				// set or overwrite generic class
+				if((self->tag_class == self->class_none)   ||
+				   (self->tag_class == self->building_yes) ||
+				   (self->tag_class == self->barrier_yes)  ||
+				   (self->tag_class == self->office_yes)   ||
+				   (self->tag_class == self->historic_yes) ||
+				   (self->tag_class == self->man_made_yes) ||
+				   (self->tag_class == self->tourism_yes))
+				{
+					self->tag_class = class;
+				}
 			}
 			else if((strcmp(atts[j], "name") == 0) &&
 			        osm_parseName(line, atts[n], name, abrev))
@@ -730,7 +744,7 @@ osm_parser_beginOsmWay(osm_parser_t* self, int line,
 	assert(atts);
 
 	self->state = OSM_STATE_OSM_WAY;
-	xml_ostream_begin(self->os, "way");
+	xml_ostream_begin(self->os_ways, "way");
 	osm_parser_init(self);
 
 	int i = 0;
@@ -758,18 +772,18 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 
 	self->state = OSM_STATE_OSM;
 
-	xml_ostream_attrf(self->os, "id", "%0.0lf", self->attr_id);
+	xml_ostream_attrf(self->os_ways, "id", "%0.0lf", self->attr_id);
 	if(self->tag_name[0] != '\0')
 	{
-		xml_ostream_attr(self->os, "name", self->tag_name);
+		xml_ostream_attr(self->os_ways, "name", self->tag_name);
 	}
 	if(self->tag_abrev[0] != '\0')
 	{
-		xml_ostream_attr(self->os, "abrev", self->tag_abrev);
+		xml_ostream_attr(self->os_ways, "abrev", self->tag_abrev);
 	}
 	if(self->tag_class)
 	{
-		xml_ostream_attr(self->os, "class",
+		xml_ostream_attr(self->os_ways, "class",
 		                 osmdb_classCodeToName(self->tag_class));
 	}
 
@@ -779,12 +793,12 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	{
 		double* ref = (double*)
 		              a3d_list_remove(self->way_nds, &iter);
-		xml_ostream_begin(self->os, "nd");
-		xml_ostream_attrf(self->os, "ref", "%0.0lf", *ref);
-		xml_ostream_end(self->os);
+		xml_ostream_begin(self->os_ways, "nd");
+		xml_ostream_attrf(self->os_ways, "ref", "%0.0lf", *ref);
+		xml_ostream_end(self->os_ways);
 		free(ref);
 	}
-	xml_ostream_end(self->os);
+	xml_ostream_end(self->os_ways);
 
 	// update histogram
 	++self->histogram[self->tag_class].ways;
@@ -821,7 +835,17 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 			int  class = osmdb_classKVToCode(atts[j], atts[n]);
 			if(class)
 			{
-				self->tag_class = class;
+				// set or overwrite generic class
+				if((self->tag_class == self->class_none)   ||
+				   (self->tag_class == self->building_yes) ||
+				   (self->tag_class == self->barrier_yes)  ||
+				   (self->tag_class == self->office_yes)   ||
+				   (self->tag_class == self->historic_yes) ||
+				   (self->tag_class == self->man_made_yes) ||
+				   (self->tag_class == self->tourism_yes))
+				{
+					self->tag_class = class;
+				}
 			}
 			else if((strcmp(atts[j], "name") == 0) &&
 			        osm_parseName(line, atts[n], name, abrev))
@@ -913,7 +937,7 @@ osm_parser_beginOsmRel(osm_parser_t* self, int line,
 	assert(atts);
 
 	self->state = OSM_STATE_OSM_REL;
-	xml_ostream_begin(self->os, "relation");
+	xml_ostream_begin(self->os_relations, "relation");
 	osm_parser_init(self);
 
 	int i = 0;
@@ -941,25 +965,25 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 
 	self->state = OSM_STATE_OSM;
 
-	xml_ostream_attrf(self->os, "id", "%0.0lf", self->attr_id);
+	xml_ostream_attrf(self->os_relations, "id", "%0.0lf", self->attr_id);
 	if(self->tag_name[0] != '\0')
 	{
-		xml_ostream_attr(self->os, "name", self->tag_name);
+		xml_ostream_attr(self->os_relations, "name", self->tag_name);
 	}
 	if(self->tag_abrev[0] != '\0')
 	{
-		xml_ostream_attr(self->os, "abrev", self->tag_abrev);
+		xml_ostream_attr(self->os_relations, "abrev", self->tag_abrev);
 	}
 
 	if(self->rel_type)
 	{
-		xml_ostream_attr(self->os, "type",
+		xml_ostream_attr(self->os_relations, "type",
 		                 osmdb_relationTagCodeToType(self->rel_type));
 	}
 
 	if(self->tag_class)
 	{
-		xml_ostream_attr(self->os, "class",
+		xml_ostream_attr(self->os_relations, "class",
 		                 osmdb_classCodeToName(self->tag_class));
 	}
 
@@ -972,17 +996,17 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 		    a3d_list_remove(self->rel_members, &iter);
 		if(m->type && m->role && (m->ref != 0.0))
 		{
-			xml_ostream_begin(self->os, "member");
-			xml_ostream_attr(self->os, "type",
+			xml_ostream_begin(self->os_relations, "member");
+			xml_ostream_attr(self->os_relations, "type",
 			                 osmdb_relationMemberCodeToType(m->type));
-			xml_ostream_attrf(self->os, "ref", "%0.0lf", m->ref);
-			xml_ostream_attr(self->os, "role",
+			xml_ostream_attrf(self->os_relations, "ref", "%0.0lf", m->ref);
+			xml_ostream_attr(self->os_relations, "role",
 			                 osmdb_relationMemberCodeToRole(m->role));
-			xml_ostream_end(self->os);
+			xml_ostream_end(self->os_relations);
 		}
 		free(m);
 	}
-	xml_ostream_end(self->os);
+	xml_ostream_end(self->os_relations);
 
 	// update histogram
 	++self->histogram[self->tag_class].rels;
@@ -1019,7 +1043,17 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 			int  class = osmdb_classKVToCode(atts[j], atts[n]);
 			if(class)
 			{
-				self->tag_class = class;
+				// set or overwrite generic class
+				if((self->tag_class == self->class_none)   ||
+				   (self->tag_class == self->building_yes) ||
+				   (self->tag_class == self->barrier_yes)  ||
+				   (self->tag_class == self->office_yes)   ||
+				   (self->tag_class == self->historic_yes) ||
+				   (self->tag_class == self->man_made_yes) ||
+				   (self->tag_class == self->tourism_yes))
+				{
+					self->tag_class = class;
+				}
 			}
 			else if((strcmp(atts[j], "name") == 0) &&
 			        osm_parseName(line, atts[n], name, abrev))
@@ -1119,9 +1153,13 @@ osm_parser_endOsmRelMember(osm_parser_t* self, int line,
 * public                                                   *
 ***********************************************************/
 
-osm_parser_t* osm_parser_new(xml_ostream_t* os)
+osm_parser_t* osm_parser_new(xml_ostream_t* os_nodes,
+                             xml_ostream_t* os_ways,
+                             xml_ostream_t* os_relations)
 {
-	assert(os);
+	assert(os_nodes);
+	assert(os_ways);
+	assert(os_relations);
 
 	osm_parser_t* self = (osm_parser_t*)
 	                     calloc(1, sizeof(osm_parser_t));
@@ -1152,7 +1190,16 @@ osm_parser_t* osm_parser_new(xml_ostream_t* os)
 		goto fail_histogram;
 	}
 
-	self->os = os;
+	self->os_nodes     = os_nodes;
+	self->os_ways      = os_ways;
+	self->os_relations = os_relations;
+	self->class_none   = osmdb_classKVToCode("class",    "none");
+	self->building_yes = osmdb_classKVToCode("building", "yes");
+	self->barrier_yes  = osmdb_classKVToCode("barrier",  "yes");
+	self->office_yes   = osmdb_classKVToCode("office",   "yes");
+	self->historic_yes = osmdb_classKVToCode("historic", "yes");
+	self->man_made_yes = osmdb_classKVToCode("man_made", "yes");
+	self->tourism_yes  = osmdb_classKVToCode("tourism",  "yes");
 
 	// success
 	return self;

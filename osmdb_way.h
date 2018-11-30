@@ -31,6 +31,8 @@ typedef struct
 {
 	int    refcount;
 	double id;
+	double lat;
+	double lon;
 	char*  name;
 	char*  abrev;
 	int    class;
@@ -39,6 +41,8 @@ typedef struct
 } osmdb_way_t;
 
 osmdb_way_t* osmdb_way_new(const char** atts, int line);
+osmdb_way_t* osmdb_way_copyCenter(osmdb_way_t* self,
+                                  double lat, double lon);
 void         osmdb_way_delete(osmdb_way_t** _self);
 void         osmdb_way_incref(osmdb_way_t* self);
 int          osmdb_way_decref(osmdb_way_t* self);

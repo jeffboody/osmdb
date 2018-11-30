@@ -40,19 +40,42 @@ int main(int argc, char** argv)
 {
 	double t0 = a3d_timestamp();
 
-	if(argc != 3)
+	if(argc != 2)
 	{
-		LOGE("%s in.osm out.xmlz", argv[0]);
+		LOGE("%s [prefix]", argv[0]);
 		return EXIT_FAILURE;
 	}
 
-	xml_ostream_t* os = xml_ostream_newGz(argv[2]);
-	if(os == NULL)
+	char fname_in[256];
+	char fname_nodes[256];
+	char fname_ways[256];
+	char fname_relations[256];
+	snprintf(fname_in, 256, "%s.osm", argv[1]);
+	snprintf(fname_nodes, 256, "%s-nodes.xml.gz", argv[1]);
+	snprintf(fname_ways, 256, "%s-ways.xml.gz", argv[1]);
+	snprintf(fname_relations, 256, "%s-relations.xml.gz", argv[1]);
+
+	xml_ostream_t* os_nodes = xml_ostream_newGz(fname_nodes);
+	if(os_nodes == NULL)
 	{
 		return EXIT_FAILURE;
 	}
 
-	osm_parser_t* parser = osm_parser_new(os);
+	xml_ostream_t* os_ways = xml_ostream_newGz(fname_ways);
+	if(os_ways == NULL)
+	{
+		goto fail_os_ways;
+	}
+
+	xml_ostream_t* os_relations;
+	os_relations = xml_ostream_newGz(fname_relations);
+	if(os_relations == NULL)
+	{
+		goto fail_os_relations;
+	}
+
+	osm_parser_t* parser;
+	parser = osm_parser_new(os_nodes, os_ways, os_relations);
 	if(parser == NULL)
 	{
 		goto fail_parser;
@@ -61,18 +84,22 @@ int main(int argc, char** argv)
 	if(xml_istream_parse((void*) parser,
 	                     osm_parser_start,
 	                     osm_parser_end,
-	                     argv[1]) == 0)
+	                     fname_in) == 0)
 	{
 		goto fail_parse;
 	}
 
-	if(xml_ostream_complete(os) == 0)
+	if((xml_ostream_complete(os_nodes)     == 0) ||
+	   (xml_ostream_complete(os_ways)      == 0) ||
+	   (xml_ostream_complete(os_relations) == 0))
 	{
 		goto fail_os;
 	}
 
 	osm_parser_delete(&parser);
-	xml_ostream_delete(&os);
+	xml_ostream_delete(&os_relations);
+	xml_ostream_delete(&os_ways);
+	xml_ostream_delete(&os_nodes);
 
 	// success
 	LOGI("SUCCESS dt=%lf", a3d_timestamp() - t0);
@@ -83,7 +110,11 @@ int main(int argc, char** argv)
 	fail_parse:
 		osm_parser_delete(&parser);
 	fail_parser:
-		xml_ostream_delete(&os);
+		xml_ostream_delete(&os_relations);
+	fail_os_relations:
+		xml_ostream_delete(&os_ways);
+	fail_os_ways:
+		xml_ostream_delete(&os_nodes);
 	LOGI("FAILURE dt=%lf", a3d_timestamp() - t0);
 	return EXIT_FAILURE;
 }

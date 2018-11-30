@@ -39,6 +39,8 @@ osmdb_relation_t* osmdb_relation_new(const char** atts, int line)
 	assert(atts);
 
 	const char* id    = NULL;
+	const char* lat   = NULL;
+	const char* lon   = NULL;
 	const char* name  = NULL;
 	const char* abrev = NULL;
 	const char* class = NULL;
@@ -51,6 +53,14 @@ osmdb_relation_t* osmdb_relation_new(const char** atts, int line)
 		if(strcmp(atts[idx0], "id") == 0)
 		{
 			id = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "lat") == 0)
+		{
+			lat = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "lon") == 0)
+		{
+			lon = atts[idx1];
 		}
 		else if(strcmp(atts[idx0], "name") == 0)
 		{
@@ -93,6 +103,16 @@ osmdb_relation_t* osmdb_relation_new(const char** atts, int line)
 	self->refcount = 0;
 	self->id = strtod(id, NULL);
 
+	if(lat)
+	{
+		self->lat = strtod(lat, NULL);
+	}
+
+	if(lon)
+	{
+		self->lon = strtod(lon, NULL);
+	}
+
 	if(name)
 	{
 		int len = strlen(name) + 1;
@@ -130,6 +150,69 @@ osmdb_relation_t* osmdb_relation_new(const char** atts, int line)
 		a3d_list_delete(&self->members);
 	fail_members:
 		free(self);
+	return NULL;
+}
+
+osmdb_relation_t*
+osmdb_relation_copyCenter(osmdb_relation_t* self,
+                          double lat, double lon)
+{
+	assert(self);
+
+	osmdb_relation_t* copy;
+	copy = (osmdb_relation_t*)
+	       calloc(1, sizeof(osmdb_relation_t));
+	if(copy == NULL)
+	{
+		LOGE("calloc failed");
+		return NULL;
+	}
+
+	copy->members = a3d_list_new();
+	if(copy->members == NULL)
+	{
+		goto fail_members;
+	}
+
+	if(self->name)
+	{
+		int len = strlen(self->name) + 1;
+		copy->name = (char*) malloc(len*sizeof(char));
+		if(copy->name == NULL)
+		{
+			LOGE("malloc failed");
+			goto fail_name;
+		}
+		snprintf(copy->name, len, "%s", self->name);
+	}
+
+	if(self->abrev)
+	{
+		int len = strlen(self->abrev) + 1;
+		copy->abrev = (char*) malloc(len*sizeof(char));
+		if(copy->abrev == NULL)
+		{
+			LOGE("malloc failed");
+			goto fail_abrev;
+		}
+		snprintf(copy->abrev, len, "%s", self->abrev);
+	}
+
+	copy->id    = self->id;
+	copy->class = self->class;
+	copy->lat   = lat;
+	copy->lon   = lon;
+
+	// success
+	return copy;
+
+	// failure
+	fail_abrev:
+		free(copy->name);
+	fail_name:
+		a3d_list_delete(&copy->members);
+	fail_members:
+		free(copy);
 	return NULL;
 }
 
@@ -180,6 +263,11 @@ int osmdb_relation_export(osmdb_relation_t* self,
 	int ret = 1;
 	ret &= xml_ostream_begin(os, "relation");
 	ret &= xml_ostream_attrf(os, "id", "%0.0lf", self->id);
+	if((self->lat != 0.0) && (self->lon != 0.0))
+	{
+		ret &= xml_ostream_attrf(os, "lat", "%lf", self->lat);
+		ret &= xml_ostream_attrf(os, "lon", "%lf", self->lon);
+	}
 	if(self->name)
 	{
 		ret &= xml_ostream_attr(os, "name", self->name);

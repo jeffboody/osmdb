@@ -21,35 +21,34 @@
  *
  */
 
-#ifndef osmdb_filter_H
-#define osmdb_filter_H
+#ifndef osmdb_range_H
+#define osmdb_range_H
 
-#include "a3d/a3d_hashmap.h"
-#include "a3d/a3d_list.h"
 #include "osmdb_node.h"
 #include "osmdb_way.h"
 #include "osmdb_relation.h"
 
-typedef struct
-{
-	int zoom;
-	int center;
-	int named;
-} osmdb_filterInfo_t;
+struct osmdb_index_s;
 
 typedef struct
 {
-	// map from class name to filter info
-	a3d_hashmap_t* info;
-} osmdb_filter_t;
+	int    pts;
+	double latT;
+	double lonL;
+	double latB;
+	double lonR;
+} osmdb_range_t;
 
-osmdb_filter_t*     osmdb_filter_new(const char* fname);
-void                osmdb_filter_delete(osmdb_filter_t** _self);
-osmdb_filterInfo_t* osmdb_filter_selectNode(osmdb_filter_t* self,
-                                            osmdb_node_t* node);
-osmdb_filterInfo_t* osmdb_filter_selectWay(osmdb_filter_t* self,
-                                           osmdb_way_t* way);
-osmdb_filterInfo_t* osmdb_filter_selectRelation(osmdb_filter_t* self,
-                                                osmdb_relation_t* relation);
+void osmdb_range_init(osmdb_range_t* self);
+void osmdb_range_addPt(osmdb_range_t* self,
+                       double lat, double lon);
+void osmdb_range_addNode(osmdb_range_t* self,
+                         osmdb_node_t* node);
+void osmdb_range_addWay(osmdb_range_t* self,
+                        struct osmdb_index_s* index,
+                        osmdb_way_t* way);
+void osmdb_range_addRelation(osmdb_range_t* self,
+                             struct osmdb_index_s* index,
+                             osmdb_relation_t* relation);
 
 #endif

@@ -28,10 +28,20 @@
 #include "../a3d/a3d_list.h"
 #include "../a3d/a3d_hashmap.h"
 #include "../libxmlstream/xml_ostream.h"
+#include "osmdb_range.h"
 
-#define OSMDB_TYPE_NODE     1
-#define OSMDB_TYPE_WAY      2
-#define OSMDB_TYPE_RELATION 3
+#define OSMDB_TYPE_NODE           1
+#define OSMDB_TYPE_WAY            2
+#define OSMDB_TYPE_RELATION       3
+// below are only intended for indexer and tiler
+#define OSMDB_TYPE_NODEREF        4
+#define OSMDB_TYPE_WAYREF         5
+#define OSMDB_TYPE_CTRNODE        6
+#define OSMDB_TYPE_CTRWAY         7
+#define OSMDB_TYPE_CTRRELATION    8
+#define OSMDB_TYPE_CTRNODEREF     9
+#define OSMDB_TYPE_CTRWAYREF      10
+#define OSMDB_TYPE_CTRRELATIONREF 11
 
 struct osmdb_index_s;
 
@@ -66,6 +76,15 @@ typedef struct osmdb_index_s
 	a3d_hashmap_t* hash_nodes;
 	a3d_hashmap_t* hash_ways;
 	a3d_hashmap_t* hash_relations;
+	// below are only intended for indexer and tiler
+	a3d_hashmap_t* hash_noderefs;
+	a3d_hashmap_t* hash_wayrefs;
+	a3d_hashmap_t* hash_ctrnodes;
+	a3d_hashmap_t* hash_ctrways;
+	a3d_hashmap_t* hash_ctrrelations;
+	a3d_hashmap_t* hash_ctrnoderefs;
+	a3d_hashmap_t* hash_ctrwayrefs;
+	a3d_hashmap_t* hash_ctrrelationrefs;
 
 	// LRU cache of tiles
 	a3d_list_t* tiles;
@@ -107,7 +126,8 @@ int                osmdb_index_delete(osmdb_index_t** _self);
 int                osmdb_index_addChunk(osmdb_index_t* self,
                                         int type, const void* data);
 int                osmdb_index_addTile(osmdb_index_t* self,
-                                       int zoom, int x, int y,
+                                       osmdb_range_t* range,
+                                       int zoom,
                                        int type, double id);
 int                osmdb_index_makeTile(osmdb_index_t* self,
                                         int zoom, int x, int y,

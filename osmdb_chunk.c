@@ -70,7 +70,8 @@ static int osmdb_chunk_finish(osmdb_chunk_t* self)
 	iter = a3d_hashmap_head(self->hash, &iterator);
 	while(iter)
 	{
-		if(self->type == OSMDB_TYPE_NODE)
+		if((self->type == OSMDB_TYPE_NODE) ||
+		   (self->type == OSMDB_TYPE_CTRNODE))
 		{
 			osmdb_node_t* n;
 			n = (osmdb_node_t*)
@@ -81,7 +82,8 @@ static int osmdb_chunk_finish(osmdb_chunk_t* self)
 			}
 			osmdb_node_delete(&n);
 		}
-		else if(self->type == OSMDB_TYPE_WAY)
+		else if((self->type == OSMDB_TYPE_WAY) ||
+		        (self->type == OSMDB_TYPE_CTRWAY))
 		{
 			osmdb_way_t* w;
 			w = (osmdb_way_t*)
@@ -92,7 +94,8 @@ static int osmdb_chunk_finish(osmdb_chunk_t* self)
 			}
 			osmdb_way_delete(&w);
 		}
-		else
+		else if((self->type == OSMDB_TYPE_RELATION) ||
+		        (self->type == OSMDB_TYPE_CTRRELATION))
 		{
 			osmdb_relation_t* r;
 			r = (osmdb_relation_t*)
@@ -102,6 +105,52 @@ static int osmdb_chunk_finish(osmdb_chunk_t* self)
 				success &= osmdb_relation_export(r, os);
 			}
 			osmdb_relation_delete(&r);
+		}
+		else if((self->type == OSMDB_TYPE_NODEREF) ||
+		        (self->type == OSMDB_TYPE_CTRNODEREF))
+		{
+			double* ref;
+			ref = (double*)
+			      a3d_hashmap_remove(self->hash, &iter);
+			if(os)
+			{
+				success &= xml_ostream_begin(os, "n");
+				success &= xml_ostream_attrf(os, "ref", "%0.0lf", *ref);
+				success &= xml_ostream_end(os);
+			}
+			free(ref);
+		}
+		else if((self->type == OSMDB_TYPE_WAYREF) ||
+		        (self->type == OSMDB_TYPE_CTRWAYREF))
+		{
+			double* ref;
+			ref = (double*)
+			      a3d_hashmap_remove(self->hash, &iter);
+			if(os)
+			{
+				success &= xml_ostream_begin(os, "w");
+				success &= xml_ostream_attrf(os, "ref", "%0.0lf", *ref);
+				success &= xml_ostream_end(os);
+			}
+			free(ref);
+		}
+		else if(self->type == OSMDB_TYPE_CTRRELATIONREF)
+		{
+			double* ref;
+			ref = (double*)
+			      a3d_hashmap_remove(self->hash, &iter);
+			if(os)
+			{
+				success &= xml_ostream_begin(os, "r");
+				success &= xml_ostream_attrf(os, "ref", "%0.0lf", *ref);
+				success &= xml_ostream_end(os);
+			}
+			free(ref);
+		}
+		else
+		{
+			LOGE("invalid type=%i", self->type);
+			success = 0;
 		}
 	}
 
@@ -126,7 +175,12 @@ osmdb_chunk_nodeFn(void* priv,
 	assert(node);
 
 	osmdb_chunk_t* self = (osmdb_chunk_t*) priv;
-	if(self->type != OSMDB_TYPE_NODE)
+	if((self->type == OSMDB_TYPE_NODE) ||
+	   (self->type == OSMDB_TYPE_CTRNODE))
+	{
+		// accept
+	}
+	else
 	{
 		LOGE("invalid id=%0.0lf", node->id);
 		return 0;
@@ -154,7 +208,12 @@ osmdb_chunk_wayFn(void* priv,
 	assert(way);
 
 	osmdb_chunk_t* self = (osmdb_chunk_t*) priv;
-	if(self->type != OSMDB_TYPE_WAY)
+	if((self->type == OSMDB_TYPE_WAY) ||
+	   (self->type == OSMDB_TYPE_CTRWAY))
+	{
+		// accept
+	}
+	else
 	{
 		LOGE("invalid id=%0.0lf", way->id);
 		return 0;
@@ -182,7 +241,12 @@ osmdb_chunk_relationFn(void* priv,
 	assert(relation);
 
 	osmdb_chunk_t* self = (osmdb_chunk_t*) priv;
-	if(self->type != OSMDB_TYPE_RELATION)
+	if((self->type == OSMDB_TYPE_RELATION) ||
+	   (self->type == OSMDB_TYPE_CTRRELATION))
+	{
+		// accept
+	}
+	else
 	{
 		LOGE("invalid id=%0.0lf", relation->id);
 		return 0;
@@ -202,6 +266,146 @@ osmdb_chunk_relationFn(void* priv,
 	return 1;
 }
 
+static int
+osmdb_chunk_nodeRefFn(void* priv,
+                      double ref)
+{
+	assert(priv);
+
+	osmdb_chunk_t* self = (osmdb_chunk_t*) priv;
+	if((self->type == OSMDB_TYPE_NODEREF) ||
+	   (self->type == OSMDB_TYPE_CTRNODEREF))
+	{
+		// accept
+	}
+	else
+	{
+		LOGE("invalid ref=%0.0lf", ref);
+		return 0;
+	}
+
+	double idu;
+	double idl;
+	osmdb_splitId(ref, &idu, &idl);
+
+	double* _ref = (double*)
+	               malloc(sizeof(double));
+	if(_ref == NULL)
+	{
+		LOGE("malloc failed");
+		return 0;
+	}
+	*_ref = ref;
+
+	if(a3d_hashmap_addf(self->hash, (const void*) _ref,
+	                    "%0.0lf", idl) == 0)
+	{
+		goto fail_add;
+	}
+
+	// success
+	self->size += (int) sizeof(double);
+	return 1;
+
+	// failure
+	fail_add:
+		free(_ref);
+	return 0;
+}
+
+static int
+osmdb_chunk_wayRefFn(void* priv,
+                     double ref)
+{
+	assert(priv);
+
+	osmdb_chunk_t* self = (osmdb_chunk_t*) priv;
+	if((self->type == OSMDB_TYPE_WAYREF) ||
+	   (self->type == OSMDB_TYPE_CTRWAYREF))
+	{
+		// accept
+	}
+	else
+	{
+		LOGE("invalid ref=%0.0lf", ref);
+		return 0;
+	}
+
+	double idu;
+	double idl;
+	osmdb_splitId(ref, &idu, &idl);
+
+	double* _ref = (double*)
+	               malloc(sizeof(double));
+	if(_ref == NULL)
+	{
+		LOGE("malloc failed");
+		return 0;
+	}
+	*_ref = ref;
+
+	if(a3d_hashmap_addf(self->hash, (const void*) _ref,
+	                    "%0.0lf", idl) == 0)
+	{
+		goto fail_add;
+	}
+
+	// success
+	self->size += (int) sizeof(double);
+	return 1;
+
+	// failure
+	fail_add:
+		free(_ref);
+	return 0;
+}
+
+static int
+osmdb_chunk_relationRefFn(void* priv,
+                          double ref)
+{
+	assert(priv);
+
+	osmdb_chunk_t* self = (osmdb_chunk_t*) priv;
+	if(self->type == OSMDB_TYPE_CTRRELATIONREF)
+	{
+		// accept
+	}
+	else
+	{
+		LOGE("invalid ref=%0.0lf", ref);
+		return 0;
+	}
+
+	double idu;
+	double idl;
+	osmdb_splitId(ref, &idu, &idl);
+
+	double* _ref = (double*)
+	               malloc(sizeof(double));
+	if(_ref == NULL)
+	{
+		LOGE("malloc failed");
+		return 0;
+	}
+	*_ref = ref;
+
+	if(a3d_hashmap_addf(self->hash, (const void*) _ref,
+	                    "%0.0lf", idl) == 0)
+	{
+		goto fail_add;
+	}
+
+	// success
+	self->size += (int) sizeof(double);
+	return 1;
+
+	// failure
+	fail_add:
+		free(_ref);
+	return 0;
+}
+
 static int osmdb_chunk_import(osmdb_chunk_t* self)
 {
 	assert(self);
@@ -209,12 +413,41 @@ static int osmdb_chunk_import(osmdb_chunk_t* self)
 	char fname[256];
 	osmdb_chunk_fname(self->base, self->type,
 	                  self->idu, fname);
-	if(osmdb_parse(fname, (void*) self,
-                   osmdb_chunk_nodeFn,
-                   osmdb_chunk_wayFn,
-                   osmdb_chunk_relationFn) == 0)
+
+	if((self->type == OSMDB_TYPE_NODE)     ||
+	   (self->type == OSMDB_TYPE_WAY)      ||
+	   (self->type == OSMDB_TYPE_RELATION) ||
+	   (self->type == OSMDB_TYPE_CTRNODE)  ||
+	   (self->type == OSMDB_TYPE_CTRWAY)   ||
+	   (self->type == OSMDB_TYPE_CTRRELATION))
 	{
-		osmdb_chunk_finish(self);
+		if(osmdb_parse(fname, (void*) self,
+		               osmdb_chunk_nodeFn,
+		               osmdb_chunk_wayFn,
+		               osmdb_chunk_relationFn) == 0)
+		{
+			osmdb_chunk_finish(self);
+			return 0;
+		}
+	}
+	else if((self->type == OSMDB_TYPE_NODEREF)    ||
+	        (self->type == OSMDB_TYPE_WAYREF)     ||
+	        (self->type == OSMDB_TYPE_CTRNODEREF) ||
+	        (self->type == OSMDB_TYPE_CTRWAYREF)  ||
+	        (self->type == OSMDB_TYPE_CTRRELATIONREF))
+	{
+		if(osmdb_parseRefs(fname, (void*) self,
+		                   osmdb_chunk_nodeRefFn,
+		                   osmdb_chunk_wayRefFn,
+		                   osmdb_chunk_relationRefFn) == 0)
+		{
+			osmdb_chunk_finish(self);
+			return 0;
+		}
+	}
+	else
+	{
+		LOGE("invalid type=%i", self->type);
 		return 0;
 	}
 
@@ -338,6 +571,107 @@ int osmdb_chunk_add(osmdb_chunk_t* self,
 	return 1;
 }
 
+int osmdb_chunk_flush(osmdb_chunk_t* self)
+{
+	assert(self);
+
+	if(self->dirty == 0)
+	{
+		return 1;
+	}
+
+	int success = 1;
+	char fname[256];
+	osmdb_chunk_fname(self->base, self->type,
+	                  self->idu, fname);
+
+	// ignore error
+	osmdb_mkdir(fname);
+
+	xml_ostream_t* os = xml_ostream_newGz(fname);
+	if(os == NULL)
+	{
+		return 0;
+	}
+	success &= xml_ostream_begin(os, "osmdb");
+
+	a3d_hashmapIter_t  iterator;
+	a3d_hashmapIter_t* iter;
+	iter = a3d_hashmap_head(self->hash, &iterator);
+	while(iter)
+	{
+		if((self->type == OSMDB_TYPE_NODE) ||
+		   (self->type == OSMDB_TYPE_CTRNODE))
+		{
+			osmdb_node_t* n;
+			n = (osmdb_node_t*)
+			    a3d_hashmap_val(iter);
+			success &= osmdb_node_export(n, os);
+		}
+		else if((self->type == OSMDB_TYPE_WAY) ||
+		        (self->type == OSMDB_TYPE_CTRWAY))
+		{
+			osmdb_way_t* w;
+			w = (osmdb_way_t*)
+			    a3d_hashmap_val(iter);
+			success &= osmdb_way_export(w, os);
+		}
+		else if((self->type == OSMDB_TYPE_RELATION) ||
+		        (self->type == OSMDB_TYPE_CTRRELATION))
+		{
+			osmdb_relation_t* r;
+			r = (osmdb_relation_t*)
+			    a3d_hashmap_val(iter);
+			success &= osmdb_relation_export(r, os);
+		}
+		else if((self->type == OSMDB_TYPE_NODEREF) ||
+		        (self->type == OSMDB_TYPE_CTRNODEREF))
+		{
+			double* ref;
+			ref = (double*)
+			      a3d_hashmap_val(iter);
+			success &= xml_ostream_begin(os, "n");
+			success &= xml_ostream_attrf(os, "ref", "%0.0lf", *ref);
+			success &= xml_ostream_end(os);
+		}
+		else if((self->type == OSMDB_TYPE_WAYREF) ||
+		        (self->type == OSMDB_TYPE_CTRWAYREF))
+		{
+			double* ref;
+			ref = (double*)
+			      a3d_hashmap_val(iter);
+			success &= xml_ostream_begin(os, "w");
+			success &= xml_ostream_attrf(os, "ref", "%0.0lf", *ref);
+			success &= xml_ostream_end(os);
+		}
+		else if(self->type == OSMDB_TYPE_CTRRELATIONREF)
+		{
+			double* ref;
+			ref = (double*)
+			      a3d_hashmap_val(iter);
+			success &= xml_ostream_begin(os, "r");
+			success &= xml_ostream_attrf(os, "ref", "%0.0lf", *ref);
+			success &= xml_ostream_end(os);
+		}
+		else
+		{
+			LOGE("invalid type=%i", self->type);
+			success = 0;
+			break;
+		}
+
+		iter = a3d_hashmap_next(iter);
+	}
+
+	success &= xml_ostream_end(os);
+	success &= xml_ostream_complete(os);
+	xml_ostream_delete(&os);
+
+	self->dirty = 0;
+
+	return success;
+}
+
 void osmdb_chunk_fname(const char* base,
                        int type, double idu,
                        char* fname)
@@ -347,17 +681,120 @@ void osmdb_chunk_fname(const char* base,
 
 	if(type == OSMDB_TYPE_NODE)
 	{
-		snprintf(fname, 256, "%s/node/%0.0lf.xmlz",
+		snprintf(fname, 256, "%s/node/%0.0lf.xml.gz",
 		         base, idu);
 	}
 	else if(type == OSMDB_TYPE_WAY)
 	{
-		snprintf(fname, 256, "%s/way/%0.0lf.xmlz",
+		snprintf(fname, 256, "%s/way/%0.0lf.xml.gz",
+		         base, idu);
+	}
+	else if(type == OSMDB_TYPE_RELATION)
+	{
+		snprintf(fname, 256, "%s/relation/%0.0lf.xml.gz",
+		         base, idu);
+	}
+	else if(type == OSMDB_TYPE_NODEREF)
+	{
+		snprintf(fname, 256, "%s/noderef/%0.0lf.xml.gz",
+		         base, idu);
+	}
+	else if(type == OSMDB_TYPE_WAYREF)
+	{
+		snprintf(fname, 256, "%s/wayref/%0.0lf.xml.gz",
+		         base, idu);
+	}
+	else if(type == OSMDB_TYPE_CTRNODE)
+	{
+		snprintf(fname, 256, "%s/ctrnode/%0.0lf.xml.gz",
+		         base, idu);
+	}
+	else if(type == OSMDB_TYPE_CTRWAY)
+	{
+		snprintf(fname, 256, "%s/ctrway/%0.0lf.xml.gz",
+		         base, idu);
+	}
+	else if(type == OSMDB_TYPE_CTRRELATION)
+	{
+		snprintf(fname, 256, "%s/ctrrelation/%0.0lf.xml.gz",
+		         base, idu);
+	}
+	else if(type == OSMDB_TYPE_CTRNODEREF)
+	{
+		snprintf(fname, 256, "%s/ctrnoderef/%0.0lf.xml.gz",
+		         base, idu);
+	}
+	else if(type == OSMDB_TYPE_CTRWAYREF)
+	{
+		snprintf(fname, 256, "%s/ctrwayref/%0.0lf.xml.gz",
+		         base, idu);
+	}
+	else if(type == OSMDB_TYPE_CTRRELATIONREF)
+	{
+		snprintf(fname, 256, "%s/ctrrelationref/%0.0lf.xml.gz",
 		         base, idu);
 	}
 	else
 	{
-		snprintf(fname, 256, "%s/relation/%0.0lf.xmlz",
+		LOGE("invalid type=%i", type);
+		snprintf(fname, 256, "%s/invalid/%0.0lf.xml.gz",
 		         base, idu);
+	}
+}
+
+void osmdb_chunk_path(const char* base,
+                      int type, char* path)
+{
+	assert(base);
+	assert(path);
+
+	if(type == OSMDB_TYPE_NODE)
+	{
+		snprintf(path, 256, "%s/node/", base);
+	}
+	else if(type == OSMDB_TYPE_WAY)
+	{
+		snprintf(path, 256, "%s/way/", base);
+	}
+	else if(type == OSMDB_TYPE_RELATION)
+	{
+		snprintf(path, 256, "%s/relation/", base);
+	}
+	else if(type == OSMDB_TYPE_NODEREF)
+	{
+		snprintf(path, 256, "%s/noderef/", base);
+	}
+	else if(type == OSMDB_TYPE_WAYREF)
+	{
+		snprintf(path, 256, "%s/wayref/", base);
+	}
+	else if(type == OSMDB_TYPE_CTRNODE)
+	{
+		snprintf(path, 256, "%s/ctrnode/", base);
+	}
+	else if(type == OSMDB_TYPE_CTRWAY)
+	{
+		snprintf(path, 256, "%s/ctrway/", base);
+	}
+	else if(type == OSMDB_TYPE_CTRRELATION)
+	{
+		snprintf(path, 256, "%s/ctrrelation/", base);
+	}
+	else if(type == OSMDB_TYPE_CTRNODEREF)
+	{
+		snprintf(path, 256, "%s/ctrnoderef/", base);
+	}
+	else if(type == OSMDB_TYPE_CTRWAYREF)
+	{
+		snprintf(path, 256, "%s/ctrwayref/", base);
+	}
+	else if(type == OSMDB_TYPE_CTRRELATIONREF)
+	{
+		snprintf(path, 256, "%s/ctrrelationref/", base);
+	}
+	else
+	{
+		LOGE("invalid type=%i", type);
+		snprintf(path, 256, "%s/invalid/", base);
 	}
 }
