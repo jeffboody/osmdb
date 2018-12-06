@@ -134,22 +134,22 @@ osmdb_index_flushChunks(osmdb_index_t* self, int type)
 }
 
 static void
-osmdb_index_trimChunks(osmdb_index_t* self, int size_chunks)
+osmdb_index_trimChunks(osmdb_index_t* self, int max_size)
 {
 	assert(self);
-	assert(size_chunks >= 0);
+	assert(max_size >= 0);
 
 	a3d_listitem_t* item = a3d_list_head(self->chunks);
 	while(item)
 	{
-		if(self->size_chunks <= size_chunks)
+		if((self->size_chunks + self->size_hash) <= max_size)
 		{
 			return;
 		}
 
 		double t0 = a3d_timestamp();
 		self->stats_chunk_trim += 1.0;
-		if(size_chunks > 0)
+		if(max_size > 0)
 		{
 			self->stats_chunk_evict += 1.0;
 		}
@@ -188,7 +188,10 @@ osmdb_index_trimChunks(osmdb_index_t* self, int size_chunks)
 			self->stats_chunk_trim_dt += a3d_timestamp() - t0;
 			return;
 		}
+		int hsz1 = a3d_hashmap_hashmapSize(hash);
 		a3d_hashmap_remove(hash, &iter);
+		int hsz2 = a3d_hashmap_hashmapSize(hash);
+
 		a3d_list_remove(self->chunks, &item);
 
 		// delete the chunk
@@ -198,6 +201,7 @@ osmdb_index_trimChunks(osmdb_index_t* self, int size_chunks)
 			self->err = 1;
 		}
 		self->size_chunks -= dsize;
+		self->size_hash   += hsz2 - hsz1;
 		self->stats_chunk_trim_dt += a3d_timestamp() - t0;
 	}
 }
@@ -331,12 +335,15 @@ osmdb_index_getChunk(osmdb_index_t* self,
 			goto fail_append;
 		}
 
+		int hsz1 = a3d_hashmap_hashmapSize(hash);
 		if(a3d_hashmap_add(hash, (const void*) iter,
 		                   key) == 0)
 		{
 			goto fail_add;
 		}
+		int hsz2 = a3d_hashmap_hashmapSize(hash);
 		self->size_chunks += csize;
+		self->size_hash   += hsz2 - hsz1;
 		osmdb_index_trimChunks(self, OSMDB_CHUNK_SIZE);
 	}
 
@@ -987,6 +994,7 @@ osmdb_index_t* osmdb_index_new(const char* base)
 
 	snprintf(self->base, 256, "%s", base);
 	self->size_chunks         = 0;
+	self->size_hash           = 0;
 	self->size_tiles          = 0;
 	self->err                 = 0;
 	self->stats_chunk_hit     = 0.0;

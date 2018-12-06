@@ -66,6 +66,7 @@ typedef struct osmdb_index_s
 {
 	char base[256];
 	int  size_chunks;
+	int  size_hash;
 	int  size_tiles;
 	int  err;
 
