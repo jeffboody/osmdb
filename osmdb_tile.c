@@ -114,7 +114,6 @@ static int osmdb_tile_finish(osmdb_tile_t* self)
 		xml_ostream_delete(&os);
 	}
 
-	self->size  = 0;
 	self->dirty = 0;
 
 	return success;
@@ -133,7 +132,6 @@ static int nodeRefFn(void* priv, double ref)
 	{
 		return 0;
 	}
-	++self->size;
 
 	return 1;
 }
@@ -151,7 +149,6 @@ static int wayRefFn(void* priv, double ref)
 	{
 		return 0;
 	}
-	++self->size;
 
 	return 1;
 }
@@ -169,7 +166,6 @@ static int relationRefFn(void* priv, double ref)
 	{
 		return 0;
 	}
-	++self->size;
 
 	return 1;
 }
@@ -198,11 +194,9 @@ static int osmdb_tile_import(osmdb_tile_t* self)
 ***********************************************************/
 
 osmdb_tile_t* osmdb_tile_new(int zoom, int x, int y,
-                             const char* base,
-                             int import, int* dsize)
+                             const char* base, int import)
 {
 	assert(base);
-	assert(dsize);
 
 	osmdb_tile_t* self = (osmdb_tile_t*)
 	                     malloc(sizeof(osmdb_tile_t));
@@ -234,7 +228,6 @@ osmdb_tile_t* osmdb_tile_new(int zoom, int x, int y,
 	self->zoom  = zoom;
 	self->x     = x;
 	self->y     = y;
-	self->size  = 0;
 	self->dirty = 0;
 
 	// optionally import tile
@@ -242,7 +235,6 @@ osmdb_tile_t* osmdb_tile_new(int zoom, int x, int y,
 	{
 		goto fail_import;
 	}
-	*dsize = self->size;
 
 	// success
 	return self;
@@ -259,18 +251,14 @@ osmdb_tile_t* osmdb_tile_new(int zoom, int x, int y,
 	return NULL;
 }
 
-int osmdb_tile_delete(osmdb_tile_t** _self, int* dsize)
+int osmdb_tile_delete(osmdb_tile_t** _self)
 {
 	assert(_self);
-	assert(dsize);
-
-	*dsize = 0;
 
 	int success = 1;
 	osmdb_tile_t* self = *_self;
 	if(self)
 	{
-		*dsize = self->size;
 		success = osmdb_tile_finish(self);
 		a3d_hashmap_delete(&self->hash_nodes);
 		a3d_hashmap_delete(&self->hash_ways);
@@ -279,6 +267,15 @@ int osmdb_tile_delete(osmdb_tile_t** _self, int* dsize)
 		*_self = NULL;
 	}
 	return success;
+}
+
+int osmdb_tile_size(osmdb_tile_t* self)
+{
+	assert(self);
+
+	return a3d_hashmap_hashmapSize(self->hash_nodes) +
+	       a3d_hashmap_hashmapSize(self->hash_ways)  +
+	       a3d_hashmap_hashmapSize(self->hash_relations);
 }
 
 int osmdb_tile_find(osmdb_tile_t* self,
@@ -335,7 +332,6 @@ int osmdb_tile_add(osmdb_tile_t* self,
 		return 0;
 	}
 
-	++self->size;
 	self->dirty = 1;
 	return 1;
 }

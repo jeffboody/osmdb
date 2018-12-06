@@ -42,7 +42,7 @@
 const int OSMDB_INDEX_ONE = 1;
 
 #define OSMDB_CHUNK_SIZE 400*1024*1024
-#define OSMDB_TILE_SIZE  2000000
+#define OSMDB_TILE_SIZE  100*1024*1024
 
 /***********************************************************
 * private                                                  *
@@ -207,22 +207,22 @@ osmdb_index_trimChunks(osmdb_index_t* self, int max_size)
 }
 
 static void
-osmdb_index_trimTiles(osmdb_index_t* self, int size_tiles)
+osmdb_index_trimTiles(osmdb_index_t* self, int max_size)
 {
 	assert(self);
-	assert(size_tiles >= 0);
+	assert(max_size >= 0);
 
 	a3d_listitem_t* item = a3d_list_head(self->tiles);
 	while(item)
 	{
-		if(self->size_tiles <= size_tiles)
+		if(self->size_tiles <= max_size)
 		{
 			return;
 		}
 
 		double t0 = a3d_timestamp();
 		self->stats_tile_trim += 1.0;
-		if(size_tiles > 0)
+		if(max_size > 0)
 		{
 			self->stats_tile_evict += 1.0;
 		}
@@ -254,8 +254,8 @@ osmdb_index_trimTiles(osmdb_index_t* self, int size_tiles)
 		a3d_list_remove(self->tiles, &item);
 
 		// delete the tile
-		int dsize = 0;
-		if(osmdb_tile_delete(&tile, &dsize) == 0)
+		int dsize = osmdb_tile_size(tile);
+		if(osmdb_tile_delete(&tile) == 0)
 		{
 			self->err = 1;
 		}
@@ -404,9 +404,8 @@ osmdb_index_getTile(osmdb_index_t* self,
 			self->stats_tile_load += 1.0;
 		}
 
-		int tsize;
-		tile = osmdb_tile_new(zoom, x, y, self->base,
-		                      exists, &tsize);
+		tile = osmdb_tile_new(zoom, x, y,
+		                      self->base, exists);
 		if(tile == NULL)
 		{
 			self->err = 1;
@@ -431,7 +430,7 @@ osmdb_index_getTile(osmdb_index_t* self,
 		{
 			goto fail_add;
 		}
-		self->size_tiles += tsize;
+		self->size_tiles += osmdb_tile_size(tile);
 		osmdb_index_trimTiles(self, OSMDB_TILE_SIZE);
 	}
 
@@ -445,8 +444,7 @@ osmdb_index_getTile(osmdb_index_t* self,
 		a3d_list_remove(self->tiles, &iter);
 	fail_append:
 	{
-		int dsize;
-		osmdb_tile_delete(&tile, &dsize);
+		osmdb_tile_delete(&tile);
 		self->err = 1;
 	}
 	self->stats_tile_get_dt += a3d_timestamp() - t0;
@@ -876,6 +874,7 @@ static int osmdb_index_addTileXY(osmdb_index_t* self,
 	}
 
 	// add the data
+	int tsz0 = osmdb_tile_size(tile);
 	if(osmdb_tile_add(tile, type, id) == 0)
 	{
 		// nothing to undo for this failure
@@ -885,7 +884,8 @@ static int osmdb_index_addTileXY(osmdb_index_t* self,
 		self->stats_tile_add_dt += a3d_timestamp() - t0;
 		return 0;
 	}
-	self->size_tiles += 1;
+	int tsz1 = osmdb_tile_size(tile);
+	self->size_tiles += tsz1 - tsz0;
 	osmdb_index_trimTiles(self, OSMDB_TILE_SIZE);
 
 	self->stats_tile_add_dt += a3d_timestamp() - t0;

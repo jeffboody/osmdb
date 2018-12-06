@@ -32,7 +32,6 @@ typedef struct
 	int zoom;
 	int x;
 	int y;
-	int size;
 	int dirty;
 
 	// map from id to const ONE
@@ -43,9 +42,9 @@ typedef struct
 
 osmdb_tile_t* osmdb_tile_new(int zoom, int x, int y,
                              const char* base,
-                             int import, int* dsize);
-int           osmdb_tile_delete(osmdb_tile_t** _self,
-                                int* dsize);
+                             int import);
+int           osmdb_tile_delete(osmdb_tile_t** _self);
+int           osmdb_tile_size(osmdb_tile_t* self);
 int           osmdb_tile_find(osmdb_tile_t* self,
                               int type, double id);
 int           osmdb_tile_add(osmdb_tile_t* self,
