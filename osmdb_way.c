@@ -38,12 +38,17 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 {
 	assert(atts);
 
-	const char* id    = NULL;
-	const char* lat   = NULL;
-	const char* lon   = NULL;
-	const char* name  = NULL;
-	const char* abrev = NULL;
-	const char* class = NULL;
+	const char* id      = NULL;
+	const char* lat     = NULL;
+	const char* lon     = NULL;
+	const char* name    = NULL;
+	const char* abrev   = NULL;
+	const char* class   = NULL;
+	const char* layer   = NULL;
+	const char* oneway  = NULL;
+	const char* bridge  = NULL;
+	const char* tunnel  = NULL;
+	const char* cutting = NULL;
 
 	// find atts
 	int idx0 = 0;
@@ -73,6 +78,26 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 		else if(strcmp(atts[idx0], "class") == 0)
 		{
 			class = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "layer") == 0)
+		{
+			layer = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "oneway") == 0)
+		{
+			oneway = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "bridge") == 0)
+		{
+			bridge = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "tunnel") == 0)
+		{
+			tunnel = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "cutting") == 0)
+		{
+			cutting = atts[idx1];
 		}
 		idx0 += 2;
 		idx1 += 2;
@@ -142,6 +167,31 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 		self->class = osmdb_classNameToCode(class);
 	}
 
+	if(layer)
+	{
+		self->layer = (int) strtol(layer, NULL, 0);
+	}
+
+	if(oneway)
+	{
+		self->oneway = (int) strtol(oneway, NULL, 0);
+	}
+
+	if(bridge)
+	{
+		self->bridge = (int) strtol(bridge, NULL, 0);
+	}
+
+	if(tunnel)
+	{
+		self->tunnel = (int) strtol(tunnel, NULL, 0);
+	}
+
+	if(cutting)
+	{
+		self->cutting = (int) strtol(cutting, NULL, 0);
+	}
+
 	// success
 	return self;
 
@@ -199,10 +249,15 @@ osmdb_way_copyCenter(osmdb_way_t* self,
 		snprintf(copy->abrev, len, "%s", self->abrev);
 	}
 
-	copy->id    = self->id;
-	copy->class = self->class;
-	copy->lat   = lat;
-	copy->lon   = lon;
+	copy->id      = self->id;
+	copy->class   = self->class;
+	copy->layer   = self->layer;
+	copy->oneway  = self->oneway;
+	copy->bridge  = self->bridge;
+	copy->tunnel  = self->tunnel;
+	copy->cutting = self->cutting;
+	copy->lat     = lat;
+	copy->lon     = lon;
 
 	// success
 	return copy;
@@ -280,6 +335,26 @@ int osmdb_way_export(osmdb_way_t* self, xml_ostream_t* os)
 	{
 		ret &= xml_ostream_attr(os, "class",
 		                        osmdb_classCodeToName(self->class));
+	}
+	if(self->layer)
+	{
+		ret &= xml_ostream_attrf(os, "layer", "%i", self->layer);
+	}
+	if(self->oneway)
+	{
+		ret &= xml_ostream_attrf(os, "oneway", "%i", self->oneway);
+	}
+	if(self->bridge)
+	{
+		ret &= xml_ostream_attrf(os, "bridge", "%i", self->bridge);
+	}
+	if(self->tunnel)
+	{
+		ret &= xml_ostream_attrf(os, "tunnel", "%i", self->tunnel);
+	}
+	if(self->cutting)
+	{
+		ret &= xml_ostream_attrf(os, "cutting", "%i", self->cutting);
 	}
 
 	a3d_listitem_t* iter = a3d_list_head(self->nds);

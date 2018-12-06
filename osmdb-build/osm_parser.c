@@ -505,14 +505,19 @@ static void osm_parser_init(osm_parser_t* self)
 {
 	assert(self);
 
-	self->attr_id      = 0.0;
-	self->attr_lat     = 0.0;
-	self->attr_lon     = 0.0;
-	self->tag_name[0]  = '\0';
-	self->tag_abrev[0] = '\0';
-	self->tag_ele      = 0;
-	self->tag_st       = 0;
-	self->tag_class    = 0;
+	self->attr_id         = 0.0;
+	self->attr_lat        = 0.0;
+	self->attr_lon        = 0.0;
+	self->tag_name[0]     = '\0';
+	self->tag_abrev[0]    = '\0';
+	self->tag_ele         = 0;
+	self->tag_st          = 0;
+	self->tag_class       = 0;
+	self->tag_way_layer   = 0;
+	self->tag_way_oneway  = 0;
+	self->tag_way_bridge  = 0;
+	self->tag_way_tunnel  = 0;
+	self->tag_way_cutting = 0;
 }
 
 static int
@@ -786,6 +791,31 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 		xml_ostream_attr(self->os_ways, "class",
 		                 osmdb_classCodeToName(self->tag_class));
 	}
+	if(self->tag_way_layer)
+	{
+		xml_ostream_attrf(self->os_ways, "layer",
+		                  "%i", self->tag_way_layer);
+	}
+	if(self->tag_way_oneway)
+	{
+		xml_ostream_attrf(self->os_ways, "oneway",
+		                  "%i", self->tag_way_oneway);
+	}
+	if(self->tag_way_bridge)
+	{
+		xml_ostream_attrf(self->os_ways, "bridge",
+		                  "%i", self->tag_way_bridge);
+	}
+	if(self->tag_way_tunnel)
+	{
+		xml_ostream_attrf(self->os_ways, "tunnel",
+		                  "%i", self->tag_way_tunnel);
+	}
+	if(self->tag_way_cutting)
+	{
+		xml_ostream_attrf(self->os_ways, "cutting",
+		                  "%i", self->tag_way_cutting);
+	}
 
 	// write way nds
 	a3d_listitem_t* iter = a3d_list_head(self->way_nds);
@@ -852,6 +882,36 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 			{
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
+			}
+			else if(strcmp(atts[j], "layer") == 0)
+			{
+				self->tag_way_layer = (int) strtol(atts[n], NULL, 0);
+			}
+			else if(strcmp(atts[j], "oneway") == 0)
+			{
+				if(strcmp(atts[n], "yes") == 0)
+				{
+					self->tag_way_oneway = 1;
+				}
+				else if(strcmp(atts[n], "-1") == 0)
+				{
+					self->tag_way_oneway = -1;
+				}
+			}
+			else if((strcmp(atts[j], "bridge") == 0) &&
+				    (strcmp(atts[n], "no") != 0))
+			{
+				self->tag_way_bridge = 1;
+			}
+			else if((strcmp(atts[j], "tunnel") == 0) &&
+				    (strcmp(atts[n], "no") != 0))
+			{
+				self->tag_way_tunnel = 1;
+			}
+			else if((strcmp(atts[j], "cutting") == 0) &&
+				    (strcmp(atts[n], "no") != 0))
+			{
+				self->tag_way_cutting = 1;
 			}
 		}
 

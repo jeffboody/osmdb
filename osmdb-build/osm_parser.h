@@ -58,6 +58,11 @@ typedef struct
 	int  tag_ele;
 	int  tag_st;
 	int  tag_class;
+	int  tag_way_layer;
+	int  tag_way_oneway;
+	int  tag_way_bridge;
+	int  tag_way_tunnel;
+	int  tag_way_cutting;
 
 	// type used for relations
 	int rel_type;

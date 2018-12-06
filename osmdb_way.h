@@ -36,6 +36,11 @@ typedef struct
 	char*  name;
 	char*  abrev;
 	int    class;
+	int    layer;
+	int    oneway;
+	int    bridge;
+	int    tunnel;
+	int    cutting;
 
 	a3d_list_t* nds;
 } osmdb_way_t;
