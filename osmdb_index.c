@@ -41,7 +41,7 @@
 
 const int OSMDB_INDEX_ONE = 1;
 
-#define OSMDB_CHUNK_SIZE 200*1024*1024
+#define OSMDB_CHUNK_SIZE 400*1024*1024
 #define OSMDB_TILE_SIZE  2000000
 
 /***********************************************************
