@@ -185,8 +185,8 @@
 		<select class="barrier:turnstile" />
 		<select class="barrier:yes" />
 	-->
-	<select class="boundary:national_park"  zoom="11" />
-	<select class="boundary:protected_area" zoom="11" />
+	<select class="boundary:national_park"  zoom="8" flags="named,center" />
+	<select class="boundary:protected_area" zoom="8" flags="named,center" />
 	<!-- DISCARD BOUNDARY
 		<select class="boundary:administrative" />
 		<select class="boundary:historic" />
@@ -360,7 +360,7 @@
 	<select class="geological:outcrop"               zoom="14" flags="named" />
 	<select class="highway:motorway"                 zoom="8" />
 	<select class="highway:trunk"                    zoom="8" />
-	<select class="highway:primary"                  zoom="11" />
+	<select class="highway:primary"                  zoom="8" />
 	<select class="highway:secondary"                zoom="11" />
 	<select class="highway:tertiary"                 zoom="14" />
 	<select class="highway:unclassified"             zoom="14" />
@@ -486,7 +486,7 @@
 	<select class="leisure:ice_rink"                zoom="14" flags="named,center" />
 	<select class="leisure:marina"                  zoom="14" flags="named,center" />
 	<select class="leisure:minature_golf"           zoom="14" flags="named,center" />
-	<select class="leisure:nature_reserve"          zoom="11" />
+	<select class="leisure:nature_reserve"          zoom="11" flags="named,center" />
 	<select class="leisure:park"                    zoom="14" flags="named,center" />
 	<select class="leisure:pitch"                   zoom="14" flags="named,center" />
 	<select class="leisure:playground"              zoom="14" flags="named,center" />

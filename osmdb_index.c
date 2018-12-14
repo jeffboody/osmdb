@@ -1310,6 +1310,18 @@ int osmdb_index_addTile(osmdb_index_t* self,
 		}
 	}
 
+	// add ways to higher zoom levels
+	if(zoom == 8)
+	{
+		ret &= osmdb_index_addTile(self, range, 11,
+		                           type, id);
+	}
+	else if(zoom == 11)
+	{
+		ret &= osmdb_index_addTile(self, range, 14,
+		                           type, id);
+	}
+
 	return ret;
 }
 
