@@ -23,7 +23,9 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 #include "../libxmlstream/xml_istream.h"
+#include "../libpak/pak_file.h"
 #include "osmdb_style.h"
 
 #define LOG_TAG "osmdb"
@@ -682,13 +684,27 @@ osmdb_style_t* osmdb_style_new(const char* fname)
 		goto fail_classes;
 	}
 
-	if(xml_istream_parse((void*) self,
-	                     osmdb_style_start,
-	                     osmdb_style_end,
-	                     fname) == 0)
+	pak_file_t* pak = pak_file_open(fname, PAK_FLAG_READ);
+	if(pak == NULL)
+	{
+		goto fail_pak;
+	}
+
+	int len = pak_file_seek(pak, "style.xml");
+	if(len == 0)
+	{
+		goto fail_seek;
+	}
+
+	if(xml_istream_parseFile((void*) self,
+	                         osmdb_style_start,
+	                         osmdb_style_end,
+	                         pak->f, len) == 0)
 	{
 		goto fail_parse;
 	}
+
+	pak_file_close(&pak);
 
 	// success
 	return self;
@@ -696,6 +712,9 @@ osmdb_style_t* osmdb_style_new(const char* fname)
 	// failure
 	fail_parse:
 		osmdb_style_finish(self);
+	fail_seek:
+		pak_file_close(&pak);
+	fail_pak:
 		a3d_hashmap_delete(&self->classes);
 	fail_classes:
 		a3d_hashmap_delete(&self->polys);
