@@ -41,8 +41,8 @@
 	<color name="secondary:halo" val="E8EA2F7F" />
 	<color name="tertiary"       val="FDFFA0FF" />
 	<color name="tertiary:halo"  val="FDFFA07F" />
-	<color name="trail"          val="2BA62B7F" />
-	<color name="track"          val="DEC49BFF" />
+	<color name="trail"          val="2BA62BFF" />
+	<color name="track"          val="DB9440FF" />
 	<color name="river"          val="4788D9BF" />
 	<color name="lake"           val="4788D9BF" />
 	<color name="glacier"        val="9BDFE07F" />
@@ -67,9 +67,9 @@
 	<line name="road"           color1="white"     width="1.75" />
 	<line name="runway"         mode="dashed,striped" color1="white" color2="runway" width="4.0" />
 	<line name="taxiway"        color1="runway" width="1.5" />
-	<line name="trail"          mode="dashed,striped" color1="white" color2="trail" />
-	<line name="track"          color1="track" />
-	<line name="railway"        mode="dashed,striped" color1="gray"  color2="ltgray" />
+	<line name="trail"          mode="dashed,striped" color1="white" color2="trail" width="1.5" />
+	<line name="track"          mode="dashed,striped" color1="white" color2="track" width="1.5" />
+	<line name="railway"        mode="dashed,striped" color1="gray"  color2="ltgray" width="1.5" />
 	<line name="river"          color1="river" width="3.0" />
 	<line name="stream"         color1="river" width="1.5" />
 
