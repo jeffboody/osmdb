@@ -63,7 +63,7 @@
 	<line name="pedestrian"     mode="striped" color1="ltgray"    color2="black:halo" width="1.5" />
 	<line name="runway"         mode="dashed,striped" color1="white" color2="runway" width="4.0" />
 	<line name="taxiway"        color1="runway" width="1.5" />
-	<line name="trail"          mode="dashed,striped" color1="white" color2="trail" width="1.5" />
+	<line name="trail"          mode="dashed,striped" color1="white" color2="trail" width="1.0" />
 	<line name="track"          mode="dashed,striped" color1="white" color2="track" width="1.5" />
 	<line name="railway"        mode="dashed,striped" color1="gray"  color2="ltgray" width="1.5" />
 	<line name="river"          color1="river" width="3.0" />
