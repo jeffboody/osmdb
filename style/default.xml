@@ -4,6 +4,7 @@
 	<layer name="ground" />
 	<layer name="trail" />
 	<layer name="track" />
+	<layer name="link" />
 	<layer name="residential" />
 	<layer name="tertiary" />
 	<layer name="secondary" />
@@ -104,11 +105,11 @@
 	<class name="highway:tertiary"       layer="tertiary"    line="tertiary" />
 	<class name="highway:unclassified"   layer="residential" line="road" />
 	<class name="highway:residential"    layer="residential" line="road" />
-	<class name="highway:motorway_link"  layer="trunk"       line="motorway_link" />
-	<class name="highway:trunk_link"     layer="primary"     line="trunk_link" />
-	<class name="highway:primary_link"   layer="secondary"   line="primary_link" />
-	<class name="highway:secondary_link" layer="tertiary"    line="secondary_link" />
-	<class name="highway:tertiary_link"  layer="residential" line="tertiary_link" />
+	<class name="highway:motorway_link"  layer="link"        line="motorway_link" />
+	<class name="highway:trunk_link"     layer="link"        line="trunk_link" />
+	<class name="highway:primary_link"   layer="link"        line="primary_link" />
+	<class name="highway:secondary_link" layer="link"        line="secondary_link" />
+	<class name="highway:tertiary_link"  layer="link"        line="tertiary_link" />
 	<class name="highway:living_street"  layer="trail"       line="pedestrian" />
 	<class name="highway:pedestrian"     layer="trail"       line="pedestrian" />
 	<class name="highway:track"          layer="track"       line="track" />
