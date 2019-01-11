@@ -237,7 +237,7 @@ osmdb_style_beginOsmColor(osmdb_style_t* self,
 		return 0;
 	}
 
-	unsigned int v = (unsigned int) strtol(val, NULL, 16);
+	unsigned int v = (unsigned int) strtoll(val, NULL, 16);
 	float r = ((float) ((v >> 24) & 0xFF))/255.0f;
 	float g = ((float) ((v >> 16) & 0xFF))/255.0f;
 	float b = ((float) ((v >> 8) & 0xFF))/255.0f;
