@@ -25,7 +25,7 @@
 	<color name="ltgray"         val="D7D7D7FF" />
 	<color name="ltgray:halo"    val="D7D7D77F" />
 	<color name="gray"           val="7F7F7FFF" />
-	<color name="gray:halo"      val="7F7F7F7F" />
+	<color name="gray:halo"      val="7F7F7FBF" />
 	<color name="runway"         val="314DB2FF" />
 	<color name="runway:halo"    val="314DB27F" />
 	<color name="brown"          val="AE7547FF" />
@@ -48,19 +48,19 @@
 	<color name="lake"           val="4788D9BF" />
 	<color name="glacier"        val="9BDFE07F" />
 
-	<line name="aerialway"      mode="dashed,striped" color1="gray" color2="white:halo" />
-	<line name="motorway"       mode="striped" color1="motorway"  color2="black:halo" width="3.5" />
-	<line name="trunk"          mode="striped" color1="trunk"     color2="black:halo" width="3.5" />
-	<line name="primary"        mode="striped" color1="primary"   color2="black:halo" width="3.5" />
-	<line name="secondary"      mode="striped" color1="secondary" color2="black:halo" width="2.75" />
-	<line name="tertiary"       mode="striped" color1="tertiary"  color2="black:halo" width="2.75" />
-	<line name="motorway_link"  mode="striped" color1="motorway"  color2="black:halo" width="2.5" />
-	<line name="trunk_link"     mode="striped" color1="trunk"     color2="black:halo" width="2.5" />
-	<line name="primary_link"   mode="striped" color1="primary"   color2="black:halo" width="2.5" />
-	<line name="secondary_link" mode="striped" color1="secondary" color2="black:halo" width="1.5" />
-	<line name="tertiary_link"  mode="striped" color1="tertiary"  color2="black:halo" width="1.5" />
-	<line name="road"           mode="striped" color1="white"     color2="black:halo" width="1.75" />
-	<line name="pedestrian"     mode="striped" color1="ltgray"    color2="black:halo" width="1.5" />
+	<line name="aerialway"      mode="dashed,striped" color1="ltgray" color2="white:halo" />
+	<line name="motorway"       mode="striped" color1="ltgray" color2="gray:halo" width="3.5" />
+	<line name="trunk"          mode="striped" color1="ltgray" color2="gray:halo" width="3.5" />
+	<line name="primary"        mode="striped" color1="ltgray" color2="gray:halo" width="3.5" />
+	<line name="secondary"      mode="striped" color1="ltgray" color2="gray:halo" width="2.75" />
+	<line name="tertiary"       mode="striped" color1="ltgray" color2="gray:halo" width="2.75" />
+	<line name="motorway_link"  mode="striped" color1="ltgray" color2="gray:halo" width="2.5" />
+	<line name="trunk_link"     mode="striped" color1="ltgray" color2="gray:halo" width="2.5" />
+	<line name="primary_link"   mode="striped" color1="ltgray" color2="gray:halo" width="2.5" />
+	<line name="secondary_link" mode="striped" color1="ltgray" color2="gray:halo" width="1.5" />
+	<line name="tertiary_link"  mode="striped" color1="ltgray" color2="gray:halo" width="1.5" />
+	<line name="road"           mode="striped" color1="ltgray" color2="gray:halo" width="1.75" />
+	<line name="pedestrian"     mode="dashed,striped" color1="white"    color2="trail" width="1.5" />
 	<line name="runway"         mode="dashed,striped" color1="white" color2="runway" width="4.0" />
 	<line name="taxiway"        color1="runway" width="1.5" />
 	<line name="trail"          mode="dashed,striped" color1="white" color2="trail" width="1.0" />
