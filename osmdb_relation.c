@@ -294,7 +294,7 @@ int osmdb_relation_export(osmdb_relation_t* self,
 		if(m->role)
 		{
 			ret &= xml_ostream_attr(os, "role",
-			                        osmdb_relationMemberCodeToType(m->role));
+			                        osmdb_relationMemberCodeToRole(m->role));
 		}
 		ret &= xml_ostream_end(os);
 		iter = a3d_list_next(iter);
