@@ -39,11 +39,13 @@ osmdb_relation_t* osmdb_relation_new(const char** atts, int line)
 	assert(atts);
 
 	const char* id    = NULL;
-	const char* lat   = NULL;
-	const char* lon   = NULL;
 	const char* name  = NULL;
 	const char* abrev = NULL;
 	const char* class = NULL;
+	const char* latT  = NULL;
+	const char* lonL  = NULL;
+	const char* latB  = NULL;
+	const char* lonR  = NULL;
 
 	// find atts
 	int idx0 = 0;
@@ -53,14 +55,6 @@ osmdb_relation_t* osmdb_relation_new(const char** atts, int line)
 		if(strcmp(atts[idx0], "id") == 0)
 		{
 			id = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "lat") == 0)
-		{
-			lat = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "lon") == 0)
-		{
-			lon = atts[idx1];
 		}
 		else if(strcmp(atts[idx0], "name") == 0)
 		{
@@ -73,6 +67,22 @@ osmdb_relation_t* osmdb_relation_new(const char** atts, int line)
 		else if(strcmp(atts[idx0], "class") == 0)
 		{
 			class = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "latT") == 0)
+		{
+			latT = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "lonL") == 0)
+		{
+			lonL = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "latB") == 0)
+		{
+			latB = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "lonR") == 0)
+		{
+			lonR = atts[idx1];
 		}
 		idx0 += 2;
 		idx1 += 2;
@@ -103,16 +113,6 @@ osmdb_relation_t* osmdb_relation_new(const char** atts, int line)
 	self->refcount = 0;
 	self->id = strtod(id, NULL);
 
-	if(lat)
-	{
-		self->lat = strtod(lat, NULL);
-	}
-
-	if(lon)
-	{
-		self->lon = strtod(lon, NULL);
-	}
-
 	if(name)
 	{
 		int len = strlen(name) + 1;
@@ -140,6 +140,26 @@ osmdb_relation_t* osmdb_relation_new(const char** atts, int line)
 		self->class = osmdb_classNameToCode(class);
 	}
 
+	if(latT)
+	{
+		self->latT = strtod(latT, NULL);
+	}
+
+	if(lonL)
+	{
+		self->lonL = strtod(lonL, NULL);
+	}
+
+	if(latB)
+	{
+		self->latB = strtod(latB, NULL);
+	}
+
+	if(lonR)
+	{
+		self->lonR = strtod(lonR, NULL);
+	}
+
 	// success
 	return self;
 
@@ -154,8 +174,43 @@ osmdb_relation_t* osmdb_relation_new(const char** atts, int line)
 }
 
 osmdb_relation_t*
-osmdb_relation_copyCenter(osmdb_relation_t* self,
-                          double lat, double lon)
+osmdb_relation_copy(osmdb_relation_t* self)
+{
+	assert(self);
+
+	osmdb_relation_t* copy;
+	copy = osmdb_relation_copyEmpty(self);
+	if(copy == NULL)
+	{
+		return NULL;
+	}
+
+	a3d_listitem_t* iter = a3d_list_head(self->members);
+	while(iter)
+	{
+		osmdb_member_t* member;
+		member = (osmdb_member_t*)
+		         a3d_list_peekitem(iter);
+
+		if(osmdb_relation_copyMember(copy, member) == 0)
+		{
+			goto fail_member;
+		}
+
+		iter = a3d_list_next(iter);
+	}
+
+	// success
+	return copy;
+
+	// failure
+	fail_member:
+		osmdb_relation_delete(&copy);
+	return NULL;
+}
+
+osmdb_relation_t*
+osmdb_relation_copyEmpty(osmdb_relation_t* self)
 {
 	assert(self);
 
@@ -200,8 +255,10 @@ osmdb_relation_copyCenter(osmdb_relation_t* self,
 
 	copy->id    = self->id;
 	copy->class = self->class;
-	copy->lat   = lat;
-	copy->lon   = lon;
+	copy->latT  = self->latT;
+	copy->lonL  = self->lonL;
+	copy->latB  = self->latB;
+	copy->lonR  = self->lonR;
 
 	// success
 	return copy;
@@ -263,11 +320,6 @@ int osmdb_relation_export(osmdb_relation_t* self,
 	int ret = 1;
 	ret &= xml_ostream_begin(os, "relation");
 	ret &= xml_ostream_attrf(os, "id", "%0.0lf", self->id);
-	if((self->lat != 0.0) && (self->lon != 0.0))
-	{
-		ret &= xml_ostream_attrf(os, "lat", "%lf", self->lat);
-		ret &= xml_ostream_attrf(os, "lon", "%lf", self->lon);
-	}
 	if(self->name)
 	{
 		ret &= xml_ostream_attr(os, "name", self->name);
@@ -280,6 +332,18 @@ int osmdb_relation_export(osmdb_relation_t* self,
 	{
 		ret &= xml_ostream_attr(os, "class",
 		                        osmdb_classCodeToName(self->class));
+	}
+	if((self->latT == 0.0) && (self->lonL == 0.0) &&
+	   (self->latB == 0.0) && (self->lonR == 0.0))
+	{
+		// skip range
+	}
+	else
+	{
+		ret &= xml_ostream_attrf(os, "latT", "%lf", self->latT);
+		ret &= xml_ostream_attrf(os, "lonL", "%lf", self->lonL);
+		ret &= xml_ostream_attrf(os, "latB", "%lf", self->latB);
+		ret &= xml_ostream_attrf(os, "lonR", "%lf", self->lonR);
 	}
 
 	a3d_listitem_t* iter = a3d_list_head(self->members);
@@ -391,5 +455,51 @@ int osmdb_relation_member(osmdb_relation_t* self,
 	// failure
 	fail_append:
 		free(member);
+	return 0;
+}
+
+void osmdb_relation_updateRange(osmdb_relation_t* self,
+                                osmdb_range_t* range)
+{
+	assert(self);
+	assert(range);
+
+	self->latT = range->latT;
+	self->lonL = range->lonL;
+	self->latB = range->latB;
+	self->lonR = range->lonR;
+}
+
+int osmdb_relation_copyMember(osmdb_relation_t* self,
+                              osmdb_member_t* member)
+{
+	assert(self);
+	assert(member);
+
+	osmdb_member_t* m = (osmdb_member_t*)
+	                    malloc(sizeof(osmdb_member_t));
+	if(m == NULL)
+	{
+		LOGE("malloc failed");
+		return 0;
+	}
+
+	m->type = member->type;
+	m->ref  = member->ref;
+	m->role = member->role;
+
+	// add member to list
+	if(a3d_list_append(self->members, NULL,
+	                   (const void*) m) == NULL)
+	{
+		goto fail_append;
+	}
+
+	// succcess
+	return 1;
+
+	// failure
+	fail_append:
+		free(m);
 	return 0;
 }

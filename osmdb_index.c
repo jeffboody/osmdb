@@ -27,6 +27,7 @@
 #include <string.h>
 #include <math.h>
 #include "../a3d/a3d_timestamp.h"
+#include "../a3d/math/a3d_vec2f.h"
 #include "../terrain/terrain_util.h"
 #include "osmdb_chunk.h"
 #include "osmdb_tile.h"
@@ -48,6 +49,96 @@ const int OSMDB_INDEX_ONE = 1;
 * private                                                  *
 ***********************************************************/
 
+static void osmdb_index_computeMinDist(osmdb_index_t* self)
+{
+	assert(self);
+
+	// compute tile at home location
+	double home_lat = 40.061295;
+	double home_lon = -105.214552;
+	float tx_8;
+	float ty_8;
+	float tx_11;
+	float ty_11;
+	float tx_14;
+	float ty_14;
+	terrain_coord2tile(home_lat, home_lon, 8,
+	                   &tx_8, &ty_8);
+	terrain_coord2tile(home_lat, home_lon, 11,
+	                   &tx_11, &ty_11);
+	terrain_coord2tile(home_lat, home_lon, 14,
+	                   &tx_14, &ty_14);
+	float txa_8  = (float) ((int) tx_8);
+	float tya_8  = (float) ((int) tx_8);
+	float txa_11 = (float) ((int) tx_11);
+	float tya_11 = (float) ((int) tx_11);
+	float txa_14 = (float) ((int) tx_14);
+	float tya_14 = (float) ((int) tx_14);
+	float txb_8  = txa_8  + 1.0f;
+	float tyb_8  = tya_8  + 1.0f;
+	float txb_11 = txa_11 + 1.0f;
+	float tyb_11 = tya_11 + 1.0f;
+	float txb_14 = txa_14 + 1.0f;
+	float tyb_14 = tya_14 + 1.0f;
+
+	// compute coords at home tiles
+	double latT_8;
+	double lonL_8;
+	double latB_8;
+	double lonR_8;
+	double latT_11;
+	double lonL_11;
+	double latB_11;
+	double lonR_11;
+	double latT_14;
+	double lonL_14;
+	double latB_14;
+	double lonR_14;
+	terrain_tile2coord(txa_8, tya_8, 8,
+	                   &latT_8, &lonL_8);
+	terrain_tile2coord(txb_8, tyb_8, 8,
+	                   &latB_8, &lonR_8);
+	terrain_tile2coord(txa_11, tya_11, 11,
+	                   &latT_11, &lonL_11);
+	terrain_tile2coord(txb_11, tyb_11, 11,
+	                   &latB_11, &lonR_11);
+	terrain_tile2coord(txa_14, tya_14, 14,
+	                   &latT_14, &lonL_14);
+	terrain_tile2coord(txb_14, tyb_14, 14,
+	                   &latB_14, &lonR_14);
+
+	// compute x,y at home tiles
+	a3d_vec2f_t pa_8;
+	a3d_vec2f_t pb_8;
+	a3d_vec2f_t pa_11;
+	a3d_vec2f_t pb_11;
+	a3d_vec2f_t pa_14;
+	a3d_vec2f_t pb_14;
+	terrain_coord2xy(latT_8, lonL_8,
+	                 &pa_8.x, &pa_8.y);
+	terrain_coord2xy(latB_8, lonR_8,
+	                 &pb_8.x, &pb_8.y);
+	terrain_coord2xy(latT_11, lonL_11,
+	                 &pa_11.x, &pa_11.y);
+	terrain_coord2xy(latB_11, lonR_11,
+	                 &pb_11.x, &pb_11.y);
+	terrain_coord2xy(latT_14, lonL_14,
+	                 &pa_14.x, &pa_14.y);
+	terrain_coord2xy(latB_14, lonR_14,
+	                 &pb_14.x, &pb_14.y);
+
+	// compute min_dist
+	float pm8        = 4.0f;
+	float pm11       = 1.0f;
+	float pm14       = 1.0f/4.0f;
+	float pix        = sqrtf(2*256.0f*256.0f);
+	self->min_dist8  = pm8*a3d_vec2f_distance(&pb_8, &pa_8)/pix;
+	self->min_dist11 = pm11*a3d_vec2f_distance(&pb_11, &pa_11)/pix;
+	self->min_dist14 = pm14*a3d_vec2f_distance(&pb_14, &pa_14)/pix;
+	LOGI("min_dist8=%f, min_dist11=%f, min_dist14=%f",
+	     self->min_dist8, self->min_dist11, self->min_dist14);
+}
+
 static a3d_hashmap_t*
 osmdb_index_getHash(osmdb_index_t* self, int type)
 {
@@ -56,10 +147,6 @@ osmdb_index_getHash(osmdb_index_t* self, int type)
 	if(type == OSMDB_TYPE_NODE)
 	{
 		return self->hash_nodes;
-	}
-	else if(type == OSMDB_TYPE_WAY)
-	{
-		return self->hash_ways;
 	}
 	else if(type == OSMDB_TYPE_RELATION)
 	{
@@ -77,9 +164,17 @@ osmdb_index_getHash(osmdb_index_t* self, int type)
 	{
 		return self->hash_ctrnodes;
 	}
+	else if(type == OSMDB_TYPE_TMPWAY)
+	{
+		return self->hash_tmpways;
+	}
 	else if(type == OSMDB_TYPE_CTRWAY)
 	{
 		return self->hash_ctrways;
+	}
+	else if(type == OSMDB_TYPE_TMPRELATION)
+	{
+		return self->hash_tmprelations;
 	}
 	else if(type == OSMDB_TYPE_CTRRELATION)
 	{
@@ -96,6 +191,18 @@ osmdb_index_getHash(osmdb_index_t* self, int type)
 	else if(type == OSMDB_TYPE_CTRRELATIONREF)
 	{
 		return self->hash_ctrrelationrefs;
+	}
+	else if(type == OSMDB_TYPE_WAY8)
+	{
+		return self->hash_ways8;
+	}
+	else if(type == OSMDB_TYPE_WAY11)
+	{
+		return self->hash_ways11;
+	}
+	else if(type == OSMDB_TYPE_WAY14)
+	{
+		return self->hash_ways14;
 	}
 
 	LOGE("invalid type=%i", type);
@@ -657,7 +764,7 @@ osmdb_index_gatherNode(osmdb_index_t* self,
 static int
 osmdb_index_gatherWay(osmdb_index_t* self,
                       xml_ostream_t* os,
-                      double id,
+                      double id, int zoom,
                       a3d_hashmap_t* hash_nodes,
                       a3d_hashmap_t* hash_ways)
 {
@@ -674,10 +781,29 @@ osmdb_index_gatherWay(osmdb_index_t* self,
 		return 1;
 	}
 
+	int type;
+	if(zoom == 8)
+	{
+		type = OSMDB_TYPE_WAY8;
+	}
+	else if(zoom == 11)
+	{
+		type = OSMDB_TYPE_WAY11;
+	}
+	else if(zoom == 14)
+	{
+		type = OSMDB_TYPE_WAY14;
+	}
+	else
+	{
+		LOGE("invalid zoom=%i", zoom);
+		return 0;
+	}
+
 	// way may not exist due to osmosis
 	osmdb_way_t* way;
 	way = (osmdb_way_t*)
-	      osmdb_index_find(self, OSMDB_TYPE_WAY, id);
+	      osmdb_index_find(self, type, id);
 	if(way == NULL)
 	{
 		return 1;
@@ -711,7 +837,7 @@ osmdb_index_gatherWay(osmdb_index_t* self,
 static int
 osmdb_index_gatherRelation(osmdb_index_t* self,
                            xml_ostream_t* os,
-                           double id,
+                           double id, int zoom,
                            a3d_hashmap_t* hash_nodes,
                            a3d_hashmap_t* hash_ways,
                            a3d_hashmap_t* hash_relations)
@@ -733,7 +859,7 @@ osmdb_index_gatherRelation(osmdb_index_t* self,
 	// relation may not exist due to osmosis
 	osmdb_relation_t* relation;
 	relation = (osmdb_relation_t*)
-	           osmdb_index_find(self, OSMDB_TYPE_RELATION, id);
+	           osmdb_index_find(self, OSMDB_TYPE_TMPRELATION, id);
 	if(relation == NULL)
 	{
 		return 1;
@@ -755,7 +881,8 @@ osmdb_index_gatherRelation(osmdb_index_t* self,
 		}
 		else if(m->type == OSMDB_TYPE_WAY)
 		{
-			if(osmdb_index_gatherWay(self, os, m->ref,
+			if(osmdb_index_gatherWay(self, os,
+			                         m->ref, zoom,
 			                         hash_nodes,
 			                         hash_ways) == 0)
 			{
@@ -780,9 +907,10 @@ static int
 osmdb_index_gatherTile(osmdb_index_t* self,
                        xml_ostream_t* os,
                        osmdb_tile_t* tile,
-	                   a3d_hashmap_t* hash_nodes,
-	                   a3d_hashmap_t* hash_ways,
-	                   a3d_hashmap_t* hash_relations)
+                       int zoom,
+                       a3d_hashmap_t* hash_nodes,
+                       a3d_hashmap_t* hash_ways,
+                       a3d_hashmap_t* hash_relations)
 {
 	assert(self);
 	assert(os);
@@ -812,7 +940,7 @@ osmdb_index_gatherTile(osmdb_index_t* self,
 	{
 		double ref = strtod(a3d_hashmap_key(iter), NULL);
 
-		if(osmdb_index_gatherWay(self, os, ref,
+		if(osmdb_index_gatherWay(self, os, ref, zoom,
 		                         hash_nodes, hash_ways) == 0)
 		{
 			return 0;
@@ -826,7 +954,7 @@ osmdb_index_gatherTile(osmdb_index_t* self,
 	{
 		double ref = strtod(a3d_hashmap_key(iter), NULL);
 
-		if(osmdb_index_gatherRelation(self, os, ref,
+		if(osmdb_index_gatherRelation(self, os, ref, zoom,
 		                              hash_nodes,
 		                              hash_ways,
 		                              hash_relations) == 0)
@@ -892,6 +1020,279 @@ static int osmdb_index_addTileXY(osmdb_index_t* self,
 	return 1;
 }
 
+static int osmdb_index_addTile(osmdb_index_t* self,
+                               osmdb_range_t* range,
+                               int zoom,
+                               int type, double id)
+ {
+	assert(self);
+	assert(range);
+
+	// ignore null range
+	if(range->pts == 0)
+	{
+		return 1;
+	}
+
+	// compute the range
+	float x0f;
+	float y0f;
+	float x1f;
+	float y1f;
+	terrain_coord2tile(range->latT, range->lonL,
+	                   zoom, &x0f, &y0f);
+	terrain_coord2tile(range->latB, range->lonR,
+	                   zoom, &x1f, &y1f);
+
+	// elements are defined with zero width but in
+	// practice are drawn with non-zero width
+	// points/lines so an offset is needed to ensure they
+	// are not clipped between neighboring tiles
+	float offset = 1.0f/8.0f;
+
+	// add id to range
+	int x;
+	int y;
+	int x0  = (int) (x0f - offset);
+	int x1  = (int) (x1f + offset);
+	int y0  = (int) (y0f - offset);
+	int y1  = (int) (y1f + offset);
+	int ret = 1;
+	for(y = y0; y <= y1; ++y)
+	{
+		for(x = x0; x <= x1; ++x)
+		{
+			ret &= osmdb_index_addTileXY(self, zoom, x, y,
+			                             type, id);
+		}
+	}
+
+	// add to higher zoom levels
+	if(zoom == 0)
+	{
+		ret &= osmdb_index_addTile(self, range, 5,
+		                           type, id);
+	}
+	else if(zoom == 5)
+	{
+		ret &= osmdb_index_addTile(self, range, 8,
+		                           type, id);
+	}
+	else if(zoom == 8)
+	{
+		ret &= osmdb_index_addTile(self, range, 11,
+		                           type, id);
+	}
+	else if(zoom == 11)
+	{
+		ret &= osmdb_index_addTile(self, range, 14,
+		                           type, id);
+	}
+
+	return ret;
+ }
+
+static int
+osmdb_index_sampleWay(osmdb_index_t* self,
+                      osmdb_way_t* way,
+                      int center,
+                      osmdb_range_t* range,
+                      osmdb_way_t** _way8,
+                      osmdb_way_t** _way11,
+                      osmdb_way_t** _way14)
+{
+	assert(self);
+	assert(way);
+	assert(range);
+	assert(_way8);
+	assert(_way11);
+	assert(_way14);
+
+	osmdb_way_t* way8 = osmdb_way_copyEmpty(way);
+	if(way8 == NULL)
+	{
+		return 0;
+	}
+
+	osmdb_way_t* way11 = osmdb_way_copyEmpty(way);
+	if(way11 == NULL)
+	{
+		goto fail_way11;
+	}
+
+	osmdb_way_t* way14 = osmdb_way_copyEmpty(way);
+	if(way14 == NULL)
+	{
+		goto fail_way14;
+	}
+
+	osmdb_range_init(range);
+
+	int first = 1;
+	int last  = 0;
+	a3d_vec2f_t p0_8  = { .x = 0.0f, .y=0.0f };
+	a3d_vec2f_t p0_11 = { .x = 0.0f, .y=0.0f };
+	a3d_vec2f_t p0_14 = { .x = 0.0f, .y=0.0f };
+	a3d_listitem_t* iter = a3d_list_head(way->nds);
+	while(iter)
+	{
+		double* ref = (double*)
+		              a3d_list_peekitem(iter);
+
+		osmdb_node_t* node;
+		node = (osmdb_node_t*)
+		       osmdb_index_find(self, OSMDB_TYPE_NODE, *ref);
+		if(node == NULL)
+		{
+			iter = a3d_list_next(iter);
+			continue;
+		}
+
+		osmdb_range_addPt(range, node->lat, node->lon);
+
+		// skip sampling ways when centering
+		if(center)
+		{
+			iter = a3d_list_next(iter);
+			continue;
+		}
+
+		// set the last flag
+		if(a3d_list_next(iter) == NULL)
+		{
+			last = 1;
+		}
+
+		// compute distance between previous point
+		a3d_vec2f_t p1_8;
+		a3d_vec2f_t p1_11;
+		a3d_vec2f_t p1_14;
+		terrain_coord2xy(node->lat, node->lon, &p1_8.x,  &p1_8.y);
+		terrain_coord2xy(node->lat, node->lon, &p1_11.x, &p1_11.y);
+		terrain_coord2xy(node->lat, node->lon, &p1_14.x, &p1_14.y);
+		float dist8  = a3d_vec2f_distance(&p1_8,  &p0_8);
+		float dist11 = a3d_vec2f_distance(&p1_11, &p0_11);
+		float dist14 = a3d_vec2f_distance(&p1_14, &p0_14);
+
+		// add the sampled points to the corresponding ways
+		if(first || last || (dist8 >= self->min_dist8))
+		{
+			if(osmdb_way_ref(way8, *ref) == 0)
+			{
+				goto fail_ref;
+			}
+
+			a3d_vec2f_copy(&p1_8, &p0_8);
+			self->stats_sample_way8 += 1.0;
+		}
+
+		if(first || last || (dist11 >= self->min_dist11))
+		{
+			if(osmdb_way_ref(way11, *ref) == 0)
+			{
+				goto fail_ref;
+			}
+
+			a3d_vec2f_copy(&p1_11, &p0_11);
+			self->stats_sample_way11 += 1.0;
+		}
+
+		if(first || last || (dist14 >= self->min_dist14))
+		{
+			if(osmdb_way_ref(way14, *ref) == 0)
+			{
+				goto fail_ref;
+			}
+
+			a3d_vec2f_copy(&p1_14, &p0_14);
+			self->stats_sample_way14 += 1.0;
+		}
+
+		first = 0;
+		self->stats_sample_ways += 1.0;
+		iter = a3d_list_next(iter);
+	}
+
+	// update ways
+	osmdb_way_updateRange(way8, range);
+	osmdb_way_updateRange(way11, range);
+	osmdb_way_updateRange(way14, range);
+	*_way8  = way8;
+	*_way11 = way11;
+	*_way14 = way14;
+
+	// success
+	return 1;
+
+	// failure
+	fail_ref:
+		osmdb_way_delete(&way14);
+	fail_way14:
+		osmdb_way_delete(&way11);
+	fail_way11:
+		osmdb_way_delete(&way8);
+	return 0;
+}
+
+static int
+osmdb_index_rangeRelation(osmdb_index_t* self,
+                          osmdb_relation_t* relation,
+                          int center,
+                          osmdb_range_t* range)
+{
+	assert(self);
+	assert(relation);
+	assert(range);
+
+	osmdb_range_init(range);
+
+	a3d_listitem_t* iter = a3d_list_head(relation->members);
+	while(iter)
+	{
+		osmdb_member_t* m = (osmdb_member_t*)
+		                    a3d_list_peekitem(iter);
+
+		if(m->type == OSMDB_TYPE_WAY)
+		{
+			osmdb_way_t* way;
+			way = (osmdb_way_t*)
+			       osmdb_index_find(self,
+			                        OSMDB_TYPE_WAY14,
+			                        m->ref);
+			if(way == NULL)
+			{
+				iter = a3d_list_next(iter);
+				continue;
+			}
+
+			osmdb_range_addPt(range, way->latT, way->lonL);
+			osmdb_range_addPt(range, way->latB, way->lonR);
+		}
+		else if(center &&
+		        (m->type == OSMDB_TYPE_NODE))
+		{
+			osmdb_node_t* node;
+			node = (osmdb_node_t*)
+			       osmdb_index_find(self,
+			                        OSMDB_TYPE_NODE,
+			                        m->ref);
+			if(node == NULL)
+			{
+				iter = a3d_list_next(iter);
+				continue;
+			}
+
+			osmdb_range_init(range);
+			osmdb_range_addPt(range, node->lat, node->lon);
+			return 1;
+		}
+
+		iter = a3d_list_next(iter);
+	}
+
+	return 1;
+}
+
 /***********************************************************
 * public - osmdb_index_t                                   *
 ***********************************************************/
@@ -920,12 +1321,6 @@ osmdb_index_t* osmdb_index_new(const char* base)
 		goto fail_nodes;
 	}
 
-	self->hash_ways = a3d_hashmap_new();
-	if(self->hash_ways == NULL)
-	{
-		goto fail_ways;
-	}
-
 	self->hash_relations = a3d_hashmap_new();
 	if(self->hash_relations == NULL)
 	{
@@ -950,10 +1345,22 @@ osmdb_index_t* osmdb_index_new(const char* base)
 		goto fail_ctrnodes;
 	}
 
+	self->hash_tmpways = a3d_hashmap_new();
+	if(self->hash_tmpways == NULL)
+	{
+		goto fail_tmpways;
+	}
+
 	self->hash_ctrways = a3d_hashmap_new();
 	if(self->hash_ctrways == NULL)
 	{
 		goto fail_ctrways;
+	}
+
+	self->hash_tmprelations = a3d_hashmap_new();
+	if(self->hash_tmprelations == NULL)
+	{
+		goto fail_tmprelations;
 	}
 
 	self->hash_ctrrelations = a3d_hashmap_new();
@@ -978,6 +1385,24 @@ osmdb_index_t* osmdb_index_new(const char* base)
 	if(self->hash_ctrrelationrefs == NULL)
 	{
 		goto fail_ctrrelationrefs;
+	}
+
+	self->hash_ways8 = a3d_hashmap_new();
+	if(self->hash_ways8 == NULL)
+	{
+		goto fail_ways8;
+	}
+
+	self->hash_ways11 = a3d_hashmap_new();
+	if(self->hash_ways11 == NULL)
+	{
+		goto fail_ways11;
+	}
+
+	self->hash_ways14 = a3d_hashmap_new();
+	if(self->hash_ways14 == NULL)
+	{
+		goto fail_ways14;
 	}
 
 	self->tiles = a3d_list_new();
@@ -1023,6 +1448,12 @@ osmdb_index_t* osmdb_index_new(const char* base)
 	self->stats_tile_load_dt  = 0.0;
 	self->stats_tile_trim     = 0.0;
 	self->stats_tile_trim_dt  = 0.0;
+	self->stats_sample_way8   = 0.0;
+	self->stats_sample_way11  = 0.0;
+	self->stats_sample_way14  = 0.0;
+	self->stats_sample_ways   = 0.0;
+
+	osmdb_index_computeMinDist(self);
 
 	// success
 	return self;
@@ -1031,6 +1462,12 @@ osmdb_index_t* osmdb_index_new(const char* base)
 	fail_hash_tiles:
 		a3d_list_delete(&self->tiles);
 	fail_tiles:
+		a3d_hashmap_delete(&self->hash_ways14);
+	fail_ways14:
+		a3d_hashmap_delete(&self->hash_ways11);
+	fail_ways11:
+		a3d_hashmap_delete(&self->hash_ways8);
+	fail_ways8:
 		a3d_hashmap_delete(&self->hash_ctrrelationrefs);
 	fail_ctrrelationrefs:
 		a3d_hashmap_delete(&self->hash_ctrwayrefs);
@@ -1039,8 +1476,12 @@ osmdb_index_t* osmdb_index_new(const char* base)
 	fail_ctrnoderefs:
 		a3d_hashmap_delete(&self->hash_ctrrelations);
 	fail_ctrrelations:
+		a3d_hashmap_delete(&self->hash_tmprelations);
+	fail_tmprelations:
 		a3d_hashmap_delete(&self->hash_ctrways);
 	fail_ctrways:
+		a3d_hashmap_delete(&self->hash_tmpways);
+	fail_tmpways:
 		a3d_hashmap_delete(&self->hash_ctrnodes);
 	fail_ctrnodes:
 		a3d_hashmap_delete(&self->hash_wayrefs);
@@ -1049,8 +1490,6 @@ osmdb_index_t* osmdb_index_new(const char* base)
 	fail_noderefs:
 		a3d_hashmap_delete(&self->hash_relations);
 	fail_relations:
-		a3d_hashmap_delete(&self->hash_ways);
-	fail_ways:
 		a3d_hashmap_delete(&self->hash_nodes);
 	fail_nodes:
 		a3d_list_delete(&self->chunks);
@@ -1072,16 +1511,20 @@ int osmdb_index_delete(osmdb_index_t** _self)
 		osmdb_index_trimTiles(self, 0);
 		a3d_hashmap_delete(&self->hash_tiles);
 		a3d_list_delete(&self->tiles);
+		a3d_hashmap_delete(&self->hash_ways14);
+		a3d_hashmap_delete(&self->hash_ways11);
+		a3d_hashmap_delete(&self->hash_ways8);
 		a3d_hashmap_delete(&self->hash_ctrrelationrefs);
 		a3d_hashmap_delete(&self->hash_ctrwayrefs);
 		a3d_hashmap_delete(&self->hash_ctrnoderefs);
 		a3d_hashmap_delete(&self->hash_ctrrelations);
+		a3d_hashmap_delete(&self->hash_tmprelations);
 		a3d_hashmap_delete(&self->hash_ctrways);
+		a3d_hashmap_delete(&self->hash_tmpways);
 		a3d_hashmap_delete(&self->hash_ctrnodes);
 		a3d_hashmap_delete(&self->hash_wayrefs);
 		a3d_hashmap_delete(&self->hash_noderefs);
 		a3d_hashmap_delete(&self->hash_relations);
-		a3d_hashmap_delete(&self->hash_ways);
 		a3d_hashmap_delete(&self->hash_nodes);
 		a3d_list_delete(&self->chunks);
 		err = self->err;
@@ -1091,6 +1534,13 @@ int osmdb_index_delete(osmdb_index_t** _self)
 	}
 
 	return err ? 0 : 1;
+}
+
+int osmdb_index_error(osmdb_index_t* self)
+{
+	assert(self);
+
+	return self->err;
 }
 
 int osmdb_index_addChunk(osmdb_index_t* self,
@@ -1120,13 +1570,6 @@ int osmdb_index_addChunk(osmdb_index_t* self,
 		id    = node->id;
 		dsize = osmdb_node_size(node);
 	}
-	else if(type == OSMDB_TYPE_WAY)
-	{
-		way   = (osmdb_way_t*) data;
-		hash  = self->hash_ways;
-		id    = way->id;
-		dsize = osmdb_way_size(way);
-	}
 	else if(type == OSMDB_TYPE_RELATION)
 	{
 		relation = (osmdb_relation_t*) data;
@@ -1155,12 +1598,26 @@ int osmdb_index_addChunk(osmdb_index_t* self,
 		id   = node->id;
 		dsize = osmdb_node_size(node);
 	}
+	else if(type == OSMDB_TYPE_TMPWAY)
+	{
+		way   = (osmdb_way_t*) data;
+		hash  = self->hash_tmpways;
+		id    = way->id;
+		dsize = osmdb_way_size(way);
+	}
 	else if(type == OSMDB_TYPE_CTRWAY)
 	{
 		way   = (osmdb_way_t*) data;
 		hash  = self->hash_ctrways;
 		id    = way->id;
 		dsize = osmdb_way_size(way);
+	}
+	else if(type == OSMDB_TYPE_TMPRELATION)
+	{
+		relation = (osmdb_relation_t*) data;
+		hash     = self->hash_tmprelations;
+		id       = relation->id;
+		dsize    = osmdb_relation_size(relation);
 	}
 	else if(type == OSMDB_TYPE_CTRRELATION)
 	{
@@ -1190,6 +1647,27 @@ int osmdb_index_addChunk(osmdb_index_t* self,
 		id    = *ref;
 		dsize = (int) sizeof(double);
 	}
+	else if(type == OSMDB_TYPE_WAY8)
+	{
+		way   = (osmdb_way_t*) data;
+		hash  = self->hash_ways8;
+		id    = way->id;
+		dsize = osmdb_way_size(way);
+	}
+	else if(type == OSMDB_TYPE_WAY11)
+	{
+		way   = (osmdb_way_t*) data;
+		hash  = self->hash_ways11;
+		id    = way->id;
+		dsize = osmdb_way_size(way);
+	}
+	else if(type == OSMDB_TYPE_WAY14)
+	{
+		way   = (osmdb_way_t*) data;
+		hash  = self->hash_ways14;
+		id    = way->id;
+		dsize = osmdb_way_size(way);
+	}
 	else
 	{
 		self->stats_chunk_add_dt += a3d_timestamp() - t0;
@@ -1207,12 +1685,16 @@ int osmdb_index_addChunk(osmdb_index_t* self,
 		{
 			osmdb_node_delete(&node);
 		}
-		else if((type == OSMDB_TYPE_WAY) ||
+		else if((type == OSMDB_TYPE_WAY8)   ||
+		        (type == OSMDB_TYPE_WAY11)  ||
+		        (type == OSMDB_TYPE_WAY14)  ||
+		        (type == OSMDB_TYPE_TMPWAY) ||
 		        (type == OSMDB_TYPE_CTRWAY))
 		{
 			osmdb_way_delete(&way);
 		}
-		else if((type == OSMDB_TYPE_RELATION) ||
+		else if((type == OSMDB_TYPE_RELATION)    ||
+		        (type == OSMDB_TYPE_TMPRELATION) ||
 		        (type == OSMDB_TYPE_CTRRELATION))
 		{
 			osmdb_relation_delete(&relation);
@@ -1269,60 +1751,162 @@ int osmdb_index_addChunk(osmdb_index_t* self,
 	return 1;
 }
 
-int osmdb_index_addTile(osmdb_index_t* self,
-                        osmdb_range_t* range,
+int osmdb_index_addNode(osmdb_index_t* self,
                         int zoom,
-                        int type, double id)
+                        osmdb_node_t* node)
 {
 	assert(self);
-	assert(range);
+	assert(node);
 
-	// ignore null range
-	if(range->pts == 0)
+	if(osmdb_index_addChunk(self,
+	                        OSMDB_TYPE_NODE,
+	                        (const void*) node) == 0)
+	{
+		return 0;
+	}
+
+	// check if node was selected for tiling
+	if(zoom == -1)
 	{
 		return 1;
 	}
 
-	// compute the range
-	float x0f;
-	float y0f;
-	float x1f;
-	float y1f;
-	terrain_coord2tile(range->latT, range->lonL,
-	                   zoom, &x0f, &y0f);
-	terrain_coord2tile(range->latB, range->lonR,
-	                   zoom, &x1f, &y1f);
+	osmdb_range_t range;
+	osmdb_range_init(&range);
+	osmdb_range_addPt(&range, node->lat, node->lon);
 
-	// add id to range
-	int x;
-	int y;
-	int x0  = (int) x0f;
-	int x1  = (int) x1f;
-	int y0  = (int) y0f;
-	int y1  = (int) y1f;
-	int ret = 1;
-	for(y = y0; y <= y1; ++y)
+	if(osmdb_index_addTile(self, &range, zoom,
+	                       OSMDB_TYPE_NODE, node->id) == 0)
 	{
-		for(x = x0; x <= x1; ++x)
+		// see error flag since node already added
+		self->err = 1;
+	}
+
+	return 1;
+}
+
+int osmdb_index_addWay(osmdb_index_t* self,
+                       int zoom,
+                       int center,
+                       int selected,
+                       osmdb_way_t* way)
+{
+	assert(self);
+	assert(way);
+
+	osmdb_range_t range;
+
+	osmdb_way_t* way8  = NULL;
+	osmdb_way_t* way11 = NULL;
+	osmdb_way_t* way14 = NULL;
+	if(osmdb_index_sampleWay(self, way, center, &range,
+	                         &way8, &way11, &way14) == 0)
+	{
+		return 0;
+	}
+
+	// discard any ways w/o any points
+	if(range.pts == 0)
+	{
+		osmdb_way_delete(&way8);
+		osmdb_way_delete(&way11);
+		osmdb_way_delete(&way14);
+		return 1;
+	}
+
+	if(osmdb_index_addChunk(self, OSMDB_TYPE_WAY8,
+	                        (const void*) way8) == 0)
+	{
+		osmdb_way_delete(&way8);
+		osmdb_way_delete(&way11);
+		osmdb_way_delete(&way14);
+		return 0;
+	}
+
+	if(osmdb_index_addChunk(self, OSMDB_TYPE_WAY11,
+	                        (const void*) way11) == 0)
+	{
+		osmdb_way_delete(&way11);
+		osmdb_way_delete(&way14);
+		return 0;
+	}
+
+	if(osmdb_index_addChunk(self, OSMDB_TYPE_WAY14,
+	                        (const void*) way14) == 0)
+	{
+		osmdb_way_delete(&way14);
+		return 0;
+	}
+
+	if(selected)
+	{
+		if(osmdb_index_addTile(self, &range, zoom,
+		                       OSMDB_TYPE_WAY, way->id) == 0)
 		{
-			ret &= osmdb_index_addTileXY(self, zoom, x, y,
-			                             type, id);
+			return 0;
 		}
 	}
 
-	// add ways to higher zoom levels
-	if(zoom == 8)
+	return 1;
+}
+
+int osmdb_index_addRelation(osmdb_index_t* self,
+                            int zoom,
+                            int selected,
+                            int center,
+                            osmdb_relation_t* relation)
+{
+	assert(self);
+	assert(relation);
+
+	osmdb_range_t range;
+	if(osmdb_index_rangeRelation(self, relation,
+	                             center, &range) == 0)
 	{
-		ret &= osmdb_index_addTile(self, range, 11,
-		                           type, id);
-	}
-	else if(zoom == 11)
-	{
-		ret &= osmdb_index_addTile(self, range, 14,
-		                           type, id);
+		return 0;
 	}
 
-	return ret;
+	// discard any relations w/o any points
+	if(range.pts == 0)
+	{
+		return 1;
+	}
+
+	osmdb_relation_t* r = NULL;
+	if(center)
+	{
+		r = osmdb_relation_copyEmpty(relation);
+	}
+	else
+	{
+		r = osmdb_relation_copy(relation);
+	}
+
+	if(r == NULL)
+	{
+		return 0;
+	}
+
+	osmdb_relation_updateRange(r, &range);
+
+	if(osmdb_index_addChunk(self, OSMDB_TYPE_RELATION,
+	                        (const void*) r) == 0)
+	{
+		osmdb_relation_delete(&r);
+		return 0;
+	}
+
+	if(selected)
+	{
+		if(osmdb_index_addTile(self, &range, zoom,
+		                       OSMDB_TYPE_RELATION,
+		                       relation->id) == 0)
+		{
+			return 0;
+		}
+	}
+
+	return 1;
 }
 
 int osmdb_index_makeTile(osmdb_index_t* self,
@@ -1375,7 +1959,7 @@ int osmdb_index_makeTile(osmdb_index_t* self,
 
 	// stream data
 	int ret = xml_ostream_begin(os, "osmdb");
-	if(osmdb_index_gatherTile(self, os, tile,
+	if(osmdb_index_gatherTile(self, os, tile, zoom,
 	                          hash_nodes, hash_ways,
 	                          hash_relations) == 0)
 	{
@@ -1479,4 +2063,10 @@ void osmdb_index_stats(osmdb_index_t* self)
 	LOGI("GET:  cnt=%0.0lf, dt=%lf", self->stats_tile_get, self->stats_tile_get_dt);
 	LOGI("LOAD: cnt=%0.0lf, dt=%lf", self->stats_tile_load, self->stats_tile_load_dt);
 	LOGI("TRIM: cnt=%0.0lf, dt=%lf", self->stats_tile_trim, self->stats_tile_trim_dt);
+	LOGI("==SAMPLE==");
+	LOGI("WAY8/11/14: %0.0lf/%0.0lf/%0.0lf of %0.0lf",
+	     self->stats_sample_way8,
+	     self->stats_sample_way11,
+	     self->stats_sample_way14,
+	     self->stats_sample_ways);
 }

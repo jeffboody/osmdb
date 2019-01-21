@@ -24,12 +24,6 @@
 #ifndef osmdb_range_H
 #define osmdb_range_H
 
-#include "osmdb_node.h"
-#include "osmdb_way.h"
-#include "osmdb_relation.h"
-
-struct osmdb_index_s;
-
 typedef struct
 {
 	int    pts;
@@ -42,13 +36,5 @@ typedef struct
 void osmdb_range_init(osmdb_range_t* self);
 void osmdb_range_addPt(osmdb_range_t* self,
                        double lat, double lon);
-void osmdb_range_addNode(osmdb_range_t* self,
-                         osmdb_node_t* node);
-void osmdb_range_addWay(osmdb_range_t* self,
-                        struct osmdb_index_s* index,
-                        osmdb_way_t* way);
-void osmdb_range_addRelation(osmdb_range_t* self,
-                             struct osmdb_index_s* index,
-                             osmdb_relation_t* relation);
 
 #endif

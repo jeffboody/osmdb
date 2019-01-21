@@ -26,6 +26,7 @@
 
 #include "../a3d/a3d_list.h"
 #include "../libxmlstream/xml_ostream.h"
+#include "osmdb_range.h"
 
 typedef struct
 {
@@ -38,18 +39,21 @@ typedef struct
 {
 	int    refcount;
 	double id;
-	double lat;
-	double lon;
 	char*  name;
 	char*  abrev;
 	int    class;
+
+	double latT;
+	double lonL;
+	double latB;
+	double lonR;
 
 	a3d_list_t* members;
 } osmdb_relation_t;
 
 osmdb_relation_t* osmdb_relation_new(const char** atts, int line);
-osmdb_relation_t* osmdb_relation_copyCenter(osmdb_relation_t* self,
-                                            double lat, double lon);
+osmdb_relation_t* osmdb_relation_copy(osmdb_relation_t* self);
+osmdb_relation_t* osmdb_relation_copyEmpty(osmdb_relation_t* self);
 void              osmdb_relation_delete(osmdb_relation_t** _self);
 void              osmdb_relation_incref(osmdb_relation_t* self);
 int               osmdb_relation_decref(osmdb_relation_t* self);
@@ -59,5 +63,9 @@ int               osmdb_relation_size(osmdb_relation_t* self);
 int               osmdb_relation_member(osmdb_relation_t* self,
                                         const char** atts,
                                         int line);
+void              osmdb_relation_updateRange(osmdb_relation_t* self,
+                                             osmdb_range_t* range);
+int               osmdb_relation_copyMember(osmdb_relation_t* self,
+                                            osmdb_member_t* member);
 
 #endif

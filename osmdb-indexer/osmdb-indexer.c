@@ -52,13 +52,23 @@ double stats_ways      = 0.0;
 double stats_relations = 0.0;
 
 static int
-osmdb_indexer_amendWays(osmdb_indexer_t* self)
+osmdb_indexer_amendWays(osmdb_indexer_t* self,
+                        int center)
 {
 	assert(self);
 
 	osmdb_indexIter_t* iter;
-	iter = osmdb_indexIter_new(self->index,
-	                           OSMDB_TYPE_CTRWAY);
+	if(center)
+	{
+		iter = osmdb_indexIter_new(self->index,
+		                           OSMDB_TYPE_CTRWAY);
+	}
+	else
+	{
+		iter = osmdb_indexIter_new(self->index,
+		                           OSMDB_TYPE_TMPWAY);
+	}
+
 	if(iter == NULL)
 	{
 		return 0;
@@ -70,17 +80,8 @@ osmdb_indexer_amendWays(osmdb_indexer_t* self)
 		                   osmdb_indexIter_peek(iter);
 
 		if(osmdb_index_find(self->index,
-		                    OSMDB_TYPE_WAY,
+		                    OSMDB_TYPE_WAY14,
 		                    way->id))
-		{
-			iter = osmdb_indexIter_next(iter);
-			continue;
-		}
-
-		osmdb_range_t range;
-		osmdb_range_init(&range);
-		osmdb_range_addWay(&range, self->index, way);
-		if(range.pts == 0)
 		{
 			iter = osmdb_indexIter_next(iter);
 			continue;
@@ -93,24 +94,23 @@ osmdb_indexer_amendWays(osmdb_indexer_t* self)
 			osmdb_index_stats(self->index);
 		}
 
-		double lat = (range.latT + range.latB)/2.0;
-		double lon = (range.lonL + range.lonR)/2.0;
-		osmdb_way_t* w = osmdb_way_copyCenter(way, lat, lon);
-		if(w == NULL)
+		int zoom     = -1;
+		int selected = 0;
+		osmdb_filterInfo_t* info;
+		info = osmdb_filter_selectWay(self->filter, way);
+		if(info)
 		{
-			goto fail_add;
+			zoom     = info->zoom;
+			selected = 1;
 		}
 
-		if(osmdb_index_addChunk(self->index,
-		                        OSMDB_TYPE_WAY,
-		                        (const void*) w) == 0)
+		if(osmdb_index_addWay(self->index, zoom,
+		                      center, selected, way) == 0)
 		{
-			osmdb_way_delete(&w);
 			goto fail_add;
 		}
 
 		iter = osmdb_indexIter_next(iter);
-		continue;
 	}
 
 	// success
@@ -123,13 +123,23 @@ osmdb_indexer_amendWays(osmdb_indexer_t* self)
 }
 
 static int
-osmdb_indexer_amendRelations(osmdb_indexer_t* self)
+osmdb_indexer_amendRelations(osmdb_indexer_t* self,
+                             int center)
 {
 	assert(self);
 
 	osmdb_indexIter_t* iter;
-	iter = osmdb_indexIter_new(self->index,
-	                           OSMDB_TYPE_CTRRELATION);
+	if(center)
+	{
+		iter = osmdb_indexIter_new(self->index,
+		                           OSMDB_TYPE_CTRRELATION);
+	}
+	else
+	{
+		iter = osmdb_indexIter_new(self->index,
+		                           OSMDB_TYPE_TMPRELATION);
+	}
+
 	if(iter == NULL)
 	{
 		return 0;
@@ -149,16 +159,6 @@ osmdb_indexer_amendRelations(osmdb_indexer_t* self)
 			continue;
 		}
 
-		osmdb_range_t range;
-		osmdb_range_init(&range);
-		osmdb_range_addRelation(&range, self->index,
-		                        relation);
-		if(range.pts == 0)
-		{
-			iter = osmdb_indexIter_next(iter);
-			continue;
-		}
-
 		stats_relations += 1.0;
 		if(fmod(stats_relations, 100000.0) == 0.0)
 		{
@@ -166,25 +166,25 @@ osmdb_indexer_amendRelations(osmdb_indexer_t* self)
 			osmdb_index_stats(self->index);
 		}
 
-		double lat = (range.latT + range.latB)/2.0;
-		double lon = (range.lonL + range.lonR)/2.0;
-		osmdb_relation_t* r;
-		r = osmdb_relation_copyCenter(relation, lat, lon);
-		if(r == NULL)
+		int zoom     = -1;
+		int selected = 0;
+		osmdb_filterInfo_t* info;
+		info = osmdb_filter_selectRelation(self->filter,
+		                                   relation);
+		if(info)
 		{
-			goto fail_add;
+			zoom     = info->zoom;
+			selected = 1;
 		}
 
-		if(osmdb_index_addChunk(self->index,
-		                        OSMDB_TYPE_RELATION,
-		                        (const void*) r) == 0)
+		if(osmdb_index_addRelation(self->index, zoom,
+		                           selected, center,
+		                           relation) == 0)
 		{
-			osmdb_relation_delete(&r);
 			goto fail_add;
 		}
 
 		iter = osmdb_indexIter_next(iter);
-		continue;
 	}
 
 	// success
@@ -203,6 +203,12 @@ static int nodeFn(void* priv, osmdb_node_t* node)
 
 	osmdb_indexer_t* indexer = (osmdb_indexer_t*) priv;
 
+	if(osmdb_index_error(indexer->index))
+	{
+		// error occurred in addNode
+		return 0;
+	}
+
 	stats_nodes += 1.0;
 	if(fmod(stats_nodes, 100000.0) == 0.0)
 	{
@@ -216,9 +222,14 @@ static int nodeFn(void* priv, osmdb_node_t* node)
 	   osmdb_index_find(indexer->index,
 	                    OSMDB_TYPE_NODEREF, node->id))
 	{
-		return osmdb_index_addChunk(indexer->index,
-		                            OSMDB_TYPE_NODE,
-		                            (const void*) node);
+		int zoom = -1;
+		if(info)
+		{
+			zoom = info->zoom;
+		}
+
+		return osmdb_index_addNode(indexer->index,
+		                           zoom, node);
 	}
 	else if(osmdb_index_find(indexer->index,
 	                         OSMDB_TYPE_CTRNODEREF, node->id))
@@ -253,7 +264,7 @@ static int wayFn(void* priv, osmdb_way_t* way)
 	                    OSMDB_TYPE_WAYREF, way->id))
 	{
 		if(osmdb_index_find(indexer->index,
-		                    OSMDB_TYPE_WAY, way->id))
+		                    OSMDB_TYPE_TMPWAY, way->id))
 		{
 			osmdb_way_delete(&way);
 			return 1;
@@ -285,7 +296,7 @@ static int wayFn(void* priv, osmdb_way_t* way)
 		}
 
 		return osmdb_index_addChunk(indexer->index,
-		                            OSMDB_TYPE_WAY,
+		                            OSMDB_TYPE_TMPWAY,
 		                            (const void*) way);
 	}
 	else if((info && (info->center)) ||
@@ -475,7 +486,7 @@ static int relationFn(void* priv, osmdb_relation_t* relation)
 		}
 
 		return osmdb_index_addChunk(indexer->index,
-		                            OSMDB_TYPE_RELATION,
+		                            OSMDB_TYPE_TMPRELATION,
 		                            (const void*) relation);
 	}
 }
@@ -525,37 +536,40 @@ int main(int argc, char** argv)
 
 	// initialize chunk paths
 	char path_node[256];
-	char path_way[256];
 	char path_relation[256];
 	char path_noderef[256];
 	char path_wayref[256];
 	char path_ctrnode[256];
+	char path_tmpway[256];
 	char path_ctrway[256];
+	char path_tmprelation[256];
 	char path_ctrrelation[256];
 	char path_ctrnoderef[256];
 	char path_ctrwayref[256];
 	char path_ctrrelationref[256];
 	osmdb_chunk_path(path_index, OSMDB_TYPE_NODE, path_node);
-	osmdb_chunk_path(path_index, OSMDB_TYPE_WAY, path_way);
 	osmdb_chunk_path(path_index, OSMDB_TYPE_RELATION, path_relation);
 	osmdb_chunk_path(path_index, OSMDB_TYPE_NODEREF, path_noderef);
 	osmdb_chunk_path(path_index, OSMDB_TYPE_WAYREF, path_wayref);
 	osmdb_chunk_path(path_index, OSMDB_TYPE_CTRNODE, path_ctrnode);
+	osmdb_chunk_path(path_index, OSMDB_TYPE_TMPWAY, path_tmpway);
 	osmdb_chunk_path(path_index, OSMDB_TYPE_CTRWAY, path_ctrway);
+	osmdb_chunk_path(path_index, OSMDB_TYPE_TMPRELATION, path_tmprelation);
 	osmdb_chunk_path(path_index, OSMDB_TYPE_CTRRELATION, path_ctrrelation);
 	osmdb_chunk_path(path_index, OSMDB_TYPE_CTRNODEREF, path_ctrnoderef);
 	osmdb_chunk_path(path_index, OSMDB_TYPE_CTRWAYREF, path_ctrwayref);
 	osmdb_chunk_path(path_index, OSMDB_TYPE_CTRRELATIONREF, path_ctrrelationref);
-	if((osmdb_mkdir(path_node) == 0)        ||
-	   (osmdb_mkdir(path_way) == 0)         ||
-	   (osmdb_mkdir(path_relation) == 0)    ||
-	   (osmdb_mkdir(path_noderef) == 0)     ||
-	   (osmdb_mkdir(path_wayref) == 0)      ||
-	   (osmdb_mkdir(path_ctrnode) == 0)     ||
-	   (osmdb_mkdir(path_ctrway) == 0)      ||
-	   (osmdb_mkdir(path_ctrrelation) == 0) ||
-	   (osmdb_mkdir(path_ctrnoderef) == 0)  ||
-	   (osmdb_mkdir(path_ctrwayref) == 0)   ||
+	if((osmdb_mkdir(path_node)           == 0) ||
+	   (osmdb_mkdir(path_relation)       == 0) ||
+	   (osmdb_mkdir(path_noderef)        == 0) ||
+	   (osmdb_mkdir(path_wayref)         == 0) ||
+	   (osmdb_mkdir(path_ctrnode)        == 0) ||
+	   (osmdb_mkdir(path_tmpway)         == 0) ||
+	   (osmdb_mkdir(path_ctrway)         == 0) ||
+	   (osmdb_mkdir(path_tmprelation)    == 0) ||
+	   (osmdb_mkdir(path_ctrrelation)    == 0) ||
+	   (osmdb_mkdir(path_ctrnoderef)     == 0) ||
+	   (osmdb_mkdir(path_ctrwayref)      == 0) ||
 	   (osmdb_mkdir(path_ctrrelationref) == 0))
 	{
 		goto fail_path;
@@ -583,13 +597,25 @@ int main(int argc, char** argv)
 	}
 
 	LOGI("AMEND WAYS");
-	if(osmdb_indexer_amendWays(&indexer) == 0)
+	if(osmdb_indexer_amendWays(&indexer, 0) == 0)
+	{
+		goto fail_amend;
+	}
+
+	LOGI("AMEND CTRWAYS");
+	if(osmdb_indexer_amendWays(&indexer, 1) == 0)
 	{
 		goto fail_amend;
 	}
 
 	LOGI("AMEND RELATIONS");
-	if(osmdb_indexer_amendRelations(&indexer) == 0)
+	if(osmdb_indexer_amendRelations(&indexer, 0) == 0)
+	{
+		goto fail_amend;
+	}
+
+	LOGI("AMEND CTRRELATIONS");
+	if(osmdb_indexer_amendRelations(&indexer, 1) == 0)
 	{
 		goto fail_amend;
 	}

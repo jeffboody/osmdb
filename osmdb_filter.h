@@ -24,8 +24,8 @@
 #ifndef osmdb_filter_H
 #define osmdb_filter_H
 
-#include "a3d/a3d_hashmap.h"
-#include "a3d/a3d_list.h"
+#include "../a3d/a3d_hashmap.h"
+#include "../a3d/a3d_list.h"
 #include "osmdb_node.h"
 #include "osmdb_way.h"
 #include "osmdb_relation.h"

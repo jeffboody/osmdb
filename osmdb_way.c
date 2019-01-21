@@ -39,8 +39,6 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 	assert(atts);
 
 	const char* id      = NULL;
-	const char* lat     = NULL;
-	const char* lon     = NULL;
 	const char* name    = NULL;
 	const char* abrev   = NULL;
 	const char* class   = NULL;
@@ -49,6 +47,10 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 	const char* bridge  = NULL;
 	const char* tunnel  = NULL;
 	const char* cutting = NULL;
+	const char* latT    = NULL;
+	const char* lonL    = NULL;
+	const char* latB    = NULL;
+	const char* lonR    = NULL;
 
 	// find atts
 	int idx0 = 0;
@@ -58,14 +60,6 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 		if(strcmp(atts[idx0], "id") == 0)
 		{
 			id = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "lat") == 0)
-		{
-			lat = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "lon") == 0)
-		{
-			lon = atts[idx1];
 		}
 		else if(strcmp(atts[idx0], "name") == 0)
 		{
@@ -99,6 +93,22 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 		{
 			cutting = atts[idx1];
 		}
+		else if(strcmp(atts[idx0], "latT") == 0)
+		{
+			latT = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "lonL") == 0)
+		{
+			lonL = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "latB") == 0)
+		{
+			latB = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "lonR") == 0)
+		{
+			lonR = atts[idx1];
+		}
 		idx0 += 2;
 		idx1 += 2;
 	}
@@ -127,16 +137,6 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 
 	self->refcount = 0;
 	self->id  = strtod(id, NULL);
-
-	if(lat)
-	{
-		self->lat = strtod(lat, NULL);
-	}
-
-	if(lon)
-	{
-		self->lon = strtod(lon, NULL);
-	}
 
 	if(name)
 	{
@@ -192,6 +192,26 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 		self->cutting = (int) strtol(cutting, NULL, 0);
 	}
 
+	if(latT)
+	{
+		self->latT = strtod(latT, NULL);
+	}
+
+	if(lonL)
+	{
+		self->lonL = strtod(lonL, NULL);
+	}
+
+	if(latB)
+	{
+		self->latB = strtod(latB, NULL);
+	}
+
+	if(lonR)
+	{
+		self->lonR = strtod(lonR, NULL);
+	}
+
 	// success
 	return self;
 
@@ -206,8 +226,7 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 }
 
 osmdb_way_t*
-osmdb_way_copyCenter(osmdb_way_t* self,
-                     double lat, double lon)
+osmdb_way_copyEmpty(osmdb_way_t* self)
 {
 	assert(self);
 
@@ -256,8 +275,10 @@ osmdb_way_copyCenter(osmdb_way_t* self,
 	copy->bridge  = self->bridge;
 	copy->tunnel  = self->tunnel;
 	copy->cutting = self->cutting;
-	copy->lat     = lat;
-	copy->lon     = lon;
+	copy->latT    = 0.0;
+	copy->lonL    = 0.0;
+	copy->latB    = 0.0;
+	copy->lonR    = 0.0;
 
 	// success
 	return copy;
@@ -318,11 +339,6 @@ int osmdb_way_export(osmdb_way_t* self, xml_ostream_t* os)
 	int ret = 1;
 	ret &= xml_ostream_begin(os, "way");
 	ret &= xml_ostream_attrf(os, "id", "%0.0lf", self->id);
-	if((self->lat != 0.0) && (self->lon != 0.0))
-	{
-		ret &= xml_ostream_attrf(os, "lat", "%lf", self->lat);
-		ret &= xml_ostream_attrf(os, "lon", "%lf", self->lon);
-	}
 	if(self->name)
 	{
 		ret &= xml_ostream_attr(os, "name", self->name);
@@ -355,6 +371,18 @@ int osmdb_way_export(osmdb_way_t* self, xml_ostream_t* os)
 	if(self->cutting)
 	{
 		ret &= xml_ostream_attrf(os, "cutting", "%i", self->cutting);
+	}
+	if((self->latT == 0.0) && (self->lonL == 0.0) &&
+	   (self->latB == 0.0) && (self->lonR == 0.0))
+	{
+		// skip range
+	}
+	else
+	{
+		ret &= xml_ostream_attrf(os, "latT", "%lf", self->latT);
+		ret &= xml_ostream_attrf(os, "lonL", "%lf", self->lonL);
+		ret &= xml_ostream_attrf(os, "latB", "%lf", self->latB);
+		ret &= xml_ostream_attrf(os, "lonR", "%lf", self->lonR);
 	}
 
 	a3d_listitem_t* iter = a3d_list_head(self->nds);
@@ -417,6 +445,32 @@ int osmdb_way_nd(osmdb_way_t* self, const char** atts, int line)
 		return 0;
 	}
 
+	// add the ref
+	if(osmdb_way_ref(self, strtod(ref, NULL)) == 0)
+	{
+		return 0;
+	}
+
+	return 1;
+}
+
+void osmdb_way_updateRange(osmdb_way_t* self,
+                           osmdb_range_t* range)
+{
+	assert(self);
+	assert(range);
+
+	self->latT = range->latT;
+	self->lonL = range->lonL;
+	self->latB = range->latB;
+	self->lonR = range->lonR;
+}
+
+int osmdb_way_ref(osmdb_way_t* self,
+                  double ref)
+{
+	assert(self);
+
 	// create the nd
 	double* _ref = (double*) malloc(sizeof(double));
 	if(_ref == NULL)
@@ -424,7 +478,7 @@ int osmdb_way_nd(osmdb_way_t* self, const char** atts, int line)
 		LOGE("malloc failed");
 		return 0;
 	}
-	*_ref = strtod(ref, NULL);
+	*_ref = ref;
 
 	// add nd to list
 	if(a3d_list_append(self->nds, NULL,

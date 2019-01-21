@@ -26,13 +26,12 @@
 
 #include "../a3d/a3d_list.h"
 #include "../libxmlstream/xml_ostream.h"
+#include "osmdb_range.h"
 
 typedef struct
 {
 	int    refcount;
 	double id;
-	double lat;
-	double lon;
 	char*  name;
 	char*  abrev;
 	int    class;
@@ -42,12 +41,16 @@ typedef struct
 	int    tunnel;
 	int    cutting;
 
+	double latT;
+	double lonL;
+	double latB;
+	double lonR;
+
 	a3d_list_t* nds;
 } osmdb_way_t;
 
 osmdb_way_t* osmdb_way_new(const char** atts, int line);
-osmdb_way_t* osmdb_way_copyCenter(osmdb_way_t* self,
-                                  double lat, double lon);
+osmdb_way_t* osmdb_way_copyEmpty(osmdb_way_t* self);
 void         osmdb_way_delete(osmdb_way_t** _self);
 void         osmdb_way_incref(osmdb_way_t* self);
 int          osmdb_way_decref(osmdb_way_t* self);
@@ -56,5 +59,9 @@ int          osmdb_way_export(osmdb_way_t* self,
 int          osmdb_way_size(osmdb_way_t* self);
 int          osmdb_way_nd(osmdb_way_t* self,
                           const char** atts, int line);
+void         osmdb_way_updateRange(osmdb_way_t* self,
+                                   osmdb_range_t* range);
+int          osmdb_way_ref(osmdb_way_t* self,
+                           double ref);
 
 #endif

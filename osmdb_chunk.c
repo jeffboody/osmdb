@@ -82,7 +82,10 @@ static int osmdb_chunk_finish(osmdb_chunk_t* self)
 			}
 			osmdb_node_delete(&n);
 		}
-		else if((self->type == OSMDB_TYPE_WAY) ||
+		else if((self->type == OSMDB_TYPE_WAY8)   ||
+		        (self->type == OSMDB_TYPE_WAY11)  ||
+		        (self->type == OSMDB_TYPE_WAY14)  ||
+		        (self->type == OSMDB_TYPE_TMPWAY) ||
 		        (self->type == OSMDB_TYPE_CTRWAY))
 		{
 			osmdb_way_t* w;
@@ -94,7 +97,8 @@ static int osmdb_chunk_finish(osmdb_chunk_t* self)
 			}
 			osmdb_way_delete(&w);
 		}
-		else if((self->type == OSMDB_TYPE_RELATION) ||
+		else if((self->type == OSMDB_TYPE_RELATION)    ||
+		        (self->type == OSMDB_TYPE_TMPRELATION) ||
 		        (self->type == OSMDB_TYPE_CTRRELATION))
 		{
 			osmdb_relation_t* r;
@@ -208,7 +212,10 @@ osmdb_chunk_wayFn(void* priv,
 	assert(way);
 
 	osmdb_chunk_t* self = (osmdb_chunk_t*) priv;
-	if((self->type == OSMDB_TYPE_WAY) ||
+	if((self->type == OSMDB_TYPE_WAY8)   ||
+	   (self->type == OSMDB_TYPE_WAY11)  ||
+	   (self->type == OSMDB_TYPE_WAY14)  ||
+	   (self->type == OSMDB_TYPE_TMPWAY) ||
 	   (self->type == OSMDB_TYPE_CTRWAY))
 	{
 		// accept
@@ -241,7 +248,8 @@ osmdb_chunk_relationFn(void* priv,
 	assert(relation);
 
 	osmdb_chunk_t* self = (osmdb_chunk_t*) priv;
-	if((self->type == OSMDB_TYPE_RELATION) ||
+	if((self->type == OSMDB_TYPE_RELATION)    ||
+	   (self->type == OSMDB_TYPE_TMPRELATION) ||
 	   (self->type == OSMDB_TYPE_CTRRELATION))
 	{
 		// accept
@@ -414,12 +422,16 @@ static int osmdb_chunk_import(osmdb_chunk_t* self)
 	osmdb_chunk_fname(self->base, self->type,
 	                  self->idu, fname);
 
-	if((self->type == OSMDB_TYPE_NODE)     ||
-	   (self->type == OSMDB_TYPE_WAY)      ||
-	   (self->type == OSMDB_TYPE_RELATION) ||
-	   (self->type == OSMDB_TYPE_CTRNODE)  ||
-	   (self->type == OSMDB_TYPE_CTRWAY)   ||
-	   (self->type == OSMDB_TYPE_CTRRELATION))
+	if((self->type == OSMDB_TYPE_NODE)        ||
+	   (self->type == OSMDB_TYPE_RELATION)    ||
+	   (self->type == OSMDB_TYPE_CTRNODE)     ||
+	   (self->type == OSMDB_TYPE_TMPWAY)      ||
+	   (self->type == OSMDB_TYPE_CTRWAY)      ||
+	   (self->type == OSMDB_TYPE_TMPRELATION) ||
+	   (self->type == OSMDB_TYPE_CTRRELATION) ||
+	   (self->type == OSMDB_TYPE_WAY8)        ||
+	   (self->type == OSMDB_TYPE_WAY11)       ||
+	   (self->type == OSMDB_TYPE_WAY14))
 	{
 		if(osmdb_parse(fname, (void*) self,
 		               osmdb_chunk_nodeFn,
@@ -608,7 +620,10 @@ int osmdb_chunk_flush(osmdb_chunk_t* self)
 			    a3d_hashmap_val(iter);
 			success &= osmdb_node_export(n, os);
 		}
-		else if((self->type == OSMDB_TYPE_WAY) ||
+		else if((self->type == OSMDB_TYPE_WAY8)   ||
+		        (self->type == OSMDB_TYPE_WAY11)  ||
+		        (self->type == OSMDB_TYPE_WAY14)  ||
+		        (self->type == OSMDB_TYPE_TMPWAY) ||
 		        (self->type == OSMDB_TYPE_CTRWAY))
 		{
 			osmdb_way_t* w;
@@ -616,7 +631,8 @@ int osmdb_chunk_flush(osmdb_chunk_t* self)
 			    a3d_hashmap_val(iter);
 			success &= osmdb_way_export(w, os);
 		}
-		else if((self->type == OSMDB_TYPE_RELATION) ||
+		else if((self->type == OSMDB_TYPE_RELATION)    ||
+		        (self->type == OSMDB_TYPE_TMPRELATION) ||
 		        (self->type == OSMDB_TYPE_CTRRELATION))
 		{
 			osmdb_relation_t* r;
@@ -684,11 +700,6 @@ void osmdb_chunk_fname(const char* base,
 		snprintf(fname, 256, "%s/node/%0.0lf.xml.gz",
 		         base, idu);
 	}
-	else if(type == OSMDB_TYPE_WAY)
-	{
-		snprintf(fname, 256, "%s/way/%0.0lf.xml.gz",
-		         base, idu);
-	}
 	else if(type == OSMDB_TYPE_RELATION)
 	{
 		snprintf(fname, 256, "%s/relation/%0.0lf.xml.gz",
@@ -709,9 +720,19 @@ void osmdb_chunk_fname(const char* base,
 		snprintf(fname, 256, "%s/ctrnode/%0.0lf.xml.gz",
 		         base, idu);
 	}
+	else if(type == OSMDB_TYPE_TMPWAY)
+	{
+		snprintf(fname, 256, "%s/tmpway/%0.0lf.xml.gz",
+		         base, idu);
+	}
 	else if(type == OSMDB_TYPE_CTRWAY)
 	{
 		snprintf(fname, 256, "%s/ctrway/%0.0lf.xml.gz",
+		         base, idu);
+	}
+	else if(type == OSMDB_TYPE_TMPRELATION)
+	{
+		snprintf(fname, 256, "%s/tmprelation/%0.0lf.xml.gz",
 		         base, idu);
 	}
 	else if(type == OSMDB_TYPE_CTRRELATION)
@@ -734,6 +755,21 @@ void osmdb_chunk_fname(const char* base,
 		snprintf(fname, 256, "%s/ctrrelationref/%0.0lf.xml.gz",
 		         base, idu);
 	}
+	else if(type == OSMDB_TYPE_WAY8)
+	{
+		snprintf(fname, 256, "%s/way8/%0.0lf.xml.gz",
+		         base, idu);
+	}
+	else if(type == OSMDB_TYPE_WAY11)
+	{
+		snprintf(fname, 256, "%s/way11/%0.0lf.xml.gz",
+		         base, idu);
+	}
+	else if(type == OSMDB_TYPE_WAY14)
+	{
+		snprintf(fname, 256, "%s/way14/%0.0lf.xml.gz",
+		         base, idu);
+	}
 	else
 	{
 		LOGE("invalid type=%i", type);
@@ -752,10 +788,6 @@ void osmdb_chunk_path(const char* base,
 	{
 		snprintf(path, 256, "%s/node/", base);
 	}
-	else if(type == OSMDB_TYPE_WAY)
-	{
-		snprintf(path, 256, "%s/way/", base);
-	}
 	else if(type == OSMDB_TYPE_RELATION)
 	{
 		snprintf(path, 256, "%s/relation/", base);
@@ -772,9 +804,17 @@ void osmdb_chunk_path(const char* base,
 	{
 		snprintf(path, 256, "%s/ctrnode/", base);
 	}
+	else if(type == OSMDB_TYPE_TMPWAY)
+	{
+		snprintf(path, 256, "%s/tmpway/", base);
+	}
 	else if(type == OSMDB_TYPE_CTRWAY)
 	{
 		snprintf(path, 256, "%s/ctrway/", base);
+	}
+	else if(type == OSMDB_TYPE_TMPRELATION)
+	{
+		snprintf(path, 256, "%s/tmprelation/", base);
 	}
 	else if(type == OSMDB_TYPE_CTRRELATION)
 	{
@@ -791,6 +831,18 @@ void osmdb_chunk_path(const char* base,
 	else if(type == OSMDB_TYPE_CTRRELATIONREF)
 	{
 		snprintf(path, 256, "%s/ctrrelationref/", base);
+	}
+	else if(type == OSMDB_TYPE_WAY8)
+	{
+		snprintf(path, 256, "%s/way8/", base);
+	}
+	else if(type == OSMDB_TYPE_WAY11)
+	{
+		snprintf(path, 256, "%s/way11/", base);
+	}
+	else if(type == OSMDB_TYPE_WAY14)
+	{
+		snprintf(path, 256, "%s/way14/", base);
 	}
 	else
 	{

@@ -28,20 +28,25 @@
 #include "../a3d/a3d_list.h"
 #include "../a3d/a3d_hashmap.h"
 #include "../libxmlstream/xml_ostream.h"
+#include "osmdb_filter.h"
 #include "osmdb_range.h"
 
 #define OSMDB_TYPE_NODE           1
-#define OSMDB_TYPE_WAY            2
+#define OSMDB_TYPE_WAY            2 // META type for WAY8/11/14
 #define OSMDB_TYPE_RELATION       3
-// below are only intended for indexer and tiler
 #define OSMDB_TYPE_NODEREF        4
 #define OSMDB_TYPE_WAYREF         5
 #define OSMDB_TYPE_CTRNODE        6
-#define OSMDB_TYPE_CTRWAY         7
-#define OSMDB_TYPE_CTRRELATION    8
-#define OSMDB_TYPE_CTRNODEREF     9
-#define OSMDB_TYPE_CTRWAYREF      10
-#define OSMDB_TYPE_CTRRELATIONREF 11
+#define OSMDB_TYPE_TMPWAY         7
+#define OSMDB_TYPE_CTRWAY         8
+#define OSMDB_TYPE_TMPRELATION    9
+#define OSMDB_TYPE_CTRRELATION    10
+#define OSMDB_TYPE_CTRNODEREF     11
+#define OSMDB_TYPE_CTRWAYREF      12
+#define OSMDB_TYPE_CTRRELATIONREF 13
+#define OSMDB_TYPE_WAY8           14
+#define OSMDB_TYPE_WAY11          15
+#define OSMDB_TYPE_WAY14          16
 
 struct osmdb_index_s;
 
@@ -70,22 +75,29 @@ typedef struct osmdb_index_s
 	int  size_tiles;
 	int  err;
 
+	float min_dist8;
+	float min_dist11;
+	float min_dist14;
+
 	// LRU cache of chunks
 	a3d_list_t* chunks;
 
 	// map from <idu> to listitems
 	a3d_hashmap_t* hash_nodes;
-	a3d_hashmap_t* hash_ways;
 	a3d_hashmap_t* hash_relations;
-	// below are only intended for indexer and tiler
 	a3d_hashmap_t* hash_noderefs;
 	a3d_hashmap_t* hash_wayrefs;
 	a3d_hashmap_t* hash_ctrnodes;
+	a3d_hashmap_t* hash_tmpways;
 	a3d_hashmap_t* hash_ctrways;
+	a3d_hashmap_t* hash_tmprelations;
 	a3d_hashmap_t* hash_ctrrelations;
 	a3d_hashmap_t* hash_ctrnoderefs;
 	a3d_hashmap_t* hash_ctrwayrefs;
 	a3d_hashmap_t* hash_ctrrelationrefs;
+	a3d_hashmap_t* hash_ways8;
+	a3d_hashmap_t* hash_ways11;
+	a3d_hashmap_t* hash_ways14;
 
 	// LRU cache of tiles
 	a3d_list_t* tiles;
@@ -120,16 +132,30 @@ typedef struct osmdb_index_s
 	double stats_tile_load_dt;
 	double stats_tile_trim;
 	double stats_tile_trim_dt;
+	double stats_sample_way8;
+	double stats_sample_way11;
+	double stats_sample_way14;
+	double stats_sample_ways;
 } osmdb_index_t;
 
 osmdb_index_t*     osmdb_index_new(const char* base);
 int                osmdb_index_delete(osmdb_index_t** _self);
+int                osmdb_index_error(osmdb_index_t* self);
 int                osmdb_index_addChunk(osmdb_index_t* self,
                                         int type, const void* data);
-int                osmdb_index_addTile(osmdb_index_t* self,
-                                       osmdb_range_t* range,
+int                osmdb_index_addNode(osmdb_index_t* self,
                                        int zoom,
-                                       int type, double id);
+                                       osmdb_node_t* node);
+int                osmdb_index_addWay(osmdb_index_t* self,
+                                      int zoom,
+                                      int center,
+                                      int selected,
+                                      osmdb_way_t* way);
+int                osmdb_index_addRelation(osmdb_index_t* self,
+                                           int zoom,
+                                           int selected,
+                                           int center,
+                                           osmdb_relation_t* relation);
 int                osmdb_index_makeTile(osmdb_index_t* self,
                                         int zoom, int x, int y,
                                         xml_ostream_t* os);
