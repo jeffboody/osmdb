@@ -547,6 +547,9 @@ int main(int argc, char** argv)
 	char path_ctrnoderef[256];
 	char path_ctrwayref[256];
 	char path_ctrrelationref[256];
+	char path_way8[256];
+	char path_way11[256];
+	char path_way14[256];
 	osmdb_chunk_path(path_index, OSMDB_TYPE_NODE, path_node);
 	osmdb_chunk_path(path_index, OSMDB_TYPE_RELATION, path_relation);
 	osmdb_chunk_path(path_index, OSMDB_TYPE_NODEREF, path_noderef);
@@ -559,6 +562,9 @@ int main(int argc, char** argv)
 	osmdb_chunk_path(path_index, OSMDB_TYPE_CTRNODEREF, path_ctrnoderef);
 	osmdb_chunk_path(path_index, OSMDB_TYPE_CTRWAYREF, path_ctrwayref);
 	osmdb_chunk_path(path_index, OSMDB_TYPE_CTRRELATIONREF, path_ctrrelationref);
+	osmdb_chunk_path(path_index, OSMDB_TYPE_WAY8, path_way8);
+	osmdb_chunk_path(path_index, OSMDB_TYPE_WAY11, path_way11);
+	osmdb_chunk_path(path_index, OSMDB_TYPE_WAY14, path_way14);
 	if((osmdb_mkdir(path_node)           == 0) ||
 	   (osmdb_mkdir(path_relation)       == 0) ||
 	   (osmdb_mkdir(path_noderef)        == 0) ||
@@ -570,7 +576,10 @@ int main(int argc, char** argv)
 	   (osmdb_mkdir(path_ctrrelation)    == 0) ||
 	   (osmdb_mkdir(path_ctrnoderef)     == 0) ||
 	   (osmdb_mkdir(path_ctrwayref)      == 0) ||
-	   (osmdb_mkdir(path_ctrrelationref) == 0))
+	   (osmdb_mkdir(path_ctrrelationref) == 0) ||
+	   (osmdb_mkdir(path_way8)           == 0) ||
+	   (osmdb_mkdir(path_way11)          == 0) ||
+	   (osmdb_mkdir(path_way14)          == 0))
 	{
 		goto fail_path;
 	}
