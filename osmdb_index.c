@@ -128,8 +128,8 @@ static void osmdb_index_computeMinDist(osmdb_index_t* self)
 	                 &pb_14.x, &pb_14.y);
 
 	// compute min_dist
-	float pm8        = 4.0f;
-	float pm11       = 1.0f;
+	float pm8        = 16.0f;
+	float pm11       = 4.0f;
 	float pm14       = 1.0f/4.0f;
 	float pix        = sqrtf(2*256.0f*256.0f);
 	self->min_dist8  = pm8*a3d_vec2f_distance(&pb_8, &pa_8)/pix;
