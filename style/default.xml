@@ -59,15 +59,16 @@
 	<line name="primary_link"   mode="striped" color1="ltgray" color2="gray:halo" width="2.5" />
 	<line name="secondary_link" mode="striped" color1="ltgray" color2="gray:halo" width="1.5" />
 	<line name="tertiary_link"  mode="striped" color1="ltgray" color2="gray:halo" width="1.5" />
-	<line name="road"           mode="striped" color1="ltgray" color2="gray:halo" width="1.75" />
-	<line name="pedestrian"     mode="dashed,striped" color1="white"    color2="trail" width="1.5" />
+	<line name="road"           mode="striped" color1="ltgray" color2="gray:halo" width="1.9" />
+	<line name="pedestrian"     mode="dashed,striped" color1="white" color2="trail" width="1.4" />
 	<line name="runway"         mode="dashed,striped" color1="white" color2="runway" width="4.0" />
 	<line name="taxiway"        color1="runway" width="1.5" />
-	<line name="trail"          mode="dashed,striped" color1="white" color2="trail" width="1.0" />
-	<line name="track"          mode="dashed,striped" color1="white" color2="track" width="1.5" />
-	<line name="railway"        mode="dashed,striped" color1="gray"  color2="ltgray" width="1.5" />
+	<line name="trail"          mode="dashed,striped" color1="white" color2="trail" width="1.7" />
+	<line name="track"          mode="dashed,striped" color1="white" color2="track" width="1.7" />
+	<line name="railway"        mode="dashed,striped" color1="gray"  color2="ltgray" width="1.7" />
 	<line name="river"          color1="river" width="3.0" />
-	<line name="stream"         color1="river" width="1.5" />
+	<line name="stream"         color1="river" width="1.7" />
+	<line name="footway"        mode="dashed,striped" color1="white" color2="trail" />
 
 	<poly name="white:halo"  color="white:halo" />
 	<poly name="ltgray:halo" color="ltgray:halo" />
@@ -116,9 +117,9 @@
 	<class name="highway:escape"         layer="ground"      line="road" />
 	<class name="highway:raceway"        layer="ground"      line="road" />
 	<class name="highway:road"           layer="residential" line="road" />
-	<class name="highway:footway"        layer="trail"       line="trail" />
+	<class name="highway:footway"        layer="trail"       line="footway" />
 	<class name="highway:bridleway"      layer="trail"       line="trail" />
-	<class name="highway:steps"          layer="trail"       line="trail" />
+	<class name="highway:steps"          layer="trail"       line="footway" />
 	<class name="highway:path"           layer="trail"       line="trail" />
 	<class name="highway:cycleway"       layer="trail"       line="trail" />
 	<class name="highway:rest_area"      layer="ground"      poly="white:halo" />
