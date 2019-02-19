@@ -31,14 +31,26 @@
 #define OSMDB_STYLE_STATE_OSM   1
 #define OSMDB_STYLE_STATE_LAYER 2
 #define OSMDB_STYLE_STATE_COLOR 3
-#define OSMDB_STYLE_STATE_LINE  4
-#define OSMDB_STYLE_STATE_POLY  5
-#define OSMDB_STYLE_STATE_CLASS 6
-#define OSMDB_STYLE_STATE_DONE  7
+#define OSMDB_STYLE_STATE_POINT 4
+#define OSMDB_STYLE_STATE_LINE  5
+#define OSMDB_STYLE_STATE_POLY  6
+#define OSMDB_STYLE_STATE_CLASS 7
+#define OSMDB_STYLE_STATE_DONE  8
 
 #define OSMDB_STYLE_MODE_SOLID   0
 #define OSMDB_STYLE_MODE_DASHED  1
 #define OSMDB_STYLE_MODE_STRIPED 2
+
+typedef struct
+{
+	int min_zoom;
+	int show_ele;
+
+	a3d_vec4f_t* text_color1;
+	a3d_vec4f_t* text_color2;
+	a3d_vec4f_t* marker_color1;
+	a3d_vec4f_t* marker_color2;
+} osmdb_stylePoint_t;
 
 typedef struct
 {
@@ -59,8 +71,10 @@ typedef struct
 typedef struct
 {
 	int layer;
+
 	osmdb_styleLine_t*    line;
 	osmdb_stylePolygon_t* poly;
+	osmdb_stylePoint_t*   point;
 } osmdb_styleClass_t;
 
 typedef struct
@@ -72,6 +86,7 @@ typedef struct
 
 	// map from name to object
 	a3d_hashmap_t* colors;
+	a3d_hashmap_t* points;
 	a3d_hashmap_t* lines;
 	a3d_hashmap_t* polys;
 	a3d_hashmap_t* classes;

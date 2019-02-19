@@ -45,8 +45,31 @@
 	<color name="trail"          val="2BA62BFF" />
 	<color name="track"          val="DB9440FF" />
 	<color name="river"          val="4788D9BF" />
-	<color name="lake"           val="4788D9BF" />
-	<color name="glacier"        val="9BDFE07F" />
+	<color name="lake"           val="4788D9FF" />
+	<color name="lake:halo"      val="4788D9BF" />
+	<color name="glacier"        val="9BDFE0FF" />
+	<color name="glacier:halo"   val="9BDFE07F" />
+	<color name="peak"           val="42A314FF" />
+	<color name="city"           val="606060FF" />
+	<color name="college"        val="DCC21BFF" />
+	<color name="hospital"       val="F46183FF" />
+	<color name="outdoor"        val="6CA63EFF" />
+	<color name="bicycle"        val="A64FD6FF" />
+
+	<point name="peak"      min_zoom="14" text_color1="white" text_color2="black" marker_color1="peak"     marker_color2="white" flags="show_ele" />
+	<point name="saddle"    min_zoom="14" text_color1="white" text_color2="black" marker_color1="peak"     marker_color2="white" />
+	<point name="city"      min_zoom="11" text_color1="white" text_color2="black" marker_color1="city"     marker_color2="white" />
+	<point name="town"      min_zoom="12" text_color1="white" text_color2="black" marker_color1="city"     marker_color2="white" />
+	<point name="village"   min_zoom="13" text_color1="white" text_color2="black" marker_color1="city"     marker_color2="white" />
+	<point name="water"     min_zoom="14" text_color1="white" text_color2="black" marker_color1="lake"     marker_color2="white" />
+	<point name="glacier"   min_zoom="14" text_color1="white" text_color2="black" marker_color1="glacier"  marker_color2="black" />
+	<point name="aerodrome" min_zoom="14" text_color1="white" text_color2="black" marker_color1="runway"   marker_color2="white" />
+	<point name="college"   min_zoom="14" text_color1="white" text_color2="black" marker_color1="college"  marker_color2="white" />
+	<point name="hospital"  min_zoom="14" text_color1="white" text_color2="black" marker_color1="hospital" marker_color2="white" />
+	<point name="building"  min_zoom="16" text_color1="white" text_color2="black" marker_color1="brown"    marker_color2="white" />
+	<point name="bicycle"   min_zoom="15" text_color1="white" text_color2="black" marker_color1="bicycle"  marker_color2="white" />
+	<point name="outdoor"   min_zoom="16" text_color1="white" text_color2="black" marker_color1="outdoor"  marker_color2="white" />
+	<point name="forest"    min_zoom="12" text_color1="white" text_color2="black" marker_color1="outdoor"  marker_color2="white" />
 
 	<line name="aerialway"      mode="dashed,striped" color1="ltgray" color2="white:halo" />
 	<line name="motorway"       mode="striped" color1="ltgray" color2="gray:halo" width="3.5" />
@@ -76,8 +99,8 @@
 	<poly name="brown:halo"  color="brown:halo" />
 	<poly name="aerialway"   color="gray:halo" />
 	<poly name="helipad"     color="gray:halo" />
-	<poly name="glacier"     color="glacier" />
-	<poly name="water"       color="lake" />
+	<poly name="glacier"     color="glacier:halo" />
+	<poly name="water"       color="lake:halo" />
 	<poly name="red"         color="red" />
 
 	<class name="aerialway:cable_car"    layer="ground"      line="aerialway" />
@@ -94,7 +117,7 @@
 	<class name="aerialway:canopy"       layer="air"         line="aerialway" />
 	<class name="aerialway:station"      layer="building"    poly="brown:halo" />
 	<class name="aeroway:helipad"        layer="helipad"     poly="helipad" />
-	<class name="aeroway:runway"         layer="runway"      line="runway" />
+	<class name="aeroway:runway"         layer="runway"      point="aerodrome" line="runway" />
 	<class name="aeroway:taxilane"       layer="taxiway"     line="taxiway" />
 	<class name="aeroway:taxiway"        layer="taxiway"     line="taxiway" />
 	<class name="aeroway:terminal"       layer="building"    poly="brown:halo" />
@@ -124,12 +147,12 @@
 	<class name="highway:cycleway"       layer="trail"       line="trail" />
 	<class name="highway:rest_area"      layer="ground"      poly="white:halo" />
 	<class name="man_made:bridge"        layer="ground"      poly="white:halo"/>
-	<class name="natural:water"          layer="water"       poly="water" />
-	<class name="natural:bay"            layer="water"       poly="water" />
-	<class name="natural:glacier"        layer="water"       poly="glacier" />
-	<class name="landuse:reservoir"      layer="water"       poly="water" />
-	<class name="landuse:salt_pond"      layer="water"       poly="water" />
-	<class name="landuse:basin"          layer="water"       poly="water" />
+	<class name="natural:water"          layer="water"       point="water"   poly="water" />
+	<class name="natural:bay"            layer="water"       point="water"   poly="water" />
+	<class name="natural:glacier"        layer="water"       point="glacier" poly="glacier" />
+	<class name="landuse:reservoir"      layer="water"       point="water"   poly="water" />
+	<class name="landuse:salt_pond"      layer="water"       point="water"   poly="water" />
+	<class name="landuse:basin"          layer="water"       point="water"   poly="water" />
 	<class name="waterway:river"         layer="water"       line="river" />
 	<class name="waterway:riverbank"     layer="water"       poly="water" />
 	<class name="waterway:stream"        layer="water"       line="stream" />
@@ -144,4 +167,49 @@
 	<class name="railway:rail"           layer="railway"     line="railway" />
 	<class name="railway:subway"         layer="railway"     line="railway" />
 	<class name="railway:tram"           layer="railway"     line="railway" />
+
+	<class name="natural:peak"               point="peak" />
+	<class name="natural:volcano"            point="peak" />
+	<class name="natural:saddle"             point="saddle" />
+	<class name="place:city"                 point="city" />
+	<class name="place:town"                 point="town" />
+	<class name="place:village"              point="village" />
+	<class name="aeroway:aerodrome"          point="aerodrome" />
+	<class name="amenity:college"            point="college" />
+	<class name="amenity:university"         point="college" />
+	<class name="amenity:research_institute" point="college" />
+	<class name="amenity:hospital"           point="hospital" />
+	<class name="building:hospital"          point="hospital" />
+	<class name="amenity:planetarium"        point="building" />
+	<class name="amenity:police"             point="building" />
+	<class name="tourism:museum"             point="building" />
+	<class name="tourism:zoo"                point="building" />
+	<class name="building:train_station"     point="building" />
+	<class name="building:transportation"    point="building" />
+	<class name="office:forestry"            point="building" />
+	<class name="leisure:hackerspace"        point="building" />
+	<class name="manmade:telescope"          point="building" />
+	<class name="shop:supermarket"           point="building" />
+	<class name="shop:outdoor"               point="building" />
+	<class name="shop:scuba_diving"          point="building" />
+	<class name="shop:ski"                   point="building" />
+	<class name="shop:sports"                point="building" />
+	<class name="shop:bicycle"               point="bicycle" />
+	<class name="leisure:disc_golf_course"   point="outdoor" />
+	<class name="leisure:dog_park"           point="outdoor" />
+	<class name="leisure:nature_reserve"     point="outdoor" />
+	<class name="leisure:park"               point="outdoor" />
+	<class name="landuse:forest"             point="forest" />
+	<class name="natural:wood"               point="forest" />
+	<class name="natural:scrub"              point="forest" />
+	<class name="natural:heath"              point="forest" />
+	<class name="natural:grassland"          point="forest" />
+	<class name="natural:fell"               point="forest" />
+	<class name="natural:bare_rock"          point="forest" />
+	<class name="natural:scree"              point="forest" />
+	<class name="natural:shingle"            point="forest" />
+	<class name="natural:sand"               point="forest" />
+	<class name="natural:mud"                point="forest" />
+	<class name="natural:wetland"            point="forest" />
+	<class name="natural:valley"             point="forest" />
 </osmdb>
