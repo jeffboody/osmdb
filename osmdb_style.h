@@ -45,6 +45,7 @@ typedef struct
 {
 	int min_zoom;
 	int show_ele;
+	int show_marker;
 
 	a3d_vec4f_t* text_color1;
 	a3d_vec4f_t* text_color2;

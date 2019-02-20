@@ -390,7 +390,8 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 	}
 
 	// parse flags
-	int show_ele = 0;
+	int show_ele    = 0;
+	int show_marker = 0;
 	if(flags)
 	{
 		char str[256];
@@ -409,13 +410,17 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 			{
 				// parse the flag
 				str[dst] = '\0';
-				if(strcmp(str, "show_ele") == 0)
+				if(strcmp(str, "ele:show") == 0)
 				{
 					show_ele = 1;
 				}
+				else if(strcmp(str, "marker:show") == 0)
+				{
+					show_marker = 1;
+				}
 				else
 				{
-					LOGW("unknown flag=%s", src);
+					LOGW("unknown flag=%s", str);
 				}
 
 				// end of string
@@ -446,6 +451,7 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 
 	point->min_zoom      = mz;
 	point->show_ele      = show_ele;
+	point->show_marker   = show_marker;
 	point->text_color1   = tc1;
 	point->text_color2   = tc2;
 	point->marker_color1 = mc1;
