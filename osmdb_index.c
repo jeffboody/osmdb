@@ -27,6 +27,7 @@
 #include <string.h>
 #include <math.h>
 #include "../a3d/a3d_timestamp.h"
+#include "../a3d/a3d_multimap.h"
 #include "../a3d/math/a3d_vec2f.h"
 #include "../terrain/terrain_util.h"
 #include "osmdb_chunk.h"
@@ -48,6 +49,102 @@ const int OSMDB_INDEX_ONE = 1;
 /***********************************************************
 * private                                                  *
 ***********************************************************/
+
+static int
+osmdb_index_addJoin(osmdb_way_t* way,
+                    a3d_hashmap_t* hash_ways_join,
+                    a3d_multimap_t* mm_nds_join)
+{
+	assert(way);
+	assert(hash_ways_join);
+	assert(mm_nds_join);
+
+	osmdb_way_t* copy = osmdb_way_copy(way);
+	if(copy == NULL)
+	{
+		return 0;
+	}
+
+	if(a3d_hashmap_addf(hash_ways_join,
+	                    (const void*) copy,
+	                    "%0.0lf", copy->id) == 0)
+	{
+		osmdb_way_delete(&copy);
+		return 0;
+	}
+
+	// check if way is complete
+	double* ref1 = (double*) a3d_list_peekhead(copy->nds);
+	double* ref2 = (double*) a3d_list_peektail(copy->nds);
+	if((ref1 == NULL) || (ref2 == NULL))
+	{
+		return 1;
+	}
+
+	double* id1_copy = (double*)
+	                   malloc(sizeof(double));
+	if(id1_copy == NULL)
+	{
+		return 0;
+	}
+	*id1_copy = copy->id;
+
+	double* id2_copy = (double*)
+	                   malloc(sizeof(double));
+	if(id2_copy == NULL)
+	{
+		free(id1_copy);
+		return 0;
+	}
+	*id2_copy = copy->id;
+
+	if(a3d_multimap_addf(mm_nds_join, (const void*) id1_copy,
+	                     "%0.0lf", *ref1) == 0)
+	{
+		free(id1_copy);
+		free(id2_copy);
+		return 0;
+	}
+
+	if(a3d_multimap_addf(mm_nds_join, (const void*) id2_copy,
+	                     "%0.0lf", *ref2) == 0)
+	{
+		free(id2_copy);
+		return 0;
+	}
+
+	return 1;
+}
+
+static void
+osmdb_index_discardJoin(a3d_hashmap_t* hash_ways_join,
+                        a3d_multimap_t* mm_nds_join)
+{
+	assert(hash_ways_join);
+	assert(mm_nds_join);
+
+	a3d_hashmapIter_t  iterator;
+	a3d_hashmapIter_t* iter;
+	iter = a3d_hashmap_head(hash_ways_join, &iterator);
+	while(iter)
+	{
+		osmdb_way_t* way;
+		way = (osmdb_way_t*)
+		      a3d_hashmap_remove(hash_ways_join, &iter);
+		osmdb_way_delete(&way);
+	}
+
+	a3d_multimapIter_t  miterator;
+	a3d_multimapIter_t* miter;
+	miter = a3d_multimap_head(mm_nds_join, &miterator);
+	while(miter)
+	{
+		double* ref;
+		ref = (double*)
+		      a3d_multimap_remove(mm_nds_join, &miter);
+		free(ref);
+	}
+}
 
 static void osmdb_index_computeMinDist(osmdb_index_t* self)
 {
@@ -835,6 +932,233 @@ osmdb_index_gatherWay(osmdb_index_t* self,
 }
 
 static int
+osmdb_index_fetchWay(osmdb_index_t* self,
+                     xml_ostream_t* os,
+                     double id, int zoom,
+                     a3d_hashmap_t* hash_nodes,
+                     a3d_hashmap_t* hash_ways,
+                     a3d_hashmap_t* hash_ways_join,
+                     a3d_multimap_t* mm_nds_join)
+{
+	assert(self);
+	assert(os);
+	assert(hash_nodes);
+	assert(hash_ways);
+	assert(hash_ways_join);
+	assert(mm_nds_join);
+
+	// check if id already included
+	a3d_hashmapIter_t iterator;
+	if(a3d_hashmap_findf(hash_ways, &iterator,
+	                     "%0.0lf", id))
+	{
+		return 1;
+	}
+
+	int type;
+	if(zoom == 8)
+	{
+		type = OSMDB_TYPE_WAY8;
+	}
+	else if(zoom == 11)
+	{
+		type = OSMDB_TYPE_WAY11;
+	}
+	else if(zoom == 14)
+	{
+		type = OSMDB_TYPE_WAY14;
+	}
+	else
+	{
+		LOGE("invalid zoom=%i", zoom);
+		return 0;
+	}
+
+	// way may not exist due to osmosis
+	osmdb_way_t* way;
+	way = (osmdb_way_t*)
+	      osmdb_index_find(self, type, id);
+	if(way == NULL)
+	{
+		return 1;
+	}
+
+	// mark the way as found
+	if(a3d_hashmap_addf(hash_ways,
+	                    (const void*) &OSMDB_INDEX_ONE,
+	                    "%0.0lf", id) == 0)
+	{
+		return 0;
+	}
+
+	if(osmdb_index_addJoin(way, hash_ways_join,
+	                       mm_nds_join) == 0)
+	{
+		return 0;
+	}
+
+	return 1;
+}
+
+static int
+osmdb_index_joinWays(a3d_hashmap_t* hash_ways_join,
+                     a3d_multimap_t* mm_nds_join)
+{
+	assert(hash_ways_join);
+	assert(mm_nds_join);
+
+	osmdb_way_t*        way1;
+	osmdb_way_t*        way2;
+	a3d_multimapIter_t  miterator1;
+	a3d_multimapIter_t* miter1;
+	a3d_multimapIter_t  miterator2;
+	a3d_hashmapIter_t   hiter1;
+	a3d_hashmapIter_t   hiterator2;
+	a3d_hashmapIter_t*  hiter2;
+	a3d_listitem_t*     iter1;
+	a3d_listitem_t*     iter2;
+	a3d_list_t*         list1;
+	a3d_list_t*         list2;
+	double*             id1;
+	double*             id2;
+	double              ref1;
+	double              ref2;
+	miter1 = a3d_multimap_head(mm_nds_join, &miterator1);
+	while(miter1)
+	{
+		ref1  = strtod(a3d_multimap_key(miter1), NULL);
+		list1 = (a3d_list_t*) a3d_multimap_list(miter1);
+		iter1 = a3d_list_head(list1);
+		while(iter1)
+		{
+			id1  = (double*) a3d_list_peekitem(iter1);
+			if(*id1 == -1.0)
+			{
+				iter1 = a3d_list_next(iter1);
+				continue;
+			}
+
+			way1 = (osmdb_way_t*)
+			       a3d_hashmap_findf(hash_ways_join,
+                                     &hiter1,
+                                     "%0.0lf", *id1);
+			if(way1 == NULL)
+			{
+				iter1 = a3d_list_next(iter1);
+				continue;
+			}
+
+			iter2 = a3d_list_next(iter1);
+			while(iter2)
+			{
+				hiter2 = &hiterator2;
+				id2 = (double*)
+				      a3d_list_peekitem(iter2);
+				if(*id2 == -1.0)
+				{
+					iter2 = a3d_list_next(iter2);
+					continue;
+				}
+
+				way2 = (osmdb_way_t*)
+				       a3d_hashmap_findf(hash_ways_join,
+				                         hiter2,
+				                         "%0.0lf", *id2);
+				if(way2 == NULL)
+				{
+					iter2 = a3d_list_next(iter2);
+					continue;
+				}
+
+				if(osmdb_way_join(way1, way2, ref1, &ref2) == 0)
+				{
+					iter2 = a3d_list_next(iter2);
+					continue;
+				}
+
+				// replace ref2->id2 with ref2->id1 in mm_nds_join
+				list2 = (a3d_list_t*)
+				        a3d_multimap_findf(mm_nds_join, &miterator2,
+				                           "%0.0lf", ref2);
+				iter2 = a3d_list_head(list2);
+				while(iter2)
+				{
+					double* idx = (double*)
+					              a3d_list_peekitem(iter2);
+					if(*idx == *id2)
+					{
+						*idx = *id1;
+						break;
+					}
+
+					iter2 = a3d_list_next(iter2);
+				}
+
+				// remove ways from mm_nds_join
+				*id1 = -1.0;
+				*id2 = -1.0;
+
+				// remove way2 from hash_ways_join
+				a3d_hashmap_remove(hash_ways_join, &hiter2);
+				osmdb_way_delete(&way2);
+				iter2 = NULL;
+			}
+
+			iter1 = a3d_list_next(iter1);
+		}
+
+		miter1 = a3d_multimap_nextList(miter1);
+	}
+
+	return 1;
+}
+
+static int
+osmdb_index_exportWays(osmdb_index_t* self,
+                       xml_ostream_t* os,
+                       a3d_hashmap_t* hash_ways_join,
+                       a3d_hashmap_t* hash_nodes)
+{
+	assert(self);
+	assert(os);
+	assert(hash_ways_join);
+	assert(hash_nodes);
+
+	a3d_hashmapIter_t  hiterator;
+	a3d_hashmapIter_t* hiter;
+	hiter = a3d_hashmap_head(hash_ways_join, &hiterator);
+	while(hiter)
+	{
+		osmdb_way_t* way;
+		way = (osmdb_way_t*)
+		      a3d_hashmap_val(hiter);
+
+		// gather nds
+		a3d_listitem_t* iter = a3d_list_head(way->nds);
+		while(iter)
+		{
+			double* ref = (double*)
+			              a3d_list_peekitem(iter);
+			if(osmdb_index_gatherNode(self, os, *ref,
+			                          hash_nodes) == 0)
+			{
+				return 0;
+			}
+			iter = a3d_list_next(iter);
+		}
+
+		if(osmdb_way_export(way, os) == 0)
+		{
+			return 0;
+		}
+
+		hiter = a3d_hashmap_next(hiter);
+	}
+
+	return 1;
+}
+
+static int
 osmdb_index_gatherRelation(osmdb_index_t* self,
                            xml_ostream_t* os,
                            double id, int zoom,
@@ -910,7 +1234,9 @@ osmdb_index_gatherTile(osmdb_index_t* self,
                        int zoom,
                        a3d_hashmap_t* hash_nodes,
                        a3d_hashmap_t* hash_ways,
-                       a3d_hashmap_t* hash_relations)
+                       a3d_hashmap_t* hash_relations,
+                       a3d_hashmap_t* hash_ways_join,
+                       a3d_multimap_t* mm_nds_join)
 {
 	assert(self);
 	assert(os);
@@ -918,6 +1244,8 @@ osmdb_index_gatherTile(osmdb_index_t* self,
 	assert(hash_nodes);
 	assert(hash_ways);
 	assert(hash_relations);
+	assert(hash_ways_join);
+	assert(mm_nds_join);
 
 	a3d_hashmapIter_t  iterator;
 	a3d_hashmapIter_t* iter;
@@ -928,20 +1256,6 @@ osmdb_index_gatherTile(osmdb_index_t* self,
 
 		if(osmdb_index_gatherNode(self, os, ref,
 		                          hash_nodes) == 0)
-		{
-			return 0;
-		}
-
-		iter = a3d_hashmap_next(iter);
-	}
-
-	iter = a3d_hashmap_head(tile->hash_ways, &iterator);
-	while(iter)
-	{
-		double ref = strtod(a3d_hashmap_key(iter), NULL);
-
-		if(osmdb_index_gatherWay(self, os, ref, zoom,
-		                         hash_nodes, hash_ways) == 0)
 		{
 			return 0;
 		}
@@ -963,6 +1277,34 @@ osmdb_index_gatherTile(osmdb_index_t* self,
 		}
 
 		iter = a3d_hashmap_next(iter);
+	}
+
+	iter = a3d_hashmap_head(tile->hash_ways, &iterator);
+	while(iter)
+	{
+		double ref = strtod(a3d_hashmap_key(iter), NULL);
+
+		if(osmdb_index_fetchWay(self, os, ref, zoom,
+		                        hash_nodes, hash_ways,
+		                        hash_ways_join,
+		                        mm_nds_join) == 0)
+		{
+			return 0;
+		}
+
+		iter = a3d_hashmap_next(iter);
+	}
+
+	if(osmdb_index_joinWays(hash_ways_join,
+	                        mm_nds_join) == 0)
+	{
+		return 0;
+	}
+
+	if(osmdb_index_exportWays(self, os, hash_ways_join,
+	                          hash_nodes) == 0)
+	{
+		return 0;
 	}
 
 	return 1;
@@ -1957,11 +2299,25 @@ int osmdb_index_makeTile(osmdb_index_t* self,
 		goto fail_relations;
 	}
 
+	a3d_hashmap_t* hash_ways_join = a3d_hashmap_new();
+	if(hash_ways_join == NULL)
+	{
+		goto fail_ways_join;
+	}
+
+	a3d_multimap_t* mm_nds_join = a3d_multimap_new(NULL);
+	if(mm_nds_join == NULL)
+	{
+		goto fail_nds_join;
+	}
+
 	// stream data
 	int ret = xml_ostream_begin(os, "osmdb");
 	if(osmdb_index_gatherTile(self, os, tile, zoom,
 	                          hash_nodes, hash_ways,
-	                          hash_relations) == 0)
+	                          hash_relations,
+	                          hash_ways_join,
+	                          mm_nds_join) == 0)
 	{
 		goto fail_gather;
 	}
@@ -1973,9 +2329,13 @@ int osmdb_index_makeTile(osmdb_index_t* self,
 		goto fail_os;
 	}
 
+	osmdb_index_discardJoin(hash_ways_join,
+	                        mm_nds_join);
 	a3d_hashmap_discard(hash_nodes);
 	a3d_hashmap_discard(hash_ways);
 	a3d_hashmap_discard(hash_relations);
+	a3d_multimap_delete(&mm_nds_join);
+	a3d_hashmap_delete(&hash_ways_join);
 	a3d_hashmap_delete(&hash_relations);
 	a3d_hashmap_delete(&hash_ways);
 	a3d_hashmap_delete(&hash_nodes);
@@ -1988,9 +2348,15 @@ int osmdb_index_makeTile(osmdb_index_t* self,
 	// failure
 	fail_os:
 	fail_gather:
+		osmdb_index_discardJoin(hash_ways_join,
+		                        mm_nds_join);
 		a3d_hashmap_discard(hash_relations);
 		a3d_hashmap_discard(hash_ways);
 		a3d_hashmap_discard(hash_nodes);
+		a3d_multimap_delete(&mm_nds_join);
+	fail_nds_join:
+		a3d_hashmap_delete(&hash_ways_join);
+	fail_ways_join:
 		a3d_hashmap_delete(&hash_relations);
 	fail_relations:
 		a3d_hashmap_delete(&hash_ways);

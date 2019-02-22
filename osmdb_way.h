@@ -50,6 +50,7 @@ typedef struct
 } osmdb_way_t;
 
 osmdb_way_t* osmdb_way_new(const char** atts, int line);
+osmdb_way_t* osmdb_way_copy(osmdb_way_t* self);
 osmdb_way_t* osmdb_way_copyEmpty(osmdb_way_t* self);
 void         osmdb_way_delete(osmdb_way_t** _self);
 void         osmdb_way_incref(osmdb_way_t* self);
@@ -63,5 +64,7 @@ void         osmdb_way_updateRange(osmdb_way_t* self,
                                    osmdb_range_t* range);
 int          osmdb_way_ref(osmdb_way_t* self,
                            double ref);
+int          osmdb_way_join(osmdb_way_t* a, osmdb_way_t* b,
+                            double ref1, double* ref2);
 
 #endif
