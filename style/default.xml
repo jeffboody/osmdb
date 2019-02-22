@@ -70,7 +70,7 @@
 	<point name="bicycle"   min_zoom="15" text_color1="white" text_color2="black" marker_color1="bicycle"  marker_color2="white" flags="marker:show" />
 	<point name="outdoor"   min_zoom="16" text_color1="white" text_color2="black" marker_color1="outdoor"  marker_color2="white" flags="marker:show" />
 	<point name="forest"    min_zoom="12" text_color1="white" text_color2="black" marker_color1="outdoor"  marker_color2="white" flags="marker:show" />
-	<point name="highway"   min_zoom="17" text_color1="white" text_color2="black" />
+	<point name="default"   min_zoom="17" text_color1="white" text_color2="black" />
 
 	<line name="aerialway"      mode="dashed,striped" color1="ltgray" color2="white:halo" />
 	<line name="motorway"       mode="striped" color1="ltgray" color2="gray:halo" width="3.5" />
@@ -123,29 +123,29 @@
 	<class name="aeroway:taxiway"        layer="taxiway"     line="taxiway" />
 	<class name="aeroway:terminal"       layer="building"    poly="brown:halo" />
 	<class name="emergency:landing_site" layer="ground"      poly="gray:halo" />
-	<class name="highway:motorway"       layer="motorway"    point="highway" line="motorway" />
-	<class name="highway:trunk"          layer="trunk"       point="highway" line="trunk" />
-	<class name="highway:primary"        layer="primary"     point="highway" line="primary" />
-	<class name="highway:secondary"      layer="secondary"   point="highway" line="secondary" />
-	<class name="highway:tertiary"       layer="tertiary"    point="highway" line="tertiary" />
-	<class name="highway:unclassified"   layer="residential" point="highway" line="road" />
-	<class name="highway:residential"    layer="residential" point="highway" line="road" />
+	<class name="highway:motorway"       layer="motorway"    point="default" line="motorway" />
+	<class name="highway:trunk"          layer="trunk"       point="default" line="trunk" />
+	<class name="highway:primary"        layer="primary"     point="default" line="primary" />
+	<class name="highway:secondary"      layer="secondary"   point="default" line="secondary" />
+	<class name="highway:tertiary"       layer="tertiary"    point="default" line="tertiary" />
+	<class name="highway:unclassified"   layer="residential" point="default" line="road" />
+	<class name="highway:residential"    layer="residential" point="default" line="road" />
 	<class name="highway:motorway_link"  layer="link"        line="motorway_link" />
 	<class name="highway:trunk_link"     layer="link"        line="trunk_link" />
 	<class name="highway:primary_link"   layer="link"        line="primary_link" />
 	<class name="highway:secondary_link" layer="link"        line="secondary_link" />
 	<class name="highway:tertiary_link"  layer="link"        line="tertiary_link" />
-	<class name="highway:living_street"  layer="trail"       point="highway" line="pedestrian" />
-	<class name="highway:pedestrian"     layer="trail"       point="highway" line="pedestrian" />
-	<class name="highway:track"          layer="track"       point="highway" line="track" />
-	<class name="highway:escape"         layer="ground"      point="highway" line="road" />
-	<class name="highway:raceway"        layer="ground"      point="highway" line="road" />
-	<class name="highway:road"           layer="residential" point="highway" line="road" />
-	<class name="highway:footway"        layer="trail"       point="highway" line="footway" />
-	<class name="highway:bridleway"      layer="trail"       point="highway" line="trail" />
-	<class name="highway:steps"          layer="trail"       point="highway" line="footway" />
-	<class name="highway:path"           layer="trail"       point="highway" line="trail" />
-	<class name="highway:cycleway"       layer="trail"       point="highway" line="trail" />
+	<class name="highway:living_street"  layer="trail"       point="default" line="pedestrian" />
+	<class name="highway:pedestrian"     layer="trail"       point="default" line="pedestrian" />
+	<class name="highway:track"          layer="track"       point="default" line="track" />
+	<class name="highway:escape"         layer="ground"      point="default" line="road" />
+	<class name="highway:raceway"        layer="ground"      point="default" line="road" />
+	<class name="highway:road"           layer="residential" point="default" line="road" />
+	<class name="highway:footway"        layer="trail"       point="default" line="footway" />
+	<class name="highway:bridleway"      layer="trail"       point="default" line="trail" />
+	<class name="highway:steps"          layer="trail"       point="default" line="footway" />
+	<class name="highway:path"           layer="trail"       point="default" line="trail" />
+	<class name="highway:cycleway"       layer="trail"       point="default" line="trail" />
 	<class name="highway:rest_area"      layer="ground"      poly="white:halo" />
 	<class name="man_made:bridge"        layer="ground"      poly="white:halo"/>
 	<class name="natural:water"          layer="water"       point="water"   poly="water" />
@@ -154,9 +154,9 @@
 	<class name="landuse:reservoir"      layer="water"       point="water"   poly="water" />
 	<class name="landuse:salt_pond"      layer="water"       point="water"   poly="water" />
 	<class name="landuse:basin"          layer="water"       point="water"   poly="water" />
-	<class name="waterway:river"         layer="water"       line="river" />
-	<class name="waterway:riverbank"     layer="water"       poly="water" />
-	<class name="waterway:stream"        layer="water"       line="stream" />
+	<class name="waterway:river"         layer="water"       point="default" line="river" />
+	<class name="waterway:riverbank"     layer="water"       point="default" poly="water" />
+	<class name="waterway:stream"        layer="water"       point="default" line="stream" />
 	<class name="waterway:canal"         layer="water"       line="stream" />
 	<class name="waterway:ditch"         layer="water"       line="stream" />
 	<class name="waterway:drain"         layer="water"       line="stream" />
