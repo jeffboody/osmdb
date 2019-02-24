@@ -1048,7 +1048,7 @@ static int osmdb_index_addTile(osmdb_index_t* self,
 	// practice are drawn with non-zero width
 	// points/lines so an offset is needed to ensure they
 	// are not clipped between neighboring tiles
-	float offset = 1.0f/8.0f;
+	float offset = 1.0f/16.0f;
 
 	// add id to range
 	int x;
