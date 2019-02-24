@@ -31,22 +31,14 @@
 #include "osmdb_filter.h"
 #include "osmdb_range.h"
 
-#define OSMDB_TYPE_NODE           1
-#define OSMDB_TYPE_WAY            2 // META type for WAY8/11/14
-#define OSMDB_TYPE_RELATION       3
-#define OSMDB_TYPE_NODEREF        4
-#define OSMDB_TYPE_WAYREF         5
-#define OSMDB_TYPE_CTRNODE        6
-#define OSMDB_TYPE_TMPWAY         7
-#define OSMDB_TYPE_CTRWAY         8
-#define OSMDB_TYPE_TMPRELATION    9
-#define OSMDB_TYPE_CTRRELATION    10
-#define OSMDB_TYPE_CTRNODEREF     11
-#define OSMDB_TYPE_CTRWAYREF      12
-#define OSMDB_TYPE_CTRRELATIONREF 13
-#define OSMDB_TYPE_WAY8           14
-#define OSMDB_TYPE_WAY11          15
-#define OSMDB_TYPE_WAY14          16
+#define OSMDB_TYPE_NODE       1
+#define OSMDB_TYPE_WAY        2
+#define OSMDB_TYPE_RELATION   3
+#define OSMDB_TYPE_CTRNODE    4
+#define OSMDB_TYPE_NODEREF    5
+#define OSMDB_TYPE_WAYREF     6
+#define OSMDB_TYPE_CTRNODEREF 7
+#define OSMDB_TYPE_CTRWAYREF  8
 
 struct osmdb_index_s;
 
@@ -84,20 +76,13 @@ typedef struct osmdb_index_s
 
 	// map from <idu> to listitems
 	a3d_hashmap_t* hash_nodes;
+	a3d_hashmap_t* hash_ways;
 	a3d_hashmap_t* hash_relations;
+	a3d_hashmap_t* hash_ctrnodes;
 	a3d_hashmap_t* hash_noderefs;
 	a3d_hashmap_t* hash_wayrefs;
-	a3d_hashmap_t* hash_ctrnodes;
-	a3d_hashmap_t* hash_tmpways;
-	a3d_hashmap_t* hash_ctrways;
-	a3d_hashmap_t* hash_tmprelations;
-	a3d_hashmap_t* hash_ctrrelations;
 	a3d_hashmap_t* hash_ctrnoderefs;
 	a3d_hashmap_t* hash_ctrwayrefs;
-	a3d_hashmap_t* hash_ctrrelationrefs;
-	a3d_hashmap_t* hash_ways8;
-	a3d_hashmap_t* hash_ways11;
-	a3d_hashmap_t* hash_ways14;
 
 	// LRU cache of tiles
 	a3d_list_t* tiles;
@@ -144,17 +129,15 @@ int                osmdb_index_error(osmdb_index_t* self);
 int                osmdb_index_addChunk(osmdb_index_t* self,
                                         int type, const void* data);
 int                osmdb_index_addNode(osmdb_index_t* self,
-                                       int zoom,
+                                       int zoom, int center,
+                                       int selected,
                                        osmdb_node_t* node);
 int                osmdb_index_addWay(osmdb_index_t* self,
-                                      int zoom,
-                                      int center,
+                                      int zoom, int center,
                                       int selected,
                                       osmdb_way_t* way);
 int                osmdb_index_addRelation(osmdb_index_t* self,
-                                           int zoom,
-                                           int selected,
-                                           int center,
+                                           int zoom, int center,
                                            osmdb_relation_t* relation);
 int                osmdb_index_makeTile(osmdb_index_t* self,
                                         int zoom, int x, int y,

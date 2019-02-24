@@ -245,9 +245,17 @@ osmdb_index_getHash(osmdb_index_t* self, int type)
 	{
 		return self->hash_nodes;
 	}
+	else if(type == OSMDB_TYPE_WAY)
+	{
+		return self->hash_ways;
+	}
 	else if(type == OSMDB_TYPE_RELATION)
 	{
 		return self->hash_relations;
+	}
+	else if(type == OSMDB_TYPE_CTRNODE)
+	{
+		return self->hash_ctrnodes;
 	}
 	else if(type == OSMDB_TYPE_NODEREF)
 	{
@@ -257,26 +265,6 @@ osmdb_index_getHash(osmdb_index_t* self, int type)
 	{
 		return self->hash_wayrefs;
 	}
-	else if(type == OSMDB_TYPE_CTRNODE)
-	{
-		return self->hash_ctrnodes;
-	}
-	else if(type == OSMDB_TYPE_TMPWAY)
-	{
-		return self->hash_tmpways;
-	}
-	else if(type == OSMDB_TYPE_CTRWAY)
-	{
-		return self->hash_ctrways;
-	}
-	else if(type == OSMDB_TYPE_TMPRELATION)
-	{
-		return self->hash_tmprelations;
-	}
-	else if(type == OSMDB_TYPE_CTRRELATION)
-	{
-		return self->hash_ctrrelations;
-	}
 	else if(type == OSMDB_TYPE_CTRNODEREF)
 	{
 		return self->hash_ctrnoderefs;
@@ -284,22 +272,6 @@ osmdb_index_getHash(osmdb_index_t* self, int type)
 	else if(type == OSMDB_TYPE_CTRWAYREF)
 	{
 		return self->hash_ctrwayrefs;
-	}
-	else if(type == OSMDB_TYPE_CTRRELATIONREF)
-	{
-		return self->hash_ctrrelationrefs;
-	}
-	else if(type == OSMDB_TYPE_WAY8)
-	{
-		return self->hash_ways8;
-	}
-	else if(type == OSMDB_TYPE_WAY11)
-	{
-		return self->hash_ways11;
-	}
-	else if(type == OSMDB_TYPE_WAY14)
-	{
-		return self->hash_ways14;
 	}
 
 	LOGE("invalid type=%i", type);
@@ -346,7 +318,8 @@ osmdb_index_trimChunks(osmdb_index_t* self, int max_size)
 	a3d_listitem_t* item = a3d_list_head(self->chunks);
 	while(item)
 	{
-		if((self->size_chunks + self->size_hash) <= max_size)
+		if((max_size > 0) &&
+		   ((self->size_chunks + self->size_hash) <= max_size))
 		{
 			return;
 		}
@@ -419,7 +392,8 @@ osmdb_index_trimTiles(osmdb_index_t* self, int max_size)
 	a3d_listitem_t* item = a3d_list_head(self->tiles);
 	while(item)
 	{
-		if(self->size_tiles <= max_size)
+		if((max_size > 0) &&
+		   (self->size_tiles <= max_size))
 		{
 			return;
 		}
@@ -861,7 +835,7 @@ osmdb_index_gatherNode(osmdb_index_t* self,
 static int
 osmdb_index_gatherWay(osmdb_index_t* self,
                       xml_ostream_t* os,
-                      double id, int zoom,
+                      double id,
                       a3d_hashmap_t* hash_nodes,
                       a3d_hashmap_t* hash_ways)
 {
@@ -878,29 +852,10 @@ osmdb_index_gatherWay(osmdb_index_t* self,
 		return 1;
 	}
 
-	int type;
-	if(zoom == 8)
-	{
-		type = OSMDB_TYPE_WAY8;
-	}
-	else if(zoom == 11)
-	{
-		type = OSMDB_TYPE_WAY11;
-	}
-	else if(zoom == 14)
-	{
-		type = OSMDB_TYPE_WAY14;
-	}
-	else
-	{
-		LOGE("invalid zoom=%i", zoom);
-		return 0;
-	}
-
 	// way may not exist due to osmosis
 	osmdb_way_t* way;
 	way = (osmdb_way_t*)
-	      osmdb_index_find(self, type, id);
+	      osmdb_index_find(self, OSMDB_TYPE_WAY, id);
 	if(way == NULL)
 	{
 		return 1;
@@ -934,7 +889,7 @@ osmdb_index_gatherWay(osmdb_index_t* self,
 static int
 osmdb_index_fetchWay(osmdb_index_t* self,
                      xml_ostream_t* os,
-                     double id, int zoom,
+                     double id,
                      a3d_hashmap_t* hash_nodes,
                      a3d_hashmap_t* hash_ways,
                      a3d_hashmap_t* hash_ways_join,
@@ -955,29 +910,10 @@ osmdb_index_fetchWay(osmdb_index_t* self,
 		return 1;
 	}
 
-	int type;
-	if(zoom == 8)
-	{
-		type = OSMDB_TYPE_WAY8;
-	}
-	else if(zoom == 11)
-	{
-		type = OSMDB_TYPE_WAY11;
-	}
-	else if(zoom == 14)
-	{
-		type = OSMDB_TYPE_WAY14;
-	}
-	else
-	{
-		LOGE("invalid zoom=%i", zoom);
-		return 0;
-	}
-
 	// way may not exist due to osmosis
 	osmdb_way_t* way;
 	way = (osmdb_way_t*)
-	      osmdb_index_find(self, type, id);
+	      osmdb_index_find(self, OSMDB_TYPE_WAY, id);
 	if(way == NULL)
 	{
 		return 1;
@@ -1183,7 +1119,7 @@ osmdb_index_gatherRelation(osmdb_index_t* self,
 	// relation may not exist due to osmosis
 	osmdb_relation_t* relation;
 	relation = (osmdb_relation_t*)
-	           osmdb_index_find(self, OSMDB_TYPE_TMPRELATION, id);
+	           osmdb_index_find(self, OSMDB_TYPE_RELATION, id);
 	if(relation == NULL)
 	{
 		return 1;
@@ -1205,8 +1141,7 @@ osmdb_index_gatherRelation(osmdb_index_t* self,
 		}
 		else if(m->type == OSMDB_TYPE_WAY)
 		{
-			if(osmdb_index_gatherWay(self, os,
-			                         m->ref, zoom,
+			if(osmdb_index_gatherWay(self, os, m->ref,
 			                         hash_nodes,
 			                         hash_ways) == 0)
 			{
@@ -1284,7 +1219,7 @@ osmdb_index_gatherTile(osmdb_index_t* self,
 	{
 		double ref = strtod(a3d_hashmap_key(iter), NULL);
 
-		if(osmdb_index_fetchWay(self, os, ref, zoom,
+		if(osmdb_index_fetchWay(self, os, ref,
 		                        hash_nodes, hash_ways,
 		                        hash_ways_join,
 		                        mm_nds_join) == 0)
@@ -1576,7 +1511,53 @@ osmdb_index_sampleWay(osmdb_index_t* self,
 	return 0;
 }
 
-static int
+static void
+osmdb_index_rangeWay(osmdb_index_t* self,
+                     osmdb_way_t* way,
+                     int center,
+                     osmdb_range_t* range)
+{
+	assert(self);
+	assert(way);
+	assert(range);
+
+	osmdb_range_init(range);
+
+	a3d_listitem_t* iter = a3d_list_head(way->nds);
+	while(iter)
+	{
+		double* ref = (double*)
+		              a3d_list_peekitem(iter);
+
+		osmdb_node_t* node;
+		node = (osmdb_node_t*)
+		       osmdb_index_find(self,
+		                        OSMDB_TYPE_NODE,
+		                        *ref);
+		if(node == NULL)
+		{
+			if(center)
+			{
+				node = (osmdb_node_t*)
+				       osmdb_index_find(self,
+				                        OSMDB_TYPE_CTRNODE,
+				                        *ref);
+			}
+
+			if(node == NULL)
+			{
+				iter = a3d_list_next(iter);
+				continue;
+			}
+		}
+
+		osmdb_range_addPt(range, node->lat, node->lon);
+
+		iter = a3d_list_next(iter);
+	}
+}
+
+static void
 osmdb_index_rangeRelation(osmdb_index_t* self,
                           osmdb_relation_t* relation,
                           int center,
@@ -1599,7 +1580,7 @@ osmdb_index_rangeRelation(osmdb_index_t* self,
 			osmdb_way_t* way;
 			way = (osmdb_way_t*)
 			       osmdb_index_find(self,
-			                        OSMDB_TYPE_WAY14,
+			                        OSMDB_TYPE_WAY,
 			                        m->ref);
 			if(way == NULL)
 			{
@@ -1620,19 +1601,28 @@ osmdb_index_rangeRelation(osmdb_index_t* self,
 			                        m->ref);
 			if(node == NULL)
 			{
-				iter = a3d_list_next(iter);
-				continue;
+				if(center)
+				{
+					node = (osmdb_node_t*)
+					       osmdb_index_find(self,
+					                        OSMDB_TYPE_CTRNODE,
+					                        m->ref);
+				}
+
+				if(node == NULL)
+				{
+					iter = a3d_list_next(iter);
+					continue;
+				}
 			}
 
 			osmdb_range_init(range);
 			osmdb_range_addPt(range, node->lat, node->lon);
-			return 1;
+			return;
 		}
 
 		iter = a3d_list_next(iter);
 	}
-
-	return 1;
 }
 
 /***********************************************************
@@ -1663,10 +1653,22 @@ osmdb_index_t* osmdb_index_new(const char* base)
 		goto fail_nodes;
 	}
 
+	self->hash_ways = a3d_hashmap_new();
+	if(self->hash_ways == NULL)
+	{
+		goto fail_ways;
+	}
+
 	self->hash_relations = a3d_hashmap_new();
 	if(self->hash_relations == NULL)
 	{
 		goto fail_relations;
+	}
+
+	self->hash_ctrnodes = a3d_hashmap_new();
+	if(self->hash_ctrnodes == NULL)
+	{
+		goto fail_ctrnodes;
 	}
 
 	self->hash_noderefs = a3d_hashmap_new();
@@ -1681,36 +1683,6 @@ osmdb_index_t* osmdb_index_new(const char* base)
 		goto fail_wayrefs;
 	}
 
-	self->hash_ctrnodes = a3d_hashmap_new();
-	if(self->hash_ctrnodes == NULL)
-	{
-		goto fail_ctrnodes;
-	}
-
-	self->hash_tmpways = a3d_hashmap_new();
-	if(self->hash_tmpways == NULL)
-	{
-		goto fail_tmpways;
-	}
-
-	self->hash_ctrways = a3d_hashmap_new();
-	if(self->hash_ctrways == NULL)
-	{
-		goto fail_ctrways;
-	}
-
-	self->hash_tmprelations = a3d_hashmap_new();
-	if(self->hash_tmprelations == NULL)
-	{
-		goto fail_tmprelations;
-	}
-
-	self->hash_ctrrelations = a3d_hashmap_new();
-	if(self->hash_ctrrelations == NULL)
-	{
-		goto fail_ctrrelations;
-	}
-
 	self->hash_ctrnoderefs = a3d_hashmap_new();
 	if(self->hash_ctrnoderefs == NULL)
 	{
@@ -1721,30 +1693,6 @@ osmdb_index_t* osmdb_index_new(const char* base)
 	if(self->hash_ctrwayrefs == NULL)
 	{
 		goto fail_ctrwayrefs;
-	}
-
-	self->hash_ctrrelationrefs = a3d_hashmap_new();
-	if(self->hash_ctrrelationrefs == NULL)
-	{
-		goto fail_ctrrelationrefs;
-	}
-
-	self->hash_ways8 = a3d_hashmap_new();
-	if(self->hash_ways8 == NULL)
-	{
-		goto fail_ways8;
-	}
-
-	self->hash_ways11 = a3d_hashmap_new();
-	if(self->hash_ways11 == NULL)
-	{
-		goto fail_ways11;
-	}
-
-	self->hash_ways14 = a3d_hashmap_new();
-	if(self->hash_ways14 == NULL)
-	{
-		goto fail_ways14;
 	}
 
 	self->tiles = a3d_list_new();
@@ -1804,34 +1752,20 @@ osmdb_index_t* osmdb_index_new(const char* base)
 	fail_hash_tiles:
 		a3d_list_delete(&self->tiles);
 	fail_tiles:
-		a3d_hashmap_delete(&self->hash_ways14);
-	fail_ways14:
-		a3d_hashmap_delete(&self->hash_ways11);
-	fail_ways11:
-		a3d_hashmap_delete(&self->hash_ways8);
-	fail_ways8:
-		a3d_hashmap_delete(&self->hash_ctrrelationrefs);
-	fail_ctrrelationrefs:
 		a3d_hashmap_delete(&self->hash_ctrwayrefs);
 	fail_ctrwayrefs:
 		a3d_hashmap_delete(&self->hash_ctrnoderefs);
 	fail_ctrnoderefs:
-		a3d_hashmap_delete(&self->hash_ctrrelations);
-	fail_ctrrelations:
-		a3d_hashmap_delete(&self->hash_tmprelations);
-	fail_tmprelations:
-		a3d_hashmap_delete(&self->hash_ctrways);
-	fail_ctrways:
-		a3d_hashmap_delete(&self->hash_tmpways);
-	fail_tmpways:
-		a3d_hashmap_delete(&self->hash_ctrnodes);
-	fail_ctrnodes:
 		a3d_hashmap_delete(&self->hash_wayrefs);
 	fail_wayrefs:
 		a3d_hashmap_delete(&self->hash_noderefs);
 	fail_noderefs:
+		a3d_hashmap_delete(&self->hash_ctrnodes);
+	fail_ctrnodes:
 		a3d_hashmap_delete(&self->hash_relations);
 	fail_relations:
+		a3d_hashmap_delete(&self->hash_ways);
+	fail_ways:
 		a3d_hashmap_delete(&self->hash_nodes);
 	fail_nodes:
 		a3d_list_delete(&self->chunks);
@@ -1853,20 +1787,13 @@ int osmdb_index_delete(osmdb_index_t** _self)
 		osmdb_index_trimTiles(self, 0);
 		a3d_hashmap_delete(&self->hash_tiles);
 		a3d_list_delete(&self->tiles);
-		a3d_hashmap_delete(&self->hash_ways14);
-		a3d_hashmap_delete(&self->hash_ways11);
-		a3d_hashmap_delete(&self->hash_ways8);
-		a3d_hashmap_delete(&self->hash_ctrrelationrefs);
 		a3d_hashmap_delete(&self->hash_ctrwayrefs);
 		a3d_hashmap_delete(&self->hash_ctrnoderefs);
-		a3d_hashmap_delete(&self->hash_ctrrelations);
-		a3d_hashmap_delete(&self->hash_tmprelations);
-		a3d_hashmap_delete(&self->hash_ctrways);
-		a3d_hashmap_delete(&self->hash_tmpways);
-		a3d_hashmap_delete(&self->hash_ctrnodes);
 		a3d_hashmap_delete(&self->hash_wayrefs);
 		a3d_hashmap_delete(&self->hash_noderefs);
+		a3d_hashmap_delete(&self->hash_ctrnodes);
 		a3d_hashmap_delete(&self->hash_relations);
+		a3d_hashmap_delete(&self->hash_ways);
 		a3d_hashmap_delete(&self->hash_nodes);
 		a3d_list_delete(&self->chunks);
 		err = self->err;
@@ -1912,12 +1839,26 @@ int osmdb_index_addChunk(osmdb_index_t* self,
 		id    = node->id;
 		dsize = osmdb_node_size(node);
 	}
+	else if(type == OSMDB_TYPE_WAY)
+	{
+		way   = (osmdb_way_t*) data;
+		hash  = self->hash_ways;
+		id    = way->id;
+		dsize = osmdb_way_size(way);
+	}
 	else if(type == OSMDB_TYPE_RELATION)
 	{
 		relation = (osmdb_relation_t*) data;
 		hash     = self->hash_relations;
 		id       = relation->id;
 		dsize    = osmdb_relation_size(relation);
+	}
+	else if(type == OSMDB_TYPE_CTRNODE)
+	{
+		node = (osmdb_node_t*) data;
+		hash = self->hash_ctrnodes;
+		id   = node->id;
+		dsize = osmdb_node_size(node);
 	}
 	else if(type == OSMDB_TYPE_NODEREF)
 	{
@@ -1933,41 +1874,6 @@ int osmdb_index_addChunk(osmdb_index_t* self,
 		id    = *ref;
 		dsize = (int) sizeof(double);
 	}
-	else if(type == OSMDB_TYPE_CTRNODE)
-	{
-		node = (osmdb_node_t*) data;
-		hash = self->hash_ctrnodes;
-		id   = node->id;
-		dsize = osmdb_node_size(node);
-	}
-	else if(type == OSMDB_TYPE_TMPWAY)
-	{
-		way   = (osmdb_way_t*) data;
-		hash  = self->hash_tmpways;
-		id    = way->id;
-		dsize = osmdb_way_size(way);
-	}
-	else if(type == OSMDB_TYPE_CTRWAY)
-	{
-		way   = (osmdb_way_t*) data;
-		hash  = self->hash_ctrways;
-		id    = way->id;
-		dsize = osmdb_way_size(way);
-	}
-	else if(type == OSMDB_TYPE_TMPRELATION)
-	{
-		relation = (osmdb_relation_t*) data;
-		hash     = self->hash_tmprelations;
-		id       = relation->id;
-		dsize    = osmdb_relation_size(relation);
-	}
-	else if(type == OSMDB_TYPE_CTRRELATION)
-	{
-		relation = (osmdb_relation_t*) data;
-		hash     = self->hash_ctrrelations;
-		id       = relation->id;
-		dsize    = osmdb_relation_size(relation);
-	}
 	else if(type == OSMDB_TYPE_CTRNODEREF)
 	{
 		ref   = (double*) data;
@@ -1981,34 +1887,6 @@ int osmdb_index_addChunk(osmdb_index_t* self,
 		hash  = self->hash_ctrwayrefs;
 		id    = *ref;
 		dsize = (int) sizeof(double);
-	}
-	else if(type == OSMDB_TYPE_CTRRELATIONREF)
-	{
-		ref   = (double*) data;
-		hash  = self->hash_ctrrelationrefs;
-		id    = *ref;
-		dsize = (int) sizeof(double);
-	}
-	else if(type == OSMDB_TYPE_WAY8)
-	{
-		way   = (osmdb_way_t*) data;
-		hash  = self->hash_ways8;
-		id    = way->id;
-		dsize = osmdb_way_size(way);
-	}
-	else if(type == OSMDB_TYPE_WAY11)
-	{
-		way   = (osmdb_way_t*) data;
-		hash  = self->hash_ways11;
-		id    = way->id;
-		dsize = osmdb_way_size(way);
-	}
-	else if(type == OSMDB_TYPE_WAY14)
-	{
-		way   = (osmdb_way_t*) data;
-		hash  = self->hash_ways14;
-		id    = way->id;
-		dsize = osmdb_way_size(way);
 	}
 	else
 	{
@@ -2027,25 +1905,18 @@ int osmdb_index_addChunk(osmdb_index_t* self,
 		{
 			osmdb_node_delete(&node);
 		}
-		else if((type == OSMDB_TYPE_WAY8)   ||
-		        (type == OSMDB_TYPE_WAY11)  ||
-		        (type == OSMDB_TYPE_WAY14)  ||
-		        (type == OSMDB_TYPE_TMPWAY) ||
-		        (type == OSMDB_TYPE_CTRWAY))
+		else if(type == OSMDB_TYPE_WAY)
 		{
 			osmdb_way_delete(&way);
 		}
-		else if((type == OSMDB_TYPE_RELATION)    ||
-		        (type == OSMDB_TYPE_TMPRELATION) ||
-		        (type == OSMDB_TYPE_CTRRELATION))
+		else if(type == OSMDB_TYPE_RELATION)
 		{
 			osmdb_relation_delete(&relation);
 		}
 		else if((type == OSMDB_TYPE_NODEREF)    ||
 		        (type == OSMDB_TYPE_CTRNODEREF) ||
 		        (type == OSMDB_TYPE_WAYREF)     ||
-		        (type == OSMDB_TYPE_CTRWAYREF)  ||
-		        (type == OSMDB_TYPE_CTRRELATIONREF))
+		        (type == OSMDB_TYPE_CTRWAYREF))
 		{
 			free(ref);
 		}
@@ -2094,37 +1965,38 @@ int osmdb_index_addChunk(osmdb_index_t* self,
 }
 
 int osmdb_index_addNode(osmdb_index_t* self,
-                        int zoom,
+                        int zoom, int center,
+                        int selected,
                         osmdb_node_t* node)
 {
 	assert(self);
 	assert(node);
 
-	if(osmdb_index_addChunk(self,
-	                        OSMDB_TYPE_NODE,
-	                        (const void*) node) == 0)
+	if(selected)
 	{
-		return 0;
+		osmdb_range_t range;
+		osmdb_range_init(&range);
+		osmdb_range_addPt(&range, node->lat, node->lon);
+
+		if(osmdb_index_addTile(self, &range, zoom,
+		                       OSMDB_TYPE_NODE, node->id) == 0)
+		{
+			return 0;
+		}
 	}
 
-	// check if node was selected for tiling
-	if(zoom == -1)
+	if(center)
 	{
-		return 1;
+		return osmdb_index_addChunk(self,
+		                            OSMDB_TYPE_CTRNODE,
+		                            (const void*) node);
 	}
-
-	osmdb_range_t range;
-	osmdb_range_init(&range);
-	osmdb_range_addPt(&range, node->lat, node->lon);
-
-	if(osmdb_index_addTile(self, &range, zoom,
-	                       OSMDB_TYPE_NODE, node->id) == 0)
+	else
 	{
-		// see error flag since node already added
-		self->err = 1;
+		return osmdb_index_addChunk(self,
+		                            OSMDB_TYPE_NODE,
+		                            (const void*) node);
 	}
-
-	return 1;
 }
 
 int osmdb_index_addWay(osmdb_index_t* self,
@@ -2136,48 +2008,19 @@ int osmdb_index_addWay(osmdb_index_t* self,
 	assert(self);
 	assert(way);
 
-	osmdb_range_t range;
-
-	osmdb_way_t* way8  = NULL;
-	osmdb_way_t* way11 = NULL;
-	osmdb_way_t* way14 = NULL;
-	if(osmdb_index_sampleWay(self, way, center, &range,
-	                         &way8, &way11, &way14) == 0)
-	{
-		return 0;
-	}
-
 	// discard any ways w/o any points
+	osmdb_range_t range;
+	osmdb_index_rangeWay(self, way, center, &range);
 	if(range.pts == 0)
 	{
-		osmdb_way_delete(&way8);
-		osmdb_way_delete(&way11);
-		osmdb_way_delete(&way14);
+		osmdb_way_delete(&way);
 		return 1;
 	}
+	osmdb_way_updateRange(way, &range);
 
-	if(osmdb_index_addChunk(self, OSMDB_TYPE_WAY8,
-	                        (const void*) way8) == 0)
+	if(center)
 	{
-		osmdb_way_delete(&way8);
-		osmdb_way_delete(&way11);
-		osmdb_way_delete(&way14);
-		return 0;
-	}
-
-	if(osmdb_index_addChunk(self, OSMDB_TYPE_WAY11,
-	                        (const void*) way11) == 0)
-	{
-		osmdb_way_delete(&way11);
-		osmdb_way_delete(&way14);
-		return 0;
-	}
-
-	if(osmdb_index_addChunk(self, OSMDB_TYPE_WAY14,
-	                        (const void*) way14) == 0)
-	{
-		osmdb_way_delete(&way14);
-		return 0;
+		osmdb_way_discardNds(way);
 	}
 
 	if(selected)
@@ -2189,66 +2032,42 @@ int osmdb_index_addWay(osmdb_index_t* self,
 		}
 	}
 
-	return 1;
+	return osmdb_index_addChunk(self, OSMDB_TYPE_WAY,
+	                            (const void*) way);
 }
 
 int osmdb_index_addRelation(osmdb_index_t* self,
-                            int zoom,
-                            int selected,
-                            int center,
+                            int zoom, int center,
                             osmdb_relation_t* relation)
 {
 	assert(self);
 	assert(relation);
 
+	// discard relations w/o any points
 	osmdb_range_t range;
-	if(osmdb_index_rangeRelation(self, relation,
-	                             center, &range) == 0)
-	{
-		return 0;
-	}
-
-	// discard any relations w/o any points
+	osmdb_index_rangeRelation(self, relation,
+	                          center, &range);
 	if(range.pts == 0)
 	{
+		osmdb_relation_delete(&relation);
 		return 1;
 	}
+	osmdb_relation_updateRange(relation, &range);
 
-	osmdb_relation_t* r = NULL;
 	if(center)
 	{
-		r = osmdb_relation_copyEmpty(relation);
-	}
-	else
-	{
-		r = osmdb_relation_copy(relation);
+		osmdb_relation_discardMembers(relation);
 	}
 
-	if(r == NULL)
+	if(osmdb_index_addTile(self, &range, zoom,
+	                       OSMDB_TYPE_RELATION,
+	                       relation->id) == 0)
 	{
 		return 0;
 	}
 
-	osmdb_relation_updateRange(r, &range);
-
-	if(osmdb_index_addChunk(self, OSMDB_TYPE_RELATION,
-	                        (const void*) r) == 0)
-	{
-		osmdb_relation_delete(&r);
-		return 0;
-	}
-
-	if(selected)
-	{
-		if(osmdb_index_addTile(self, &range, zoom,
-		                       OSMDB_TYPE_RELATION,
-		                       relation->id) == 0)
-		{
-			return 0;
-		}
-	}
-
-	return 1;
+	return osmdb_index_addChunk(self, OSMDB_TYPE_RELATION,
+	                            (const void*) relation);
 }
 
 int osmdb_index_makeTile(osmdb_index_t* self,

@@ -280,14 +280,7 @@ void osmdb_relation_delete(osmdb_relation_t** _self)
 	osmdb_relation_t* self = *_self;
 	if(self)
 	{
-		a3d_listitem_t* iter = a3d_list_head(self->members);
-		while(iter)
-		{
-			osmdb_member_t* m = (osmdb_member_t*)
-			                    a3d_list_remove(self->members, &iter);
-			free(m);
-		}
-
+		osmdb_relation_discardMembers(self);
 		a3d_list_delete(&self->members);
 		free(self->name);
 		free(self->abrev);
@@ -502,4 +495,18 @@ int osmdb_relation_copyMember(osmdb_relation_t* self,
 	fail_append:
 		free(m);
 	return 0;
+}
+
+void osmdb_relation_discardMembers(osmdb_relation_t* self)
+{
+	assert(self);
+
+	a3d_listitem_t* iter = a3d_list_head(self->members);
+	while(iter)
+	{
+		osmdb_member_t* m;
+		m = (osmdb_member_t*)
+		    a3d_list_remove(self->members, &iter);
+		free(m);
+	}
 }

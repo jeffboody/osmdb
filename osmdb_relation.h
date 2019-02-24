@@ -67,5 +67,6 @@ void              osmdb_relation_updateRange(osmdb_relation_t* self,
                                              osmdb_range_t* range);
 int               osmdb_relation_copyMember(osmdb_relation_t* self,
                                             osmdb_member_t* member);
+void              osmdb_relation_discardMembers(osmdb_relation_t* self);
 
 #endif

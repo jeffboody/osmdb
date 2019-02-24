@@ -661,7 +661,7 @@
 	<select class="place:town"                     zoom="14" flags="named,center" />
 	<select class="place:village"                  zoom="14" flags="named,center" />
 	<select class="place:hamlet"                   zoom="14" flags="named,center" />
-	<select class="place:continent"                zoom="0"  flags="named,center" />
+	<select class="place:continent"                zoom="5"  flags="named,center" />
 	<select class="place:island"                   zoom="8"  flags="named,center" />
 	<select class="place:islet"                    zoom="11" flags="named,center" />
 	<select class="place:locality"                 zoom="14" flags="named,center" />

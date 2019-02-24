@@ -66,5 +66,6 @@ int          osmdb_way_ref(osmdb_way_t* self,
                            double ref);
 int          osmdb_way_join(osmdb_way_t* a, osmdb_way_t* b,
                             double ref1, double* ref2);
+void         osmdb_way_discardNds(osmdb_way_t* self);
 
 #endif

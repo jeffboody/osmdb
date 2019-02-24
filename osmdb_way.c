@@ -339,14 +339,7 @@ void osmdb_way_delete(osmdb_way_t** _self)
 	osmdb_way_t* self = *_self;
 	if(self)
 	{
-		a3d_listitem_t* iter = a3d_list_head(self->nds);
-		while(iter)
-		{
-			double* ref = (double*)
-			              a3d_list_remove(self->nds, &iter);
-			free(ref);
-		}
-
+		osmdb_way_discardNds(self);
 		a3d_list_delete(&self->nds);
 		free(self->name);
 		free(self->abrev);
@@ -667,4 +660,17 @@ int osmdb_way_join(osmdb_way_t* a, osmdb_way_t* b,
 	}
 
 	return 1;
+}
+
+void osmdb_way_discardNds(osmdb_way_t* self)
+{
+	assert(self);
+
+	a3d_listitem_t* iter = a3d_list_head(self->nds);
+	while(iter)
+	{
+		double* ref = (double*)
+		              a3d_list_remove(self->nds, &iter);
+		free(ref);
+	}
 }
