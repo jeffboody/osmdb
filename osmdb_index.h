@@ -117,10 +117,14 @@ typedef struct osmdb_index_s
 	double stats_tile_load_dt;
 	double stats_tile_trim;
 	double stats_tile_trim_dt;
-	double stats_sample_way8;
-	double stats_sample_way11;
-	double stats_sample_way14;
-	double stats_sample_ways;
+	double stats_sample_way8_sample;
+	double stats_sample_way8_total;
+	double stats_sample_way11_sample;
+	double stats_sample_way11_total;
+	double stats_sample_way14_sample;
+	double stats_sample_way14_total;
+	double stats_clip_unclipped;
+	double stats_clip_clipped;
 } osmdb_index_t;
 
 osmdb_index_t*     osmdb_index_new(const char* base);

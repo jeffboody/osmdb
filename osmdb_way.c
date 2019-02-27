@@ -24,6 +24,10 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include "../a3d/a3d_unit.h"
+#include "../a3d/math/a3d_vec2f.h"
+#include "../terrain/terrain_util.h"
+#include "osmdb_index.h"
 #include "osmdb_way.h"
 #include "osmdb_util.h"
 
@@ -529,10 +533,12 @@ int osmdb_way_ref(osmdb_way_t* self,
 }
 
 int osmdb_way_join(osmdb_way_t* a, osmdb_way_t* b,
-                   double ref1, double* ref2)
+                   double ref1, double* ref2,
+                   struct osmdb_index_s* index)
 {
 	assert(a);
 	assert(b);
+	assert(index);
 
 	// don't join a way with itself
 	if(a == b)
@@ -567,30 +573,82 @@ int osmdb_way_join(osmdb_way_t* a, osmdb_way_t* b,
 	// check if ref1 is included in both ways and that
 	// they can be joined head to tail
 	int append;
+	double* refp;
+	double* refn;
+	a3d_listitem_t* next;
+	a3d_listitem_t* prev;
 	if((ref1 == *refa1) && (ref1 == *refb2))
 	{
 		append = 0;
 		*ref2  = *refb1;
+
+		prev = a3d_list_next(a3d_list_head(a->nds));
+		next = a3d_list_prev(a3d_list_tail(b->nds));
+		refp = (double*)
+		       a3d_list_peekitem(prev);
+		refn = (double*)
+		       a3d_list_peekitem(next);
 	}
 	else if((ref1 == *refa2) && (ref1 == *refb1))
 	{
 		append = 1;
 		*ref2  = *refb2;
+
+		prev = a3d_list_prev(a3d_list_tail(a->nds));
+		next = a3d_list_next(a3d_list_head(b->nds));
+		refp = (double*)
+		       a3d_list_peekitem(prev);
+		refn = (double*)
+		       a3d_list_peekitem(next);
 	}
 	else
 	{
 		return 0;
 	}
 
+	// identify the nodes to be joined
+	osmdb_node_t* node0;
+	osmdb_node_t* node1;
+	osmdb_node_t* node2;
+	node0 = (osmdb_node_t*)
+	        osmdb_index_find(index, OSMDB_TYPE_NODE, *refp);
+	node1 = (osmdb_node_t*)
+	        osmdb_index_find(index, OSMDB_TYPE_NODE, ref1);
+	node2 = (osmdb_node_t*)
+	        osmdb_index_find(index, OSMDB_TYPE_NODE, *refn);
+	if((node0 == NULL) || (node1 == NULL) || (node2 == NULL))
+	{
+		return 0;
+	}
+
+	// check join angle to prevent joining ways
+	// at a sharp angle since this causes weird
+	// rendering artifacts
+	a3d_vec2f_t p0;
+	a3d_vec2f_t p1;
+	a3d_vec2f_t p2;
+	a3d_vec2f_t v01;
+	a3d_vec2f_t v12;
+	terrain_coord2xy(node0->lat, node0->lon,
+	                 &p0.x,  &p0.y);
+	terrain_coord2xy(node1->lat, node1->lon,
+	                 &p1.x,  &p1.y);
+	terrain_coord2xy(node2->lat, node2->lon,
+	                 &p2.x,  &p2.y);
+	a3d_vec2f_subv_copy(&p1, &p0, &v01);
+	a3d_vec2f_subv_copy(&p2, &p1, &v12);
+	a3d_vec2f_normalize(&v01);
+	a3d_vec2f_normalize(&v12);
+	float dot = a3d_vec2f_dot(&v01, &v12);
+	if(dot < cosf(a3d_deg2rad(30.0f)))
+	{
+		return 0;
+	}
+
 	// check way attributes
-	// disallow oneway roads since they intersect at sharp
-	// angles when pointing the opposite directions which
-	// is a difficult case to detect and causes line drawing
-	// artifacts
 	if((a->class   != b->class)  ||
 	   (a->layer   != b->layer)  ||
-	   (a->oneway  != 0)         ||
-	   (b->oneway  != 0)         ||
+	   (a->oneway  != b->oneway) ||
 	   (a->bridge  != b->bridge) ||
 	   (a->tunnel  != b->tunnel) ||
 	   (a->cutting != b->cutting))

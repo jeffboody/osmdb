@@ -28,6 +28,8 @@
 #include "../libxmlstream/xml_ostream.h"
 #include "osmdb_range.h"
 
+struct osmdb_index_s;
+
 typedef struct
 {
 	int    refcount;
@@ -65,7 +67,8 @@ void         osmdb_way_updateRange(osmdb_way_t* self,
 int          osmdb_way_ref(osmdb_way_t* self,
                            double ref);
 int          osmdb_way_join(osmdb_way_t* a, osmdb_way_t* b,
-                            double ref1, double* ref2);
+                            double ref1, double* ref2,
+                            struct osmdb_index_s* index);
 void         osmdb_way_discardNds(osmdb_way_t* self);
 
 #endif

@@ -36,5 +36,8 @@ typedef struct
 void osmdb_range_init(osmdb_range_t* self);
 void osmdb_range_addPt(osmdb_range_t* self,
                        double lat, double lon);
+int  osmdb_range_clip(osmdb_range_t* self,
+                      double latT, double lonL,
+                      double latB, double lonR);
 
 #endif

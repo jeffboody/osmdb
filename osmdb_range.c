@@ -79,3 +79,25 @@ void osmdb_range_addPt(osmdb_range_t* self,
 	}
 	++self->pts;
 }
+
+int osmdb_range_clip(osmdb_range_t* self,
+                     double latT, double lonL,
+                     double latB, double lonR)
+{
+	assert(self);
+
+	if(self->pts == 0)
+	{
+		return 1;
+	}
+
+	if((self->latT < latB) ||
+	   (self->latB > latT) ||
+	   (self->lonL > lonR) ||
+	   (self->lonR < lonL))
+	{
+		return 1;
+	}
+
+	return 0;
+}
