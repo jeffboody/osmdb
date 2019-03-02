@@ -183,9 +183,7 @@ int main(int argc, const char** argv)
 	path_terrain = argv[1];
 
 	osmdb_index_t* index;
-	char path_index[256];
-	snprintf(path_index, 256, "%s-index", argv[2]);
-	index = osmdb_index_new(path_index);
+	index = osmdb_index_new(argv[2]);
 	if(index == NULL)
 	{
 		goto fail_index;

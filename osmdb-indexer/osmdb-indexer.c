@@ -484,17 +484,15 @@ int main(int argc, char** argv)
 		LOGE("%s [filter.xml] [prefix]", argv[0]);
 		return EXIT_FAILURE;
 	}
+	const char* fname_filter = argv[1];
+	const char* prefix       = argv[2];
 
-	char path_index[256];
 	char fname_nodes[256];
 	char fname_ways[256];
 	char fname_relations[256];
-	char fname_filter[256];
-	snprintf(path_index, 256, "%s-index", argv[2]);
-	snprintf(fname_nodes, 256, "%s-nodes.xml.gz", argv[2]);
-	snprintf(fname_ways, 256, "%s-ways.xml.gz", argv[2]);
-	snprintf(fname_relations, 256, "%s-relations.xml.gz", argv[2]);
-	snprintf(fname_filter, 256, "%s", argv[1]);
+	snprintf(fname_nodes, 256, "%s-nodes.xml.gz", prefix);
+	snprintf(fname_ways, 256, "%s-ways.xml.gz", prefix);
+	snprintf(fname_relations, 256, "%s-relations.xml.gz", prefix);
 
 	osmdb_filter_t* filter = osmdb_filter_new(fname_filter);
 	if(filter == NULL)
@@ -502,7 +500,7 @@ int main(int argc, char** argv)
 		return EXIT_FAILURE;
 	}
 
-	osmdb_index_t* index = osmdb_index_new(path_index);
+	osmdb_index_t* index = osmdb_index_new(prefix);
 	if(index == NULL)
 	{
 		goto fail_index;
@@ -523,14 +521,14 @@ int main(int argc, char** argv)
 	char path_wayref[256];
 	char path_ctrnoderef[256];
 	char path_ctrwayref[256];
-	osmdb_chunk_path(path_index, OSMDB_TYPE_NODE, path_node);
-	osmdb_chunk_path(path_index, OSMDB_TYPE_WAY, path_way);
-	osmdb_chunk_path(path_index, OSMDB_TYPE_RELATION, path_relation);
-	osmdb_chunk_path(path_index, OSMDB_TYPE_CTRNODE, path_ctrnode);
-	osmdb_chunk_path(path_index, OSMDB_TYPE_NODEREF, path_noderef);
-	osmdb_chunk_path(path_index, OSMDB_TYPE_WAYREF, path_wayref);
-	osmdb_chunk_path(path_index, OSMDB_TYPE_CTRNODEREF, path_ctrnoderef);
-	osmdb_chunk_path(path_index, OSMDB_TYPE_CTRWAYREF, path_ctrwayref);
+	osmdb_chunk_path(prefix, OSMDB_TYPE_NODE, path_node);
+	osmdb_chunk_path(prefix, OSMDB_TYPE_WAY, path_way);
+	osmdb_chunk_path(prefix, OSMDB_TYPE_RELATION, path_relation);
+	osmdb_chunk_path(prefix, OSMDB_TYPE_CTRNODE, path_ctrnode);
+	osmdb_chunk_path(prefix, OSMDB_TYPE_NODEREF, path_noderef);
+	osmdb_chunk_path(prefix, OSMDB_TYPE_WAYREF, path_wayref);
+	osmdb_chunk_path(prefix, OSMDB_TYPE_CTRNODEREF, path_ctrnoderef);
+	osmdb_chunk_path(prefix, OSMDB_TYPE_CTRWAYREF, path_ctrwayref);
 	if((osmdb_mkdir(path_node)       == 0) ||
 	   (osmdb_mkdir(path_way)        == 0) ||
 	   (osmdb_mkdir(path_relation)   == 0) ||
