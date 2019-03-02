@@ -129,6 +129,7 @@
 	<class name="highway:secondary"      layer="secondary"   point="default" line="secondary" />
 	<class name="highway:tertiary"       layer="tertiary"    point="default" line="tertiary" />
 	<class name="highway:unclassified"   layer="residential" point="default" line="road" />
+	<class name="highway:service"        layer="residential" point="default" line="road" />
 	<class name="highway:residential"    layer="residential" point="default" line="road" />
 	<class name="highway:motorway_link"  layer="link"        line="motorway_link" />
 	<class name="highway:trunk_link"     layer="link"        line="trunk_link" />

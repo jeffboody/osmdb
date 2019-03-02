@@ -389,11 +389,11 @@
 	<select class="highway:rest_area"                zoom="14" />
 	<select class="highway:services"                 zoom="14" />
 	<select class="highway:turning_circle"           zoom="14" />
+	<select class="highway:service"                  zoom="14" flags="named"/>
 	<!-- DISCARD HIGHWAY
 		<select class="highway:stop" />
 		<select class="highway:traffic_signals" />
 		<select class="highway:crossing" />
-		<select class="highway:service" />
 		<select class="highway:street_lamp" />
 		<select class="highway:speed_camera" />
 		<select class="highway:emergency_access_point" />
