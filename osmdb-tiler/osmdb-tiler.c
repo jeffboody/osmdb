@@ -61,6 +61,11 @@ static int osmdb_makeTile(osmdb_index_t* index,
 	snprintf(gzname, 256, "%s/osmdb/%i/%i/%i.xml.gz",
 	         index->base, zoom, x, y);
 
+	if(osmdb_fileExists(gzname))
+	{
+		return 1;
+	}
+
 	if(osmdb_mkdir(gzname) == 0)
 	{
 		return 0;
