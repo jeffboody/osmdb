@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <math.h>
 #include "../a3d/a3d_unit.h"
 #include "../a3d/math/a3d_vec2f.h"
 #include "../terrain/terrain_util.h"

@@ -16,10 +16,14 @@ add_library(osmdb
             osmdb_node.c
             osmdb_way.c
             osmdb_relation.c
-            osmdb_tile.c)
+            osmdb_tile.c
+            osmdb_range.c)
 
 # Linking
 target_link_libraries(osmdb
+
+                      # Submodule libraries
+                      a3d
 
                       # NDK libraries
                       log)
