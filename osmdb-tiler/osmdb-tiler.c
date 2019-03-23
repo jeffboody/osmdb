@@ -108,17 +108,17 @@ static int osmdb_makeTileR(osmdb_index_t* index,
 		ret &= osmdb_makeTileR(index, zoom + 1, 2*x + 1, 2*y);
 		return ret;
 	}
-	else if(zoom == 15)
+	else if(zoom > 15)
 	{
 		// end recursion
 		return 1;
 	}
 
 	// make tiles at valid zoom levels
-	if((zoom == 5) ||
-	   (zoom == 8) ||
-	   (zoom == 11) ||
-	   (zoom == 14))
+	if((zoom == 6) ||
+	   (zoom == 9) ||
+	   (zoom == 12) ||
+	   (zoom == 15))
 	{
 		if(osmdb_makeTile(index, zoom, x, y) == 0)
 		{

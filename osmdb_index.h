@@ -67,9 +67,9 @@ typedef struct osmdb_index_s
 	int  size_tiles;
 	int  err;
 
-	float min_dist8;
-	float min_dist11;
-	float min_dist14;
+	float min_dist9;
+	float min_dist12;
+	float min_dist15;
 
 	// LRU cache of chunks
 	a3d_list_t* chunks;
@@ -117,12 +117,12 @@ typedef struct osmdb_index_s
 	double stats_tile_load_dt;
 	double stats_tile_trim;
 	double stats_tile_trim_dt;
-	double stats_sample_way8_sample;
-	double stats_sample_way8_total;
-	double stats_sample_way11_sample;
-	double stats_sample_way11_total;
-	double stats_sample_way14_sample;
-	double stats_sample_way14_total;
+	double stats_sample_way9_sample;
+	double stats_sample_way9_total;
+	double stats_sample_way12_sample;
+	double stats_sample_way12_total;
+	double stats_sample_way15_sample;
+	double stats_sample_way15_total;
 	double stats_clip_unclipped;
 	double stats_clip_clipped;
 } osmdb_index_t;
