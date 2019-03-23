@@ -63,11 +63,6 @@
 	<point name="village"   min_zoom="13" text_color1="white" text_color2="black" marker_color1="city"     marker_color2="white" flags="marker:show" />
 	<point name="water"     min_zoom="14" text_color1="white" text_color2="black" marker_color1="lake"     marker_color2="white" flags="marker:show" />
 	<point name="glacier"   min_zoom="14" text_color1="white" text_color2="black" marker_color1="glacier"  marker_color2="black" flags="marker:show" />
-	<point name="aerodrome" min_zoom="14" text_color1="white" text_color2="black" marker_color1="runway"   marker_color2="white" flags="marker:show" />
-	<point name="college"   min_zoom="14" text_color1="white" text_color2="black" marker_color1="college"  marker_color2="white" flags="marker:show" />
-	<point name="hospital"  min_zoom="14" text_color1="white" text_color2="black" marker_color1="hospital" marker_color2="white" flags="marker:show" />
-	<point name="building"  min_zoom="16" text_color1="white" text_color2="black" marker_color1="brown"    marker_color2="white" flags="marker:show" />
-	<point name="bicycle"   min_zoom="15" text_color1="white" text_color2="black" marker_color1="bicycle"  marker_color2="white" flags="marker:show" />
 	<point name="outdoor"   min_zoom="16" text_color1="white" text_color2="black" marker_color1="outdoor"  marker_color2="white" flags="marker:show" />
 	<point name="forest"    min_zoom="12" text_color1="white" text_color2="black" marker_color1="outdoor"  marker_color2="white" flags="marker:show" />
 	<point name="default"   min_zoom="17" text_color1="white" text_color2="black" />
@@ -118,7 +113,7 @@
 	<class name="aerialway:canopy"       layer="air"         line="aerialway" />
 	<class name="aerialway:station"      layer="building"    poly="brown:halo" />
 	<class name="aeroway:helipad"        layer="helipad"     poly="helipad" />
-	<class name="aeroway:runway"         layer="runway"      point="aerodrome" line="runway" />
+	<class name="aeroway:runway"         layer="runway"      line="runway" />
 	<class name="aeroway:taxilane"       layer="taxiway"     line="taxiway" />
 	<class name="aeroway:taxiway"        layer="taxiway"     line="taxiway" />
 	<class name="aeroway:terminal"       layer="building"    poly="brown:halo" />
@@ -176,27 +171,6 @@
 	<class name="place:city"                 point="city" />
 	<class name="place:town"                 point="town" />
 	<class name="place:village"              point="village" />
-	<class name="aeroway:aerodrome"          point="aerodrome" />
-	<class name="amenity:college"            point="college" />
-	<class name="amenity:university"         point="college" />
-	<class name="amenity:research_institute" point="college" />
-	<class name="amenity:hospital"           point="hospital" />
-	<class name="building:hospital"          point="hospital" />
-	<class name="amenity:planetarium"        point="building" />
-	<class name="amenity:police"             point="building" />
-	<class name="tourism:museum"             point="building" />
-	<class name="tourism:zoo"                point="building" />
-	<class name="building:train_station"     point="building" />
-	<class name="building:transportation"    point="building" />
-	<class name="office:forestry"            point="building" />
-	<class name="leisure:hackerspace"        point="building" />
-	<class name="manmade:telescope"          point="building" />
-	<class name="shop:supermarket"           point="building" />
-	<class name="shop:outdoor"               point="building" />
-	<class name="shop:scuba_diving"          point="building" />
-	<class name="shop:ski"                   point="building" />
-	<class name="shop:sports"                point="building" />
-	<class name="shop:bicycle"               point="bicycle" />
 	<class name="leisure:disc_golf_course"   point="outdoor" />
 	<class name="leisure:dog_park"           point="outdoor" />
 	<class name="leisure:nature_reserve"     point="outdoor" />
