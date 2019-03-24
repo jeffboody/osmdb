@@ -42,30 +42,37 @@
 	<color name="secondary:halo" val="E8EA2F7F" />
 	<color name="tertiary"       val="FDFFA0FF" />
 	<color name="tertiary:halo"  val="FDFFA07F" />
-	<color name="trail"          val="2BA62BFF" />
-	<color name="track"          val="DB9440FF" />
+	<color name="trail:text"     val="F4F6B6FF" />
+	<color name="trail"          val="DAEC5FFF" />
+	<color name="track:text"     val="F6ECE0FF" />
+	<color name="track"          val="E8CFB2FF" />
 	<color name="river"          val="4788D9BF" />
+	<color name="lake:text"      val="B6CDEDFF" />
 	<color name="lake"           val="4788D9FF" />
 	<color name="lake:halo"      val="4788D9BF" />
 	<color name="glacier"        val="9BDFE0FF" />
 	<color name="glacier:halo"   val="9BDFE07F" />
-	<color name="peak"           val="42A314FF" />
+	<color name="peak:text"      val="A4EFA4FF" />
+	<color name="peak"           val="A4EFA4FF" />
 	<color name="city"           val="606060FF" />
 	<color name="college"        val="DCC21BFF" />
 	<color name="hospital"       val="F46183FF" />
 	<color name="outdoor"        val="6CA63EFF" />
 	<color name="bicycle"        val="A64FD6FF" />
 
-	<point name="peak"      min_zoom="14" text_color1="white" text_color2="black" marker_color1="peak"     marker_color2="white" flags="marker:show,ele:show" />
-	<point name="saddle"    min_zoom="14" text_color1="white" text_color2="black" marker_color1="peak"     marker_color2="white" flags="marker:show" />
-	<point name="city"      min_zoom="11" text_color1="white" text_color2="black" marker_color1="city"     marker_color2="white" flags="marker:show" />
-	<point name="town"      min_zoom="12" text_color1="white" text_color2="black" marker_color1="city"     marker_color2="white" flags="marker:show" />
-	<point name="village"   min_zoom="13" text_color1="white" text_color2="black" marker_color1="city"     marker_color2="white" flags="marker:show" />
-	<point name="water"     min_zoom="14" text_color1="white" text_color2="black" marker_color1="lake"     marker_color2="white" flags="marker:show" />
-	<point name="glacier"   min_zoom="14" text_color1="white" text_color2="black" marker_color1="glacier"  marker_color2="black" flags="marker:show" />
-	<point name="outdoor"   min_zoom="16" text_color1="white" text_color2="black" marker_color1="outdoor"  marker_color2="white" flags="marker:show" />
-	<point name="forest"    min_zoom="12" text_color1="white" text_color2="black" marker_color1="outdoor"  marker_color2="white" flags="marker:show" />
-	<point name="default"   min_zoom="17" text_color1="white" text_color2="black" />
+	<point name="peak"    min_zoom="14" text_color1="peak:text"  text_color2="black" marker_color1="peak"    marker_color2="black" flags="marker:show,ele:show" />
+	<point name="saddle"  min_zoom="14" text_color1="peak:text"  text_color2="black" marker_color1="peak"    marker_color2="black" flags="marker:show" />
+	<point name="city"    min_zoom="11" text_color1="white"      text_color2="black" marker_color1="city"    marker_color2="white" flags="marker:show" />
+	<point name="town"    min_zoom="12" text_color1="white"      text_color2="black" marker_color1="city"    marker_color2="white" flags="marker:show" />
+	<point name="village" min_zoom="13" text_color1="white"      text_color2="black" marker_color1="city"    marker_color2="white" flags="marker:show" />
+	<point name="water14" min_zoom="14" text_color1="lake:text"  text_color2="black" marker_color1="lake"    marker_color2="white" flags="marker:show" />
+	<point name="water17" min_zoom="17" text_color1="lake:text"  text_color2="black" />
+	<point name="glacier" min_zoom="14" text_color1="white"      text_color2="black" marker_color1="glacier" marker_color2="black" flags="marker:show" />
+	<point name="outdoor" min_zoom="16" text_color1="peak:text"  text_color2="black" marker_color1="peak"    marker_color2="black" flags="marker:show" />
+	<point name="forest"  min_zoom="12" text_color1="peak:text"  text_color2="black" marker_color1="peak"    marker_color2="black" flags="marker:show" />
+	<point name="trail"   min_zoom="17" text_color1="trail:text" text_color2="black" />
+	<point name="track"   min_zoom="17" text_color1="track:text" text_color2="black" />
+	<point name="default" min_zoom="17" text_color1="white"      text_color2="black" />
 
 	<line name="aerialway"      mode="dashed,striped" color1="ltgray" color2="white:halo" />
 	<line name="motorway"       mode="striped" color1="ltgray" color2="gray:halo" width="3.5" />
@@ -79,15 +86,15 @@
 	<line name="secondary_link" mode="striped" color1="ltgray" color2="gray:halo" width="1.5" />
 	<line name="tertiary_link"  mode="striped" color1="ltgray" color2="gray:halo" width="1.5" />
 	<line name="road"           mode="striped" color1="ltgray" color2="gray:halo" width="1.9" />
-	<line name="pedestrian"     mode="dashed,striped" color1="white" color2="trail" width="1.4" />
+	<line name="pedestrian"     mode="dashed,striped" color1="trail" color2="gray:halo" width="1.4" />
 	<line name="runway"         mode="dashed,striped" color1="white" color2="runway" width="4.0" />
 	<line name="taxiway"        color1="runway" width="1.5" />
-	<line name="trail"          mode="dashed,striped" color1="white" color2="trail" width="1.7" />
-	<line name="track"          mode="dashed,striped" color1="white" color2="track" width="1.7" />
+	<line name="trail"          mode="dashed,striped" color1="trail" color2="gray:halo" width="1.7" />
+	<line name="track"          mode="striped" color1="track" color2="gray:halo" width="1.7" />
 	<line name="railway"        mode="dashed,striped" color1="gray"  color2="ltgray" width="1.7" />
 	<line name="river"          color1="river" width="3.0" />
 	<line name="stream"         color1="river" width="1.7" />
-	<line name="footway"        mode="dashed,striped" color1="white" color2="trail" />
+	<line name="footway"        mode="dashed,striped" color1="trail" color2="gray:halo" />
 
 	<poly name="white:halo"  color="white:halo" />
 	<poly name="ltgray:halo" color="ltgray:halo" />
@@ -131,28 +138,28 @@
 	<class name="highway:primary_link"   layer="link"        line="primary_link" />
 	<class name="highway:secondary_link" layer="link"        line="secondary_link" />
 	<class name="highway:tertiary_link"  layer="link"        line="tertiary_link" />
-	<class name="highway:living_street"  layer="trail"       point="default" line="pedestrian" />
-	<class name="highway:pedestrian"     layer="trail"       point="default" line="pedestrian" />
-	<class name="highway:track"          layer="track"       point="default" line="track" />
+	<class name="highway:living_street"  layer="trail"       point="trail"   line="pedestrian" />
+	<class name="highway:pedestrian"     layer="trail"       point="trail"   line="pedestrian" />
+	<class name="highway:track"          layer="track"       point="track"   line="track" />
 	<class name="highway:escape"         layer="ground"      point="default" line="road" />
 	<class name="highway:raceway"        layer="ground"      point="default" line="road" />
 	<class name="highway:road"           layer="residential" point="default" line="road" />
-	<class name="highway:footway"        layer="trail"       point="default" line="footway" />
-	<class name="highway:bridleway"      layer="trail"       point="default" line="trail" />
-	<class name="highway:steps"          layer="trail"       point="default" line="footway" />
-	<class name="highway:path"           layer="trail"       point="default" line="trail" />
-	<class name="highway:cycleway"       layer="trail"       point="default" line="trail" />
+	<class name="highway:footway"        layer="trail"       point="trail"   line="footway" />
+	<class name="highway:bridleway"      layer="trail"       point="trail"   line="trail" />
+	<class name="highway:steps"          layer="trail"       point="trail"   line="footway" />
+	<class name="highway:path"           layer="trail"       point="trail"   line="trail" />
+	<class name="highway:cycleway"       layer="trail"       point="trail"   line="trail" />
 	<class name="highway:rest_area"      layer="ground"      poly="white:halo" />
 	<class name="man_made:bridge"        layer="ground"      poly="white:halo"/>
-	<class name="natural:water"          layer="water"       point="water"   poly="water" />
-	<class name="natural:bay"            layer="water"       point="water"   poly="water" />
+	<class name="natural:water"          layer="water"       point="water14" poly="water" />
+	<class name="natural:bay"            layer="water"       point="water14" poly="water" />
 	<class name="natural:glacier"        layer="water"       point="glacier" poly="glacier" />
-	<class name="landuse:reservoir"      layer="water"       point="water"   poly="water" />
-	<class name="landuse:salt_pond"      layer="water"       point="water"   poly="water" />
-	<class name="landuse:basin"          layer="water"       point="water"   poly="water" />
-	<class name="waterway:river"         layer="water"       point="default" line="river" />
-	<class name="waterway:riverbank"     layer="water"       point="default" poly="water" />
-	<class name="waterway:stream"        layer="water"       point="default" line="stream" />
+	<class name="landuse:reservoir"      layer="water"       point="water14" poly="water" />
+	<class name="landuse:salt_pond"      layer="water"       point="water14" poly="water" />
+	<class name="landuse:basin"          layer="water"       point="water14" poly="water" />
+	<class name="waterway:river"         layer="water"       point="water17" line="river" />
+	<class name="waterway:riverbank"     layer="water"       point="water17" poly="water" />
+	<class name="waterway:stream"        layer="water"       point="water17" line="stream" />
 	<class name="waterway:canal"         layer="water"       line="stream" />
 	<class name="waterway:ditch"         layer="water"       line="stream" />
 	<class name="waterway:drain"         layer="water"       line="stream" />
