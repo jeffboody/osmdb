@@ -358,10 +358,10 @@
 	<select class="geological:palaeontological_site" zoom="15" flags="named" />
 	<select class="geological:moraine"               zoom="15" flags="named" />
 	<select class="geological:outcrop"               zoom="15" flags="named" />
-	<select class="highway:motorway"                 zoom="9" />
-	<select class="highway:trunk"                    zoom="9" />
-	<select class="highway:primary"                  zoom="9" />
-	<select class="highway:secondary"                zoom="9" />
+	<select class="highway:motorway"                 zoom="12" />
+	<select class="highway:trunk"                    zoom="12" />
+	<select class="highway:primary"                  zoom="12" />
+	<select class="highway:secondary"                zoom="12" />
 	<select class="highway:tertiary"                 zoom="12" />
 	<select class="highway:unclassified"             zoom="15" />
 	<select class="highway:residential"              zoom="15" />
