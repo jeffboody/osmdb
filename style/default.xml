@@ -52,6 +52,7 @@
 	<color name="lake:halo"      val="4788D9BF" />
 	<color name="glacier"        val="9BDFE0FF" />
 	<color name="glacier:halo"   val="9BDFE07F" />
+	<color name="glacier:text"   val="C0F0F1FF" />
 	<color name="peak:text"      val="A4EFA4FF" />
 	<color name="peak"           val="A4EFA4FF" />
 	<color name="city"           val="606060FF" />
@@ -60,19 +61,19 @@
 	<color name="outdoor"        val="6CA63EFF" />
 	<color name="bicycle"        val="A64FD6FF" />
 
-	<point name="peak"    min_zoom="14" text_color1="peak:text"  text_color2="black" marker_color1="peak"    marker_color2="black" flags="marker:show,ele:show" />
-	<point name="saddle"  min_zoom="14" text_color1="peak:text"  text_color2="black" marker_color1="peak"    marker_color2="black" flags="marker:show" />
-	<point name="city"    min_zoom="11" text_color1="white"      text_color2="black" marker_color1="city"    marker_color2="white" flags="marker:show" />
-	<point name="town"    min_zoom="12" text_color1="white"      text_color2="black" marker_color1="city"    marker_color2="white" flags="marker:show" />
-	<point name="village" min_zoom="13" text_color1="white"      text_color2="black" marker_color1="city"    marker_color2="white" flags="marker:show" />
-	<point name="water14" min_zoom="14" text_color1="lake:text"  text_color2="black" />
-	<point name="water17" min_zoom="17" text_color1="lake:text"  text_color2="black" />
-	<point name="glacier" min_zoom="14" text_color1="white"      text_color2="black" />
-	<point name="outdoor" min_zoom="16" text_color1="peak:text"  text_color2="black" />
-	<point name="forest"  min_zoom="12" text_color1="peak:text"  text_color2="black" />
-	<point name="trail"   min_zoom="17" text_color1="trail:text" text_color2="black" />
-	<point name="track"   min_zoom="17" text_color1="track:text" text_color2="black" />
-	<point name="default" min_zoom="17" text_color1="white"      text_color2="black" />
+	<point name="peak"    min_zoom="14" text_color1="peak:text"    text_color2="black" marker_color1="peak"    marker_color2="black" flags="marker:show,ele:show" />
+	<point name="saddle"  min_zoom="14" text_color1="peak:text"    text_color2="black" marker_color1="peak"    marker_color2="black" flags="marker:show" />
+	<point name="city"    min_zoom="11" text_color1="white"        text_color2="black" marker_color1="city"    marker_color2="white" flags="marker:show" />
+	<point name="town"    min_zoom="12" text_color1="white"        text_color2="black" marker_color1="city"    marker_color2="white" flags="marker:show" />
+	<point name="village" min_zoom="13" text_color1="white"        text_color2="black" marker_color1="city"    marker_color2="white" flags="marker:show" />
+	<point name="water14" min_zoom="14" text_color1="lake:text"    text_color2="black" />
+	<point name="water17" min_zoom="17" text_color1="lake:text"    text_color2="black" />
+	<point name="glacier" min_zoom="14" text_color1="glacier:text" text_color2="black" />
+	<point name="outdoor" min_zoom="16" text_color1="peak:text"    text_color2="black" />
+	<point name="forest"  min_zoom="12" text_color1="peak:text"    text_color2="black" />
+	<point name="trail"   min_zoom="17" text_color1="trail:text"   text_color2="black" />
+	<point name="track"   min_zoom="17" text_color1="track:text"   text_color2="black" />
+	<point name="default" min_zoom="17" text_color1="white"        text_color2="black" />
 
 	<line name="aerialway"      mode="dashed,striped" color1="ltgray" color2="white:halo" />
 	<line name="motorway"       mode="striped" color1="ltgray" color2="gray:halo" width="3.5" />
