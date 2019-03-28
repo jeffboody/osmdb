@@ -65,11 +65,11 @@
 	<point name="city"    min_zoom="11" text_color1="white"      text_color2="black" marker_color1="city"    marker_color2="white" flags="marker:show" />
 	<point name="town"    min_zoom="12" text_color1="white"      text_color2="black" marker_color1="city"    marker_color2="white" flags="marker:show" />
 	<point name="village" min_zoom="13" text_color1="white"      text_color2="black" marker_color1="city"    marker_color2="white" flags="marker:show" />
-	<point name="water14" min_zoom="14" text_color1="lake:text"  text_color2="black" marker_color1="lake"    marker_color2="white" flags="marker:show" />
+	<point name="water14" min_zoom="14" text_color1="lake:text"  text_color2="black" />
 	<point name="water17" min_zoom="17" text_color1="lake:text"  text_color2="black" />
-	<point name="glacier" min_zoom="14" text_color1="white"      text_color2="black" marker_color1="glacier" marker_color2="black" flags="marker:show" />
-	<point name="outdoor" min_zoom="16" text_color1="peak:text"  text_color2="black" marker_color1="peak"    marker_color2="black" flags="marker:show" />
-	<point name="forest"  min_zoom="12" text_color1="peak:text"  text_color2="black" marker_color1="peak"    marker_color2="black" flags="marker:show" />
+	<point name="glacier" min_zoom="14" text_color1="white"      text_color2="black" />
+	<point name="outdoor" min_zoom="16" text_color1="peak:text"  text_color2="black" />
+	<point name="forest"  min_zoom="12" text_color1="peak:text"  text_color2="black" />
 	<point name="trail"   min_zoom="17" text_color1="trail:text" text_color2="black" />
 	<point name="track"   min_zoom="17" text_color1="track:text" text_color2="black" />
 	<point name="default" min_zoom="17" text_color1="white"      text_color2="black" />
