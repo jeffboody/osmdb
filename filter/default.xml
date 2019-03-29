@@ -1,111 +1,111 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <filter>
-	<select class="aerialway:cable_car"    zoom="15" />
-	<select class="aerialway:gondola"      zoom="15" />
-	<select class="aerialway:chair_lift"   zoom="15" />
-	<select class="aerialway:mixed_lift"   zoom="15" />
-	<select class="aerialway:drag_lift"    zoom="15" />
-	<select class="aerialway:t-bar"        zoom="15" />
-	<select class="aerialway:j-bar"        zoom="15" />
-	<select class="aerialway:platter"      zoom="15" />
-	<select class="aerialway:rope_tow"     zoom="15" />
-	<select class="aerialway:magic_carpet" zoom="15" />
-	<select class="aerialway:zip_line"     zoom="15" />
-	<select class="aerialway:canopy"       zoom="15" />
-	<select class="aerialway:station"      zoom="15" flags="named,center" />
-	<select class="aerialway:pylon"        zoom="15" flags="center" />
-	<select class="aeroway:aerodrome"      zoom="15" flags="named,center" />
-	<select class="aeroway:gate"           zoom="15" flags="center" />
-	<select class="aeroway:helipad"        zoom="15" flags="center" />
-	<select class="aeroway:heliport"       zoom="15" flags="named,center" />
-	<select class="aeroway:runway"         zoom="15" />
-	<select class="aeroway:spaceport"      zoom="15" flags="named,center" />
-	<select class="aeroway:taxilane"       zoom="15" />
-	<select class="aeroway:taxiway"        zoom="15" />
-	<select class="aeroway:terminal"       zoom="15" flags="named,center" />
+	<select class="aerialway:cable_car"    zoom="14" />
+	<select class="aerialway:gondola"      zoom="14" />
+	<select class="aerialway:chair_lift"   zoom="14" />
+	<select class="aerialway:mixed_lift"   zoom="14" />
+	<select class="aerialway:drag_lift"    zoom="14" />
+	<select class="aerialway:t-bar"        zoom="14" />
+	<select class="aerialway:j-bar"        zoom="14" />
+	<select class="aerialway:platter"      zoom="14" />
+	<select class="aerialway:rope_tow"     zoom="14" />
+	<select class="aerialway:magic_carpet" zoom="14" />
+	<select class="aerialway:zip_line"     zoom="14" />
+	<select class="aerialway:canopy"       zoom="14" />
+	<select class="aerialway:station"      zoom="14" flags="named,center" />
+	<select class="aerialway:pylon"        zoom="14" flags="center" />
+	<select class="aeroway:aerodrome"      zoom="14" flags="named,center" />
+	<select class="aeroway:gate"           zoom="14" flags="center" />
+	<select class="aeroway:helipad"        zoom="14" flags="center" />
+	<select class="aeroway:heliport"       zoom="14" flags="named,center" />
+	<select class="aeroway:runway"         zoom="14" />
+	<select class="aeroway:spaceport"      zoom="14" flags="named,center" />
+	<select class="aeroway:taxilane"       zoom="14" />
+	<select class="aeroway:taxiway"        zoom="14" />
+	<select class="aeroway:terminal"       zoom="14" flags="named,center" />
 	<!-- DISCARD AEROWAY
 		<select class="aeroway:apron" />
 		<select class="aeroway:hangar" />
 		<select class="aeroway:navigationalaid" />
 		<select class="aeroway:windsock" />
 	-->
-	<select class="amenity:bar"                zoom="15" flags="named,center" />
-	<select class="amenity:bbq"                zoom="15" flags="named,center" />
-	<select class="amenity:biergarten"         zoom="15" flags="named,center" />
-	<select class="amenity:cafe"               zoom="15" flags="named,center" />
-	<select class="amenity:fast_food"          zoom="15" flags="named,center" />
-	<select class="amenity:food_court"         zoom="15" flags="named,center" />
-	<select class="amenity:ice_cream"          zoom="15" flags="named,center" />
-	<select class="amenity:pub"                zoom="15" flags="named,center" />
-	<select class="amenity:restaurant"         zoom="15" flags="named,center" />
-	<select class="amenity:college"            zoom="15" flags="named,center" />
-	<select class="amenity:kindergarten"       zoom="15" flags="named,center" />
-	<select class="amenity:library"            zoom="15" flags="named,center" />
-	<select class="amenity:archive"            zoom="15" flags="named,center" />
-	<select class="amenity:school"             zoom="15" flags="named,center" />
-	<select class="amenity:music_school"       zoom="15" flags="named,center" />
-	<select class="amenity:driving_school"     zoom="15" flags="named,center" />
-	<select class="amenity:language_school"    zoom="15" flags="named,center" />
-	<select class="amenity:university"         zoom="15" flags="named,center" />
-	<select class="amenity:research_institute" zoom="15" flags="named,center" />
-	<select class="amenity:boat_rental"        zoom="15" flags="named,center" />
-	<select class="amenity:boat_sharing"       zoom="15" flags="named,center" />
-	<select class="amenity:bus_station"        zoom="15" flags="named,center" />
-	<select class="amenity:car_rental"         zoom="15" flags="named,center" />
-	<select class="amenity:car_sharing"        zoom="15" flags="named,center" />
-	<select class="amenity:car_wash"           zoom="15" flags="named,center" />
-	<select class="amenity:charging_station"   zoom="15" flags="named,center" />
-	<select class="amenity:ferry_terminal"     zoom="15" flags="named,center" />
-	<select class="amenity:fuel"               zoom="15" flags="named,center" />
-	<select class="amenity:grit_bin"           zoom="15" flags="named,center" />
-	<select class="amenity:parking"            zoom="15" flags="center" />
-	<select class="amenity:taxi"               zoom="15" flags="named,center" />
-	<select class="amenity:ticket_validator"   zoom="15" flags="named,center" />
-	<select class="amenity:atm"                zoom="15" flags="center" />
-	<select class="amenity:bank"               zoom="15" flags="named,center" />
-	<select class="amenity:bureau_de_change"   zoom="15" flags="named,center" />
-	<select class="amenity:clinic"             zoom="15" flags="named,center" />
-	<select class="amenity:dentist"            zoom="15" flags="named,center" />
-	<select class="amenity:doctors"            zoom="15" flags="named,center" />
-	<select class="amenity:hospital"           zoom="15" flags="named,center" />
-	<select class="amenity:nursing_home"       zoom="15" flags="named,center" />
-	<select class="amenity:pharmacy"           zoom="15" flags="named,center" />
-	<select class="amenity:social_facility"    zoom="15" flags="named,center" />
-	<select class="amenity:veterinary"         zoom="15" flags="named,center" />
-	<select class="amenity:arts_centre"        zoom="15" flags="named,center" />
-	<select class="amenity:casino"             zoom="15" flags="named,center" />
-	<select class="amenity:cinema"             zoom="15" flags="named,center" />
-	<select class="amenity:community_centre"   zoom="15" flags="named,center" />
-	<select class="amenity:gambling"           zoom="15" flags="named,center" />
-	<select class="amenity:nightclub"          zoom="15" flags="named,center" />
-	<select class="amenity:planetarium"        zoom="15" flags="named,center" />
-	<select class="amenity:social_centre"      zoom="15" flags="named,center" />
-	<select class="amenity:studio"             zoom="15" flags="named,center" />
-	<select class="amenity:theatre"            zoom="15" flags="named,center" />
-	<select class="amenity:animal_boarding"    zoom="15" flags="named,center" />
-	<select class="amenity:animal_shelter"     zoom="15" flags="named,center" />
-	<select class="amenity:baking_oven"        zoom="15" flags="named,center" />
-	<select class="amenity:courthouse"         zoom="15" flags="named,center" />
-	<select class="amenity:coworking_space"    zoom="15" flags="named,center" />
-	<select class="amenity:crematorium"        zoom="15" flags="named,center" />
-	<select class="amenity:crypt"              zoom="15" flags="named,center" />
-	<select class="amenity:dive_centre"        zoom="15" flags="named,center" />
-	<select class="amenity:dojo"               zoom="15" flags="named,center" />
-	<select class="amenity:embassy"            zoom="15" flags="named,center" />
-	<select class="amenity:fire_station"       zoom="15" flags="named,center" />
-	<select class="amenity:grave_yard"         zoom="15" flags="named,center" />
-	<select class="amenity:internet_cafe"      zoom="15" flags="named,center" />
-	<select class="amenity:kitchen"            zoom="15" flags="named,center" />
-	<select class="amenity:marketplace"        zoom="15" flags="named,center" />
-	<select class="amenity:place_of_warship"   zoom="15" flags="named,center" />
-	<select class="amenity:police"             zoom="15" flags="named,center" />
-	<select class="amenity:post_office"        zoom="15" flags="named,center" />
-	<select class="amenity:prison"             zoom="15" flags="named,center" />
-	<select class="amenity:ranger_station"     zoom="15" flags="center" />
-	<select class="amenity:rescue_station"     zoom="15" flags="center" />
-	<select class="amenity:shelter"            zoom="15" flags="center" />
-	<select class="amenity:toilets"            zoom="15" flags="center" />
-	<select class="amenity:townhall"           zoom="15" flags="named,center" />
+	<select class="amenity:bar"                zoom="14" flags="named,center" />
+	<select class="amenity:bbq"                zoom="14" flags="named,center" />
+	<select class="amenity:biergarten"         zoom="14" flags="named,center" />
+	<select class="amenity:cafe"               zoom="14" flags="named,center" />
+	<select class="amenity:fast_food"          zoom="14" flags="named,center" />
+	<select class="amenity:food_court"         zoom="14" flags="named,center" />
+	<select class="amenity:ice_cream"          zoom="14" flags="named,center" />
+	<select class="amenity:pub"                zoom="14" flags="named,center" />
+	<select class="amenity:restaurant"         zoom="14" flags="named,center" />
+	<select class="amenity:college"            zoom="14" flags="named,center" />
+	<select class="amenity:kindergarten"       zoom="14" flags="named,center" />
+	<select class="amenity:library"            zoom="14" flags="named,center" />
+	<select class="amenity:archive"            zoom="14" flags="named,center" />
+	<select class="amenity:school"             zoom="14" flags="named,center" />
+	<select class="amenity:music_school"       zoom="14" flags="named,center" />
+	<select class="amenity:driving_school"     zoom="14" flags="named,center" />
+	<select class="amenity:language_school"    zoom="14" flags="named,center" />
+	<select class="amenity:university"         zoom="14" flags="named,center" />
+	<select class="amenity:research_institute" zoom="14" flags="named,center" />
+	<select class="amenity:boat_rental"        zoom="14" flags="named,center" />
+	<select class="amenity:boat_sharing"       zoom="14" flags="named,center" />
+	<select class="amenity:bus_station"        zoom="14" flags="named,center" />
+	<select class="amenity:car_rental"         zoom="14" flags="named,center" />
+	<select class="amenity:car_sharing"        zoom="14" flags="named,center" />
+	<select class="amenity:car_wash"           zoom="14" flags="named,center" />
+	<select class="amenity:charging_station"   zoom="14" flags="named,center" />
+	<select class="amenity:ferry_terminal"     zoom="14" flags="named,center" />
+	<select class="amenity:fuel"               zoom="14" flags="named,center" />
+	<select class="amenity:grit_bin"           zoom="14" flags="named,center" />
+	<select class="amenity:parking"            zoom="14" flags="center" />
+	<select class="amenity:taxi"               zoom="14" flags="named,center" />
+	<select class="amenity:ticket_validator"   zoom="14" flags="named,center" />
+	<select class="amenity:atm"                zoom="14" flags="center" />
+	<select class="amenity:bank"               zoom="14" flags="named,center" />
+	<select class="amenity:bureau_de_change"   zoom="14" flags="named,center" />
+	<select class="amenity:clinic"             zoom="14" flags="named,center" />
+	<select class="amenity:dentist"            zoom="14" flags="named,center" />
+	<select class="amenity:doctors"            zoom="14" flags="named,center" />
+	<select class="amenity:hospital"           zoom="14" flags="named,center" />
+	<select class="amenity:nursing_home"       zoom="14" flags="named,center" />
+	<select class="amenity:pharmacy"           zoom="14" flags="named,center" />
+	<select class="amenity:social_facility"    zoom="14" flags="named,center" />
+	<select class="amenity:veterinary"         zoom="14" flags="named,center" />
+	<select class="amenity:arts_centre"        zoom="14" flags="named,center" />
+	<select class="amenity:casino"             zoom="14" flags="named,center" />
+	<select class="amenity:cinema"             zoom="14" flags="named,center" />
+	<select class="amenity:community_centre"   zoom="14" flags="named,center" />
+	<select class="amenity:gambling"           zoom="14" flags="named,center" />
+	<select class="amenity:nightclub"          zoom="14" flags="named,center" />
+	<select class="amenity:planetarium"        zoom="14" flags="named,center" />
+	<select class="amenity:social_centre"      zoom="14" flags="named,center" />
+	<select class="amenity:studio"             zoom="14" flags="named,center" />
+	<select class="amenity:theatre"            zoom="14" flags="named,center" />
+	<select class="amenity:animal_boarding"    zoom="14" flags="named,center" />
+	<select class="amenity:animal_shelter"     zoom="14" flags="named,center" />
+	<select class="amenity:baking_oven"        zoom="14" flags="named,center" />
+	<select class="amenity:courthouse"         zoom="14" flags="named,center" />
+	<select class="amenity:coworking_space"    zoom="14" flags="named,center" />
+	<select class="amenity:crematorium"        zoom="14" flags="named,center" />
+	<select class="amenity:crypt"              zoom="14" flags="named,center" />
+	<select class="amenity:dive_centre"        zoom="14" flags="named,center" />
+	<select class="amenity:dojo"               zoom="14" flags="named,center" />
+	<select class="amenity:embassy"            zoom="14" flags="named,center" />
+	<select class="amenity:fire_station"       zoom="14" flags="named,center" />
+	<select class="amenity:grave_yard"         zoom="14" flags="named,center" />
+	<select class="amenity:internet_cafe"      zoom="14" flags="named,center" />
+	<select class="amenity:kitchen"            zoom="14" flags="named,center" />
+	<select class="amenity:marketplace"        zoom="14" flags="named,center" />
+	<select class="amenity:place_of_warship"   zoom="14" flags="named,center" />
+	<select class="amenity:police"             zoom="14" flags="named,center" />
+	<select class="amenity:post_office"        zoom="14" flags="named,center" />
+	<select class="amenity:prison"             zoom="14" flags="named,center" />
+	<select class="amenity:ranger_station"     zoom="14" flags="center" />
+	<select class="amenity:rescue_station"     zoom="14" flags="center" />
+	<select class="amenity:shelter"            zoom="14" flags="center" />
+	<select class="amenity:toilets"            zoom="14" flags="center" />
+	<select class="amenity:townhall"           zoom="14" flags="named,center" />
 	<!-- DISCARD AMENITY
 		<select class="amenity:bicycle_parking" />
 		<select class="amenity:bicycle_rental" />
@@ -185,8 +185,8 @@
 		<select class="barrier:turnstile" />
 		<select class="barrier:yes" />
 	-->
-	<select class="boundary:national_park"  zoom="9" flags="named,center" />
-	<select class="boundary:protected_area" zoom="9" flags="named,center" />
+	<select class="boundary:national_park"  zoom="8" flags="named,center" />
+	<select class="boundary:protected_area" zoom="8" flags="named,center" />
 	<!-- DISCARD BOUNDARY
 		<select class="boundary:administrative" />
 		<select class="boundary:historic" />
@@ -195,50 +195,50 @@
 		<select class="boundary:postal_code" />
 		<select class="boundary:religious_administration" />
 	-->
-	<select class="building:apartments"     zoom="15" flags="named,center" />
-	<select class="building:hotel"          zoom="15" flags="named,center" />
-	<select class="building:residential"    zoom="15" flags="named,center" />
-	<select class="building:dormatory"      zoom="15" flags="named,center" />
-	<select class="building:terrace"        zoom="15" flags="named,center" />
-	<select class="building:commercial"     zoom="15" flags="named,center" />
-	<select class="building:office"         zoom="15" flags="named,center" />
-	<select class="building:industrial"     zoom="15" flags="named,center" />
-	<select class="building:retail"         zoom="15" flags="named,center" />
-	<select class="building:warehouse"      zoom="15" flags="named,center" />
-	<select class="building:religious"      zoom="15" flags="named,center" />
-	<select class="building:cathedral"      zoom="15" flags="named,center" />
-	<select class="building:chapel"         zoom="15" flags="named,center" />
-	<select class="building:church"         zoom="15" flags="named,center" />
-	<select class="building:mosque"         zoom="15" flags="named,center" />
-	<select class="building:temple"         zoom="15" flags="named,center" />
-	<select class="building:synagogue"      zoom="15" flags="named,center" />
-	<select class="building:shrine"         zoom="15" flags="named,center" />
-	<select class="building:bakehouse"      zoom="15" flags="named,center" />
-	<select class="building:kindergarten"   zoom="15" flags="named,center" />
-	<select class="building:civic"          zoom="15" flags="named,center" />
-	<select class="building:hospital"       zoom="15" flags="named,center" />
-	<select class="building:school"         zoom="15" flags="named,center" />
-	<select class="building:stadium"        zoom="15" flags="named,center" />
-	<select class="building:train_station"  zoom="15" flags="named,center" />
-	<select class="building:transportation" zoom="15" flags="named,center" />
-	<select class="building:university"     zoom="15" flags="named,center" />
-	<select class="building:bridge"         zoom="15" flags="named,center" />
-	<select class="building:bunker"         zoom="15" flags="named,center" />
-	<select class="building:conservatory"   zoom="15" flags="named,center" />
-	<select class="building:garage"         zoom="15" flags="named,center" />
-	<select class="building:garages"        zoom="15" flags="named,center" />
-	<select class="building:greenhouse"     zoom="15" flags="named,center" />
-	<select class="building:hangar"         zoom="15" flags="named,center" />
-	<select class="building:pavilion"       zoom="15" flags="named,center" />
-	<select class="building:parking"        zoom="15" flags="named,center" />
-	<select class="building:riding_hall"    zoom="15" flags="named,center" />
-	<select class="building:sports_hall"    zoom="15" flags="named,center" />
-	<select class="building:stable"         zoom="15" flags="named,center" />
-	<select class="building:service"        zoom="15" flags="named,center" />
-	<select class="building:ruins"          zoom="15" flags="center" />
-	<select class="building:water_tower"    zoom="15" flags="center" />
-	<select class="building:public"         zoom="15" flags="named,center" />
-	<select class="building:yes"            zoom="15" flags="named,center" />
+	<select class="building:apartments"     zoom="14" flags="named,center" />
+	<select class="building:hotel"          zoom="14" flags="named,center" />
+	<select class="building:residential"    zoom="14" flags="named,center" />
+	<select class="building:dormatory"      zoom="14" flags="named,center" />
+	<select class="building:terrace"        zoom="14" flags="named,center" />
+	<select class="building:commercial"     zoom="14" flags="named,center" />
+	<select class="building:office"         zoom="14" flags="named,center" />
+	<select class="building:industrial"     zoom="14" flags="named,center" />
+	<select class="building:retail"         zoom="14" flags="named,center" />
+	<select class="building:warehouse"      zoom="14" flags="named,center" />
+	<select class="building:religious"      zoom="14" flags="named,center" />
+	<select class="building:cathedral"      zoom="14" flags="named,center" />
+	<select class="building:chapel"         zoom="14" flags="named,center" />
+	<select class="building:church"         zoom="14" flags="named,center" />
+	<select class="building:mosque"         zoom="14" flags="named,center" />
+	<select class="building:temple"         zoom="14" flags="named,center" />
+	<select class="building:synagogue"      zoom="14" flags="named,center" />
+	<select class="building:shrine"         zoom="14" flags="named,center" />
+	<select class="building:bakehouse"      zoom="14" flags="named,center" />
+	<select class="building:kindergarten"   zoom="14" flags="named,center" />
+	<select class="building:civic"          zoom="14" flags="named,center" />
+	<select class="building:hospital"       zoom="14" flags="named,center" />
+	<select class="building:school"         zoom="14" flags="named,center" />
+	<select class="building:stadium"        zoom="14" flags="named,center" />
+	<select class="building:train_station"  zoom="14" flags="named,center" />
+	<select class="building:transportation" zoom="14" flags="named,center" />
+	<select class="building:university"     zoom="14" flags="named,center" />
+	<select class="building:bridge"         zoom="14" flags="named,center" />
+	<select class="building:bunker"         zoom="14" flags="named,center" />
+	<select class="building:conservatory"   zoom="14" flags="named,center" />
+	<select class="building:garage"         zoom="14" flags="named,center" />
+	<select class="building:garages"        zoom="14" flags="named,center" />
+	<select class="building:greenhouse"     zoom="14" flags="named,center" />
+	<select class="building:hangar"         zoom="14" flags="named,center" />
+	<select class="building:pavilion"       zoom="14" flags="named,center" />
+	<select class="building:parking"        zoom="14" flags="named,center" />
+	<select class="building:riding_hall"    zoom="14" flags="named,center" />
+	<select class="building:sports_hall"    zoom="14" flags="named,center" />
+	<select class="building:stable"         zoom="14" flags="named,center" />
+	<select class="building:service"        zoom="14" flags="named,center" />
+	<select class="building:ruins"          zoom="14" flags="center" />
+	<select class="building:water_tower"    zoom="14" flags="center" />
+	<select class="building:public"         zoom="14" flags="named,center" />
+	<select class="building:yes"            zoom="14" flags="named,center" />
 	<!-- DISCARD BUILDING
 		<select class="building:farm" />
 		<select class="building:house" />
@@ -262,25 +262,25 @@
 		<select class="building:sty" />
 		<select class="building:transformer_tower" />
 	-->
-	<select class="craft:bakery"           zoom="15" flags="named,center" />
-	<select class="craft:brewery"          zoom="15" flags="named,center" />
-	<select class="craft:builder"          zoom="15" flags="named,center" />
-	<select class="craft:carpenter"        zoom="15" flags="named,center" />
-	<select class="craft:caterer"          zoom="15" flags="named,center" />
-	<select class="craft:confectionery"    zoom="15" flags="named,center" />
-	<select class="craft:dental_technican" zoom="15" flags="named,center" />
-	<select class="craft:electrician"      zoom="15" flags="named,center" />
-	<select class="craft:gardener"         zoom="15" flags="named,center" />
-	<select class="craft:locksmith"        zoom="15" flags="named,center" />
-	<select class="craft:optician"         zoom="15" flags="named,center" />
-	<select class="craft:painter"          zoom="15" flags="named,center" />
-	<select class="craft:photographer"     zoom="15" flags="named,center" />
-	<select class="craft:plumber"          zoom="15" flags="named,center" />
-	<select class="craft:pottery"          zoom="15" flags="named,center" />
-	<select class="craft:printmaker"       zoom="15" flags="named,center" />
-	<select class="craft:sawmill"          zoom="15" flags="named,center" />
-	<select class="craft:sculpter"         zoom="15" flags="named,center" />
-	<select class="craft:winery"           zoom="15" flags="named,center" />
+	<select class="craft:bakery"           zoom="14" flags="named,center" />
+	<select class="craft:brewery"          zoom="14" flags="named,center" />
+	<select class="craft:builder"          zoom="14" flags="named,center" />
+	<select class="craft:carpenter"        zoom="14" flags="named,center" />
+	<select class="craft:caterer"          zoom="14" flags="named,center" />
+	<select class="craft:confectionery"    zoom="14" flags="named,center" />
+	<select class="craft:dental_technican" zoom="14" flags="named,center" />
+	<select class="craft:electrician"      zoom="14" flags="named,center" />
+	<select class="craft:gardener"         zoom="14" flags="named,center" />
+	<select class="craft:locksmith"        zoom="14" flags="named,center" />
+	<select class="craft:optician"         zoom="14" flags="named,center" />
+	<select class="craft:painter"          zoom="14" flags="named,center" />
+	<select class="craft:photographer"     zoom="14" flags="named,center" />
+	<select class="craft:plumber"          zoom="14" flags="named,center" />
+	<select class="craft:pottery"          zoom="14" flags="named,center" />
+	<select class="craft:printmaker"       zoom="14" flags="named,center" />
+	<select class="craft:sawmill"          zoom="14" flags="named,center" />
+	<select class="craft:sculpter"         zoom="14" flags="named,center" />
+	<select class="craft:winery"           zoom="14" flags="named,center" />
 	<!-- DISCARD CRAFT
 		<select class="craft:agricultural_engines" />
 		<select class="craft:basket_maker" />
@@ -327,13 +327,13 @@
 		<select class="craft:watchmaker" />
 		<select class="craft:window_construction" />
 	-->
-	<select class="emergency:landing_site"       zoom="15" />
-	<select class="emergency:fire_water_pond"    zoom="15" />
-	<select class="emergency:lifeguard"          zoom="15" flags="center" />
-	<select class="emergency:lifeguard_base"     zoom="15" flags="center" />
-	<select class="emergency:lifeguard_tower"    zoom="15" flags="center" />
-	<select class="emergency:lifeguard_platform" zoom="15" flags="center" />
-	<select class="emergency:mountain_rescue"    zoom="15" flags="center" />
+	<select class="emergency:landing_site"       zoom="14" />
+	<select class="emergency:fire_water_pond"    zoom="14" />
+	<select class="emergency:lifeguard"          zoom="14" flags="center" />
+	<select class="emergency:lifeguard_base"     zoom="14" flags="center" />
+	<select class="emergency:lifeguard_tower"    zoom="14" flags="center" />
+	<select class="emergency:lifeguard_platform" zoom="14" flags="center" />
+	<select class="emergency:mountain_rescue"    zoom="14" flags="center" />
 	<!-- DISCARD EMERGENCY
 		<select class="emergency:ambulance_station" />
 		<select class="emergency:life_ring" />
@@ -355,41 +355,41 @@
 		<select class="emergency:rescue_box" />
 		<select class="emergency:siren" />
 	-->
-	<select class="geological:palaeontological_site" zoom="15" flags="named" />
-	<select class="geological:moraine"               zoom="15" flags="named" />
-	<select class="geological:outcrop"               zoom="15" flags="named" />
-	<select class="highway:motorway"                 zoom="12" />
-	<select class="highway:trunk"                    zoom="12" />
-	<select class="highway:primary"                  zoom="12" />
-	<select class="highway:secondary"                zoom="12" />
-	<select class="highway:tertiary"                 zoom="12" />
-	<select class="highway:unclassified"             zoom="15" />
-	<select class="highway:residential"              zoom="15" />
-	<select class="highway:motorway_link"            zoom="15" />
-	<select class="highway:trunk_link"               zoom="15" />
-	<select class="highway:primary_link"             zoom="15" />
-	<select class="highway:secondary_link"           zoom="15" />
-	<select class="highway:tertiary_link"            zoom="15" />
-	<select class="highway:living_street"            zoom="15" />
-	<select class="highway:pedestrian"               zoom="15" />
-	<select class="highway:track"                    zoom="15" />
-	<select class="highway:bus_guideway"             zoom="15" />
-	<select class="highway:escape"                   zoom="15" />
-	<select class="highway:raceway"                  zoom="15" />
-	<select class="highway:road"                     zoom="15" />
-	<select class="highway:footway"                  zoom="15" />
-	<select class="highway:bridleway"                zoom="15" />
-	<select class="highway:steps"                    zoom="15" />
-	<select class="highway:path"                     zoom="15" />
-	<select class="highway:cycleway"                 zoom="15" />
-	<select class="highway:bus_stop"                 zoom="15" flags="center" />
-	<select class="highway:mini_roundabout"          zoom="15" />
-	<select class="highway:motorway_junction"        zoom="15" />
-	<select class="highway:passing_place"            zoom="15" />
-	<select class="highway:rest_area"                zoom="15" />
-	<select class="highway:services"                 zoom="15" />
-	<select class="highway:turning_circle"           zoom="15" />
-	<select class="highway:service"                  zoom="15" flags="named"/>
+	<select class="geological:palaeontological_site" zoom="14" flags="named" />
+	<select class="geological:moraine"               zoom="14" flags="named" />
+	<select class="geological:outcrop"               zoom="14" flags="named" />
+	<select class="highway:motorway"                 zoom="11" />
+	<select class="highway:trunk"                    zoom="11" />
+	<select class="highway:primary"                  zoom="11" />
+	<select class="highway:secondary"                zoom="11" />
+	<select class="highway:tertiary"                 zoom="11" />
+	<select class="highway:unclassified"             zoom="14" />
+	<select class="highway:residential"              zoom="14" />
+	<select class="highway:motorway_link"            zoom="14" />
+	<select class="highway:trunk_link"               zoom="14" />
+	<select class="highway:primary_link"             zoom="14" />
+	<select class="highway:secondary_link"           zoom="14" />
+	<select class="highway:tertiary_link"            zoom="14" />
+	<select class="highway:living_street"            zoom="14" />
+	<select class="highway:pedestrian"               zoom="14" />
+	<select class="highway:track"                    zoom="14" />
+	<select class="highway:bus_guideway"             zoom="14" />
+	<select class="highway:escape"                   zoom="14" />
+	<select class="highway:raceway"                  zoom="14" />
+	<select class="highway:road"                     zoom="14" />
+	<select class="highway:footway"                  zoom="14" />
+	<select class="highway:bridleway"                zoom="14" />
+	<select class="highway:steps"                    zoom="14" />
+	<select class="highway:path"                     zoom="14" />
+	<select class="highway:cycleway"                 zoom="14" />
+	<select class="highway:bus_stop"                 zoom="14" flags="center" />
+	<select class="highway:mini_roundabout"          zoom="14" />
+	<select class="highway:motorway_junction"        zoom="14" />
+	<select class="highway:passing_place"            zoom="14" />
+	<select class="highway:rest_area"                zoom="14" />
+	<select class="highway:services"                 zoom="14" />
+	<select class="highway:turning_circle"           zoom="14" />
+	<select class="highway:service"                  zoom="14" flags="named"/>
 	<!-- DISCARD HIGHWAY
 		<select class="highway:stop" />
 		<select class="highway:traffic_signals" />
@@ -400,22 +400,22 @@
 		<select class="highway:elevator" />
 		<select class="highway:give_way" />
 	-->
-	<select class="historic:aircraft"    zoom="15" flags="named,center" />
-	<select class="historic:castle"      zoom="15" flags="named,center" />
-	<select class="historic:castle_wall" zoom="15" flags="named,center" />
-	<select class="historic:church"      zoom="15" flags="named,center" />
-	<select class="historic:fort"        zoom="15" flags="named,center" />
-	<select class="historic:locomotive"  zoom="15" flags="named,center" />
-	<select class="historic:manor"       zoom="15" flags="named,center" />
-	<select class="historic:memorial"    zoom="15" flags="named,center" />
-	<select class="historic:monastery"   zoom="15" flags="named,center" />
-	<select class="historic:monument"    zoom="15" flags="named,center" />
-	<select class="historic:railway_car" zoom="15" flags="named,center" />
-	<select class="historic:ruins"       zoom="15" flags="named,center" />
-	<select class="historic:ship"        zoom="15" flags="named,center" />
-	<select class="historic:tomb"        zoom="15" flags="named,center" />
-	<select class="historic:tower"       zoom="15" flags="named,center" />
-	<select class="historic:wreck"       zoom="15" flags="named,center" />
+	<select class="historic:aircraft"    zoom="14" flags="named,center" />
+	<select class="historic:castle"      zoom="14" flags="named,center" />
+	<select class="historic:castle_wall" zoom="14" flags="named,center" />
+	<select class="historic:church"      zoom="14" flags="named,center" />
+	<select class="historic:fort"        zoom="14" flags="named,center" />
+	<select class="historic:locomotive"  zoom="14" flags="named,center" />
+	<select class="historic:manor"       zoom="14" flags="named,center" />
+	<select class="historic:memorial"    zoom="14" flags="named,center" />
+	<select class="historic:monastery"   zoom="14" flags="named,center" />
+	<select class="historic:monument"    zoom="14" flags="named,center" />
+	<select class="historic:railway_car" zoom="14" flags="named,center" />
+	<select class="historic:ruins"       zoom="14" flags="named,center" />
+	<select class="historic:ship"        zoom="14" flags="named,center" />
+	<select class="historic:tomb"        zoom="14" flags="named,center" />
+	<select class="historic:tower"       zoom="14" flags="named,center" />
+	<select class="historic:wreck"       zoom="14" flags="named,center" />
 	<!-- DISCARD HISTORIC
 		<select class="historic:optical_telegraph" />
 		<select class="historic:highwater_mark" />
@@ -436,18 +436,18 @@
 		<select class="historic:wayside_shrine" />
 		<select class="historic:yes" />
 	-->
-	<select class="landuse:reservoir"         zoom="12" />
-	<select class="landuse:salt_pond"         zoom="15" />
-	<select class="landuse:basin"             zoom="12" />
-	<select class="landuse:cemetery"          zoom="15" flags="named,center" />
-	<select class="landuse:military"          zoom="15" flags="named,center" />
-	<select class="landuse:commercial"        zoom="15" flags="named,center" />
-	<select class="landuse:industrial"        zoom="15" flags="named,center" />
-	<select class="landuse:residential"       zoom="15" flags="named,center" />
-	<select class="landuse:retail"            zoom="15" flags="named,center" />
-	<select class="landuse:quarry"            zoom="15" flags="named,center" />
-	<select class="landuse:recreation_ground" zoom="15" flags="named,center" />
-	<select class="landuse:forest"            zoom="15" flags="named,center" />
+	<select class="landuse:reservoir"         zoom="11" />
+	<select class="landuse:salt_pond"         zoom="14" />
+	<select class="landuse:basin"             zoom="11" />
+	<select class="landuse:cemetery"          zoom="14" flags="named,center" />
+	<select class="landuse:military"          zoom="14" flags="named,center" />
+	<select class="landuse:commercial"        zoom="14" flags="named,center" />
+	<select class="landuse:industrial"        zoom="14" flags="named,center" />
+	<select class="landuse:residential"       zoom="14" flags="named,center" />
+	<select class="landuse:retail"            zoom="14" flags="named,center" />
+	<select class="landuse:quarry"            zoom="14" flags="named,center" />
+	<select class="landuse:recreation_ground" zoom="14" flags="named,center" />
+	<select class="landuse:forest"            zoom="14" flags="named,center" />
 	<!-- DISCARD LANDUSE
 		<select class="landuse:construction" />
 		<select class="landuse:allotments" />
@@ -469,35 +469,35 @@
 		<select class="landuse:village_green" />
 		<select class="landuse:vineyard" />
 	-->
-	<select class="leisure:adult_gaming_centre"     zoom="15" flags="named,center" />
-	<select class="leisure:amusement_arcade"        zoom="15" flags="named,center" />
-	<select class="leisure:beach_resort"            zoom="15" flags="named,center" />
-	<select class="leisure:bandstand"               zoom="15" flags="named,center" />
-	<select class="leisure:common"                  zoom="15" flags="named,center" />
-	<select class="leisure:dance"                   zoom="15" flags="named,center" />
-	<select class="leisure:disc_golf_course"        zoom="15" flags="named,center" />
-	<select class="leisure:dog_park"                zoom="15" flags="named,center" />
-	<select class="leisure:escape_game"             zoom="15" flags="named,center" />
-	<select class="leisure:fishing"                 zoom="15" flags="named,center" />
-	<select class="leisure:fitness_centre"          zoom="15" flags="named,center" />
-	<select class="leisure:garden"                  zoom="15" flags="named,center" />
-	<select class="leisure:hackerspace"             zoom="15" flags="named,center" />
-	<select class="leisure:horse_riding"            zoom="15" flags="named,center" />
-	<select class="leisure:ice_rink"                zoom="15" flags="named,center" />
-	<select class="leisure:marina"                  zoom="15" flags="named,center" />
-	<select class="leisure:minature_golf"           zoom="15" flags="named,center" />
-	<select class="leisure:nature_reserve"          zoom="12" flags="named,center" />
-	<select class="leisure:park"                    zoom="15" flags="named,center" />
-	<select class="leisure:pitch"                   zoom="15" flags="named,center" />
-	<select class="leisure:playground"              zoom="15" flags="named,center" />
-	<select class="leisure:slipway"                 zoom="15" flags="named,center" />
-	<select class="leisure:sports_centre"           zoom="15" flags="named,center" />
-	<select class="leisure:stadium"                 zoom="15" flags="named,center" />
-	<select class="leisure:summer_camp"             zoom="15" flags="named,center" />
-	<select class="leisure:swimming_area"           zoom="15" flags="named,center" />
-	<select class="leisure:swimming_pool"           zoom="15" flags="named,center" />
-	<select class="leisure:track"                   zoom="15" flags="named,center" />
-	<select class="leisure:water_park"              zoom="15" flags="named,center" />
+	<select class="leisure:adult_gaming_centre"     zoom="14" flags="named,center" />
+	<select class="leisure:amusement_arcade"        zoom="14" flags="named,center" />
+	<select class="leisure:beach_resort"            zoom="14" flags="named,center" />
+	<select class="leisure:bandstand"               zoom="14" flags="named,center" />
+	<select class="leisure:common"                  zoom="14" flags="named,center" />
+	<select class="leisure:dance"                   zoom="14" flags="named,center" />
+	<select class="leisure:disc_golf_course"        zoom="14" flags="named,center" />
+	<select class="leisure:dog_park"                zoom="14" flags="named,center" />
+	<select class="leisure:escape_game"             zoom="14" flags="named,center" />
+	<select class="leisure:fishing"                 zoom="14" flags="named,center" />
+	<select class="leisure:fitness_centre"          zoom="14" flags="named,center" />
+	<select class="leisure:garden"                  zoom="14" flags="named,center" />
+	<select class="leisure:hackerspace"             zoom="14" flags="named,center" />
+	<select class="leisure:horse_riding"            zoom="14" flags="named,center" />
+	<select class="leisure:ice_rink"                zoom="14" flags="named,center" />
+	<select class="leisure:marina"                  zoom="14" flags="named,center" />
+	<select class="leisure:minature_golf"           zoom="14" flags="named,center" />
+	<select class="leisure:nature_reserve"          zoom="11" flags="named,center" />
+	<select class="leisure:park"                    zoom="14" flags="named,center" />
+	<select class="leisure:pitch"                   zoom="14" flags="named,center" />
+	<select class="leisure:playground"              zoom="14" flags="named,center" />
+	<select class="leisure:slipway"                 zoom="14" flags="named,center" />
+	<select class="leisure:sports_centre"           zoom="14" flags="named,center" />
+	<select class="leisure:stadium"                 zoom="14" flags="named,center" />
+	<select class="leisure:summer_camp"             zoom="14" flags="named,center" />
+	<select class="leisure:swimming_area"           zoom="14" flags="named,center" />
+	<select class="leisure:swimming_pool"           zoom="14" flags="named,center" />
+	<select class="leisure:track"                   zoom="14" flags="named,center" />
+	<select class="leisure:water_park"              zoom="14" flags="named,center" />
 	<!-- DISCARD LEISURE
 		<select class="leisure:bird_hide" />
 		<select class="leisure:firepit" />
@@ -505,31 +505,31 @@
 		<select class="leisure:picnic_table" />
 		<select class="leisure:wildlife_hide" />
 	-->
-	<select class="man_made:beacon"               zoom="15" flags="center" />
-	<select class="man_made:breakwater"           zoom="15" />
-	<select class="man_made:bridge"               zoom="15" />
-	<select class="man_made:communications_tower" zoom="15" flags="center" />
-	<select class="man_made:dyke"                 zoom="15" />
-	<select class="man_made:gasometer"            zoom="15" flags="center" />
-	<select class="man_made:lighthouse"           zoom="15" flags="center" />
-	<select class="man_made:mineshaft"            zoom="15" flags="named,center" />
-	<select class="man_made:monitoring_station"   zoom="15" flags="named,center" />
-	<select class="man_made:obelisk"              zoom="15" flags="named,center" />
-	<select class="man_made:observatory"          zoom="15" flags="named,center" />
-	<select class="man_made:petroleum_well"       zoom="15" flags="named,center" />
-	<select class="man_made:pier"                 zoom="15" />
-	<select class="man_made:pipeline"             zoom="15" />
-	<select class="man_made:pumping_station"      zoom="15" flags="named,center" />
-	<select class="man_made:reservoir_covered"    zoom="15" flags="named" />
-	<select class="man_made:silo"                 zoom="15" flags="center" />
-	<select class="man_made:telescope"            zoom="15" flags="center" />
-	<select class="man_made:tower"                zoom="15" flags="center" />
-	<select class="man_made:wastewater_plant"     zoom="15" flags="named,center" />
-	<select class="man_made:watermill"            zoom="15" flags="center"/>
-	<select class="man_made:water_tower"          zoom="15" flags="center"/>
-	<select class="man_made:water_well"           zoom="15" flags="named,center" />
-	<select class="man_made:water_works"          zoom="15" flags="named,center" />
-	<select class="man_made:windmill"             zoom="15" flags="center"/>
+	<select class="man_made:beacon"               zoom="14" flags="center" />
+	<select class="man_made:breakwater"           zoom="14" />
+	<select class="man_made:bridge"               zoom="14" />
+	<select class="man_made:communications_tower" zoom="14" flags="center" />
+	<select class="man_made:dyke"                 zoom="14" />
+	<select class="man_made:gasometer"            zoom="14" flags="center" />
+	<select class="man_made:lighthouse"           zoom="14" flags="center" />
+	<select class="man_made:mineshaft"            zoom="14" flags="named,center" />
+	<select class="man_made:monitoring_station"   zoom="14" flags="named,center" />
+	<select class="man_made:obelisk"              zoom="14" flags="named,center" />
+	<select class="man_made:observatory"          zoom="14" flags="named,center" />
+	<select class="man_made:petroleum_well"       zoom="14" flags="named,center" />
+	<select class="man_made:pier"                 zoom="14" />
+	<select class="man_made:pipeline"             zoom="14" />
+	<select class="man_made:pumping_station"      zoom="14" flags="named,center" />
+	<select class="man_made:reservoir_covered"    zoom="14" flags="named" />
+	<select class="man_made:silo"                 zoom="14" flags="center" />
+	<select class="man_made:telescope"            zoom="14" flags="center" />
+	<select class="man_made:tower"                zoom="14" flags="center" />
+	<select class="man_made:wastewater_plant"     zoom="14" flags="named,center" />
+	<select class="man_made:watermill"            zoom="14" flags="center"/>
+	<select class="man_made:water_tower"          zoom="14" flags="center"/>
+	<select class="man_made:water_well"           zoom="14" flags="named,center" />
+	<select class="man_made:water_works"          zoom="14" flags="named,center" />
+	<select class="man_made:windmill"             zoom="14" flags="center"/>
 	<!-- DISCARD MAN_MADE
 		<select class="man_made:water_tap" />
 		<select class="man_made:groyne" />
@@ -559,112 +559,112 @@
 		<select class="man_made:works" />
 		<select class="man_made:yes" />
 	-->
-	<select class="military:airfield"      zoom="15" />
-	<select class="military:bunker"        zoom="15" flags="named,center" />
-	<select class="military:barracks"      zoom="15" flags="named,center" />
-	<select class="military:danger_area"   zoom="15" />
-	<select class="military:naval_base"    zoom="15" flags="named,center" />
-	<select class="military:office"        zoom="15" flags="named,center" />
-	<select class="military:range"         zoom="15" flags="named,center" />
-	<select class="military:training_area" zoom="15" flags="named,center" />
-	<select class="military:launchpad"     zoom="15" flags="named,center" />
-	<select class="military:ammunition"    zoom="15" flags="named,center" />
+	<select class="military:airfield"      zoom="14" />
+	<select class="military:bunker"        zoom="14" flags="named,center" />
+	<select class="military:barracks"      zoom="14" flags="named,center" />
+	<select class="military:danger_area"   zoom="14" />
+	<select class="military:naval_base"    zoom="14" flags="named,center" />
+	<select class="military:office"        zoom="14" flags="named,center" />
+	<select class="military:range"         zoom="14" flags="named,center" />
+	<select class="military:training_area" zoom="14" flags="named,center" />
+	<select class="military:launchpad"     zoom="14" flags="named,center" />
+	<select class="military:ammunition"    zoom="14" flags="named,center" />
 	<!-- DISCARD MILITARY
 		<select class="military:checkpoint" />
 		<select class="military:nuclear_explosion_site" />
 		<select class="military:obstacle_course" />
 		<select class="military:trench" />
 	-->
-	<select class="natural:wood"          zoom="15" flags="named,center" />
-	<select class="natural:scrub"         zoom="15" flags="named,center" />
-	<select class="natural:heath"         zoom="15" flags="named,center" />
-	<select class="natural:moor"          zoom="15" flags="named,center" />
-	<select class="natural:grassland"     zoom="15" flags="named,center" />
-	<select class="natural:fell"          zoom="15" flags="named,center" />
-	<select class="natural:bare_rock"     zoom="15" flags="named,center" />
-	<select class="natural:scree"         zoom="15" flags="named,center" />
-	<select class="natural:shingle"       zoom="15" flags="named,center" />
-	<select class="natural:sand"          zoom="15" flags="named,center" />
-	<select class="natural:mud"           zoom="15" flags="named,center" />
-	<select class="natural:water"         zoom="12" />
-	<select class="natural:wetland"       zoom="15" flags="named,center" />
-	<select class="natural:glacier"       zoom="12" />
-	<select class="natural:bay"           zoom="12" flags="named,center" />
-	<select class="natural:cape"          zoom="12" flags="named,center" />
-	<select class="natural:beach"         zoom="15" flags="named,center" />
-	<select class="natural:coastline"     zoom="15" flags="named,center" />
-	<select class="natural:spring"        zoom="15" flags="named,center" />
-	<select class="natural:hot_spring"    zoom="15" flags="named,center" />
-	<select class="natural:geyser"        zoom="15" flags="named,center" />
-	<select class="natural:blowhole"      zoom="15" flags="named,center" />
-	<select class="natural:peak"          zoom="12" />
-	<select class="natural:volcano"       zoom="12" />
-	<select class="natural:valley"        zoom="15" flags="named,center" />
-	<select class="natural:ridge"         zoom="15" flags="named,center" />
-	<select class="natural:arete"         zoom="15" flags="named,center" />
-	<select class="natural:cliff"         zoom="15" flags="named" />
-	<select class="natural:saddle"        zoom="15" flags="named" />
-	<select class="natural:rock"          zoom="15" flags="named,center" />
-	<select class="natural:stone"         zoom="15" flags="named,center" />
-	<select class="natural:sinkhole"      zoom="15" flags="named,center" />
-	<select class="natural:cave_entrance" zoom="15" flags="named,center" />
+	<select class="natural:wood"          zoom="14" flags="named,center" />
+	<select class="natural:scrub"         zoom="14" flags="named,center" />
+	<select class="natural:heath"         zoom="14" flags="named,center" />
+	<select class="natural:moor"          zoom="14" flags="named,center" />
+	<select class="natural:grassland"     zoom="14" flags="named,center" />
+	<select class="natural:fell"          zoom="14" flags="named,center" />
+	<select class="natural:bare_rock"     zoom="14" flags="named,center" />
+	<select class="natural:scree"         zoom="14" flags="named,center" />
+	<select class="natural:shingle"       zoom="14" flags="named,center" />
+	<select class="natural:sand"          zoom="14" flags="named,center" />
+	<select class="natural:mud"           zoom="14" flags="named,center" />
+	<select class="natural:water"         zoom="11" />
+	<select class="natural:wetland"       zoom="14" flags="named,center" />
+	<select class="natural:glacier"       zoom="11" />
+	<select class="natural:bay"           zoom="11" flags="named,center" />
+	<select class="natural:cape"          zoom="11" flags="named,center" />
+	<select class="natural:beach"         zoom="14" flags="named,center" />
+	<select class="natural:coastline"     zoom="14" flags="named,center" />
+	<select class="natural:spring"        zoom="14" flags="named,center" />
+	<select class="natural:hot_spring"    zoom="14" flags="named,center" />
+	<select class="natural:geyser"        zoom="14" flags="named,center" />
+	<select class="natural:blowhole"      zoom="14" flags="named,center" />
+	<select class="natural:peak"          zoom="11" />
+	<select class="natural:volcano"       zoom="11" />
+	<select class="natural:valley"        zoom="14" flags="named,center" />
+	<select class="natural:ridge"         zoom="14" flags="named,center" />
+	<select class="natural:arete"         zoom="14" flags="named,center" />
+	<select class="natural:cliff"         zoom="14" flags="named" />
+	<select class="natural:saddle"        zoom="14" flags="named" />
+	<select class="natural:rock"          zoom="14" flags="named,center" />
+	<select class="natural:stone"         zoom="14" flags="named,center" />
+	<select class="natural:sinkhole"      zoom="14" flags="named,center" />
+	<select class="natural:cave_entrance" zoom="14" flags="named,center" />
 	<!-- DISCARD NATURAL
 		<select class="natural:tree_row" />
 		<select class="natural:tree" />
 	-->
-	<select class="office:accountant"              zoom="15" flags="named,center" />
-	<select class="office:adoption_agency"         zoom="15" flags="named,center" />
-	<select class="office:advertising_agency"      zoom="15" flags="named,center" />
-	<select class="office:architect"               zoom="15" flags="named,center" />
-	<select class="office:association"             zoom="15" flags="named,center" />
-	<select class="office:charity"                 zoom="15" flags="named,center" />
-	<select class="office:company"                 zoom="15" flags="named,center" />
-	<select class="office:educational_institution" zoom="15" flags="named,center" />
-	<select class="office:employment_agency"       zoom="15" flags="named,center" />
-	<select class="office:energy_supplier"         zoom="15" flags="named,center" />
-	<select class="office:estate_agent"            zoom="15" flags="named,center" />
-	<select class="office:forestry"                zoom="15" flags="named,center" />
-	<select class="office:foundation"              zoom="15" flags="named,center" />
-	<select class="office:government"              zoom="15" flags="named,center" />
-	<select class="office:guide"                   zoom="15" flags="named,center" />
-	<select class="office:healer"                  zoom="15" flags="named,center" />
-	<select class="office:insurance"               zoom="15" flags="named,center" />
-	<select class="office:it"                      zoom="15" flags="named,center" />
-	<select class="office:lawyer"                  zoom="15" flags="named,center" />
-	<select class="office:logistics"               zoom="15" flags="named,center" />
-	<select class="office:moving_company"          zoom="15" flags="named,center" />
-	<select class="office:newspaper"               zoom="15" flags="named,center" />
-	<select class="office:ngo"                     zoom="15" flags="named,center" />
-	<select class="office:notary"                  zoom="15" flags="named,center" />
-	<select class="office:physican"                zoom="15" flags="named,center" />
-	<select class="office:political_party"         zoom="15" flags="named,center" />
-	<select class="office:private_investigator"    zoom="15" flags="named,center" />
-	<select class="office:property_management"     zoom="15" flags="named,center" />
-	<select class="office:quango"                  zoom="15" flags="named,center" />
-	<select class="office:real_estate_agent"       zoom="15" flags="named,center" />
-	<select class="office:religion"                zoom="15" flags="named,center" />
-	<select class="office:research"                zoom="15" flags="named,center" />
-	<select class="office:surveyor"                zoom="15" flags="named,center" />
-	<select class="office:tax"                     zoom="15" flags="named,center" />
-	<select class="office:tax_advisor"             zoom="15" flags="named,center" />
-	<select class="office:telecommunication"       zoom="15" flags="named,center" />
-	<select class="office:therapist"               zoom="15" flags="named,center" />
-	<select class="office:travel_agent"            zoom="15" flags="named,center" />
-	<select class="office:water_utility"           zoom="15" flags="named,center" />
-	<select class="office:yes"                     zoom="15" flags="named,center" />
-	<select class="place:country"                  zoom="6"  flags="named,center" />
-	<select class="place:state"                    zoom="9"  flags="named,center" />
-	<select class="place:municipality"             zoom="12" flags="named,center" />
-	<select class="place:city"                     zoom="12" flags="named,center" />
-	<select class="place:suburb"                   zoom="15" flags="named,center" />
-	<select class="place:neighbourhood"            zoom="15" flags="named,center" />
-	<select class="place:town"                     zoom="15" flags="named,center" />
-	<select class="place:village"                  zoom="15" flags="named,center" />
-	<select class="place:hamlet"                   zoom="15" flags="named,center" />
-	<select class="place:continent"                zoom="6"  flags="named,center" />
-	<select class="place:island"                   zoom="9"  flags="named,center" />
-	<select class="place:islet"                    zoom="12" flags="named,center" />
-	<select class="place:locality"                 zoom="15" flags="named,center" />
+	<select class="office:accountant"              zoom="14" flags="named,center" />
+	<select class="office:adoption_agency"         zoom="14" flags="named,center" />
+	<select class="office:advertising_agency"      zoom="14" flags="named,center" />
+	<select class="office:architect"               zoom="14" flags="named,center" />
+	<select class="office:association"             zoom="14" flags="named,center" />
+	<select class="office:charity"                 zoom="14" flags="named,center" />
+	<select class="office:company"                 zoom="14" flags="named,center" />
+	<select class="office:educational_institution" zoom="14" flags="named,center" />
+	<select class="office:employment_agency"       zoom="14" flags="named,center" />
+	<select class="office:energy_supplier"         zoom="14" flags="named,center" />
+	<select class="office:estate_agent"            zoom="14" flags="named,center" />
+	<select class="office:forestry"                zoom="14" flags="named,center" />
+	<select class="office:foundation"              zoom="14" flags="named,center" />
+	<select class="office:government"              zoom="14" flags="named,center" />
+	<select class="office:guide"                   zoom="14" flags="named,center" />
+	<select class="office:healer"                  zoom="14" flags="named,center" />
+	<select class="office:insurance"               zoom="14" flags="named,center" />
+	<select class="office:it"                      zoom="14" flags="named,center" />
+	<select class="office:lawyer"                  zoom="14" flags="named,center" />
+	<select class="office:logistics"               zoom="14" flags="named,center" />
+	<select class="office:moving_company"          zoom="14" flags="named,center" />
+	<select class="office:newspaper"               zoom="14" flags="named,center" />
+	<select class="office:ngo"                     zoom="14" flags="named,center" />
+	<select class="office:notary"                  zoom="14" flags="named,center" />
+	<select class="office:physican"                zoom="14" flags="named,center" />
+	<select class="office:political_party"         zoom="14" flags="named,center" />
+	<select class="office:private_investigator"    zoom="14" flags="named,center" />
+	<select class="office:property_management"     zoom="14" flags="named,center" />
+	<select class="office:quango"                  zoom="14" flags="named,center" />
+	<select class="office:real_estate_agent"       zoom="14" flags="named,center" />
+	<select class="office:religion"                zoom="14" flags="named,center" />
+	<select class="office:research"                zoom="14" flags="named,center" />
+	<select class="office:surveyor"                zoom="14" flags="named,center" />
+	<select class="office:tax"                     zoom="14" flags="named,center" />
+	<select class="office:tax_advisor"             zoom="14" flags="named,center" />
+	<select class="office:telecommunication"       zoom="14" flags="named,center" />
+	<select class="office:therapist"               zoom="14" flags="named,center" />
+	<select class="office:travel_agent"            zoom="14" flags="named,center" />
+	<select class="office:water_utility"           zoom="14" flags="named,center" />
+	<select class="office:yes"                     zoom="14" flags="named,center" />
+	<select class="place:country"                  zoom="5"  flags="named,center" />
+	<select class="place:state"                    zoom="8"  flags="named,center" />
+	<select class="place:municipality"             zoom="11" flags="named,center" />
+	<select class="place:city"                     zoom="11" flags="named,center" />
+	<select class="place:suburb"                   zoom="14" flags="named,center" />
+	<select class="place:neighbourhood"            zoom="14" flags="named,center" />
+	<select class="place:town"                     zoom="14" flags="named,center" />
+	<select class="place:village"                  zoom="14" flags="named,center" />
+	<select class="place:hamlet"                   zoom="14" flags="named,center" />
+	<select class="place:continent"                zoom="5"  flags="named,center" />
+	<select class="place:island"                   zoom="8"  flags="named,center" />
+	<select class="place:islet"                    zoom="11" flags="named,center" />
+	<select class="place:locality"                 zoom="14" flags="named,center" />
 	<!-- DISCARD PLACE
 		<select class="place:archipelago" />
 		<select class="place:city_block" />
@@ -680,12 +680,12 @@
 		<select class="place:farm" />
 		<select class="place:allotments" />
 	-->
-	<select class="power:plant"      zoom="15" flags="named,center" />
-	<select class="power:line"       zoom="15" />
-	<select class="power:minor_line" zoom="15" />
-	<select class="power:pole"       zoom="15" flags="center" />
-	<select class="power:substation" zoom="15" flags="named,center" />
-	<select class="power:tower"      zoom="15" flags="center" />
+	<select class="power:plant"      zoom="14" flags="named,center" />
+	<select class="power:line"       zoom="14" />
+	<select class="power:minor_line" zoom="14" />
+	<select class="power:pole"       zoom="14" flags="center" />
+	<select class="power:substation" zoom="14" flags="named,center" />
+	<select class="power:tower"      zoom="14" flags="center" />
 	<!-- DISCARD POWER
 		<select class="power:portal" />
 		<select class="power:catenary_mast" />
@@ -707,18 +707,18 @@
 		<select class="public_transport:station"       />
 		<select class="public_transport:stop_area"     />
 	-->
-	<select class="railway:disused"      zoom="15" />
-	<select class="railway:minature"     zoom="15" />
-	<select class="railway:funicular"    zoom="15" />
-	<select class="railway:light_rail"   zoom="15" />
-	<select class="railway:monorail"     zoom="15" />
-	<select class="railway:narrow_gauge" zoom="15" />
-	<select class="railway:preserved"    zoom="15" />
-	<select class="railway:rail"         zoom="15" />
-	<select class="railway:subway"       zoom="15" />
-	<select class="railway:tram"         zoom="15" />
-	<select class="railway:platform"     zoom="15" />
-	<select class="railway:station"      zoom="15" flags="named,center" />
+	<select class="railway:disused"      zoom="14" />
+	<select class="railway:minature"     zoom="14" />
+	<select class="railway:funicular"    zoom="14" />
+	<select class="railway:light_rail"   zoom="14" />
+	<select class="railway:monorail"     zoom="14" />
+	<select class="railway:narrow_gauge" zoom="14" />
+	<select class="railway:preserved"    zoom="14" />
+	<select class="railway:rail"         zoom="14" />
+	<select class="railway:subway"       zoom="14" />
+	<select class="railway:tram"         zoom="14" />
+	<select class="railway:platform"     zoom="14" />
+	<select class="railway:station"      zoom="14" flags="named,center" />
 	<!-- DISCARD RAILWAY
 		<select class="railway:halt" />
 		<select class="railway:railway_crossing" />
@@ -737,152 +737,152 @@
 		<select class="railway:traverser" />
 		<select class="railway:wash" />
 	-->
-	<select class="shop:alcohol"                   zoom="15" flags="named,center" />
-	<select class="shop:bakery"                    zoom="15" flags="named,center" />
-	<select class="shop:beverages"                 zoom="15" flags="named,center" />
-	<select class="shop:brewing_supplies"          zoom="15" flags="named,center" />
-	<select class="shop:butcher"                   zoom="15" flags="named,center" />
-	<select class="shop:cheese"                    zoom="15" flags="named,center" />
-	<select class="shop:chocolate"                 zoom="15" flags="named,center" />
-	<select class="shop:coffee"                    zoom="15" flags="named,center" />
-	<select class="shop:confectionery"             zoom="15" flags="named,center" />
-	<select class="shop:convenience"               zoom="15" flags="named,center" />
-	<select class="shop:deli"                      zoom="15" flags="named,center" />
-	<select class="shop:dairy"                     zoom="15" flags="named,center" />
-	<select class="shop:farm"                      zoom="15" flags="named,center" />
-	<select class="shop:frozen_food"               zoom="15" flags="named,center" />
-	<select class="shop:greengrocier"              zoom="15" flags="named,center" />
-	<select class="shop:health_food"               zoom="15" flags="named,center" />
-	<select class="shop:ice_cream"                 zoom="15" flags="named,center" />
-	<select class="shop:pasta"                     zoom="15" flags="named,center" />
-	<select class="shop:pastry"                    zoom="15" flags="named,center" />
-	<select class="shop:seafood"                   zoom="15" flags="named,center" />
-	<select class="shop:spices"                    zoom="15" flags="named,center" />
-	<select class="shop:tea"                       zoom="15" flags="named,center" />
-	<select class="shop:water"                     zoom="15" flags="named,center" />
-	<select class="shop:department_store"          zoom="15" flags="named,center" />
-	<select class="shop:general"                   zoom="15" flags="named,center" />
-	<select class="shop:kiosk"                     zoom="15" flags="named,center" />
-	<select class="shop:mall"                      zoom="15" flags="named,center" />
-	<select class="shop:supermarket"               zoom="15" flags="named,center" />
-	<select class="shop:wholesale"                 zoom="15" flags="named,center" />
-	<select class="shop:baby_goods"                zoom="15" flags="named,center" />
-	<select class="shop:bag"                       zoom="15" flags="named,center" />
-	<select class="shop:boutique"                  zoom="15" flags="named,center" />
-	<select class="shop:clothes"                   zoom="15" flags="named,center" />
-	<select class="shop:fabric"                    zoom="15" flags="named,center" />
-	<select class="shop:fashion"                   zoom="15" flags="named,center" />
-	<select class="shop:jewelry"                   zoom="15" flags="named,center" />
-	<select class="shop:leather"                   zoom="15" flags="named,center" />
-	<select class="shop:sewing"                    zoom="15" flags="named,center" />
-	<select class="shop:shoes"                     zoom="15" flags="named,center" />
-	<select class="shop:tailor"                    zoom="15" flags="named,center" />
-	<select class="shop:watches"                   zoom="15" flags="named,center" />
-	<select class="shop:charity"                   zoom="15" flags="named,center" />
-	<select class="shop:second_hand"               zoom="15" flags="named,center" />
-	<select class="shop:variety_store"             zoom="15" flags="named,center" />
-	<select class="shop:beauty"                    zoom="15" flags="named,center" />
-	<select class="shop:chemist"                   zoom="15" flags="named,center" />
-	<select class="shop:cosmetics"                 zoom="15" flags="named,center" />
-	<select class="shop:hairdresser"               zoom="15" flags="named,center" />
-	<select class="shop:hairdresser_suply"         zoom="15" flags="named,center" />
-	<select class="shop:hearing_aids"              zoom="15" flags="named,center" />
-	<select class="shop:massage"                   zoom="15" flags="named,center" />
-	<select class="shop:nutrition_supplements"     zoom="15" flags="named,center" />
-	<select class="shop:optician"                  zoom="15" flags="named,center" />
-	<select class="shop:perfumery"                 zoom="15" flags="named,center" />
-	<select class="shop:agrarian"                  zoom="15" flags="named,center" />
-	<select class="shop:appliance"                 zoom="15" flags="named,center" />
-	<select class="shop:bathroom_furnishing"       zoom="15" flags="named,center" />
-	<select class="shop:doityourself"              zoom="15" flags="named,center" />
-	<select class="shop:electrical"                zoom="15" flags="named,center" />
-	<select class="shop:energy"                    zoom="15" flags="named,center" />
-	<select class="shop:fireplace"                 zoom="15" flags="named,center" />
-	<select class="shop:florist"                   zoom="15" flags="named,center" />
-	<select class="shop:garden_centre"             zoom="15" flags="named,center" />
-	<select class="shop:garden_furniture"          zoom="15" flags="named,center" />
-	<select class="shop:gas"                       zoom="15" flags="named,center" />
-	<select class="shop:glaziery"                  zoom="15" flags="named,center" />
-	<select class="shop:hardware"                  zoom="15" flags="named,center" />
-	<select class="shop:houseware"                 zoom="15" flags="named,center" />
-	<select class="shop:locksmith"                 zoom="15" flags="named,center" />
-	<select class="shop:paint"                     zoom="15" flags="named,center" />
-	<select class="shop:security"                  zoom="15" flags="named,center" />
-	<select class="shop:trade"                     zoom="15" flags="named,center" />
-	<select class="shop:antiques"                  zoom="15" flags="named,center" />
-	<select class="shop:bed"                       zoom="15" flags="named,center" />
-	<select class="shop:candles"                   zoom="15" flags="named,center" />
-	<select class="shop:carpet"                    zoom="15" flags="named,center" />
-	<select class="shop:curtain"                   zoom="15" flags="named,center" />
-	<select class="shop:doors"                     zoom="15" flags="named,center" />
-	<select class="shop:flooring"                  zoom="15" flags="named,center" />
-	<select class="shop:furniture"                 zoom="15" flags="named,center" />
-	<select class="shop:interior_decoration"       zoom="15" flags="named,center" />
-	<select class="shop:kitchen"                   zoom="15" flags="named,center" />
-	<select class="shop:lamps"                     zoom="15" flags="named,center" />
-	<select class="shop:tiles"                     zoom="15" flags="named,center" />
-	<select class="shop:window_blind"              zoom="15" flags="named,center" />
-	<select class="shop:computer"                  zoom="15" flags="named,center" />
-	<select class="shop:robot"                     zoom="15" flags="named,center" />
-	<select class="shop:electonics"                zoom="15" flags="named,center" />
-	<select class="shop:hifi"                      zoom="15" flags="named,center" />
-	<select class="shop:mobile_phone"              zoom="15" flags="named,center" />
-	<select class="shop:radiotechnics"             zoom="15" flags="named,center" />
-	<select class="shop:vacuum_cleaner"            zoom="15" flags="named,center" />
-	<select class="shop:atv"                       zoom="15" flags="named,center" />
-	<select class="shop:bicycle"                   zoom="15" flags="named,center" />
-	<select class="shop:boat"                      zoom="15" flags="named,center" />
-	<select class="shop:car"                       zoom="15" flags="named,center" />
-	<select class="shop:car_repair"                zoom="15" flags="named,center" />
-	<select class="shop:car_parts"                 zoom="15" flags="named,center" />
-	<select class="shop:fuel"                      zoom="15" flags="named,center" />
-	<select class="shop:fishing"                   zoom="15" flags="named,center" />
-	<select class="shop:free_flying"               zoom="15" flags="named,center" />
-	<select class="shop:hunting"                   zoom="15" flags="named,center" />
-	<select class="shop:jetski"                    zoom="15" flags="named,center" />
-	<select class="shop:motorcycle"                zoom="15" flags="named,center" />
-	<select class="shop:outdoor"                   zoom="15" flags="named,center" />
-	<select class="shop:scuba_diving"              zoom="15" flags="named,center" />
-	<select class="shop:ski"                       zoom="15" flags="named,center" />
-	<select class="shop:snowmobile"                zoom="15" flags="named,center" />
-	<select class="shop:sports"                    zoom="15" flags="named,center" />
-	<select class="shop:swimming_pool"             zoom="15" flags="named,center" />
-	<select class="shop:tyres"                     zoom="15" flags="named,center" />
-	<select class="shop:art"                       zoom="15" flags="named,center" />
-	<select class="shop:collector"                 zoom="15" flags="named,center" />
-	<select class="shop:craft"                     zoom="15" flags="named,center" />
-	<select class="shop:frame"                     zoom="15" flags="named,center" />
-	<select class="shop:games"                     zoom="15" flags="named,center" />
-	<select class="shop:model"                     zoom="15" flags="named,center" />
-	<select class="shop:music"                     zoom="15" flags="named,center" />
-	<select class="shop:musical_instrument"        zoom="15" flags="named,center" />
-	<select class="shop:photo"                     zoom="15" flags="named,center" />
-	<select class="shop:camera"                    zoom="15" flags="named,center" />
-	<select class="shop:trophy"                    zoom="15" flags="named,center" />
-	<select class="shop:video"                     zoom="15" flags="named,center" />
-	<select class="shop:video_games"               zoom="15" flags="named,center" />
-	<select class="shop:anime"                     zoom="15" flags="named,center" />
-	<select class="shop:books"                     zoom="15" flags="named,center" />
-	<select class="shop:gift"                      zoom="15" flags="named,center" />
-	<select class="shop:lottery"                   zoom="15" flags="named,center" />
-	<select class="shop:newsagent"                 zoom="15" flags="named,center" />
-	<select class="shop:stationery"                zoom="15" flags="named,center" />
-	<select class="shop:ticket"                    zoom="15" flags="named,center" />
-	<select class="shop:bookmaker"                 zoom="15" flags="named,center" />
-	<select class="shop:copyshop"                  zoom="15" flags="named,center" />
-	<select class="shop:dry_cleaning"              zoom="15" flags="named,center" />
-	<select class="shop:funeral_directors"         zoom="15" flags="named,center" />
-	<select class="shop:laundry"                   zoom="15" flags="named,center" />
-	<select class="shop:money_lender"              zoom="15" flags="named,center" />
-	<select class="shop:party"                     zoom="15" flags="named,center" />
-	<select class="shop:pawnbroker"                zoom="15" flags="named,center" />
-	<select class="shop:pet"                       zoom="15" flags="named,center" />
-	<select class="shop:pyrotechnics"              zoom="15" flags="named,center" />
-	<select class="shop:religion"                  zoom="15" flags="named,center" />
-	<select class="shop:storage_rental"            zoom="15" flags="named,center" />
-	<select class="shop:toys"                      zoom="15" flags="named,center" />
-	<select class="shop:travel_agency"             zoom="15" flags="named,center" />
-	<select class="shop:vacant"                    zoom="15" flags="named,center" />
+	<select class="shop:alcohol"                   zoom="14" flags="named,center" />
+	<select class="shop:bakery"                    zoom="14" flags="named,center" />
+	<select class="shop:beverages"                 zoom="14" flags="named,center" />
+	<select class="shop:brewing_supplies"          zoom="14" flags="named,center" />
+	<select class="shop:butcher"                   zoom="14" flags="named,center" />
+	<select class="shop:cheese"                    zoom="14" flags="named,center" />
+	<select class="shop:chocolate"                 zoom="14" flags="named,center" />
+	<select class="shop:coffee"                    zoom="14" flags="named,center" />
+	<select class="shop:confectionery"             zoom="14" flags="named,center" />
+	<select class="shop:convenience"               zoom="14" flags="named,center" />
+	<select class="shop:deli"                      zoom="14" flags="named,center" />
+	<select class="shop:dairy"                     zoom="14" flags="named,center" />
+	<select class="shop:farm"                      zoom="14" flags="named,center" />
+	<select class="shop:frozen_food"               zoom="14" flags="named,center" />
+	<select class="shop:greengrocier"              zoom="14" flags="named,center" />
+	<select class="shop:health_food"               zoom="14" flags="named,center" />
+	<select class="shop:ice_cream"                 zoom="14" flags="named,center" />
+	<select class="shop:pasta"                     zoom="14" flags="named,center" />
+	<select class="shop:pastry"                    zoom="14" flags="named,center" />
+	<select class="shop:seafood"                   zoom="14" flags="named,center" />
+	<select class="shop:spices"                    zoom="14" flags="named,center" />
+	<select class="shop:tea"                       zoom="14" flags="named,center" />
+	<select class="shop:water"                     zoom="14" flags="named,center" />
+	<select class="shop:department_store"          zoom="14" flags="named,center" />
+	<select class="shop:general"                   zoom="14" flags="named,center" />
+	<select class="shop:kiosk"                     zoom="14" flags="named,center" />
+	<select class="shop:mall"                      zoom="14" flags="named,center" />
+	<select class="shop:supermarket"               zoom="14" flags="named,center" />
+	<select class="shop:wholesale"                 zoom="14" flags="named,center" />
+	<select class="shop:baby_goods"                zoom="14" flags="named,center" />
+	<select class="shop:bag"                       zoom="14" flags="named,center" />
+	<select class="shop:boutique"                  zoom="14" flags="named,center" />
+	<select class="shop:clothes"                   zoom="14" flags="named,center" />
+	<select class="shop:fabric"                    zoom="14" flags="named,center" />
+	<select class="shop:fashion"                   zoom="14" flags="named,center" />
+	<select class="shop:jewelry"                   zoom="14" flags="named,center" />
+	<select class="shop:leather"                   zoom="14" flags="named,center" />
+	<select class="shop:sewing"                    zoom="14" flags="named,center" />
+	<select class="shop:shoes"                     zoom="14" flags="named,center" />
+	<select class="shop:tailor"                    zoom="14" flags="named,center" />
+	<select class="shop:watches"                   zoom="14" flags="named,center" />
+	<select class="shop:charity"                   zoom="14" flags="named,center" />
+	<select class="shop:second_hand"               zoom="14" flags="named,center" />
+	<select class="shop:variety_store"             zoom="14" flags="named,center" />
+	<select class="shop:beauty"                    zoom="14" flags="named,center" />
+	<select class="shop:chemist"                   zoom="14" flags="named,center" />
+	<select class="shop:cosmetics"                 zoom="14" flags="named,center" />
+	<select class="shop:hairdresser"               zoom="14" flags="named,center" />
+	<select class="shop:hairdresser_suply"         zoom="14" flags="named,center" />
+	<select class="shop:hearing_aids"              zoom="14" flags="named,center" />
+	<select class="shop:massage"                   zoom="14" flags="named,center" />
+	<select class="shop:nutrition_supplements"     zoom="14" flags="named,center" />
+	<select class="shop:optician"                  zoom="14" flags="named,center" />
+	<select class="shop:perfumery"                 zoom="14" flags="named,center" />
+	<select class="shop:agrarian"                  zoom="14" flags="named,center" />
+	<select class="shop:appliance"                 zoom="14" flags="named,center" />
+	<select class="shop:bathroom_furnishing"       zoom="14" flags="named,center" />
+	<select class="shop:doityourself"              zoom="14" flags="named,center" />
+	<select class="shop:electrical"                zoom="14" flags="named,center" />
+	<select class="shop:energy"                    zoom="14" flags="named,center" />
+	<select class="shop:fireplace"                 zoom="14" flags="named,center" />
+	<select class="shop:florist"                   zoom="14" flags="named,center" />
+	<select class="shop:garden_centre"             zoom="14" flags="named,center" />
+	<select class="shop:garden_furniture"          zoom="14" flags="named,center" />
+	<select class="shop:gas"                       zoom="14" flags="named,center" />
+	<select class="shop:glaziery"                  zoom="14" flags="named,center" />
+	<select class="shop:hardware"                  zoom="14" flags="named,center" />
+	<select class="shop:houseware"                 zoom="14" flags="named,center" />
+	<select class="shop:locksmith"                 zoom="14" flags="named,center" />
+	<select class="shop:paint"                     zoom="14" flags="named,center" />
+	<select class="shop:security"                  zoom="14" flags="named,center" />
+	<select class="shop:trade"                     zoom="14" flags="named,center" />
+	<select class="shop:antiques"                  zoom="14" flags="named,center" />
+	<select class="shop:bed"                       zoom="14" flags="named,center" />
+	<select class="shop:candles"                   zoom="14" flags="named,center" />
+	<select class="shop:carpet"                    zoom="14" flags="named,center" />
+	<select class="shop:curtain"                   zoom="14" flags="named,center" />
+	<select class="shop:doors"                     zoom="14" flags="named,center" />
+	<select class="shop:flooring"                  zoom="14" flags="named,center" />
+	<select class="shop:furniture"                 zoom="14" flags="named,center" />
+	<select class="shop:interior_decoration"       zoom="14" flags="named,center" />
+	<select class="shop:kitchen"                   zoom="14" flags="named,center" />
+	<select class="shop:lamps"                     zoom="14" flags="named,center" />
+	<select class="shop:tiles"                     zoom="14" flags="named,center" />
+	<select class="shop:window_blind"              zoom="14" flags="named,center" />
+	<select class="shop:computer"                  zoom="14" flags="named,center" />
+	<select class="shop:robot"                     zoom="14" flags="named,center" />
+	<select class="shop:electonics"                zoom="14" flags="named,center" />
+	<select class="shop:hifi"                      zoom="14" flags="named,center" />
+	<select class="shop:mobile_phone"              zoom="14" flags="named,center" />
+	<select class="shop:radiotechnics"             zoom="14" flags="named,center" />
+	<select class="shop:vacuum_cleaner"            zoom="14" flags="named,center" />
+	<select class="shop:atv"                       zoom="14" flags="named,center" />
+	<select class="shop:bicycle"                   zoom="14" flags="named,center" />
+	<select class="shop:boat"                      zoom="14" flags="named,center" />
+	<select class="shop:car"                       zoom="14" flags="named,center" />
+	<select class="shop:car_repair"                zoom="14" flags="named,center" />
+	<select class="shop:car_parts"                 zoom="14" flags="named,center" />
+	<select class="shop:fuel"                      zoom="14" flags="named,center" />
+	<select class="shop:fishing"                   zoom="14" flags="named,center" />
+	<select class="shop:free_flying"               zoom="14" flags="named,center" />
+	<select class="shop:hunting"                   zoom="14" flags="named,center" />
+	<select class="shop:jetski"                    zoom="14" flags="named,center" />
+	<select class="shop:motorcycle"                zoom="14" flags="named,center" />
+	<select class="shop:outdoor"                   zoom="14" flags="named,center" />
+	<select class="shop:scuba_diving"              zoom="14" flags="named,center" />
+	<select class="shop:ski"                       zoom="14" flags="named,center" />
+	<select class="shop:snowmobile"                zoom="14" flags="named,center" />
+	<select class="shop:sports"                    zoom="14" flags="named,center" />
+	<select class="shop:swimming_pool"             zoom="14" flags="named,center" />
+	<select class="shop:tyres"                     zoom="14" flags="named,center" />
+	<select class="shop:art"                       zoom="14" flags="named,center" />
+	<select class="shop:collector"                 zoom="14" flags="named,center" />
+	<select class="shop:craft"                     zoom="14" flags="named,center" />
+	<select class="shop:frame"                     zoom="14" flags="named,center" />
+	<select class="shop:games"                     zoom="14" flags="named,center" />
+	<select class="shop:model"                     zoom="14" flags="named,center" />
+	<select class="shop:music"                     zoom="14" flags="named,center" />
+	<select class="shop:musical_instrument"        zoom="14" flags="named,center" />
+	<select class="shop:photo"                     zoom="14" flags="named,center" />
+	<select class="shop:camera"                    zoom="14" flags="named,center" />
+	<select class="shop:trophy"                    zoom="14" flags="named,center" />
+	<select class="shop:video"                     zoom="14" flags="named,center" />
+	<select class="shop:video_games"               zoom="14" flags="named,center" />
+	<select class="shop:anime"                     zoom="14" flags="named,center" />
+	<select class="shop:books"                     zoom="14" flags="named,center" />
+	<select class="shop:gift"                      zoom="14" flags="named,center" />
+	<select class="shop:lottery"                   zoom="14" flags="named,center" />
+	<select class="shop:newsagent"                 zoom="14" flags="named,center" />
+	<select class="shop:stationery"                zoom="14" flags="named,center" />
+	<select class="shop:ticket"                    zoom="14" flags="named,center" />
+	<select class="shop:bookmaker"                 zoom="14" flags="named,center" />
+	<select class="shop:copyshop"                  zoom="14" flags="named,center" />
+	<select class="shop:dry_cleaning"              zoom="14" flags="named,center" />
+	<select class="shop:funeral_directors"         zoom="14" flags="named,center" />
+	<select class="shop:laundry"                   zoom="14" flags="named,center" />
+	<select class="shop:money_lender"              zoom="14" flags="named,center" />
+	<select class="shop:party"                     zoom="14" flags="named,center" />
+	<select class="shop:pawnbroker"                zoom="14" flags="named,center" />
+	<select class="shop:pet"                       zoom="14" flags="named,center" />
+	<select class="shop:pyrotechnics"              zoom="14" flags="named,center" />
+	<select class="shop:religion"                  zoom="14" flags="named,center" />
+	<select class="shop:storage_rental"            zoom="14" flags="named,center" />
+	<select class="shop:toys"                      zoom="14" flags="named,center" />
+	<select class="shop:travel_agency"             zoom="14" flags="named,center" />
+	<select class="shop:vacant"                    zoom="14" flags="named,center" />
 	<!--
 		<select class="shop:herbalist" />
 		<select class="shop:medical_supply" />
@@ -892,131 +892,131 @@
 		<select class="shop:erotic" />
 		<select class="shop:weapons" />
 	-->
-	<select class="sport:9pin"                zoom="15" flags="named,center" />
-	<select class="sport:10pin"               zoom="15" flags="named,center" />
-	<select class="sport:american_football"   zoom="15" flags="named,center" />
-	<select class="sport:aikido"              zoom="15" flags="named,center" />
-	<select class="sport:archery"             zoom="15" flags="named,center" />
-	<select class="sport:athletics"           zoom="15" flags="named,center" />
-	<select class="sport:australian_football" zoom="15" flags="named,center" />
-	<select class="sport:badminton"           zoom="15" flags="named,center" />
-	<select class="sport:bandy"               zoom="15" flags="named,center" />
-	<select class="sport:base"                zoom="15" flags="named,center" />
-	<select class="sport:baseball"            zoom="15" flags="named,center" />
-	<select class="sport:basketball"          zoom="15" flags="named,center" />
-	<select class="sport:beachvolleyball"     zoom="15" flags="named,center" />
-	<select class="sport:billards"            zoom="15" flags="named,center" />
-	<select class="sport:bmx"                 zoom="15" flags="named,center" />
-	<select class="sport:bobsleigh"           zoom="15" flags="named,center" />
-	<select class="sport:boules"              zoom="15" flags="named,center" />
-	<select class="sport:bowls"               zoom="15" flags="named,center" />
-	<select class="sport:boxing"              zoom="15" flags="named,center" />
-	<select class="sport:canadian_football"   zoom="15" flags="named,center" />
-	<select class="sport:canoe"               zoom="15" flags="named,center" />
-	<select class="sport:chess"               zoom="15" flags="named,center" />
-	<select class="sport:cliff_diving"        zoom="15" flags="named,center" />
-	<select class="sport:climbing"            zoom="15" flags="named,center" />
-	<select class="sport:climbing_adventure"  zoom="15" flags="named,center" />
-	<select class="sport:cricket"             zoom="15" flags="named,center" />
-	<select class="sport:croquet"             zoom="15" flags="named,center" />
-	<select class="sport:curling"             zoom="15" flags="named,center" />
-	<select class="sport:cycling"             zoom="15" flags="named,center" />
-	<select class="sport:darts"               zoom="15" flags="named,center" />
-	<select class="sport:dog_racing"          zoom="15" flags="named,center" />
-	<select class="sport:equestrian"          zoom="15" flags="named,center" />
-	<select class="sport:fencing"             zoom="15" flags="named,center" />
-	<select class="sport:field_hockey"        zoom="15" flags="named,center" />
-	<select class="sport:free_flying"         zoom="15" flags="named,center" />
-	<select class="sport:futsal"              zoom="15" flags="named,center" />
-	<select class="sport:gaelic_games"        zoom="15" flags="named,center" />
-	<select class="sport:golf"                zoom="15" flags="named,center" />
-	<select class="sport:gymnastics"          zoom="15" flags="named,center" />
-	<select class="sport:handball"            zoom="15" flags="named,center" />
-	<select class="sport:hapkido"             zoom="15" flags="named,center" />
-	<select class="sport:horseshoes"          zoom="15" flags="named,center" />
-	<select class="sport:horse_racing"        zoom="15" flags="named,center" />
-	<select class="sport:ice_hockey"          zoom="15" flags="named,center" />
-	<select class="sport:ice_skating"         zoom="15" flags="named,center" />
-	<select class="sport:ice_stock"           zoom="15" flags="named,center" />
-	<select class="sport:judo"                zoom="15" flags="named,center" />
-	<select class="sport:karate"              zoom="15" flags="named,center" />
-	<select class="sport:karting"             zoom="15" flags="named,center" />
-	<select class="sport:kitesurfing"         zoom="15" flags="named,center" />
-	<select class="sport:korfball"            zoom="15" flags="named,center" />
-	<select class="sport:lacrosse"            zoom="15" flags="named,center" />
-	<select class="sport:model_aerodrome"     zoom="15" flags="named,center" />
-	<select class="sport:motocross"           zoom="15" flags="named,center" />
-	<select class="sport:motor"               zoom="15" flags="named,center" />
-	<select class="sport:multi"               zoom="15" flags="named,center" />
-	<select class="sport:netball"             zoom="15" flags="named,center" />
-	<select class="sport:obstacle_course"     zoom="15" flags="named,center" />
-	<select class="sport:orienteering"        zoom="15" flags="named,center" />
-	<select class="sport:paddle_tennis"       zoom="15" flags="named,center" />
-	<select class="sport:padel"               zoom="15" flags="named,center" />
-	<select class="sport:parachuting"         zoom="15" flags="named,center" />
-	<select class="sport:paragliding"         zoom="15" flags="named,center" />
-	<select class="sport:pelota"              zoom="15" flags="named,center" />
-	<select class="sport:racquet"             zoom="15" flags="named,center" />
-	<select class="sport:rc_car"              zoom="15" flags="named,center" />
-	<select class="sport:roller_skating"      zoom="15" flags="named,center" />
-	<select class="sport:rowing"              zoom="15" flags="named,center" />
-	<select class="sport:rugby_league"        zoom="15" flags="named,center" />
-	<select class="sport:rugby_union"         zoom="15" flags="named,center" />
-	<select class="sport:running"             zoom="15" flags="named,center" />
-	<select class="sport:sailing"             zoom="15" flags="named,center" />
-	<select class="sport:scuba_diving"        zoom="15" flags="named,center" />
-	<select class="sport:shooting"            zoom="15" flags="named,center" />
-	<select class="sport:skateboard"          zoom="15" flags="named,center" />
-	<select class="sport:soccer"              zoom="15" flags="named,center" />
-	<select class="sport:sumo"                zoom="15" flags="named,center" />
-	<select class="sport:surfing"             zoom="15" flags="named,center" />
-	<select class="sport:swimming"            zoom="15" flags="named,center" />
-	<select class="sport:table_tennis"        zoom="15" flags="named,center" />
-	<select class="sport:table_soccer"        zoom="15" flags="named,center" />
-	<select class="sport:taekwondo"           zoom="15" flags="named,center" />
-	<select class="sport:tennis"              zoom="15" flags="named,center" />
-	<select class="sport:toboggan"            zoom="15" flags="named,center" />
-	<select class="sport:volleyball"          zoom="15" flags="named,center" />
-	<select class="sport:water_polo"          zoom="15" flags="named,center" />
-	<select class="sport:water_ski"           zoom="15" flags="named,center" />
-	<select class="sport:weightlifting"       zoom="15" flags="named,center" />
-	<select class="sport:wrestling"           zoom="15" flags="named,center" />
-	<select class="sport:yoga"                zoom="15" flags="named,center" />
-	<select class="tourism:alpine_hut"        zoom="15" flags="center" />
-	<select class="tourism:apartment"         zoom="15" flags="named,center" />
-	<select class="tourism:aquarium"          zoom="15" flags="named,center" />
-	<select class="tourism:artwork"           zoom="15" flags="named,center" />
-	<select class="tourism:attraction"        zoom="15" flags="named,center" />
-	<select class="tourism:camp_site"         zoom="15" flags="center" />
-	<select class="tourism:caravan_site"      zoom="15" flags="center" />
-	<select class="tourism:chalet"            zoom="15" flags="named,center" />
-	<select class="tourism:gallery"           zoom="15" flags="named,center" />
-	<select class="tourism:guest_house"       zoom="15" flags="named,center" />
-	<select class="tourism:hostel"            zoom="15" flags="named,center" />
-	<select class="tourism:hotel"             zoom="15" flags="named,center" />
-	<select class="tourism:information"       zoom="15" flags="center" />
-	<select class="tourism:motel"             zoom="15" flags="named,center" />
-	<select class="tourism:museum"            zoom="15" flags="named,center" />
-	<select class="tourism:picnic_site"       zoom="15" flags="center" />
-	<select class="tourism:theme_park"        zoom="15" flags="named,center" />
-	<select class="tourism:viewpoint"         zoom="15" flags="center" />
-	<select class="tourism:wilderness_hut"    zoom="15" flags="center" />
-	<select class="tourism:zoo"               zoom="15" flags="named,center" />
-	<select class="tourism:yes"               zoom="15" flags="named,center" />
-	<select class="waterway:river"            zoom="12" />
-	<select class="waterway:riverbank"        zoom="12" />
-	<select class="waterway:stream"           zoom="15" />
-	<select class="waterway:wadi"             zoom="15" />
-	<select class="waterway:drystream"        zoom="15" />
-	<select class="waterway:canal"            zoom="15" />
-	<select class="waterway:drain"            zoom="15" />
-	<select class="waterway:ditch"            zoom="15" />
-	<select class="waterway:fairway"          zoom="15" />
-	<select class="waterway:dock"             zoom="15" flags="named,center" />
-	<select class="waterway:boatyard"         zoom="15" flags="named,center" />
-	<select class="waterway:dam"              zoom="12" />
-	<select class="waterway:weir"             zoom="15" />
-	<select class="waterway:waterfall"        zoom="15" />
+	<select class="sport:9pin"                zoom="14" flags="named,center" />
+	<select class="sport:10pin"               zoom="14" flags="named,center" />
+	<select class="sport:american_football"   zoom="14" flags="named,center" />
+	<select class="sport:aikido"              zoom="14" flags="named,center" />
+	<select class="sport:archery"             zoom="14" flags="named,center" />
+	<select class="sport:athletics"           zoom="14" flags="named,center" />
+	<select class="sport:australian_football" zoom="14" flags="named,center" />
+	<select class="sport:badminton"           zoom="14" flags="named,center" />
+	<select class="sport:bandy"               zoom="14" flags="named,center" />
+	<select class="sport:base"                zoom="14" flags="named,center" />
+	<select class="sport:baseball"            zoom="14" flags="named,center" />
+	<select class="sport:basketball"          zoom="14" flags="named,center" />
+	<select class="sport:beachvolleyball"     zoom="14" flags="named,center" />
+	<select class="sport:billards"            zoom="14" flags="named,center" />
+	<select class="sport:bmx"                 zoom="14" flags="named,center" />
+	<select class="sport:bobsleigh"           zoom="14" flags="named,center" />
+	<select class="sport:boules"              zoom="14" flags="named,center" />
+	<select class="sport:bowls"               zoom="14" flags="named,center" />
+	<select class="sport:boxing"              zoom="14" flags="named,center" />
+	<select class="sport:canadian_football"   zoom="14" flags="named,center" />
+	<select class="sport:canoe"               zoom="14" flags="named,center" />
+	<select class="sport:chess"               zoom="14" flags="named,center" />
+	<select class="sport:cliff_diving"        zoom="14" flags="named,center" />
+	<select class="sport:climbing"            zoom="14" flags="named,center" />
+	<select class="sport:climbing_adventure"  zoom="14" flags="named,center" />
+	<select class="sport:cricket"             zoom="14" flags="named,center" />
+	<select class="sport:croquet"             zoom="14" flags="named,center" />
+	<select class="sport:curling"             zoom="14" flags="named,center" />
+	<select class="sport:cycling"             zoom="14" flags="named,center" />
+	<select class="sport:darts"               zoom="14" flags="named,center" />
+	<select class="sport:dog_racing"          zoom="14" flags="named,center" />
+	<select class="sport:equestrian"          zoom="14" flags="named,center" />
+	<select class="sport:fencing"             zoom="14" flags="named,center" />
+	<select class="sport:field_hockey"        zoom="14" flags="named,center" />
+	<select class="sport:free_flying"         zoom="14" flags="named,center" />
+	<select class="sport:futsal"              zoom="14" flags="named,center" />
+	<select class="sport:gaelic_games"        zoom="14" flags="named,center" />
+	<select class="sport:golf"                zoom="14" flags="named,center" />
+	<select class="sport:gymnastics"          zoom="14" flags="named,center" />
+	<select class="sport:handball"            zoom="14" flags="named,center" />
+	<select class="sport:hapkido"             zoom="14" flags="named,center" />
+	<select class="sport:horseshoes"          zoom="14" flags="named,center" />
+	<select class="sport:horse_racing"        zoom="14" flags="named,center" />
+	<select class="sport:ice_hockey"          zoom="14" flags="named,center" />
+	<select class="sport:ice_skating"         zoom="14" flags="named,center" />
+	<select class="sport:ice_stock"           zoom="14" flags="named,center" />
+	<select class="sport:judo"                zoom="14" flags="named,center" />
+	<select class="sport:karate"              zoom="14" flags="named,center" />
+	<select class="sport:karting"             zoom="14" flags="named,center" />
+	<select class="sport:kitesurfing"         zoom="14" flags="named,center" />
+	<select class="sport:korfball"            zoom="14" flags="named,center" />
+	<select class="sport:lacrosse"            zoom="14" flags="named,center" />
+	<select class="sport:model_aerodrome"     zoom="14" flags="named,center" />
+	<select class="sport:motocross"           zoom="14" flags="named,center" />
+	<select class="sport:motor"               zoom="14" flags="named,center" />
+	<select class="sport:multi"               zoom="14" flags="named,center" />
+	<select class="sport:netball"             zoom="14" flags="named,center" />
+	<select class="sport:obstacle_course"     zoom="14" flags="named,center" />
+	<select class="sport:orienteering"        zoom="14" flags="named,center" />
+	<select class="sport:paddle_tennis"       zoom="14" flags="named,center" />
+	<select class="sport:padel"               zoom="14" flags="named,center" />
+	<select class="sport:parachuting"         zoom="14" flags="named,center" />
+	<select class="sport:paragliding"         zoom="14" flags="named,center" />
+	<select class="sport:pelota"              zoom="14" flags="named,center" />
+	<select class="sport:racquet"             zoom="14" flags="named,center" />
+	<select class="sport:rc_car"              zoom="14" flags="named,center" />
+	<select class="sport:roller_skating"      zoom="14" flags="named,center" />
+	<select class="sport:rowing"              zoom="14" flags="named,center" />
+	<select class="sport:rugby_league"        zoom="14" flags="named,center" />
+	<select class="sport:rugby_union"         zoom="14" flags="named,center" />
+	<select class="sport:running"             zoom="14" flags="named,center" />
+	<select class="sport:sailing"             zoom="14" flags="named,center" />
+	<select class="sport:scuba_diving"        zoom="14" flags="named,center" />
+	<select class="sport:shooting"            zoom="14" flags="named,center" />
+	<select class="sport:skateboard"          zoom="14" flags="named,center" />
+	<select class="sport:soccer"              zoom="14" flags="named,center" />
+	<select class="sport:sumo"                zoom="14" flags="named,center" />
+	<select class="sport:surfing"             zoom="14" flags="named,center" />
+	<select class="sport:swimming"            zoom="14" flags="named,center" />
+	<select class="sport:table_tennis"        zoom="14" flags="named,center" />
+	<select class="sport:table_soccer"        zoom="14" flags="named,center" />
+	<select class="sport:taekwondo"           zoom="14" flags="named,center" />
+	<select class="sport:tennis"              zoom="14" flags="named,center" />
+	<select class="sport:toboggan"            zoom="14" flags="named,center" />
+	<select class="sport:volleyball"          zoom="14" flags="named,center" />
+	<select class="sport:water_polo"          zoom="14" flags="named,center" />
+	<select class="sport:water_ski"           zoom="14" flags="named,center" />
+	<select class="sport:weightlifting"       zoom="14" flags="named,center" />
+	<select class="sport:wrestling"           zoom="14" flags="named,center" />
+	<select class="sport:yoga"                zoom="14" flags="named,center" />
+	<select class="tourism:alpine_hut"        zoom="14" flags="center" />
+	<select class="tourism:apartment"         zoom="14" flags="named,center" />
+	<select class="tourism:aquarium"          zoom="14" flags="named,center" />
+	<select class="tourism:artwork"           zoom="14" flags="named,center" />
+	<select class="tourism:attraction"        zoom="14" flags="named,center" />
+	<select class="tourism:camp_site"         zoom="14" flags="center" />
+	<select class="tourism:caravan_site"      zoom="14" flags="center" />
+	<select class="tourism:chalet"            zoom="14" flags="named,center" />
+	<select class="tourism:gallery"           zoom="14" flags="named,center" />
+	<select class="tourism:guest_house"       zoom="14" flags="named,center" />
+	<select class="tourism:hostel"            zoom="14" flags="named,center" />
+	<select class="tourism:hotel"             zoom="14" flags="named,center" />
+	<select class="tourism:information"       zoom="14" flags="center" />
+	<select class="tourism:motel"             zoom="14" flags="named,center" />
+	<select class="tourism:museum"            zoom="14" flags="named,center" />
+	<select class="tourism:picnic_site"       zoom="14" flags="center" />
+	<select class="tourism:theme_park"        zoom="14" flags="named,center" />
+	<select class="tourism:viewpoint"         zoom="14" flags="center" />
+	<select class="tourism:wilderness_hut"    zoom="14" flags="center" />
+	<select class="tourism:zoo"               zoom="14" flags="named,center" />
+	<select class="tourism:yes"               zoom="14" flags="named,center" />
+	<select class="waterway:river"            zoom="11" />
+	<select class="waterway:riverbank"        zoom="11" />
+	<select class="waterway:stream"           zoom="14" />
+	<select class="waterway:wadi"             zoom="14" />
+	<select class="waterway:drystream"        zoom="14" />
+	<select class="waterway:canal"            zoom="14" />
+	<select class="waterway:drain"            zoom="14" />
+	<select class="waterway:ditch"            zoom="14" />
+	<select class="waterway:fairway"          zoom="14" />
+	<select class="waterway:dock"             zoom="14" flags="named,center" />
+	<select class="waterway:boatyard"         zoom="14" flags="named,center" />
+	<select class="waterway:dam"              zoom="11" />
+	<select class="waterway:weir"             zoom="14" />
+	<select class="waterway:waterfall"        zoom="14" />
 	<!-- DISCARD WATERWAY
 		<select class="waterway:turning_point" />
 		<select class="waterway:water_point" />

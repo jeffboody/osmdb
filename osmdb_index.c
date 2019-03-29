@@ -154,86 +154,86 @@ static void osmdb_index_computeMinDist(osmdb_index_t* self)
 	// compute tile at home location
 	double home_lat = 40.061295;
 	double home_lon = -105.214552;
-	float tx_9;
-	float ty_9;
-	float tx_12;
-	float ty_12;
-	float tx_15;
-	float ty_15;
-	terrain_coord2tile(home_lat, home_lon, 9,
-	                   &tx_9, &ty_9);
-	terrain_coord2tile(home_lat, home_lon, 12,
-	                   &tx_12, &ty_12);
-	terrain_coord2tile(home_lat, home_lon, 15,
-	                   &tx_15, &ty_15);
-	float txa_9  = (float) ((int) tx_9);
-	float tya_9  = (float) ((int) ty_9);
-	float txa_12 = (float) ((int) tx_12);
-	float tya_12 = (float) ((int) ty_12);
-	float txa_15 = (float) ((int) tx_15);
-	float tya_15 = (float) ((int) ty_15);
-	float txb_9  = txa_9  + 1.0f;
-	float tyb_9  = tya_9  + 1.0f;
-	float txb_12 = txa_12 + 1.0f;
-	float tyb_12 = tya_12 + 1.0f;
-	float txb_15 = txa_15 + 1.0f;
-	float tyb_15 = tya_15 + 1.0f;
+	float tx_8;
+	float ty_8;
+	float tx_11;
+	float ty_11;
+	float tx_14;
+	float ty_14;
+	terrain_coord2tile(home_lat, home_lon, 8,
+	                   &tx_8, &ty_8);
+	terrain_coord2tile(home_lat, home_lon, 11,
+	                   &tx_11, &ty_11);
+	terrain_coord2tile(home_lat, home_lon, 14,
+	                   &tx_14, &ty_14);
+	float txa_8  = (float) ((int) tx_8);
+	float tya_8  = (float) ((int) tx_8);
+	float txa_11 = (float) ((int) tx_11);
+	float tya_11 = (float) ((int) tx_11);
+	float txa_14 = (float) ((int) tx_14);
+	float tya_14 = (float) ((int) tx_14);
+	float txb_8  = txa_8  + 1.0f;
+	float tyb_8  = tya_8  + 1.0f;
+	float txb_11 = txa_11 + 1.0f;
+	float tyb_11 = tya_11 + 1.0f;
+	float txb_14 = txa_14 + 1.0f;
+	float tyb_14 = tya_14 + 1.0f;
 
 	// compute coords at home tiles
-	double latT_9;
-	double lonL_9;
-	double latB_9;
-	double lonR_9;
-	double latT_12;
-	double lonL_12;
-	double latB_12;
-	double lonR_12;
-	double latT_15;
-	double lonL_15;
-	double latB_15;
-	double lonR_15;
-	terrain_tile2coord(txa_9, tya_9, 9,
-	                   &latT_9, &lonL_9);
-	terrain_tile2coord(txb_9, tyb_9, 9,
-	                   &latB_9, &lonR_9);
-	terrain_tile2coord(txa_12, tya_12, 12,
-	                   &latT_12, &lonL_12);
-	terrain_tile2coord(txb_12, tyb_12, 12,
-	                   &latB_12, &lonR_12);
-	terrain_tile2coord(txa_15, tya_15, 15,
-	                   &latT_15, &lonL_15);
-	terrain_tile2coord(txb_15, tyb_15, 15,
-	                   &latB_15, &lonR_15);
+	double latT_8;
+	double lonL_8;
+	double latB_8;
+	double lonR_8;
+	double latT_11;
+	double lonL_11;
+	double latB_11;
+	double lonR_11;
+	double latT_14;
+	double lonL_14;
+	double latB_14;
+	double lonR_14;
+	terrain_tile2coord(txa_8, tya_8, 8,
+	                   &latT_8, &lonL_8);
+	terrain_tile2coord(txb_8, tyb_8, 8,
+	                   &latB_8, &lonR_8);
+	terrain_tile2coord(txa_11, tya_11, 11,
+	                   &latT_11, &lonL_11);
+	terrain_tile2coord(txb_11, tyb_11, 11,
+	                   &latB_11, &lonR_11);
+	terrain_tile2coord(txa_14, tya_14, 14,
+	                   &latT_14, &lonL_14);
+	terrain_tile2coord(txb_14, tyb_14, 14,
+	                   &latB_14, &lonR_14);
 
 	// compute x,y at home tiles
-	a3d_vec2f_t pa_9;
-	a3d_vec2f_t pb_9;
-	a3d_vec2f_t pa_12;
-	a3d_vec2f_t pb_12;
-	a3d_vec2f_t pa_15;
-	a3d_vec2f_t pb_15;
-	terrain_coord2xy(latT_9, lonL_9,
-	                 &pa_9.x, &pa_9.y);
-	terrain_coord2xy(latB_9, lonR_9,
-	                 &pb_9.x, &pb_9.y);
-	terrain_coord2xy(latT_12, lonL_12,
-	                 &pa_12.x, &pa_12.y);
-	terrain_coord2xy(latB_12, lonR_12,
-	                 &pb_12.x, &pb_12.y);
-	terrain_coord2xy(latT_15, lonL_15,
-	                 &pa_15.x, &pa_15.y);
-	terrain_coord2xy(latB_15, lonR_15,
-	                 &pb_15.x, &pb_15.y);
+	a3d_vec2f_t pa_8;
+	a3d_vec2f_t pb_8;
+	a3d_vec2f_t pa_11;
+	a3d_vec2f_t pb_11;
+	a3d_vec2f_t pa_14;
+	a3d_vec2f_t pb_14;
+	terrain_coord2xy(latT_8, lonL_8,
+	                 &pa_8.x, &pa_8.y);
+	terrain_coord2xy(latB_8, lonR_8,
+	                 &pb_8.x, &pb_8.y);
+	terrain_coord2xy(latT_11, lonL_11,
+	                 &pa_11.x, &pa_11.y);
+	terrain_coord2xy(latB_11, lonR_11,
+	                 &pb_11.x, &pb_11.y);
+	terrain_coord2xy(latT_14, lonL_14,
+	                 &pa_14.x, &pa_14.y);
+	terrain_coord2xy(latB_14, lonR_14,
+	                 &pb_14.x, &pb_14.y);
 
 	// compute min_dist
 	// scale by 1/8th since each tile serves 3 zoom levels
 	float s   = 1.0f/8.0f;
 	float pix = sqrtf(2*256.0f*256.0f);
-	self->min_dist9  = s*a3d_vec2f_distance(&pb_9, &pa_9)/pix;
-	self->min_dist12 = s*a3d_vec2f_distance(&pb_12, &pa_12)/pix;
-	self->min_dist15 = s*a3d_vec2f_distance(&pb_15, &pa_15)/pix;
-	LOGI("min_dist9=%f, min_dist12=%f, min_dist15=%f",
-	     self->min_dist9, self->min_dist12, self->min_dist15);
+	self->min_dist8  = s*a3d_vec2f_distance(&pb_8, &pa_8)/pix;
+	self->min_dist11 = s*a3d_vec2f_distance(&pb_11, &pa_11)/pix;
+	self->min_dist14 = s*a3d_vec2f_distance(&pb_14, &pa_14)/pix;
+	LOGI("min_dist8=%f, min_dist11=%f, min_dist14=%f",
+	     self->min_dist8, self->min_dist11, self->min_dist14);
 }
 
 static a3d_hashmap_t*
@@ -805,17 +805,17 @@ osmdb_index_sampleWay(osmdb_index_t* self,
 	assert(way);
 
 	float min_dist;
-	if(zoom == 15)
+	if(zoom == 14)
 	{
-		min_dist = self->min_dist15;
+		min_dist = self->min_dist14;
 	}
-	else if(zoom == 12)
+	else if(zoom == 11)
 	{
-		min_dist = self->min_dist12;
+		min_dist = self->min_dist11;
 	}
-	else if(zoom == 9)
+	else if(zoom == 8)
 	{
-		min_dist = self->min_dist9;
+		min_dist = self->min_dist8;
 	}
 	else
 	{
@@ -951,19 +951,19 @@ osmdb_index_gatherWay(osmdb_index_t* self,
 		return 0;
 	}
 
-	if(zoom == 15)
+	if(zoom == 14)
 	{
-		self->stats_sample_way15_total += (double)
+		self->stats_sample_way14_total += (double)
 		                                  a3d_list_size(way->nds);
 	}
-	else if(zoom == 12)
+	else if(zoom == 11)
 	{
-		self->stats_sample_way12_total += (double)
+		self->stats_sample_way11_total += (double)
 		                                  a3d_list_size(way->nds);
 	}
-	else if(zoom == 9)
+	else if(zoom == 8)
 	{
-		self->stats_sample_way9_total += (double)
+		self->stats_sample_way8_total += (double)
 		                                 a3d_list_size(way->nds);
 	}
 
@@ -972,19 +972,19 @@ osmdb_index_gatherWay(osmdb_index_t* self,
 		goto fail_sample;
 	}
 
-	if(zoom == 15)
+	if(zoom == 14)
 	{
-		self->stats_sample_way15_sample += (double)
+		self->stats_sample_way14_sample += (double)
 		                                   a3d_list_size(way->nds);
 	}
-	else if(zoom == 12)
+	else if(zoom == 11)
 	{
-		self->stats_sample_way12_sample += (double)
+		self->stats_sample_way11_sample += (double)
 		                                   a3d_list_size(way->nds);
 	}
-	else if(zoom == 9)
+	else if(zoom == 8)
 	{
-		self->stats_sample_way9_sample += (double)
+		self->stats_sample_way8_sample += (double)
 		                                  a3d_list_size(way->nds);
 	}
 
@@ -1204,19 +1204,19 @@ osmdb_index_sampleWays(osmdb_index_t* self,
 	{
 		osmdb_way_t* way = (osmdb_way_t*)
 		                   a3d_hashmap_val(hiter);
-		if(zoom == 15)
+		if(zoom == 14)
 		{
-			self->stats_sample_way15_total += (double)
+			self->stats_sample_way14_total += (double)
 			                                  a3d_list_size(way->nds);
 		}
-		else if(zoom == 12)
+		else if(zoom == 11)
 		{
-			self->stats_sample_way12_total += (double)
+			self->stats_sample_way11_total += (double)
 			                                  a3d_list_size(way->nds);
 		}
-		else if(zoom == 9)
+		else if(zoom == 8)
 		{
-			self->stats_sample_way9_total += (double)
+			self->stats_sample_way8_total += (double)
 			                                 a3d_list_size(way->nds);
 		}
 
@@ -1225,19 +1225,19 @@ osmdb_index_sampleWays(osmdb_index_t* self,
 			return 0;
 		}
 
-		if(zoom == 15)
+		if(zoom == 14)
 		{
-			self->stats_sample_way15_sample += (double)
+			self->stats_sample_way14_sample += (double)
 			                                   a3d_list_size(way->nds);
 		}
-		else if(zoom == 12)
+		else if(zoom == 11)
 		{
-			self->stats_sample_way12_sample += (double)
+			self->stats_sample_way11_sample += (double)
 			                                   a3d_list_size(way->nds);
 		}
-		else if(zoom == 9)
+		else if(zoom == 8)
 		{
-			self->stats_sample_way9_sample += (double)
+			self->stats_sample_way8_sample += (double)
 			                                  a3d_list_size(way->nds);
 		}
 
@@ -1736,17 +1736,17 @@ static int osmdb_index_addTile(osmdb_index_t* self,
 	}
 	else if(zoom == 5)
 	{
-		ret &= osmdb_index_addTile(self, range, 9,
+		ret &= osmdb_index_addTile(self, range, 8,
 		                           type, id);
 	}
-	else if(zoom == 9)
+	else if(zoom == 8)
 	{
-		ret &= osmdb_index_addTile(self, range, 12,
+		ret &= osmdb_index_addTile(self, range, 11,
 		                           type, id);
 	}
-	else if(zoom == 12)
+	else if(zoom == 11)
 	{
-		ret &= osmdb_index_addTile(self, range, 15,
+		ret &= osmdb_index_addTile(self, range, 14,
 		                           type, id);
 	}
 
@@ -1980,12 +1980,12 @@ osmdb_index_t* osmdb_index_new(const char* base)
 	self->stats_tile_load_dt        = 0.0;
 	self->stats_tile_trim           = 0.0;
 	self->stats_tile_trim_dt        = 0.0;
-	self->stats_sample_way9_sample  = 0.0;
-	self->stats_sample_way9_total   = 0.0;
-	self->stats_sample_way12_sample = 0.0;
-	self->stats_sample_way12_total  = 0.0;
-	self->stats_sample_way15_sample = 0.0;
-	self->stats_sample_way15_total  = 0.0;
+	self->stats_sample_way8_sample  = 0.0;
+	self->stats_sample_way8_total   = 0.0;
+	self->stats_sample_way11_sample = 0.0;
+	self->stats_sample_way11_total  = 0.0;
+	self->stats_sample_way14_sample = 0.0;
+	self->stats_sample_way14_total  = 0.0;
 	self->stats_clip_unclipped      = 0.0;
 	self->stats_clip_clipped        = 0.0;
 
@@ -2495,13 +2495,13 @@ void osmdb_index_stats(osmdb_index_t* self)
 	LOGI("LOAD: cnt=%0.0lf, dt=%lf", self->stats_tile_load, self->stats_tile_load_dt);
 	LOGI("TRIM: cnt=%0.0lf, dt=%lf", self->stats_tile_trim, self->stats_tile_trim_dt);
 	LOGI("==SAMPLE==");
-	LOGI("WAY9/12/15: %0.0lf/%0.0lf, %0.0lf/%0.0lf, %0.0lf/%0.0lf",
-	     self->stats_sample_way9_sample,
-	     self->stats_sample_way9_total,
-	     self->stats_sample_way12_sample,
-	     self->stats_sample_way12_total,
-	     self->stats_sample_way15_sample,
-	     self->stats_sample_way15_total);
+	LOGI("WAY8/11/14: %0.0lf/%0.0lf, %0.0lf/%0.0lf, %0.0lf/%0.0lf",
+	     self->stats_sample_way8_sample,
+	     self->stats_sample_way8_total,
+	     self->stats_sample_way11_sample,
+	     self->stats_sample_way11_total,
+	     self->stats_sample_way14_sample,
+	     self->stats_sample_way14_total);
 	LOGI("==CLIP==");
 	LOGI("CLIPPED/UNCLIPPED: %0.0lf/%0.0lf",
 	     self->stats_clip_clipped,
