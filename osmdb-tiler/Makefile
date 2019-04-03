@@ -1,10 +1,10 @@
 TARGET   = osmdb-tiler
-CLASSES  =
+CLASSES  = ../osmdb_index ../osmdb_chunk ../osmdb_tile ../osmdb_filter ../osmdb_range
 SOURCE   = $(TARGET).c $(CLASSES:%=%.c)
 OBJECTS  = $(TARGET).o $(CLASSES:%=%.o)
 HFILES   = $(CLASSES:%=%.h)
 OPT      = -O2 -Wall -Wno-format-truncation
-CFLAGS   = $(OPT) -I.
+CFLAGS   = $(OPT) -I. `sdl2-config --cflags` -DA3D_GL2 -DGOTO_USE_SDL
 LDFLAGS  = -Losmdb -losmdb -Lterrain -lterrain -La3d -la3d -Llibxmlstream -lxmlstream -Llibexpat/expat/lib -lexpat -lm -lz
 CCC      = gcc
 

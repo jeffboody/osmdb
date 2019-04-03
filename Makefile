@@ -1,5 +1,5 @@
 TARGET   = libosmdb.a
-CLASSES  = osmdb_index osmdb_chunk osmdb_parser osmdb_style osmdb_util osmdb_node osmdb_way osmdb_relation osmdb_tile osmdb_filter osmdb_range
+CLASSES  = osmdb_parser osmdb_style osmdb_util osmdb_node osmdb_way osmdb_relation
 SOURCE   = $(CLASSES:%=%.c)
 OBJECTS  = $(SOURCE:.c=.o)
 HFILES   = $(CLASSES:%=%.h)
