@@ -60,6 +60,7 @@
 	<color name="hospital"       val="F46183FF" />
 	<color name="outdoor"        val="6CA63EFF" />
 	<color name="bicycle"        val="A64FD6FF" />
+	<color name="core:text"      val="F29999FF" />
 
 	<point name="peak"    min_zoom="14" text_color1="peak:text"    text_color2="black" marker_color1="peak"    marker_color2="black" flags="marker:show,ele:show" />
 	<point name="saddle"  min_zoom="14" text_color1="peak:text"    text_color2="black" marker_color1="peak"    marker_color2="black" flags="marker:show" />
@@ -73,6 +74,7 @@
 	<point name="forest"  min_zoom="12" text_color1="peak:text"    text_color2="black" />
 	<point name="trail"   min_zoom="17" text_color1="trail:text"   text_color2="black" />
 	<point name="track"   min_zoom="17" text_color1="track:text"   text_color2="black" />
+	<point name="core"    min_zoom="11" text_color1="core:text"    text_color2="black" flags="marker:show,ele:show" />
 	<point name="default" min_zoom="17" text_color1="white"        text_color2="black" />
 
 	<line name="aerialway"      mode="dashed,striped" color1="ltgray" color2="white:halo" />
@@ -196,4 +198,5 @@
 	<class name="natural:mud"                point="forest" />
 	<class name="natural:wetland"            point="forest" />
 	<class name="natural:valley"             point="forest" />
+	<class name="meta:core"                  point="core" />
 </osmdb>
