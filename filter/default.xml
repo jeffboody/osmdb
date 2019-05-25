@@ -1024,4 +1024,8 @@
 		<select class="waterway:lock_gate" />
 		<select class="waterway:stream_end" />
 	-->
+	<select class="core:wilderness" zoom="11" />
+	<select class="core:recreation" zoom="11" />
+	<select class="core:special"    zoom="11" />
+	<select class="core:mineral"    zoom="11" />
 </filter>

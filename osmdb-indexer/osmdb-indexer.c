@@ -479,20 +479,13 @@ int main(int argc, char** argv)
 {
 	double t0 = a3d_timestamp();
 
-	if(argc != 3)
+	if(argc < 3)
 	{
-		LOGE("%s [filter.xml] [prefix]", argv[0]);
+		LOGE("%s filter.xml PREFIX [PREFIX1 ... PREFIXN]", argv[0]);
 		return EXIT_FAILURE;
 	}
 	const char* fname_filter = argv[1];
 	const char* prefix       = argv[2];
-
-	char fname_nodes[256];
-	char fname_ways[256];
-	char fname_relations[256];
-	snprintf(fname_nodes, 256, "%s-nodes.xml.gz", prefix);
-	snprintf(fname_ways, 256, "%s-ways.xml.gz", prefix);
-	snprintf(fname_relations, 256, "%s-relations.xml.gz", prefix);
 
 	osmdb_filter_t* filter = osmdb_filter_new(fname_filter);
 	if(filter == NULL)
@@ -542,38 +535,66 @@ int main(int argc, char** argv)
 	}
 
 	LOGI("PARSE RELATION REFS");
-	if(osmdb_parse(fname_relations, (void*) &indexer,
-	               nodeErrFn, wayErrFn, relationRefFn) == 0)
+	int  i;
+	int  start = 2; // start of prefixes
+	char fname[256];
+	for(i = start; i < argc; ++i)
 	{
-		goto fail_parse;
+		prefix = argv[i];
+		snprintf(fname, 256, "%s-relations.xml.gz", prefix);
+		if(osmdb_parse(fname, (void*) &indexer,
+		               nodeErrFn, wayErrFn, relationRefFn) == 0)
+		{
+			goto fail_parse;
+		}
 	}
 
 	LOGI("PARSE WAY REFS");
-	if(osmdb_parse(fname_ways, (void*) &indexer,
-	               nodeErrFn, wayRefFn, relationErrFn) == 0)
+	for(i = start; i < argc; ++i)
 	{
-		goto fail_parse;
+		prefix = argv[i];
+		snprintf(fname, 256, "%s-ways.xml.gz", prefix);
+		if(osmdb_parse(fname, (void*) &indexer,
+		               nodeErrFn, wayRefFn, relationErrFn) == 0)
+		{
+			goto fail_parse;
+		}
 	}
 
 	LOGI("PARSE NODES");
-	if(osmdb_parse(fname_nodes, (void*) &indexer,
-	               nodeFn, wayErrFn, relationErrFn) == 0)
+	for(i = start; i < argc; ++i)
 	{
-		goto fail_parse;
+		prefix = argv[i];
+		snprintf(fname, 256, "%s-nodes.xml.gz", prefix);
+		if(osmdb_parse(fname, (void*) &indexer,
+		               nodeFn, wayErrFn, relationErrFn) == 0)
+		{
+			goto fail_parse;
+		}
 	}
 
 	LOGI("PARSE WAYS");
-	if(osmdb_parse(fname_ways, (void*) &indexer,
-	               nodeErrFn, wayFn, relationErrFn) == 0)
+	for(i = start; i < argc; ++i)
 	{
-		goto fail_parse;
+		prefix = argv[i];
+		snprintf(fname, 256, "%s-ways.xml.gz", prefix);
+		if(osmdb_parse(fname, (void*) &indexer,
+		               nodeErrFn, wayFn, relationErrFn) == 0)
+		{
+			goto fail_parse;
+		}
 	}
 
 	LOGI("PARSE RELATIONS");
-	if(osmdb_parse(fname_relations, (void*) &indexer,
-	               nodeErrFn, wayErrFn, relationFn) == 0)
+	for(i = start; i < argc; ++i)
 	{
-		goto fail_parse;
+		prefix = argv[i];
+		snprintf(fname, 256, "%s-relations.xml.gz", prefix);
+		if(osmdb_parse(fname, (void*) &indexer,
+		               nodeErrFn, wayErrFn, relationFn) == 0)
+		{
+			goto fail_parse;
+		}
 	}
 
 	LOGI("FINISH INDEX");

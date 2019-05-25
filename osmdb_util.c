@@ -1100,6 +1100,10 @@ const char* const OSM_UTIL_CLASSES[] =
 	"waterway:water_point",
 	"waterway:fuel",
 	"meta:core",
+	"core:wilderness",
+	"core:recreation",
+	"core:special",
+	"core:mineral",
 	NULL
 };
 

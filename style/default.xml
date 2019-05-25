@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <osmdb>
+	<layer name="core" />
 	<layer name="water" />
 	<layer name="ground" />
 	<layer name="trail" />
@@ -18,64 +19,69 @@
 	<layer name="helipad" />
 	<layer name="air" />
 
-	<color name="white"          val="FFFFFFFF" />
-	<color name="white:halo"     val="FFFFFF7F" />
-	<color name="black"          val="000000FF" />
-	<color name="black:halo"     val="000000BF" />
-	<color name="ltgray"         val="D7D7D7FF" />
-	<color name="ltgray:halo"    val="D7D7D77F" />
-	<color name="gray"           val="7F7F7FFF" />
-	<color name="gray:halo"      val="7F7F7FBF" />
-	<color name="runway"         val="314DB2FF" />
-	<color name="runway:halo"    val="314DB27F" />
-	<color name="brown"          val="AE7547FF" />
-	<color name="brown:halo"     val="AE75477F" />
-	<color name="red"            val="FF0000FF" />
-	<color name="red:halo"       val="FF00007F" />
-	<color name="motorway"       val="FFA023FF" />
-	<color name="motorway:halo"  val="FFA0237F" />
-	<color name="trunk"          val="F0B923FF" />
-	<color name="trunk:halo"     val="F0B9237F" />
-	<color name="primary"        val="F0B923FF" />
-	<color name="primary:halo"   val="F0B9237F" />
-	<color name="secondary"      val="E8EA2FFF" />
-	<color name="secondary:halo" val="E8EA2F7F" />
-	<color name="tertiary"       val="FDFFA0FF" />
-	<color name="tertiary:halo"  val="FDFFA07F" />
-	<color name="trail:text"     val="F4F6B6FF" />
-	<color name="trail"          val="DAEC5FFF" />
-	<color name="track:text"     val="F6ECE0FF" />
-	<color name="track"          val="E8CFB2FF" />
-	<color name="river"          val="4788D9BF" />
-	<color name="lake:text"      val="B6CDEDFF" />
-	<color name="lake"           val="4788D9FF" />
-	<color name="lake:halo"      val="4788D9BF" />
-	<color name="glacier"        val="9BDFE0FF" />
-	<color name="glacier:halo"   val="9BDFE07F" />
-	<color name="glacier:text"   val="C0F0F1FF" />
-	<color name="peak:text"      val="A4EFA4FF" />
-	<color name="peak"           val="A4EFA4FF" />
-	<color name="city"           val="606060FF" />
-	<color name="college"        val="DCC21BFF" />
-	<color name="hospital"       val="F46183FF" />
-	<color name="outdoor"        val="6CA63EFF" />
-	<color name="bicycle"        val="A64FD6FF" />
-	<color name="core:text"      val="F29999FF" />
+	<color name="white"           val="FFFFFFFF" />
+	<color name="white:halo"      val="FFFFFF7F" />
+	<color name="black"           val="000000FF" />
+	<color name="black:halo"      val="000000BF" />
+	<color name="ltgray"          val="D7D7D7FF" />
+	<color name="ltgray:halo"     val="D7D7D77F" />
+	<color name="gray"            val="7F7F7FFF" />
+	<color name="gray:halo"       val="7F7F7FBF" />
+	<color name="runway"          val="314DB2FF" />
+	<color name="runway:halo"     val="314DB27F" />
+	<color name="brown"           val="AE7547FF" />
+	<color name="brown:halo"      val="AE75477F" />
+	<color name="red"             val="FF0000FF" />
+	<color name="red:halo"        val="FF00007F" />
+	<color name="motorway"        val="FFA023FF" />
+	<color name="motorway:halo"   val="FFA0237F" />
+	<color name="trunk"           val="F0B923FF" />
+	<color name="trunk:halo"      val="F0B9237F" />
+	<color name="primary"         val="F0B923FF" />
+	<color name="primary:halo"    val="F0B9237F" />
+	<color name="secondary"       val="E8EA2FFF" />
+	<color name="secondary:halo"  val="E8EA2F7F" />
+	<color name="tertiary"        val="FDFFA0FF" />
+	<color name="tertiary:halo"   val="FDFFA07F" />
+	<color name="trail:text"      val="F4F6B6FF" />
+	<color name="trail"           val="DAEC5FFF" />
+	<color name="track:text"      val="F6ECE0FF" />
+	<color name="track"           val="E8CFB2FF" />
+	<color name="river"           val="4788D9BF" />
+	<color name="lake:text"       val="B6CDEDFF" />
+	<color name="lake"            val="4788D9FF" />
+	<color name="lake:halo"       val="4788D9BF" />
+	<color name="glacier"         val="9BDFE0FF" />
+	<color name="glacier:halo"    val="9BDFE07F" />
+	<color name="glacier:text"    val="C0F0F1FF" />
+	<color name="peak:text"       val="A4EFA4FF" />
+	<color name="peak"            val="A4EFA4FF" />
+	<color name="city"            val="606060FF" />
+	<color name="college"         val="DCC21BFF" />
+	<color name="hospital"        val="F46183FF" />
+	<color name="outdoor"         val="6CA63EFF" />
+	<color name="bicycle"         val="A64FD6FF" />
+	<color name="core:text"       val="F29999FF" />
+	<color name="core:wilderness" val="00FF003F" />
+	<color name="core:recreation" val="00FFFF3F" />
+	<color name="core:special"    val="FFFF003F" />
+	<color name="core:mineral"    val="FF00003F" />
 
-	<point name="peak"    min_zoom="14" text_color1="peak:text"    text_color2="black" marker_color1="peak"    marker_color2="black" flags="marker:show,ele:show" />
-	<point name="saddle"  min_zoom="14" text_color1="peak:text"    text_color2="black" marker_color1="peak"    marker_color2="black" flags="marker:show" />
-	<point name="city"    min_zoom="11" text_color1="white"        text_color2="black" marker_color1="city"    marker_color2="white" flags="marker:show" />
-	<point name="town"    min_zoom="12" text_color1="white"        text_color2="black" marker_color1="city"    marker_color2="white" flags="marker:show" />
-	<point name="village" min_zoom="13" text_color1="white"        text_color2="black" marker_color1="city"    marker_color2="white" flags="marker:show" />
-	<point name="water14" min_zoom="14" text_color1="lake:text"    text_color2="black" />
-	<point name="water17" min_zoom="17" text_color1="lake:text"    text_color2="black" />
-	<point name="glacier" min_zoom="14" text_color1="glacier:text" text_color2="black" />
-	<point name="outdoor" min_zoom="16" text_color1="peak:text"    text_color2="black" />
-	<point name="forest"  min_zoom="12" text_color1="peak:text"    text_color2="black" />
-	<point name="trail"   min_zoom="17" text_color1="trail:text"   text_color2="black" />
-	<point name="track"   min_zoom="17" text_color1="track:text"   text_color2="black" />
-	<point name="core"    min_zoom="11" text_color1="core:text"    text_color2="black" flags="marker:show,ele:show" />
-	<point name="default" min_zoom="17" text_color1="white"        text_color2="black" />
+	<point name="peak"      min_zoom="14" text_color1="peak:text"    text_color2="black" marker_color1="peak"    marker_color2="black" flags="marker:show,ele:show" />
+	<point name="saddle"    min_zoom="14" text_color1="peak:text"    text_color2="black" marker_color1="peak"    marker_color2="black" flags="marker:show" />
+	<point name="city"      min_zoom="11" text_color1="white"        text_color2="black" marker_color1="city"    marker_color2="white" flags="marker:show" />
+	<point name="town"      min_zoom="12" text_color1="white"        text_color2="black" marker_color1="city"    marker_color2="white" flags="marker:show" />
+	<point name="village"   min_zoom="13" text_color1="white"        text_color2="black" marker_color1="city"    marker_color2="white" flags="marker:show" />
+	<point name="water14"   min_zoom="14" text_color1="lake:text"    text_color2="black" />
+	<point name="water17"   min_zoom="17" text_color1="lake:text"    text_color2="black" />
+	<point name="glacier"   min_zoom="14" text_color1="glacier:text" text_color2="black" />
+	<point name="outdoor"   min_zoom="16" text_color1="peak:text"    text_color2="black" />
+	<point name="forest"    min_zoom="12" text_color1="peak:text"    text_color2="black" />
+	<point name="trail"     min_zoom="17" text_color1="trail:text"   text_color2="black" />
+	<point name="track"     min_zoom="17" text_color1="track:text"   text_color2="black" />
+	<point name="core"      min_zoom="11" text_color1="core:text"    text_color2="black" flags="marker:show,ele:show" />
+	<point name="core:area" min_zoom="11" text_color1="white"        text_color2="black" flags="marker:show" />
+	<point name="default"   min_zoom="17" text_color1="white"        text_color2="black" />
 
 	<line name="aerialway"      mode="dashed,striped" color1="ltgray" color2="white:halo" />
 	<line name="motorway"       mode="striped" color1="ltgray" color2="gray:halo" width="3.5" />
@@ -99,15 +105,19 @@
 	<line name="stream"         color1="river" width="1.7" />
 	<line name="footway"        mode="dashed,striped" color1="trail" color2="gray:halo" />
 
-	<poly name="white:halo"  color="white:halo" />
-	<poly name="ltgray:halo" color="ltgray:halo" />
-	<poly name="gray:halo"   color="gray:halo" />
-	<poly name="brown:halo"  color="brown:halo" />
-	<poly name="aerialway"   color="gray:halo" />
-	<poly name="helipad"     color="gray:halo" />
-	<poly name="glacier"     color="glacier:halo" />
-	<poly name="water"       color="lake:halo" />
-	<poly name="red"         color="red" />
+	<poly name="white:halo"      color="white:halo" />
+	<poly name="ltgray:halo"     color="ltgray:halo" />
+	<poly name="gray:halo"       color="gray:halo" />
+	<poly name="brown:halo"      color="brown:halo" />
+	<poly name="aerialway"       color="gray:halo" />
+	<poly name="helipad"         color="gray:halo" />
+	<poly name="glacier"         color="glacier:halo" />
+	<poly name="water"           color="lake:halo" />
+	<poly name="red"             color="red" />
+	<poly name="core:wilderness" color="core:wilderness" />
+	<poly name="core:recreation" color="core:recreation" />
+	<poly name="core:special"    color="core:special" />
+	<poly name="core:mineral"    color="core:mineral" />
 
 	<class name="aerialway:cable_car"    layer="ground"      line="aerialway" />
 	<class name="aerialway:gondola"      layer="air"         line="aerialway" />
@@ -174,6 +184,10 @@
 	<class name="railway:rail"           layer="railway"     line="railway" />
 	<class name="railway:subway"         layer="railway"     line="railway" />
 	<class name="railway:tram"           layer="railway"     line="railway" />
+	<class name="core:wilderness"        layer="core"        poly="core:wilderness" point="core:area" />
+	<class name="core:recreation"        layer="core"        poly="core:recreation" point="core:area" />
+	<class name="core:special"           layer="core"        poly="core:special"    point="core:area" />
+	<class name="core:mineral"           layer="core"        poly="core:mineral"    point="core:area" />
 
 	<class name="natural:peak"               point="peak" />
 	<class name="natural:volcano"            point="peak" />
