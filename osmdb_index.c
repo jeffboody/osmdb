@@ -48,6 +48,12 @@ const int OSMDB_INDEX_ONE = 1;
 #define OSMDB_CHUNK_SIZE 400*1024*1024
 #define OSMDB_TILE_SIZE  100*1024*1024
 
+#define OSMDB_QUADRANT_NONE   0
+#define OSMDB_QUADRANT_TOP    1
+#define OSMDB_QUADRANT_LEFT   2
+#define OSMDB_QUADRANT_BOTTOM 3
+#define OSMDB_QUADRANT_RIGHT  4
+
 /***********************************************************
 * private - way                                            *
 ***********************************************************/
@@ -1441,6 +1447,47 @@ osmdb_index_sampleWays(osmdb_index_t* self,
 	return 1;
 }
 
+static double osmdb_dot(double* a, double* b)
+{
+	assert(a);
+	assert(b);
+
+	return a[0]*b[0] + a[1]*b[1];
+}
+
+static int osmdb_quadrant(double* pc, double* tlc, double* trc)
+{
+	assert(pc);
+	assert(tlc);
+	assert(trc);
+
+	double tl = osmdb_dot(tlc, pc);
+	double tr = osmdb_dot(trc, pc);
+
+	if((tl > 0.0f) && (tr > 0.0f))
+	{
+		return OSMDB_QUADRANT_TOP;
+	}
+	else if((tl > 0.0f) && (tr <= 0.0f))
+	{
+		return OSMDB_QUADRANT_LEFT;
+	}
+	else if((tl <= 0.0f) && (tr <= 0.0f))
+	{
+		return OSMDB_QUADRANT_BOTTOM;
+	}
+	return OSMDB_QUADRANT_RIGHT;
+}
+
+static void osmdb_normalize(double* p)
+{
+	assert(p);
+
+	double mag = sqrt(p[0]*p[0] + p[1]*p[1]);
+	p[0] = p[0]/mag;
+	p[1] = p[1]/mag;
+}
+
 static void
 osmdb_index_clipWay(osmdb_index_t* self,
                     osmdb_way_t* way,
@@ -1456,21 +1503,64 @@ osmdb_index_clipWay(osmdb_index_t* self,
 		return;
 	}
 
-	// don't clip ways which form a loop
+	// check if way forms a loop
 	double* first = (double*) a3d_list_peekhead(way->nds);
 	double* last  = (double*) a3d_list_peektail(way->nds);
+	int     loop  = 0;
 	if(*first == *last)
 	{
-		return;
+		loop = 1;
 	}
 
-	// clip start of way
-	osmdb_range_t   range;
+	/*
+	 * quadrant setup
+	 * remove (B), (E), (F), (L)
+	 * remove A as well if not loop
+	 *  \                          /
+	 *   \        (L)             /
+	 *    \      M        K      /
+	 *  A  +--------------------+
+	 *     |TLC        J     TRC|
+	 *     |     N              | I
+	 *     |                    |
+	 * (B) |                    |
+	 *     |         *          |
+	 *     |         CENTER     |
+	 *     |                    | H
+	 *     |                    |
+	 *   C +--------------------+
+	 *    /                G     \
+	 *   /  D          (F)        \
+	 *  /         (E)              \
+	 */
+	int q0 = OSMDB_QUADRANT_NONE;
+	int q1 = OSMDB_QUADRANT_NONE;
+	int q2 = OSMDB_QUADRANT_NONE;
+	double dlat = (latT - latB)/2.0;
+	double dlon = (lonR - lonL)/2.0;
+	double center[2] =
+	{
+		lonL + dlon,
+		latB + dlat
+	};
+	double tlc[2] =
+	{
+		(lonL - center[0])/dlon,
+		(latT - center[1])/dlat
+	};
+	double trc[2] =
+	{
+		(lonR - center[0])/dlon,
+		(latT - center[1])/dlat
+	};
+	osmdb_normalize(tlc);
+	osmdb_normalize(trc);
+
+	// clip way
 	double*         ref;
 	osmdb_node_t*   node;
 	a3d_listitem_t* iter;
-	a3d_listitem_t* xiter = NULL;
-	osmdb_range_init(&range);
+	a3d_listitem_t* prev = NULL;
 	iter = a3d_list_head(way->nds);
 	while(iter)
 	{
@@ -1482,80 +1572,91 @@ osmdb_index_clipWay(osmdb_index_t* self,
 		                        OSMDB_TYPE_NODE, *ref);
 		if(node == NULL)
 		{
+			// ignore
 			iter = a3d_list_next(iter);
 			continue;
 		}
 
-		osmdb_range_addPt(&range, node->lat, node->lon);
-
-		// clip points up to the first unclipped point
-		if(osmdb_range_clip(&range,
-		                    latT, lonL,
-		                    latB, lonR) == 0)
+		// check if node is clipped
+		if((node->lat < latB) ||
+		   (node->lat > latT) ||
+		   (node->lon > lonR) ||
+		   (node->lon < lonL))
 		{
-			// check if nds at start need to be clipped
-			if(xiter == NULL)
-			{
-				break;
-			}
-
-			iter = a3d_list_head(way->nds);
-			while(iter != xiter)
-			{
-				ref = (double*)
-				      a3d_list_remove(way->nds, &iter);
-				free(ref);
-			}
-			break;
+			// proceed to clipping
 		}
-
-		xiter = iter;
-		iter  = a3d_list_next(iter);
-	}
-
-	// clip end of way
-	osmdb_range_init(&range);
-	xiter = NULL;
-	iter  = a3d_list_tail(way->nds);
-	while(iter)
-	{
-		ref = (double*)
-		      a3d_list_peekitem(iter);
-
-		node = (osmdb_node_t*)
-		       osmdb_index_find(self,
-		                        OSMDB_TYPE_NODE, *ref);
-		if(node == NULL)
+		else
 		{
-			iter = a3d_list_prev(iter);
+			// not clipped by tile
+			q0   = OSMDB_QUADRANT_NONE;
+			q1   = OSMDB_QUADRANT_NONE;
+			prev = NULL;
+			iter = a3d_list_next(iter);
 			continue;
 		}
 
-		osmdb_range_addPt(&range, node->lat, node->lon);
-
-		// clip points up to the first unclipped point
-		if(osmdb_range_clip(&range,
-		                    latT, lonL,
-		                    latB, lonR) == 0)
+		// compute the quadrant
+		double pc[2] =
 		{
-			// check if nds at end need to be clipped
-			if(xiter == NULL)
-			{
-				break;
-			}
+			(node->lon - center[0])/dlon,
+			(node->lat - center[1])/dlat
+		};
+		osmdb_normalize(pc);
+		q2 = osmdb_quadrant(pc, tlc, trc);
 
-			iter = a3d_list_next(xiter);
-			while(iter)
+		// mark the first and last node
+		int clip_last = 0;
+		if(iter == a3d_list_head(way->nds))
+		{
+			if(loop)
 			{
-				ref = (double*)
-				      a3d_list_remove(way->nds, &iter);
-				free(ref);
+				q0 = OSMDB_QUADRANT_NONE;
+				q1 = OSMDB_QUADRANT_NONE;
 			}
-			break;
+			else
+			{
+				q0 = q2;
+				q1 = q2;
+			}
+			prev = iter;
+			iter = a3d_list_next(iter);
+			continue;
+		}
+		else if(iter == a3d_list_tail(way->nds))
+		{
+			if((loop == 0) && (q1 == q2))
+			{
+				clip_last = 1;
+			}
+			else
+			{
+				// don't clip the prev node when
+				// keeping the last node
+				prev = NULL;
+			}
 		}
 
-		xiter = iter;
-		iter  = a3d_list_prev(iter);
+		// clip prev node
+		if(prev && (q0 == q2) && (q1 == q2))
+		{
+			ref = (double*)
+			      a3d_list_remove(way->nds, &prev);
+			free(ref);
+		}
+
+		// clip last node
+		if(clip_last)
+		{
+			ref = (double*)
+			      a3d_list_remove(way->nds, &iter);
+			free(ref);
+			return;
+		}
+
+		q0   = q1;
+		q1   = q2;
+		prev = iter;
+		iter = a3d_list_next(iter);
 	}
 }
 
