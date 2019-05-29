@@ -542,6 +542,11 @@ int main(int argc, char** argv)
 	{
 		prefix = argv[i];
 		snprintf(fname, 256, "%s-relations.xml.gz", prefix);
+		if((i > start) && (osmdb_fileExists(fname) == 0))
+		{
+			LOGW("%s does not exist", fname);
+			continue;
+		}
 		if(osmdb_parse(fname, (void*) &indexer,
 		               nodeErrFn, wayErrFn, relationRefFn) == 0)
 		{
@@ -554,6 +559,11 @@ int main(int argc, char** argv)
 	{
 		prefix = argv[i];
 		snprintf(fname, 256, "%s-ways.xml.gz", prefix);
+		if((i > start) && (osmdb_fileExists(fname) == 0))
+		{
+			LOGW("%s does not exist", fname);
+			continue;
+		}
 		if(osmdb_parse(fname, (void*) &indexer,
 		               nodeErrFn, wayRefFn, relationErrFn) == 0)
 		{
@@ -578,6 +588,11 @@ int main(int argc, char** argv)
 	{
 		prefix = argv[i];
 		snprintf(fname, 256, "%s-ways.xml.gz", prefix);
+		if((i > start) && (osmdb_fileExists(fname) == 0))
+		{
+			LOGW("%s does not exist", fname);
+			continue;
+		}
 		if(osmdb_parse(fname, (void*) &indexer,
 		               nodeErrFn, wayFn, relationErrFn) == 0)
 		{
@@ -590,6 +605,11 @@ int main(int argc, char** argv)
 	{
 		prefix = argv[i];
 		snprintf(fname, 256, "%s-relations.xml.gz", prefix);
+		if((i > start) && (osmdb_fileExists(fname) == 0))
+		{
+			LOGW("%s does not exist", fname);
+			continue;
+		}
 		if(osmdb_parse(fname, (void*) &indexer,
 		               nodeErrFn, wayErrFn, relationFn) == 0)
 		{
