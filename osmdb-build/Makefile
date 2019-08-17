@@ -5,18 +5,18 @@ OBJECTS  = $(TARGET).o $(CLASSES:%=%.o)
 HFILES   = $(CLASSES:%=%.h)
 OPT      = -O2 -Wall
 CFLAGS   = $(OPT) -I.
-LDFLAGS  = -La3d -la3d -Llibxmlstream -lxmlstream -Llibexpat/expat/lib -lexpat -lm -lz
+LDFLAGS  = -Llibcc -lcc -Llibxmlstream -lxmlstream -Llibexpat/expat/lib -lexpat -lm -lz
 CCC      = gcc
 
 all: $(TARGET)
 
-$(TARGET): $(OBJECTS) a3d xmlstream libexpat
+$(TARGET): $(OBJECTS) cc xmlstream libexpat
 	$(CCC) $(OPT) $(OBJECTS) -o $@ $(LDFLAGS)
 
-.PHONY: a3d xmlstream libexpat
+.PHONY: cc xmlstream libexpat
 
-a3d:
-	$(MAKE) -C a3d -f Makefile.sdl
+cc:
+	$(MAKE) -C libcc
 
 xmlstream:
 	$(MAKE) -C libxmlstream
@@ -26,9 +26,9 @@ libexpat:
 
 clean:
 	rm -f $(OBJECTS) *~ \#*\# $(TARGET)
-	$(MAKE) -C a3d -f Makefile.sdl clean
+	$(MAKE) -C libcc clean
 	$(MAKE) -C libxmlstream clean
 	$(MAKE) -C libexpat/expat/lib clean
-	rm a3d libxmlstream libexpat
+	rm libcc libxmlstream libexpat
 
 $(OBJECTS): $(HFILES)

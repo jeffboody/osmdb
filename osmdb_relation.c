@@ -104,7 +104,7 @@ osmdb_relation_t* osmdb_relation_new(const char** atts, int line)
 		return NULL;
 	}
 
-	self->members = a3d_list_new();
+	self->members = cc_list_new();
 	if(self->members == NULL)
 	{
 		goto fail_members;
@@ -167,7 +167,7 @@ osmdb_relation_t* osmdb_relation_new(const char** atts, int line)
 	fail_abrev:
 		free(self->name);
 	fail_name:
-		a3d_list_delete(&self->members);
+		cc_list_delete(&self->members);
 	fail_members:
 		free(self);
 	return NULL;
@@ -185,19 +185,18 @@ osmdb_relation_copy(osmdb_relation_t* self)
 		return NULL;
 	}
 
-	a3d_listitem_t* iter = a3d_list_head(self->members);
+	cc_listIter_t* iter = cc_list_head(self->members);
 	while(iter)
 	{
 		osmdb_member_t* member;
-		member = (osmdb_member_t*)
-		         a3d_list_peekitem(iter);
+		member = (osmdb_member_t*) cc_list_peekIter(iter);
 
 		if(osmdb_relation_copyMember(copy, member) == 0)
 		{
 			goto fail_member;
 		}
 
-		iter = a3d_list_next(iter);
+		iter = cc_list_next(iter);
 	}
 
 	// success
@@ -223,7 +222,7 @@ osmdb_relation_copyEmpty(osmdb_relation_t* self)
 		return NULL;
 	}
 
-	copy->members = a3d_list_new();
+	copy->members = cc_list_new();
 	if(copy->members == NULL)
 	{
 		goto fail_members;
@@ -267,7 +266,7 @@ osmdb_relation_copyEmpty(osmdb_relation_t* self)
 	fail_abrev:
 		free(copy->name);
 	fail_name:
-		a3d_list_delete(&copy->members);
+		cc_list_delete(&copy->members);
 	fail_members:
 		free(copy);
 	return NULL;
@@ -281,7 +280,7 @@ void osmdb_relation_delete(osmdb_relation_t** _self)
 	if(self)
 	{
 		osmdb_relation_discardMembers(self);
-		a3d_list_delete(&self->members);
+		cc_list_delete(&self->members);
 		free(self->name);
 		free(self->abrev);
 		free(self);
@@ -339,11 +338,11 @@ int osmdb_relation_export(osmdb_relation_t* self,
 		ret &= xml_ostream_attrf(os, "lonR", "%lf", self->lonR);
 	}
 
-	a3d_listitem_t* iter = a3d_list_head(self->members);
+	cc_listIter_t* iter = cc_list_head(self->members);
 	while(iter)
 	{
 		osmdb_member_t* m = (osmdb_member_t*)
-		                    a3d_list_peekitem(iter);
+		                    cc_list_peekIter(iter);
 		ret &= xml_ostream_begin(os, "member");
 		ret &= xml_ostream_attr(os, "type",
 		                        osmdb_relationMemberCodeToType(m->type));
@@ -354,7 +353,7 @@ int osmdb_relation_export(osmdb_relation_t* self,
 			                        osmdb_relationMemberCodeToRole(m->role));
 		}
 		ret &= xml_ostream_end(os);
-		iter = a3d_list_next(iter);
+		iter = cc_list_next(iter);
 	}
 
 	ret &= xml_ostream_end(os);
@@ -375,7 +374,7 @@ int osmdb_relation_size(osmdb_relation_t* self)
 	{
 		size += strlen(self->abrev);
 	}
-	size += sizeof(osmdb_member_t)*a3d_list_size(self->members);
+	size += sizeof(osmdb_member_t)*cc_list_size(self->members);
 
 	return size;
 }
@@ -436,8 +435,8 @@ int osmdb_relation_member(osmdb_relation_t* self,
 	}
 
 	// add member to list
-	if(a3d_list_append(self->members, NULL,
-	                   (const void*) member) == NULL)
+	if(cc_list_append(self->members, NULL,
+	                  (const void*) member) == NULL)
 	{
 		goto fail_append;
 	}
@@ -482,8 +481,8 @@ int osmdb_relation_copyMember(osmdb_relation_t* self,
 	m->role = member->role;
 
 	// add member to list
-	if(a3d_list_append(self->members, NULL,
-	                   (const void*) m) == NULL)
+	if(cc_list_append(self->members, NULL,
+	                  (const void*) m) == NULL)
 	{
 		goto fail_append;
 	}
@@ -501,12 +500,12 @@ void osmdb_relation_discardMembers(osmdb_relation_t* self)
 {
 	assert(self);
 
-	a3d_listitem_t* iter = a3d_list_head(self->members);
+	cc_listIter_t* iter = cc_list_head(self->members);
 	while(iter)
 	{
 		osmdb_member_t* m;
 		m = (osmdb_member_t*)
-		    a3d_list_remove(self->members, &iter);
+		    cc_list_remove(self->members, &iter);
 		free(m);
 	}
 }

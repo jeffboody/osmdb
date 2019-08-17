@@ -24,7 +24,7 @@
 #ifndef osmdb_relation_H
 #define osmdb_relation_H
 
-#include "../a3d/a3d_list.h"
+#include "../libcc/cc_list.h"
 #include "../libxmlstream/xml_ostream.h"
 #include "osmdb_range.h"
 
@@ -48,7 +48,7 @@ typedef struct
 	double latB;
 	double lonR;
 
-	a3d_list_t* members;
+	cc_list_t* members;
 } osmdb_relation_t;
 
 osmdb_relation_t* osmdb_relation_new(const char** atts, int line);

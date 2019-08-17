@@ -25,8 +25,8 @@
 #include <assert.h>
 #include <string.h>
 #include <math.h>
-#include "../a3d/a3d_unit.h"
-#include "../a3d/math/a3d_vec2f.h"
+#include "../libcc/cc_unit.h"
+#include "../libcc/math/cc_vec2f.h"
 #include "../terrain/terrain_util.h"
 #include "osmdb_way.h"
 #include "osmdb_util.h"
@@ -133,7 +133,7 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 		return NULL;
 	}
 
-	self->nds = a3d_list_new();
+	self->nds = cc_list_new();
 	if(self->nds == NULL)
 	{
 		goto fail_nds;
@@ -223,7 +223,7 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 	fail_abrev:
 		free(self->name);
 	fail_name:
-		a3d_list_delete(&self->nds);
+		cc_list_delete(&self->nds);
 	fail_nds:
 		free(self);
 	return NULL;
@@ -240,18 +240,17 @@ osmdb_way_t* osmdb_way_copy(osmdb_way_t* self)
 	}
 
 	// copy nds
-	a3d_listitem_t* iter = a3d_list_head(self->nds);
+	cc_listIter_t* iter = cc_list_head(self->nds);
 	while(iter)
 	{
-		double* ref = (double*)
-		              a3d_list_peekitem(iter);
+		double* ref = (double*) cc_list_peekIter(iter);
 
 		if(osmdb_way_ref(copy, *ref) == 0)
 		{
 			goto fail_nd;
 		}
 
-		iter = a3d_list_next(iter);
+		iter = cc_list_next(iter);
 	}
 
 	copy->latT = self->latT;
@@ -281,7 +280,7 @@ osmdb_way_copyEmpty(osmdb_way_t* self)
 		return NULL;
 	}
 
-	copy->nds = a3d_list_new();
+	copy->nds = cc_list_new();
 	if(copy->nds == NULL)
 	{
 		goto fail_nds;
@@ -330,7 +329,7 @@ osmdb_way_copyEmpty(osmdb_way_t* self)
 	fail_abrev:
 		free(copy->name);
 	fail_name:
-		a3d_list_delete(&copy->nds);
+		cc_list_delete(&copy->nds);
 	fail_nds:
 		free(copy);
 	return NULL;
@@ -344,7 +343,7 @@ void osmdb_way_delete(osmdb_way_t** _self)
 	if(self)
 	{
 		osmdb_way_discardNds(self);
-		a3d_list_delete(&self->nds);
+		cc_list_delete(&self->nds);
 		free(self->name);
 		free(self->abrev);
 		free(self);
@@ -421,14 +420,14 @@ int osmdb_way_export(osmdb_way_t* self, xml_ostream_t* os)
 		ret &= xml_ostream_attrf(os, "lonR", "%lf", self->lonR);
 	}
 
-	a3d_listitem_t* iter = a3d_list_head(self->nds);
+	cc_listIter_t* iter = cc_list_head(self->nds);
 	while(iter)
 	{
-		double* ref = (double*) a3d_list_peekitem(iter);
+		double* ref = (double*) cc_list_peekIter(iter);
 		ret &= xml_ostream_begin(os, "nd");
 		ret &= xml_ostream_attrf(os, "ref", "%0.0lf", *ref);
 		ret &= xml_ostream_end(os);
-		iter = a3d_list_next(iter);
+		iter = cc_list_next(iter);
 	}
 
 	ret &= xml_ostream_end(os);
@@ -449,7 +448,7 @@ int osmdb_way_size(osmdb_way_t* self)
 	{
 		size += strlen(self->abrev);
 	}
-	size += sizeof(double)*a3d_list_size(self->nds);
+	size += sizeof(double)*cc_list_size(self->nds);
 
 	return size;
 }
@@ -517,8 +516,8 @@ int osmdb_way_ref(osmdb_way_t* self,
 	*_ref = ref;
 
 	// add nd to list
-	if(a3d_list_append(self->nds, NULL,
-	                   (const void*) _ref) == NULL)
+	if(cc_list_append(self->nds, NULL,
+	                  (const void*) _ref) == NULL)
 	{
 		goto fail_append;
 	}
@@ -536,11 +535,11 @@ void osmdb_way_discardNds(osmdb_way_t* self)
 {
 	assert(self);
 
-	a3d_listitem_t* iter = a3d_list_head(self->nds);
+	cc_listIter_t* iter = cc_list_head(self->nds);
 	while(iter)
 	{
 		double* ref = (double*)
-		              a3d_list_remove(self->nds, &iter);
+		              cc_list_remove(self->nds, &iter);
 		free(ref);
 	}
 }

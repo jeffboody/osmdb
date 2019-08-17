@@ -66,45 +66,45 @@ static int osmdb_tile_finish(osmdb_tile_t* self)
 		}
 	}
 
-	a3d_hashmapIter_t  iterator;
-	a3d_hashmapIter_t* iter;
-	iter = a3d_hashmap_head(self->hash_nodes, &iterator);
+	cc_mapIter_t  iterator;
+	cc_mapIter_t* iter;
+	iter = cc_map_head(self->map_nodes, &iterator);
 	while(iter)
 	{
 		if(os)
 		{
 			success &= xml_ostream_begin(os, "n");
 			success &= xml_ostream_attr(os, "ref",
-			                            a3d_hashmap_key(iter));
+			                            cc_map_key(iter));
 			success &= xml_ostream_end(os);
 		}
-		a3d_hashmap_remove(self->hash_nodes, &iter);
+		cc_map_remove(self->map_nodes, &iter);
 	}
 
-	iter = a3d_hashmap_head(self->hash_ways, &iterator);
+	iter = cc_map_head(self->map_ways, &iterator);
 	while(iter)
 	{
 		if(os)
 		{
 			success &= xml_ostream_begin(os, "w");
 			success &= xml_ostream_attr(os, "ref",
-			                            a3d_hashmap_key(iter));
+			                            cc_map_key(iter));
 			success &= xml_ostream_end(os);
 		}
-		a3d_hashmap_remove(self->hash_ways, &iter);
+		cc_map_remove(self->map_ways, &iter);
 	}
 
-	iter = a3d_hashmap_head(self->hash_relations, &iterator);
+	iter = cc_map_head(self->map_relations, &iterator);
 	while(iter)
 	{
 		if(os)
 		{
 			success &= xml_ostream_begin(os, "r");
 			success &= xml_ostream_attr(os, "ref",
-			                            a3d_hashmap_key(iter));
+			                            cc_map_key(iter));
 			success &= xml_ostream_end(os);
 		}
-		a3d_hashmap_remove(self->hash_relations, &iter);
+		cc_map_remove(self->map_relations, &iter);
 	}
 
 	if(os)
@@ -124,11 +124,10 @@ static int nodeRefFn(void* priv, double ref)
 	assert(priv);
 
 	osmdb_tile_t*  self = (osmdb_tile_t*) priv;
-	a3d_hashmap_t* hash = self->hash_nodes;
+	cc_map_t* map = self->map_nodes;
 
-	if(a3d_hashmap_addf(hash,
-	                    (const void*) &OSMDB_TILE_ONE,
-	                    "%0.0lf", ref) == 0)
+	if(cc_map_addf(map, (const void*) &OSMDB_TILE_ONE,
+	               "%0.0lf", ref) == 0)
 	{
 		return 0;
 	}
@@ -141,11 +140,10 @@ static int wayRefFn(void* priv, double ref)
 	assert(priv);
 
 	osmdb_tile_t*  self = (osmdb_tile_t*) priv;
-	a3d_hashmap_t* hash = self->hash_ways;
+	cc_map_t* map = self->map_ways;
 
-	if(a3d_hashmap_addf(hash,
-	                    (const void*) &OSMDB_TILE_ONE,
-	                    "%0.0lf", ref) == 0)
+	if(cc_map_addf(map, (const void*) &OSMDB_TILE_ONE,
+	               "%0.0lf", ref) == 0)
 	{
 		return 0;
 	}
@@ -158,11 +156,10 @@ static int relationRefFn(void* priv, double ref)
 	assert(priv);
 
 	osmdb_tile_t*  self = (osmdb_tile_t*) priv;
-	a3d_hashmap_t* hash = self->hash_relations;
+	cc_map_t* map = self->map_relations;
 
-	if(a3d_hashmap_addf(hash,
-	                    (const void*) &OSMDB_TILE_ONE,
-	                    "%0.0lf", ref) == 0)
+	if(cc_map_addf(map, (const void*) &OSMDB_TILE_ONE,
+	               "%0.0lf", ref) == 0)
 	{
 		return 0;
 	}
@@ -206,22 +203,22 @@ osmdb_tile_t* osmdb_tile_new(int zoom, int x, int y,
 		return NULL;
 	}
 
-	self->hash_nodes = a3d_hashmap_new();
-	if(self->hash_nodes == NULL)
+	self->map_nodes = cc_map_new();
+	if(self->map_nodes == NULL)
 	{
-		goto fail_hash_nodes;
+		goto fail_map_nodes;
 	}
 
-	self->hash_ways = a3d_hashmap_new();
-	if(self->hash_ways == NULL)
+	self->map_ways = cc_map_new();
+	if(self->map_ways == NULL)
 	{
-		goto fail_hash_ways;
+		goto fail_map_ways;
 	}
 
-	self->hash_relations = a3d_hashmap_new();
-	if(self->hash_relations == NULL)
+	self->map_relations = cc_map_new();
+	if(self->map_relations == NULL)
 	{
-		goto fail_hash_relations;
+		goto fail_map_relations;
 	}
 
 	self->base  = base;
@@ -241,12 +238,12 @@ osmdb_tile_t* osmdb_tile_new(int zoom, int x, int y,
 
 	// failure
 	fail_import:
-		a3d_hashmap_delete(&self->hash_relations);
-	fail_hash_relations:
-		a3d_hashmap_delete(&self->hash_ways);
-	fail_hash_ways:
-		a3d_hashmap_delete(&self->hash_nodes);
-	fail_hash_nodes:
+		cc_map_delete(&self->map_relations);
+	fail_map_relations:
+		cc_map_delete(&self->map_ways);
+	fail_map_ways:
+		cc_map_delete(&self->map_nodes);
+	fail_map_nodes:
 		free(self);
 	return NULL;
 }
@@ -260,9 +257,9 @@ int osmdb_tile_delete(osmdb_tile_t** _self)
 	if(self)
 	{
 		success = osmdb_tile_finish(self);
-		a3d_hashmap_delete(&self->hash_nodes);
-		a3d_hashmap_delete(&self->hash_ways);
-		a3d_hashmap_delete(&self->hash_relations);
+		cc_map_delete(&self->map_nodes);
+		cc_map_delete(&self->map_ways);
+		cc_map_delete(&self->map_relations);
 		free(self);
 		*_self = NULL;
 	}
@@ -273,9 +270,10 @@ int osmdb_tile_size(osmdb_tile_t* self)
 {
 	assert(self);
 
-	return a3d_hashmap_hashmapSize(self->hash_nodes) +
-	       a3d_hashmap_hashmapSize(self->hash_ways)  +
-	       a3d_hashmap_hashmapSize(self->hash_relations);
+	return (int)
+	       (cc_map_sizeof(self->map_nodes) +
+	        cc_map_sizeof(self->map_ways)  +
+	        cc_map_sizeof(self->map_relations));
 }
 
 int osmdb_tile_find(osmdb_tile_t* self,
@@ -283,22 +281,22 @@ int osmdb_tile_find(osmdb_tile_t* self,
 {
 	assert(self);
 
-	a3d_hashmap_t* hash;
+	cc_map_t* map;
 	if(type == OSMDB_TYPE_NODE)
 	{
-		hash = self->hash_nodes;
+		map = self->map_nodes;
 	}
 	else if(type == OSMDB_TYPE_WAY)
 	{
-		hash = self->hash_ways;
+		map = self->map_ways;
 	}
 	else
 	{
-		hash = self->hash_relations;
+		map = self->map_relations;
 	}
 
-	a3d_hashmapIter_t iter;
-	if(a3d_hashmap_findf(hash, &iter, "%0.0lf", id))
+	cc_mapIter_t iter;
+	if(cc_map_findf(map, &iter, "%0.0lf", id))
 	{
 		return 1;
 	}
@@ -311,23 +309,22 @@ int osmdb_tile_add(osmdb_tile_t* self,
 {
 	assert(self);
 
-	a3d_hashmap_t* hash;
+	cc_map_t* map;
 	if(type == OSMDB_TYPE_NODE)
 	{
-		hash = self->hash_nodes;
+		map = self->map_nodes;
 	}
 	else if(type == OSMDB_TYPE_WAY)
 	{
-		hash = self->hash_ways;
+		map = self->map_ways;
 	}
 	else
 	{
-		hash = self->hash_relations;
+		map = self->map_relations;
 	}
 
-	if(a3d_hashmap_addf(hash,
-	                    (const void*) &OSMDB_TILE_ONE,
-	                    "%0.0lf", id) == 0)
+	if(cc_map_addf(map, (const void*) &OSMDB_TILE_ONE,
+	               "%0.0lf", id) == 0)
 	{
 		return 0;
 	}

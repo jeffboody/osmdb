@@ -1,4 +1,4 @@
-ln -s ../../a3d
+ln -s ../../libcc
 ln -s ../../osmdb
 ln -s ../../libexpat
 ln -s ../../libxmlstream

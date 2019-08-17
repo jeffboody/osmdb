@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.4.1)
 
+# Defines
+set(CC_USE_MATH true)
+
 # Compiler options
 add_compile_options(-Wall)
 
@@ -19,7 +22,7 @@ add_library(osmdb
 target_link_libraries(osmdb
 
                       # Submodule libraries
-                      a3d
+                      cc
 
                       # NDK libraries
                       log)

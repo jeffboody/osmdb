@@ -24,8 +24,8 @@
 #ifndef osmdb_filter_H
 #define osmdb_filter_H
 
-#include "../a3d/a3d_hashmap.h"
-#include "../a3d/a3d_list.h"
+#include "../libcc/cc_map.h"
+#include "../libcc/cc_list.h"
 #include "osmdb_node.h"
 #include "osmdb_way.h"
 #include "osmdb_relation.h"
@@ -40,7 +40,7 @@ typedef struct
 typedef struct
 {
 	// map from class name to filter info
-	a3d_hashmap_t* info;
+	cc_map_t* info;
 } osmdb_filter_t;
 
 osmdb_filter_t*     osmdb_filter_new(const char* fname);

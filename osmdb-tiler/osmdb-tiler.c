@@ -32,7 +32,7 @@
 #include "osmdb/osmdb_way.h"
 #include "osmdb/osmdb_relation.h"
 #include "osmdb/osmdb_util.h"
-#include "a3d/a3d_timestamp.h"
+#include "libcc/cc_timestamp.h"
 
 #define LOG_TAG "osmdb"
 #include "libxmlstream/xml_log.h"
@@ -178,7 +178,7 @@ static int osmdb_makeTileR(osmdb_index_t* index,
 
 int main(int argc, const char** argv)
 {
-	double t0 = a3d_timestamp();
+	double t0 = cc_timestamp();
 
 	if(argc != 3)
 	{
@@ -208,7 +208,7 @@ int main(int argc, const char** argv)
 	}
 
 	// success
-	LOGI("SUCCESS dt=%lf", a3d_timestamp() - t0);
+	LOGI("SUCCESS dt=%lf", cc_timestamp() - t0);
 	return EXIT_SUCCESS;
 
 	// failure
@@ -216,6 +216,6 @@ int main(int argc, const char** argv)
 	fail_make:
 		osmdb_index_delete(&index);
 	fail_index:
-		LOGI("FAILURE dt=%lf", a3d_timestamp() - t0);
+		LOGI("FAILURE dt=%lf", cc_timestamp() - t0);
 	return EXIT_FAILURE;
 }

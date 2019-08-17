@@ -818,11 +818,11 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	}
 
 	// write way nds
-	a3d_listitem_t* iter = a3d_list_head(self->way_nds);
+	cc_listIter_t* iter = cc_list_head(self->way_nds);
 	while(iter)
 	{
 		double* ref = (double*)
-		              a3d_list_remove(self->way_nds, &iter);
+		              cc_list_remove(self->way_nds, &iter);
 		xml_ostream_begin(self->os_ways, "nd");
 		xml_ostream_attrf(self->os_ways, "ref", "%0.0lf", *ref);
 		xml_ostream_end(self->os_ways);
@@ -967,8 +967,8 @@ osm_parser_beginOsmWayNd(osm_parser_t* self, int line,
 	}
 
 	if((*ref == 0.0) ||
-	   (a3d_list_enqueue(self->way_nds,
-	                     (const void*) ref) == 0))
+	   (cc_list_append(self->way_nds, NULL,
+	                   (const void*) ref) == NULL))
 	{
 		free(ref);
 		return 0;
@@ -1048,12 +1048,12 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 	}
 
 	// write rel members
-	a3d_listitem_t* iter = a3d_list_head(self->rel_members);
+	cc_listIter_t* iter = cc_list_head(self->rel_members);
 	while(iter)
 	{
 		osm_relationMember_t* m;
 		m = (osm_relationMember_t*)
-		    a3d_list_remove(self->rel_members, &iter);
+		    cc_list_remove(self->rel_members, &iter);
 		if(m->type && m->role && (m->ref != 0.0))
 		{
 			xml_ostream_begin(self->os_relations, "member");
@@ -1187,8 +1187,8 @@ osm_parser_beginOsmRelMember(osm_parser_t* self, int line,
 		j += 2;
 	}
 
-	if(a3d_list_enqueue(self->rel_members,
-	                    (const void*) m) == 0)
+	if(cc_list_append(self->rel_members, NULL,
+	                  (const void*) m) == NULL)
 	{
 		free(m);
 		return 0;
@@ -1229,13 +1229,13 @@ osm_parser_t* osm_parser_new(xml_ostream_t* os_nodes,
 		return NULL;
 	}
 
-	self->way_nds = a3d_list_new();
+	self->way_nds = cc_list_new();
 	if(self->way_nds == NULL)
 	{
 		goto fail_way_nds;
 	}
 
-	self->rel_members = a3d_list_new();
+	self->rel_members = cc_list_new();
 	if(self->rel_members == NULL)
 	{
 		goto fail_rel_members;
@@ -1266,9 +1266,9 @@ osm_parser_t* osm_parser_new(xml_ostream_t* os_nodes,
 
 	// failure
 	fail_histogram:
-		a3d_list_delete(&self->rel_members);
+		cc_list_delete(&self->rel_members);
 	fail_rel_members:
-		a3d_list_delete(&self->way_nds);
+		cc_list_delete(&self->way_nds);
 	fail_way_nds:
 		free(self);
 	return NULL;
@@ -1301,25 +1301,25 @@ void osm_parser_delete(osm_parser_t** _self)
 		}
 		free(self->histogram);
 
-		a3d_listitem_t* iter = a3d_list_head(self->rel_members);
+		cc_listIter_t* iter = cc_list_head(self->rel_members);
 		while(iter)
 		{
 			osm_relationMember_t* m;
 			m = (osm_relationMember_t*)
-			    a3d_list_remove(self->rel_members, &iter);
+			    cc_list_remove(self->rel_members, &iter);
 			free(m);
 		}
 
-		iter = a3d_list_head(self->way_nds);
+		iter = cc_list_head(self->way_nds);
 		while(iter)
 		{
 			double* ref = (double*)
-			              a3d_list_remove(self->way_nds, &iter);
+			              cc_list_remove(self->way_nds, &iter);
 			free(ref);
 		}
 
-		a3d_list_delete(&self->rel_members);
-		a3d_list_delete(&self->way_nds);
+		cc_list_delete(&self->rel_members);
+		cc_list_delete(&self->way_nds);
 		free(self);
 		*_self = NULL;
 	}

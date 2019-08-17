@@ -39,58 +39,58 @@ static void osmdb_style_finish(osmdb_style_t* self)
 {
 	assert(self);
 
-	a3d_hashmapIter_t  iterator;
-	a3d_hashmapIter_t* iter;
-	iter = a3d_hashmap_head(self->classes, &iterator);
+	cc_mapIter_t  iterator;
+	cc_mapIter_t* iter;
+	iter = cc_map_head(self->classes, &iterator);
 	while(iter)
 	{
 		osmdb_styleClass_t* class;
 		class = (osmdb_styleClass_t*)
-		        a3d_hashmap_remove(self->classes, &iter);
+		        cc_map_remove(self->classes, &iter);
 		free(class);
 	}
 
-	iter = a3d_hashmap_head(self->polys, &iterator);
+	iter = cc_map_head(self->polys, &iterator);
 	while(iter)
 	{
 		osmdb_stylePolygon_t* poly;
 		poly = (osmdb_stylePolygon_t*)
-		       a3d_hashmap_remove(self->polys, &iter);
+		       cc_map_remove(self->polys, &iter);
 		free(poly);
 	}
 
-	iter = a3d_hashmap_head(self->lines, &iterator);
+	iter = cc_map_head(self->lines, &iterator);
 	while(iter)
 	{
 		osmdb_styleLine_t* line;
 		line = (osmdb_styleLine_t*)
-		       a3d_hashmap_remove(self->lines, &iter);
+		       cc_map_remove(self->lines, &iter);
 		free(line);
 	}
 
-	iter = a3d_hashmap_head(self->points, &iterator);
+	iter = cc_map_head(self->points, &iterator);
 	while(iter)
 	{
 		osmdb_stylePoint_t* point;
 		point = (osmdb_stylePoint_t*)
-		        a3d_hashmap_remove(self->points, &iter);
+		        cc_map_remove(self->points, &iter);
 		free(point);
 	}
 
-	iter = a3d_hashmap_head(self->colors, &iterator);
+	iter = cc_map_head(self->colors, &iterator);
 	while(iter)
 	{
-		a3d_vec4f_t* color;
-		color = (a3d_vec4f_t*)
-		        a3d_hashmap_remove(self->colors, &iter);
-		a3d_vec4f_delete(&color);
+		cc_vec4f_t* color;
+		color = (cc_vec4f_t*)
+		        cc_map_remove(self->colors, &iter);
+		cc_vec4f_delete(&color);
 	}
 
-	iter = a3d_hashmap_head(self->layers, &iterator);
+	iter = cc_map_head(self->layers, &iterator);
 	while(iter)
 	{
 		int* layerp = (int*)
-		              a3d_hashmap_remove(self->layers, &iter);
+		              cc_map_remove(self->layers, &iter);
 		free(layerp);
 	}
 }
@@ -193,10 +193,10 @@ osmdb_style_beginOsmLayer(osmdb_style_t* self,
 		LOGE("malloc failed");
 		return 0;
 	}
-	*layerp = a3d_hashmap_size(self->layers);
+	*layerp = cc_map_size(self->layers);
 
-	if(a3d_hashmap_add(self->layers,
-	                   (const void*) layerp, name) == 0)
+	if(cc_map_add(self->layers, (const void*) layerp,
+	              name) == 0)
 	{
 		goto fail_add;
 	}
@@ -252,14 +252,14 @@ osmdb_style_beginOsmColor(osmdb_style_t* self,
 	float b = ((float) ((v >> 8) & 0xFF))/255.0f;
 	float a = ((float) (v & 0xFF))/255.0f;
 
-	a3d_vec4f_t* c = a3d_vec4f_new(r, g, b, a);
+	cc_vec4f_t* c = cc_vec4f_new(r, g, b, a);
 	if(c == NULL)
 	{
 		return 0;
 	}
 
-	if(a3d_hashmap_add(self->colors,
-	                   (const void*) c, name) == 0)
+	if(cc_map_add(self->colors, (const void*) c,
+	              name) == 0)
 	{
 		goto fail_add;
 	}
@@ -269,7 +269,7 @@ osmdb_style_beginOsmColor(osmdb_style_t* self,
 
 	// failure
 	fail_add:
-		a3d_vec4f_delete(&c);
+		cc_vec4f_delete(&c);
 	return 0;
 }
 
@@ -334,12 +334,12 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 		return 0;
 	}
 
-	a3d_hashmapIter_t iter;
-	a3d_vec4f_t* tc1 = NULL;
+	cc_mapIter_t iter;
+	cc_vec4f_t* tc1 = NULL;
 	if(text_color1)
 	{
-		tc1 = (a3d_vec4f_t*)
-		      a3d_hashmap_find(self->colors, &iter, text_color1);
+		tc1 = (cc_vec4f_t*)
+		      cc_map_find(self->colors, &iter, text_color1);
 		if(tc1 == NULL)
 		{
 			LOGE("invalid line=%i text_color1=%s", line, text_color1);
@@ -347,11 +347,11 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 		}
 	}
 
-	a3d_vec4f_t* tc2 = NULL;
+	cc_vec4f_t* tc2 = NULL;
 	if(text_color2)
 	{
-		tc2 = (a3d_vec4f_t*)
-		      a3d_hashmap_find(self->colors, &iter, text_color2);
+		tc2 = (cc_vec4f_t*)
+		      cc_map_find(self->colors, &iter, text_color2);
 		if(tc2 == NULL)
 		{
 			LOGE("invalid line=%i text_color2=%s", line, text_color2);
@@ -359,11 +359,11 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 		}
 	}
 
-	a3d_vec4f_t* mc1 = NULL;
+	cc_vec4f_t* mc1 = NULL;
 	if(marker_color1)
 	{
-		mc1 = (a3d_vec4f_t*)
-		      a3d_hashmap_find(self->colors, &iter, marker_color1);
+		mc1 = (cc_vec4f_t*)
+		      cc_map_find(self->colors, &iter, marker_color1);
 		if(mc1 == NULL)
 		{
 			LOGE("invalid line=%i marker_color1=%s", line, marker_color1);
@@ -371,11 +371,11 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 		}
 	}
 
-	a3d_vec4f_t* mc2 = NULL;
+	cc_vec4f_t* mc2 = NULL;
 	if(marker_color2)
 	{
-		mc2 = (a3d_vec4f_t*)
-		      a3d_hashmap_find(self->colors, &iter, marker_color2);
+		mc2 = (cc_vec4f_t*)
+		      cc_map_find(self->colors, &iter, marker_color2);
 		if(mc2 == NULL)
 		{
 			LOGE("invalid line=%i marker_color2=%s", line, marker_color2);
@@ -457,8 +457,8 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 	point->marker_color1 = mc1;
 	point->marker_color2 = mc2;
 
-	if(a3d_hashmap_add(self->points,
-	                   (const void*) point, name) == 0)
+	if(cc_map_add(self->points, (const void*) point,
+	              name) == 0)
 	{
 		goto fail_add;
 	}
@@ -529,12 +529,12 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 		modei = osmdb_style_parseLineMode(mode);
 	}
 
-	a3d_vec4f_t* c1 = NULL;
-	a3d_hashmapIter_t iter;
+	cc_vec4f_t* c1 = NULL;
+	cc_mapIter_t iter;
 	if(color1)
 	{
-		c1 = (a3d_vec4f_t*)
-		     a3d_hashmap_find(self->colors, &iter, color1);
+		c1 = (cc_vec4f_t*)
+		     cc_map_find(self->colors, &iter, color1);
 		if(c1 == NULL)
 		{
 			LOGE("invalid line=%i", line);
@@ -542,11 +542,11 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 		}
 	}
 
-	a3d_vec4f_t* c2 = NULL;
+	cc_vec4f_t* c2 = NULL;
 	if(color2)
 	{
-		c2 = (a3d_vec4f_t*)
-		     a3d_hashmap_find(self->colors, &iter, color2);
+		c2 = (cc_vec4f_t*)
+		     cc_map_find(self->colors, &iter, color2);
 		if(c2 == NULL)
 		{
 			LOGE("invalid line=%i", line);
@@ -572,8 +572,8 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 	linep->color1 = c1;
 	linep->color2 = c2;
 
-	if(a3d_hashmap_add(self->lines,
-	                   (const void*) linep, name) == 0)
+	if(cc_map_add(self->lines, (const void*) linep,
+	              name) == 0)
 	{
 		goto fail_add;
 	}
@@ -623,12 +623,12 @@ osmdb_style_beginOsmPoly(osmdb_style_t* self,
 		return 0;
 	}
 
-	a3d_vec4f_t* c = NULL;
-	a3d_hashmapIter_t iter;
+	cc_vec4f_t* c = NULL;
+	cc_mapIter_t iter;
 	if(color)
 	{
-		c = (a3d_vec4f_t*)
-		    a3d_hashmap_find(self->colors, &iter, color);
+		c = (cc_vec4f_t*)
+		    cc_map_find(self->colors, &iter, color);
 		if(c == NULL)
 		{
 			LOGE("invalid line=%i color=%s", line, color);
@@ -645,8 +645,8 @@ osmdb_style_beginOsmPoly(osmdb_style_t* self,
 	}
 	poly->color = c;
 
-	if(a3d_hashmap_add(self->polys,
-	                   (const void*) poly, name) == 0)
+	if(cc_map_add(self->polys, (const void*) poly,
+	              name) == 0)
 	{
 		goto fail_add;
 	}
@@ -712,11 +712,11 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 	}
 
 	int layeri = 0;
-	a3d_hashmapIter_t iter;
+	cc_mapIter_t iter;
 	if(layer)
 	{
 		int* layerp = (int*)
-		              a3d_hashmap_find(self->layers, &iter, layer);
+		              cc_map_find(self->layers, &iter, layer);
 		if(layerp == NULL)
 		{
 			LOGE("invalid line=%i", line);
@@ -729,7 +729,7 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 	if(ln)
 	{
 		linep = (osmdb_styleLine_t*)
-		        a3d_hashmap_find(self->lines, &iter, ln);
+		        cc_map_find(self->lines, &iter, ln);
 		if(linep == NULL)
 		{
 			LOGE("invalid line=%i", line);
@@ -741,7 +741,7 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 	if(poly)
 	{
 		polyp = (osmdb_stylePolygon_t*)
-		        a3d_hashmap_find(self->polys, &iter, poly);
+		        cc_map_find(self->polys, &iter, poly);
 		if(polyp == NULL)
 		{
 			LOGE("invalid line=%i, poly=%s", line, poly);
@@ -753,7 +753,7 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 	if(point)
 	{
 		pointp = (osmdb_stylePoint_t*)
-		         a3d_hashmap_find(self->points, &iter, point);
+		         cc_map_find(self->points, &iter, point);
 		if(pointp == NULL)
 		{
 			LOGE("invalid line=%i, point=%s", line, point);
@@ -773,8 +773,8 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 	class->poly  = polyp;
 	class->point = pointp;
 
-	if(a3d_hashmap_add(self->classes,
-	                   (const void*) class, name) == 0)
+	if(cc_map_add(self->classes, (const void*) class,
+	              name) == 0)
 	{
 		goto fail_add;
 	}
@@ -884,37 +884,37 @@ osmdb_style_t* osmdb_style_new(const char* fname)
 	}
 	self->state = OSMDB_STYLE_STATE_INIT;
 
-	self->layers = a3d_hashmap_new();
+	self->layers = cc_map_new();
 	if(self->layers == NULL)
 	{
 		goto fail_layers;
 	}
 
-	self->colors = a3d_hashmap_new();
+	self->colors = cc_map_new();
 	if(self->colors == NULL)
 	{
 		goto fail_colors;
 	}
 
-	self->points = a3d_hashmap_new();
+	self->points = cc_map_new();
 	if(self->points == NULL)
 	{
 		goto fail_points;
 	}
 
-	self->lines = a3d_hashmap_new();
+	self->lines = cc_map_new();
 	if(self->lines == NULL)
 	{
 		goto fail_lines;
 	}
 
-	self->polys = a3d_hashmap_new();
+	self->polys = cc_map_new();
 	if(self->polys == NULL)
 	{
 		goto fail_polys;
 	}
 
-	self->classes = a3d_hashmap_new();
+	self->classes = cc_map_new();
 	if(self->classes == NULL)
 	{
 		goto fail_classes;
@@ -951,17 +951,17 @@ osmdb_style_t* osmdb_style_new(const char* fname)
 	fail_seek:
 		pak_file_close(&pak);
 	fail_pak:
-		a3d_hashmap_delete(&self->classes);
+		cc_map_delete(&self->classes);
 	fail_classes:
-		a3d_hashmap_delete(&self->polys);
+		cc_map_delete(&self->polys);
 	fail_polys:
-		a3d_hashmap_delete(&self->lines);
+		cc_map_delete(&self->lines);
 	fail_lines:
-		a3d_hashmap_delete(&self->points);
+		cc_map_delete(&self->points);
 	fail_points:
-		a3d_hashmap_delete(&self->colors);
+		cc_map_delete(&self->colors);
 	fail_colors:
-		a3d_hashmap_delete(&self->layers);
+		cc_map_delete(&self->layers);
 	fail_layers:
 		free(self);
 	return NULL;
@@ -975,12 +975,12 @@ void osmdb_style_delete(osmdb_style_t** _self)
 	if(self)
 	{
 		osmdb_style_finish(self);
-		a3d_hashmap_delete(&self->classes);
-		a3d_hashmap_delete(&self->polys);
-		a3d_hashmap_delete(&self->lines);
-		a3d_hashmap_delete(&self->points);
-		a3d_hashmap_delete(&self->colors);
-		a3d_hashmap_delete(&self->layers);
+		cc_map_delete(&self->classes);
+		cc_map_delete(&self->polys);
+		cc_map_delete(&self->lines);
+		cc_map_delete(&self->points);
+		cc_map_delete(&self->colors);
+		cc_map_delete(&self->layers);
 		free(self);
 		*_self = NULL;
 	}
@@ -992,7 +992,7 @@ osmdb_styleClass_t* osmdb_style_class(osmdb_style_t* self,
 	assert(self);
 	assert(name);
 
-	a3d_hashmapIter_t iter;
+	cc_mapIter_t iter;
 	return (osmdb_styleClass_t*)
-	       a3d_hashmap_find(self->classes, &iter, name);
+	       cc_map_find(self->classes, &iter, name);
 }

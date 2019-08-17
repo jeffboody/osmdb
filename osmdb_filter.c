@@ -171,8 +171,8 @@ static int osmdb_filter_start(void* priv,
 	}
 
 	// check for duplicates
-	a3d_hashmapIter_t iterator;
-	if(a3d_hashmap_find(self->info, &iterator, class))
+	cc_mapIter_t iterator;
+	if(cc_map_find(self->info, &iterator, class))
 	{
 		LOGE("duplicate line=%i", line);
 		return 0;
@@ -187,8 +187,7 @@ static int osmdb_filter_start(void* priv,
 	}
 
 	// add the filter info
-	if(a3d_hashmap_add(self->info, (const void*) info,
-	                   class) == 0)
+	if(cc_map_add(self->info, (const void*) info, class) == 0)
 	{
 		goto fail_add;
 	}
@@ -218,14 +217,14 @@ static void osmdb_filter_discard(osmdb_filter_t* self)
 {
 	assert(self);
 
-	a3d_hashmapIter_t  iterator;
-	a3d_hashmapIter_t* iter;
-	iter = a3d_hashmap_head(self->info, &iterator);
+	cc_mapIter_t  iterator;
+	cc_mapIter_t* iter;
+	iter = cc_map_head(self->info, &iterator);
 	while(iter)
 	{
 		osmdb_filterInfo_t* info = (osmdb_filterInfo_t*)
-		                           a3d_hashmap_remove(self->info,
-		                                              &iter);
+		                           cc_map_remove(self->info,
+		                                         &iter);
 		osmdb_filterInfo_delete(&info);
 	}
 }
@@ -246,7 +245,7 @@ osmdb_filter_t* osmdb_filter_new(const char* fname)
 		return NULL;
 	}
 
-	self->info = a3d_hashmap_new();
+	self->info = cc_map_new();
 	if(self->info == NULL)
 	{
 		goto fail_info;
@@ -266,7 +265,7 @@ osmdb_filter_t* osmdb_filter_new(const char* fname)
 	// failure
 	fail_parse:
 		osmdb_filter_discard(self);
-		a3d_hashmap_delete(&self->info);
+		cc_map_delete(&self->info);
 	fail_info:
 		free(self);
 	return NULL;
@@ -280,7 +279,7 @@ void osmdb_filter_delete(osmdb_filter_t** _self)
 	if(self)
 	{
 		osmdb_filter_discard(self);
-		a3d_hashmap_delete(&self->info);
+		cc_map_delete(&self->info);
 		free(self);
 		*_self = NULL;
 	}
@@ -295,10 +294,10 @@ osmdb_filter_selectNode(osmdb_filter_t* self,
 
 	const char* class = osmdb_classCodeToName(node->class);
 
-	a3d_hashmapIter_t iter;
+	cc_mapIter_t iter;
 	osmdb_filterInfo_t* info = (osmdb_filterInfo_t*)
-	                           a3d_hashmap_find(self->info,
-	                                            &iter, class);
+	                           cc_map_find(self->info,
+	                                       &iter, class);
 	if(info == NULL)
 	{
 		return NULL;
@@ -322,10 +321,10 @@ osmdb_filter_selectWay(osmdb_filter_t* self,
 
 	const char* class = osmdb_classCodeToName(way->class);
 
-	a3d_hashmapIter_t iter;
+	cc_mapIter_t iter;
 	osmdb_filterInfo_t* info = (osmdb_filterInfo_t*)
-	                           a3d_hashmap_find(self->info,
-	                                            &iter, class);
+	                           cc_map_find(self->info,
+	                                       &iter, class);
 	if(info == NULL)
 	{
 		return NULL;
@@ -349,10 +348,10 @@ osmdb_filter_selectRelation(osmdb_filter_t* self,
 
 	const char* class = osmdb_classCodeToName(relation->class);
 
-	a3d_hashmapIter_t iter;
+	cc_mapIter_t iter;
 	osmdb_filterInfo_t* info = (osmdb_filterInfo_t*)
-	                           a3d_hashmap_find(self->info,
-	                                            &iter, class);
+	                           cc_map_find(self->info,
+	                                       &iter, class);
 	if(info == NULL)
 	{
 		return NULL;

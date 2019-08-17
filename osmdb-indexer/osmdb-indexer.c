@@ -27,7 +27,7 @@
 #include <string.h>
 
 #define LOG_TAG "osmdb"
-#include "a3d/a3d_timestamp.h"
+#include "libcc/cc_timestamp.h"
 #include "libxmlstream/xml_log.h"
 #include "osmdb/osmdb_parser.h"
 #include "osmdb/osmdb_node.h"
@@ -124,11 +124,11 @@ static int relationRefFn(void* priv, osmdb_relation_t* relation)
 	if(info->center)
 	{
 		int skip_ways = 0;
-		a3d_listitem_t* iter = a3d_list_head(relation->members);
+		cc_listIter_t* iter = cc_list_head(relation->members);
 		while(iter)
 		{
 			osmdb_member_t* m = (osmdb_member_t*)
-			                    a3d_list_peekitem(iter);
+			                    cc_list_peekIter(iter);
 			if(m->type == OSMDB_TYPE_NODE)
 			{
 				double* copy = (double*)
@@ -152,16 +152,16 @@ static int relationRefFn(void* priv, osmdb_relation_t* relation)
 				break;
 			}
 
-			iter = a3d_list_next(iter);
+			iter = cc_list_next(iter);
 		}
 
 		if(skip_ways == 0)
 		{
-			iter = a3d_list_head(relation->members);
+			iter = cc_list_head(relation->members);
 			while(iter)
 			{
 				osmdb_member_t* m = (osmdb_member_t*)
-				                    a3d_list_peekitem(iter);
+				                    cc_list_peekIter(iter);
 				if(m->type == OSMDB_TYPE_WAY)
 				{
 					double* copy = (double*)
@@ -182,17 +182,17 @@ static int relationRefFn(void* priv, osmdb_relation_t* relation)
 					}
 				}
 
-				iter = a3d_list_next(iter);
+				iter = cc_list_next(iter);
 			}
 		}
 	}
 	else
 	{
-		a3d_listitem_t* iter = a3d_list_head(relation->members);
+		cc_listIter_t* iter = cc_list_head(relation->members);
 		while(iter)
 		{
 			osmdb_member_t* m = (osmdb_member_t*)
-			                    a3d_list_peekitem(iter);
+			                    cc_list_peekIter(iter);
 			if(m->type == OSMDB_TYPE_NODE)
 			{
 				double* copy = (double*)
@@ -232,7 +232,7 @@ static int relationRefFn(void* priv, osmdb_relation_t* relation)
 				}
 			}
 
-			iter = a3d_list_next(iter);
+			iter = cc_list_next(iter);
 		}
 	}
 
@@ -271,11 +271,11 @@ static int wayRefFn(void* priv, osmdb_way_t* way)
 	   osmdb_index_find(indexer->index,
 	                    OSMDB_TYPE_WAYREF, way->id))
 	{
-		a3d_listitem_t* iter = a3d_list_head(way->nds);
+		cc_listIter_t* iter = cc_list_head(way->nds);
 		while(iter)
 		{
 			double* ref = (double*)
-			              a3d_list_peekitem(iter);
+			              cc_list_peekIter(iter);
 			double* copy = (double*)
 			               malloc(sizeof(double));
 			if(copy == NULL)
@@ -293,18 +293,18 @@ static int wayRefFn(void* priv, osmdb_way_t* way)
 				return 0;
 			}
 
-			iter = a3d_list_next(iter);
+			iter = cc_list_next(iter);
 		}
 	}
 	else if((info && (info->center)) ||
 	        osmdb_index_find(indexer->index,
 	                         OSMDB_TYPE_CTRWAYREF, way->id))
 	{
-		a3d_listitem_t* iter = a3d_list_head(way->nds);
+		cc_listIter_t* iter = cc_list_head(way->nds);
 		while(iter)
 		{
 			double* ref = (double*)
-			              a3d_list_peekitem(iter);
+			              cc_list_peekIter(iter);
 			double* copy = (double*)
 			               malloc(sizeof(double));
 			if(copy == NULL)
@@ -322,7 +322,7 @@ static int wayRefFn(void* priv, osmdb_way_t* way)
 				return 0;
 			}
 
-			iter = a3d_list_next(iter);
+			iter = cc_list_next(iter);
 		}
 	}
 
@@ -477,7 +477,7 @@ static int relationFn(void* priv, osmdb_relation_t* relation)
 
 int main(int argc, char** argv)
 {
-	double t0 = a3d_timestamp();
+	double t0 = cc_timestamp();
 
 	if(argc < 3)
 	{
@@ -620,14 +620,14 @@ int main(int argc, char** argv)
 	LOGI("FINISH INDEX");
 	if(osmdb_index_delete(&index) == 0)
 	{
-		LOGE("FAILURE dt=%lf", a3d_timestamp() - t0);
+		LOGE("FAILURE dt=%lf", cc_timestamp() - t0);
 		return EXIT_FAILURE;
 	}
 
 	osmdb_filter_delete(&filter);
 
 	// success
-	LOGE("SUCCESS dt=%lf", a3d_timestamp() - t0);
+	LOGE("SUCCESS dt=%lf", cc_timestamp() - t0);
 	return EXIT_SUCCESS;
 
 	// failure
@@ -636,6 +636,6 @@ int main(int argc, char** argv)
 		osmdb_index_delete(&index);
 	fail_index:
 		osmdb_filter_delete(&filter);
-	LOGE("FAILURE dt=%lf", a3d_timestamp() - t0);
+	LOGE("FAILURE dt=%lf", cc_timestamp() - t0);
 	return EXIT_FAILURE;
 }

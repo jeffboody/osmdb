@@ -24,7 +24,7 @@
 #ifndef osmdb_chunk_H
 #define osmdb_chunk_H
 
-#include "../a3d/a3d_hashmap.h"
+#include "../libcc/cc_map.h"
 
 #define OSMDB_CHUNK_COUNT 10000
 
@@ -38,7 +38,7 @@ typedef struct
 	int         locked;
 
 	// map from idl to node/way/relation/ref
-	a3d_hashmap_t* hash;
+	cc_map_t* map;
 } osmdb_chunk_t;
 
 osmdb_chunk_t* osmdb_chunk_new(const char* base,

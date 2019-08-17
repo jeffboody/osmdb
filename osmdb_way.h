@@ -24,7 +24,7 @@
 #ifndef osmdb_way_H
 #define osmdb_way_H
 
-#include "../a3d/a3d_list.h"
+#include "../libcc/cc_list.h"
 #include "../libxmlstream/xml_ostream.h"
 #include "osmdb_range.h"
 
@@ -46,7 +46,7 @@ typedef struct
 	double latB;
 	double lonR;
 
-	a3d_list_t* nds;
+	cc_list_t* nds;
 } osmdb_way_t;
 
 osmdb_way_t* osmdb_way_new(const char** atts, int line);

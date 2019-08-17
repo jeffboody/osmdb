@@ -24,8 +24,8 @@
 #ifndef osmdb_style_H
 #define osmdb_style_H
 
-#include "../a3d/a3d_hashmap.h"
-#include "../a3d/math/a3d_vec4f.h"
+#include "../libcc/cc_map.h"
+#include "../libcc/math/cc_vec4f.h"
 
 #define OSMDB_STYLE_STATE_INIT  0
 #define OSMDB_STYLE_STATE_OSM   1
@@ -47,10 +47,10 @@ typedef struct
 	int show_ele;
 	int show_marker;
 
-	a3d_vec4f_t* text_color1;
-	a3d_vec4f_t* text_color2;
-	a3d_vec4f_t* marker_color1;
-	a3d_vec4f_t* marker_color2;
+	cc_vec4f_t* text_color1;
+	cc_vec4f_t* text_color2;
+	cc_vec4f_t* marker_color1;
+	cc_vec4f_t* marker_color2;
 } osmdb_stylePoint_t;
 
 typedef struct
@@ -58,13 +58,13 @@ typedef struct
 	// mode: solid|dashed|striped|dashed,striped
 	float width;
 	int   mode;
-	a3d_vec4f_t* color1;
-	a3d_vec4f_t* color2;
+	cc_vec4f_t* color1;
+	cc_vec4f_t* color2;
 } osmdb_styleLine_t;
 
 typedef struct
 {
-	a3d_vec4f_t* color;
+	cc_vec4f_t* color;
 } osmdb_stylePolygon_t;
 
 // See wiki for expected feature types when developing style sheet
@@ -83,14 +83,14 @@ typedef struct
 	int state;
 
 	// map from name to layer number
-	a3d_hashmap_t* layers;
+	cc_map_t* layers;
 
 	// map from name to object
-	a3d_hashmap_t* colors;
-	a3d_hashmap_t* points;
-	a3d_hashmap_t* lines;
-	a3d_hashmap_t* polys;
-	a3d_hashmap_t* classes;
+	cc_map_t* colors;
+	cc_map_t* points;
+	cc_map_t* lines;
+	cc_map_t* polys;
+	cc_map_t* classes;
 } osmdb_style_t;
 
 osmdb_style_t*      osmdb_style_new(const char* fname);

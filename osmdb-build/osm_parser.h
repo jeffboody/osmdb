@@ -24,7 +24,7 @@
 #ifndef osm_parser_H
 #define osm_parser_H
 
-#include "a3d/a3d_list.h"
+#include "libcc/cc_list.h"
 
 typedef struct
 {
@@ -68,10 +68,10 @@ typedef struct
 	int rel_type;
 
 	// way nds
-	a3d_list_t* way_nds;
+	cc_list_t* way_nds;
 
 	// rel members
-	a3d_list_t* rel_members;
+	cc_list_t* rel_members;
 
 	// class constants
 	int class_none;

@@ -24,7 +24,7 @@
 #ifndef osmdb_tile_H
 #define osmdb_tile_H
 
-#include "../a3d/a3d_hashmap.h"
+#include "../libcc/cc_map.h"
 
 typedef struct
 {
@@ -35,9 +35,9 @@ typedef struct
 	int dirty;
 
 	// map from id to const ONE
-	a3d_hashmap_t* hash_nodes;
-	a3d_hashmap_t* hash_ways;
-	a3d_hashmap_t* hash_relations;
+	cc_map_t* map_nodes;
+	cc_map_t* map_ways;
+	cc_map_t* map_relations;
 } osmdb_tile_t;
 
 osmdb_tile_t* osmdb_tile_new(int zoom, int x, int y,

@@ -25,8 +25,8 @@
 #define osmdb_index_H
 
 #include <dirent.h>
-#include "../a3d/a3d_list.h"
-#include "../a3d/a3d_hashmap.h"
+#include "../libcc/cc_list.h"
+#include "../libcc/cc_map.h"
 #include "../libxmlstream/xml_ostream.h"
 #include "osmdb_filter.h"
 #include "osmdb_range.h"
@@ -48,9 +48,9 @@ typedef struct
 	int type;
 	DIR* dir;
 	struct dirent* de;
-	a3d_hashmapIter_t  chunk_iterator;
-	a3d_hashmapIter_t* chunk_iter;
-	a3d_listitem_t*    list_iter;
+	cc_mapIter_t   chunk_iterator;
+	cc_mapIter_t*  chunk_iter;
+	cc_listIter_t* list_iter;
 } osmdb_indexIter_t;
 
 osmdb_indexIter_t* osmdb_indexIter_new(struct osmdb_index_s* index,
@@ -63,7 +63,7 @@ typedef struct osmdb_index_s
 {
 	char base[256];
 	int  size_chunks;
-	int  size_hash;
+	int  size_map;
 	int  size_tiles;
 	int  err;
 
@@ -72,23 +72,23 @@ typedef struct osmdb_index_s
 	float min_dist14;
 
 	// LRU cache of chunks
-	a3d_list_t* chunks;
+	cc_list_t* chunks;
 
-	// map from <idu> to listitems
-	a3d_hashmap_t* hash_nodes;
-	a3d_hashmap_t* hash_ways;
-	a3d_hashmap_t* hash_relations;
-	a3d_hashmap_t* hash_ctrnodes;
-	a3d_hashmap_t* hash_noderefs;
-	a3d_hashmap_t* hash_wayrefs;
-	a3d_hashmap_t* hash_ctrnoderefs;
-	a3d_hashmap_t* hash_ctrwayrefs;
+	// map from <idu> to listIters
+	cc_map_t* map_nodes;
+	cc_map_t* map_ways;
+	cc_map_t* map_relations;
+	cc_map_t* map_ctrnodes;
+	cc_map_t* map_noderefs;
+	cc_map_t* map_wayrefs;
+	cc_map_t* map_ctrnoderefs;
+	cc_map_t* map_ctrwayrefs;
 
 	// LRU cache of tiles
-	a3d_list_t* tiles;
+	cc_list_t* tiles;
 
-	// map from ZzoomXxYy to listitems
-	a3d_hashmap_t* hash_tiles;
+	// map from ZzoomXxYy to listIters
+	cc_map_t* map_tiles;
 
 	// stats
 	double stats_chunk_hit;
@@ -127,27 +127,27 @@ typedef struct osmdb_index_s
 	double stats_clip_clipped;
 } osmdb_index_t;
 
-osmdb_index_t*     osmdb_index_new(const char* base);
-int                osmdb_index_delete(osmdb_index_t** _self);
-int                osmdb_index_error(osmdb_index_t* self);
-int                osmdb_index_addChunk(osmdb_index_t* self,
-                                        int type, const void* data);
-int                osmdb_index_addNode(osmdb_index_t* self,
+osmdb_index_t* osmdb_index_new(const char* base);
+int            osmdb_index_delete(osmdb_index_t** _self);
+int            osmdb_index_error(osmdb_index_t* self);
+int            osmdb_index_addChunk(osmdb_index_t* self,
+                                    int type, const void* data);
+int            osmdb_index_addNode(osmdb_index_t* self,
+                                   int zoom, int center,
+                                   int selected,
+                                   osmdb_node_t* node);
+int            osmdb_index_addWay(osmdb_index_t* self,
+                                  int zoom, int center,
+                                  int selected,
+                                  osmdb_way_t* way);
+int            osmdb_index_addRelation(osmdb_index_t* self,
                                        int zoom, int center,
-                                       int selected,
-                                       osmdb_node_t* node);
-int                osmdb_index_addWay(osmdb_index_t* self,
-                                      int zoom, int center,
-                                      int selected,
-                                      osmdb_way_t* way);
-int                osmdb_index_addRelation(osmdb_index_t* self,
-                                           int zoom, int center,
-                                           osmdb_relation_t* relation);
-int                osmdb_index_makeTile(osmdb_index_t* self,
-                                        int zoom, int x, int y,
-                                        xml_ostream_t* os);
-const void*        osmdb_index_find(osmdb_index_t* self,
-                                    int type, double id);
-void               osmdb_index_stats(osmdb_index_t* self);
+                                       osmdb_relation_t* relation);
+int            osmdb_index_makeTile(osmdb_index_t* self,
+                                    int zoom, int x, int y,
+                                    xml_ostream_t* os);
+const void*    osmdb_index_find(osmdb_index_t* self,
+                                int type, double id);
+void           osmdb_index_stats(osmdb_index_t* self);
 
 #endif

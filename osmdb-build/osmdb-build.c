@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
-#include "a3d/a3d_timestamp.h"
+#include "libcc/cc_timestamp.h"
 #include "libxmlstream/xml_istream.h"
 #include "libxmlstream/xml_ostream.h"
 #include "osm_parser.h"
@@ -38,7 +38,7 @@
 
 int main(int argc, char** argv)
 {
-	double t0 = a3d_timestamp();
+	double t0 = cc_timestamp();
 
 	if(argc != 2)
 	{
@@ -102,7 +102,7 @@ int main(int argc, char** argv)
 	xml_ostream_delete(&os_nodes);
 
 	// success
-	LOGI("SUCCESS dt=%lf", a3d_timestamp() - t0);
+	LOGI("SUCCESS dt=%lf", cc_timestamp() - t0);
 	return EXIT_SUCCESS;
 
 	// failure
@@ -115,6 +115,6 @@ int main(int argc, char** argv)
 		xml_ostream_delete(&os_ways);
 	fail_os_ways:
 		xml_ostream_delete(&os_nodes);
-	LOGI("FAILURE dt=%lf", a3d_timestamp() - t0);
+	LOGI("FAILURE dt=%lf", cc_timestamp() - t0);
 	return EXIT_FAILURE;
 }

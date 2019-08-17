@@ -65,17 +65,16 @@ static int osmdb_chunk_finish(osmdb_chunk_t* self)
 		}
 	}
 
-	a3d_hashmapIter_t  iterator;
-	a3d_hashmapIter_t* iter;
-	iter = a3d_hashmap_head(self->hash, &iterator);
+	cc_mapIter_t  iterator;
+	cc_mapIter_t* iter;
+	iter = cc_map_head(self->map, &iterator);
 	while(iter)
 	{
 		if((self->type == OSMDB_TYPE_NODE) ||
 		   (self->type == OSMDB_TYPE_CTRNODE))
 		{
 			osmdb_node_t* n;
-			n = (osmdb_node_t*)
-			    a3d_hashmap_remove(self->hash, &iter);
+			n = (osmdb_node_t*) cc_map_remove(self->map, &iter);
 			if(os)
 			{
 				success &= osmdb_node_export(n, os);
@@ -85,8 +84,7 @@ static int osmdb_chunk_finish(osmdb_chunk_t* self)
 		else if(self->type == OSMDB_TYPE_WAY)
 		{
 			osmdb_way_t* w;
-			w = (osmdb_way_t*)
-			    a3d_hashmap_remove(self->hash, &iter);
+			w = (osmdb_way_t*) cc_map_remove(self->map, &iter);
 			if(os)
 			{
 				success &= osmdb_way_export(w, os);
@@ -96,8 +94,7 @@ static int osmdb_chunk_finish(osmdb_chunk_t* self)
 		else if(self->type == OSMDB_TYPE_RELATION)
 		{
 			osmdb_relation_t* r;
-			r = (osmdb_relation_t*)
-			    a3d_hashmap_remove(self->hash, &iter);
+			r = (osmdb_relation_t*) cc_map_remove(self->map, &iter);
 			if(os)
 			{
 				success &= osmdb_relation_export(r, os);
@@ -109,7 +106,7 @@ static int osmdb_chunk_finish(osmdb_chunk_t* self)
 		{
 			double* ref;
 			ref = (double*)
-			      a3d_hashmap_remove(self->hash, &iter);
+			      cc_map_remove(self->map, &iter);
 			if(os)
 			{
 				success &= xml_ostream_begin(os, "n");
@@ -122,8 +119,7 @@ static int osmdb_chunk_finish(osmdb_chunk_t* self)
 		        (self->type == OSMDB_TYPE_CTRWAYREF))
 		{
 			double* ref;
-			ref = (double*)
-			      a3d_hashmap_remove(self->hash, &iter);
+			ref = (double*) cc_map_remove(self->map, &iter);
 			if(os)
 			{
 				success &= xml_ostream_begin(os, "w");
@@ -175,8 +171,8 @@ osmdb_chunk_nodeFn(void* priv,
 	double idl;
 	osmdb_splitId(node->id, &idu, &idl);
 
-	if(a3d_hashmap_addf(self->hash, (const void*) node,
-	                    "%0.0lf", idl) == 0)
+	if(cc_map_addf(self->map, (const void*) node, "%0.0lf",
+	               idl) == 0)
 	{
 		return 0;
 	}
@@ -207,8 +203,8 @@ osmdb_chunk_wayFn(void* priv,
 	double idl;
 	osmdb_splitId(way->id, &idu, &idl);
 
-	if(a3d_hashmap_addf(self->hash, (const void*) way,
-	                    "%0.0lf", idl) == 0)
+	if(cc_map_addf(self->map, (const void*) way, "%0.0lf",
+	               idl) == 0)
 	{
 		return 0;
 	}
@@ -239,8 +235,8 @@ osmdb_chunk_relationFn(void* priv,
 	double idl;
 	osmdb_splitId(relation->id, &idu, &idl);
 
-	if(a3d_hashmap_addf(self->hash, (const void*) relation,
-	                    "%0.0lf", idl) == 0)
+	if(cc_map_addf(self->map, (const void*) relation, "%0.0lf",
+	               idl) == 0)
 	{
 		return 0;
 	}
@@ -280,8 +276,8 @@ osmdb_chunk_nodeRefFn(void* priv,
 	}
 	*_ref = ref;
 
-	if(a3d_hashmap_addf(self->hash, (const void*) _ref,
-	                    "%0.0lf", idl) == 0)
+	if(cc_map_addf(self->map, (const void*) _ref, "%0.0lf",
+	               idl) == 0)
 	{
 		goto fail_add;
 	}
@@ -327,8 +323,8 @@ osmdb_chunk_wayRefFn(void* priv,
 	}
 	*_ref = ref;
 
-	if(a3d_hashmap_addf(self->hash, (const void*) _ref,
-	                    "%0.0lf", idl) == 0)
+	if(cc_map_addf(self->map, (const void*) _ref, "%0.0lf",
+	               idl) == 0)
 	{
 		goto fail_add;
 	}
@@ -415,10 +411,10 @@ osmdb_chunk_t* osmdb_chunk_new(const char* base,
 		return NULL;
 	}
 
-	self->hash = a3d_hashmap_new();
-	if(self->hash == NULL)
+	self->map = cc_map_new();
+	if(self->map == NULL)
 	{
-		goto fail_hash;
+		goto fail_map;
 	}
 
 	self->base   = base;
@@ -440,8 +436,8 @@ osmdb_chunk_t* osmdb_chunk_new(const char* base,
 
 	// failure
 	fail_import:
-		a3d_hashmap_delete(&self->hash);
-	fail_hash:
+		cc_map_delete(&self->map);
+	fail_map:
 		free(self);
 	return NULL;
 }
@@ -459,7 +455,7 @@ int osmdb_chunk_delete(osmdb_chunk_t** _self, int* dsize)
 	{
 		*dsize = self->size;
 		success = osmdb_chunk_finish(self);
-		a3d_hashmap_delete(&self->hash);
+		cc_map_delete(&self->map);
 		free(self);
 		*_self = NULL;
 	}
@@ -491,9 +487,8 @@ const void* osmdb_chunk_find(osmdb_chunk_t* self, double idl)
 {
 	assert(self);
 
-	a3d_hashmapIter_t iterator;
-	return a3d_hashmap_findf(self->hash, &iterator,
-	                         "%0.0lf", idl);
+	cc_mapIter_t iterator;
+	return cc_map_findf(self->map, &iterator, "%0.0lf", idl);
 }
 
 int osmdb_chunk_add(osmdb_chunk_t* self,
@@ -502,8 +497,7 @@ int osmdb_chunk_add(osmdb_chunk_t* self,
 	assert(self);
 	assert(data);
 
-	if(a3d_hashmap_addf(self->hash, data,
-	                    "%0.0f", idl) == 0)
+	if(cc_map_addf(self->map, data, "%0.0f", idl) == 0)
 	{
 		return 0;
 	}
@@ -537,39 +531,35 @@ int osmdb_chunk_flush(osmdb_chunk_t* self)
 	}
 	success &= xml_ostream_begin(os, "osmdb");
 
-	a3d_hashmapIter_t  iterator;
-	a3d_hashmapIter_t* iter;
-	iter = a3d_hashmap_head(self->hash, &iterator);
+	cc_mapIter_t  iterator;
+	cc_mapIter_t* iter;
+	iter = cc_map_head(self->map, &iterator);
 	while(iter)
 	{
 		if((self->type == OSMDB_TYPE_NODE) ||
 		   (self->type == OSMDB_TYPE_CTRNODE))
 		{
 			osmdb_node_t* n;
-			n = (osmdb_node_t*)
-			    a3d_hashmap_val(iter);
+			n = (osmdb_node_t*) cc_map_val(iter);
 			success &= osmdb_node_export(n, os);
 		}
 		else if(self->type == OSMDB_TYPE_WAY)
 		{
 			osmdb_way_t* w;
-			w = (osmdb_way_t*)
-			    a3d_hashmap_val(iter);
+			w = (osmdb_way_t*) cc_map_val(iter);
 			success &= osmdb_way_export(w, os);
 		}
 		else if(self->type == OSMDB_TYPE_RELATION)
 		{
 			osmdb_relation_t* r;
-			r = (osmdb_relation_t*)
-			    a3d_hashmap_val(iter);
+			r = (osmdb_relation_t*) cc_map_val(iter);
 			success &= osmdb_relation_export(r, os);
 		}
 		else if((self->type == OSMDB_TYPE_NODEREF) ||
 		        (self->type == OSMDB_TYPE_CTRNODEREF))
 		{
 			double* ref;
-			ref = (double*)
-			      a3d_hashmap_val(iter);
+			ref = (double*) cc_map_val(iter);
 			success &= xml_ostream_begin(os, "n");
 			success &= xml_ostream_attrf(os, "ref", "%0.0lf", *ref);
 			success &= xml_ostream_end(os);
@@ -578,8 +568,7 @@ int osmdb_chunk_flush(osmdb_chunk_t* self)
 		        (self->type == OSMDB_TYPE_CTRWAYREF))
 		{
 			double* ref;
-			ref = (double*)
-			      a3d_hashmap_val(iter);
+			ref = (double*) cc_map_val(iter);
 			success &= xml_ostream_begin(os, "w");
 			success &= xml_ostream_attrf(os, "ref", "%0.0lf", *ref);
 			success &= xml_ostream_end(os);
@@ -591,7 +580,7 @@ int osmdb_chunk_flush(osmdb_chunk_t* self)
 			break;
 		}
 
-		iter = a3d_hashmap_next(iter);
+		iter = cc_map_next(iter);
 	}
 
 	success &= xml_ostream_end(os);
