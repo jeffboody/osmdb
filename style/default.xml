@@ -82,27 +82,27 @@
 	<point name="core"    min_zoom="14" text_color1="core:text"    text_color2="black" flags="marker:show,ele:show" />
 	<point name="default" min_zoom="17" text_color1="white"        text_color2="black" />
 
-	<line name="aerialway"       mode="dashed,striped" color1="ltgray" color2="white:halo" />
-	<line name="motorway"        mode="striped" color1="ltgray" color2="gray:halo" width="3.5" />
-	<line name="trunk"           mode="striped" color1="ltgray" color2="gray:halo" width="3.5" />
-	<line name="primary"         mode="striped" color1="ltgray" color2="gray:halo" width="3.5" />
-	<line name="secondary"       mode="striped" color1="ltgray" color2="gray:halo" width="2.75" />
-	<line name="tertiary"        mode="striped" color1="ltgray" color2="gray:halo" width="2.75" />
-	<line name="motorway_link"   mode="striped" color1="ltgray" color2="gray:halo" width="2.5" />
-	<line name="trunk_link"      mode="striped" color1="ltgray" color2="gray:halo" width="2.5" />
-	<line name="primary_link"    mode="striped" color1="ltgray" color2="gray:halo" width="2.5" />
-	<line name="secondary_link"  mode="striped" color1="ltgray" color2="gray:halo" width="1.5" />
-	<line name="tertiary_link"   mode="striped" color1="ltgray" color2="gray:halo" width="1.5" />
-	<line name="road"            mode="striped" color1="ltgray" color2="gray:halo" width="1.9" />
-	<line name="pedestrian"      mode="dashed,striped" color1="trail" color2="gray:halo" width="1.4" />
+	<line name="aerialway"       mode="dashed,striped" color1="ltgray" color2="white" />
+	<line name="motorway"        mode="striped" color1="ltgray" color2="gray" width="3.5" />
+	<line name="trunk"           mode="striped" color1="ltgray" color2="gray" width="3.5" />
+	<line name="primary"         mode="striped" color1="ltgray" color2="gray" width="3.5" />
+	<line name="secondary"       mode="striped" color1="ltgray" color2="gray" width="2.75" />
+	<line name="tertiary"        mode="striped" color1="ltgray" color2="gray" width="2.75" />
+	<line name="motorway_link"   mode="striped" color1="ltgray" color2="gray" width="2.5" />
+	<line name="trunk_link"      mode="striped" color1="ltgray" color2="gray" width="2.5" />
+	<line name="primary_link"    mode="striped" color1="ltgray" color2="gray" width="2.5" />
+	<line name="secondary_link"  mode="striped" color1="ltgray" color2="gray" width="1.5" />
+	<line name="tertiary_link"   mode="striped" color1="ltgray" color2="gray" width="1.5" />
+	<line name="road"            mode="striped" color1="ltgray" color2="gray" width="1.9" />
+	<line name="pedestrian"      mode="dashed,striped" color1="trail" color2="gray" width="1.4" />
 	<line name="runway"          mode="dashed,striped" color1="white" color2="runway" width="4.0" />
 	<line name="taxiway"         color1="runway" width="1.5" />
-	<line name="trail"           mode="dashed,striped" color1="trail" color2="gray:halo" width="1.7" />
-	<line name="track"           mode="striped" color1="track" color2="gray:halo" width="1.7" />
+	<line name="trail"           mode="dashed,striped" color1="trail" color2="gray" width="1.7" />
+	<line name="track"           mode="striped" color1="track" color2="gray" width="1.7" />
 	<line name="railway"         mode="dashed,striped" color1="gray"  color2="ltgray" width="1.7" />
 	<line name="river"           color1="river" width="3.0" />
 	<line name="stream"          color1="river" width="1.7" />
-	<line name="footway"         mode="dashed,striped" color1="trail" color2="gray:halo" />
+	<line name="footway"         mode="dashed,striped" color1="trail" color2="gray" />
 	<line name="core:wilderness" color1="core:wilderness" color2="core:wilderness" width="2.5" />
 	<line name="core:recreation" color1="core:recreation" color2="core:recreation" width="2.5" />
 	<line name="core:special"    color1="core:special"    color2="core:special"    width="2.5" />
