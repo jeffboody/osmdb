@@ -871,8 +871,10 @@ static int osmdb_style_end(void* priv,
 * public                                                   *
 ***********************************************************/
 
-osmdb_style_t* osmdb_style_new(const char* fname)
+osmdb_style_t*
+osmdb_style_new(const char* resource, const char* fname)
 {
+	assert(resource);
 	assert(fname);
 
 	osmdb_style_t* self = (osmdb_style_t*)
@@ -920,15 +922,17 @@ osmdb_style_t* osmdb_style_new(const char* fname)
 		goto fail_classes;
 	}
 
-	pak_file_t* pak = pak_file_open(fname, PAK_FLAG_READ);
+	pak_file_t* pak = pak_file_open(resource, PAK_FLAG_READ);
 	if(pak == NULL)
 	{
+		LOGE("invalid %s", resource);
 		goto fail_pak;
 	}
 
-	int len = pak_file_seek(pak, "style.xml");
+	int len = pak_file_seek(pak, fname);
 	if(len == 0)
 	{
+		LOGE("invalid %s", fname);
 		goto fail_seek;
 	}
 
