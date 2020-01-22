@@ -79,7 +79,7 @@
 	<point name="forest"  min_zoom="12" text_color1="peak:text"    text_color2="black" />
 	<point name="trail"   min_zoom="17" text_color1="trail:text"   text_color2="black" />
 	<point name="track"   min_zoom="17" text_color1="track:text"   text_color2="black" />
-	<point name="core"    min_zoom="14" text_color1="core:text"    text_color2="black" flags="marker:show,ele:show" />
+	<point name="core"    min_zoom="11" text_color1="core:text"    text_color2="black" flags="marker:show,ele:show" />
 	<point name="default" min_zoom="17" text_color1="white"        text_color2="black" />
 
 	<line name="aerialway"       mode="dashed,striped" color1="ltgray" color2="white" />
