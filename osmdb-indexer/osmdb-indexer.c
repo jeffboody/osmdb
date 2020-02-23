@@ -21,22 +21,22 @@
  *
  */
 
-#include <stdlib.h>
-#include <assert.h>
 #include <math.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define LOG_TAG "osmdb"
+#include "libcc/cc_log.h"
+#include "libcc/cc_memory.h"
 #include "libcc/cc_timestamp.h"
-#include "libxmlstream/xml_log.h"
-#include "osmdb/osmdb_parser.h"
-#include "osmdb/osmdb_node.h"
-#include "osmdb/osmdb_way.h"
-#include "osmdb/osmdb_relation.h"
-#include "osmdb/osmdb_util.h"
-#include "osmdb/osmdb_index.h"
 #include "osmdb/osmdb_chunk.h"
 #include "osmdb/osmdb_filter.h"
+#include "osmdb/osmdb_index.h"
+#include "osmdb/osmdb_node.h"
+#include "osmdb/osmdb_parser.h"
+#include "osmdb/osmdb_relation.h"
+#include "osmdb/osmdb_util.h"
+#include "osmdb/osmdb_way.h"
 
 /***********************************************************
 * private                                                  *
@@ -89,8 +89,8 @@ static int relationErrFn(void* priv, osmdb_relation_t* relation)
 
 static int relationRefFn(void* priv, osmdb_relation_t* relation)
 {
-	assert(priv);
-	assert(relation);
+	ASSERT(priv);
+	ASSERT(relation);
 
 	osmdb_indexer_t* indexer = (osmdb_indexer_t*) priv;
 	if(osmdb_index_error(indexer->index))
@@ -132,10 +132,10 @@ static int relationRefFn(void* priv, osmdb_relation_t* relation)
 			if(m->type == OSMDB_TYPE_NODE)
 			{
 				double* copy = (double*)
-				               malloc(sizeof(double));
+				               MALLOC(sizeof(double));
 				if(copy == NULL)
 				{
-					LOGE("malloc failed");
+					LOGE("MALLOC failed");
 					return 0;
 				}
 				*copy = m->ref;
@@ -144,7 +144,7 @@ static int relationRefFn(void* priv, osmdb_relation_t* relation)
 				                        OSMDB_TYPE_CTRNODEREF,
 				                        (const void*) copy) == 0)
 				{
-					free(copy);
+					FREE(copy);
 					return 0;
 				}
 
@@ -165,10 +165,10 @@ static int relationRefFn(void* priv, osmdb_relation_t* relation)
 				if(m->type == OSMDB_TYPE_WAY)
 				{
 					double* copy = (double*)
-					               malloc(sizeof(double));
+					               MALLOC(sizeof(double));
 					if(copy == NULL)
 					{
-						LOGE("malloc failed");
+						LOGE("MALLOC failed");
 						return 0;
 					}
 					*copy = m->ref;
@@ -177,7 +177,7 @@ static int relationRefFn(void* priv, osmdb_relation_t* relation)
 					                        OSMDB_TYPE_CTRWAYREF,
 					                        (const void*) copy) == 0)
 					{
-						free(copy);
+						FREE(copy);
 						return 0;
 					}
 				}
@@ -196,10 +196,10 @@ static int relationRefFn(void* priv, osmdb_relation_t* relation)
 			if(m->type == OSMDB_TYPE_NODE)
 			{
 				double* copy = (double*)
-				               malloc(sizeof(double));
+				               MALLOC(sizeof(double));
 				if(copy == NULL)
 				{
-					LOGE("malloc failed");
+					LOGE("MALLOC failed");
 					return 0;
 				}
 				*copy = m->ref;
@@ -208,17 +208,17 @@ static int relationRefFn(void* priv, osmdb_relation_t* relation)
 				                        OSMDB_TYPE_NODEREF,
 				                        (const void*) copy) == 0)
 				{
-					free(copy);
+					FREE(copy);
 					return 0;
 				}
 			}
 			else if(m->type == OSMDB_TYPE_WAY)
 			{
 				double* copy = (double*)
-				               malloc(sizeof(double));
+				               MALLOC(sizeof(double));
 				if(copy == NULL)
 				{
-					LOGE("malloc failed");
+					LOGE("MALLOC failed");
 					return 0;
 				}
 				*copy = m->ref;
@@ -227,7 +227,7 @@ static int relationRefFn(void* priv, osmdb_relation_t* relation)
 				                        OSMDB_TYPE_WAYREF,
 				                        (const void*) copy) == 0)
 				{
-					free(copy);
+					FREE(copy);
 					return 0;
 				}
 			}
@@ -242,8 +242,8 @@ static int relationRefFn(void* priv, osmdb_relation_t* relation)
 
 static int wayRefFn(void* priv, osmdb_way_t* way)
 {
-	assert(priv);
-	assert(way);
+	ASSERT(priv);
+	ASSERT(way);
 
 	osmdb_indexer_t* indexer = (osmdb_indexer_t*) priv;
 	if(osmdb_index_error(indexer->index))
@@ -277,10 +277,10 @@ static int wayRefFn(void* priv, osmdb_way_t* way)
 			double* ref = (double*)
 			              cc_list_peekIter(iter);
 			double* copy = (double*)
-			               malloc(sizeof(double));
+			               MALLOC(sizeof(double));
 			if(copy == NULL)
 			{
-				LOGE("malloc failed");
+				LOGE("MALLOC failed");
 				return 0;
 			}
 			*copy = *ref;
@@ -289,7 +289,7 @@ static int wayRefFn(void* priv, osmdb_way_t* way)
 			                        OSMDB_TYPE_NODEREF,
 			                        (const void*) copy) == 0)
 			{
-				free(copy);
+				FREE(copy);
 				return 0;
 			}
 
@@ -306,10 +306,10 @@ static int wayRefFn(void* priv, osmdb_way_t* way)
 			double* ref = (double*)
 			              cc_list_peekIter(iter);
 			double* copy = (double*)
-			               malloc(sizeof(double));
+			               MALLOC(sizeof(double));
 			if(copy == NULL)
 			{
-				LOGE("malloc failed");
+				LOGE("MALLOC failed");
 				return 0;
 			}
 			*copy = *ref;
@@ -318,7 +318,7 @@ static int wayRefFn(void* priv, osmdb_way_t* way)
 			                        OSMDB_TYPE_CTRNODEREF,
 			                        (const void*) copy) == 0)
 			{
-				free(copy);
+				FREE(copy);
 				return 0;
 			}
 
@@ -332,8 +332,8 @@ static int wayRefFn(void* priv, osmdb_way_t* way)
 
 static int nodeFn(void* priv, osmdb_node_t* node)
 {
-	assert(priv);
-	assert(node);
+	ASSERT(priv);
+	ASSERT(node);
 
 	osmdb_indexer_t* indexer = (osmdb_indexer_t*) priv;
 	if(osmdb_index_error(indexer->index))
@@ -380,8 +380,8 @@ static int nodeFn(void* priv, osmdb_node_t* node)
 
 static int wayFn(void* priv, osmdb_way_t* way)
 {
-	assert(priv);
-	assert(way);
+	ASSERT(priv);
+	ASSERT(way);
 
 	osmdb_indexer_t* indexer = (osmdb_indexer_t*) priv;
 	if(osmdb_index_error(indexer->index))
@@ -435,8 +435,8 @@ static int wayFn(void* priv, osmdb_way_t* way)
 
 static int relationFn(void* priv, osmdb_relation_t* relation)
 {
-	assert(priv);
-	assert(relation);
+	ASSERT(priv);
+	ASSERT(relation);
 
 	osmdb_indexer_t* indexer = (osmdb_indexer_t*) priv;
 	if(osmdb_index_error(indexer->index))
@@ -481,7 +481,8 @@ int main(int argc, char** argv)
 
 	if(argc < 3)
 	{
-		LOGE("%s filter.xml PREFIX [PREFIX1 ... PREFIXN]", argv[0]);
+		LOGE("%s filter.xml PREFIX [PREFIX1 ... PREFIXN]",
+		     argv[0]);
 		return EXIT_FAILURE;
 	}
 	const char* fname_filter = argv[1];
@@ -516,12 +517,15 @@ int main(int argc, char** argv)
 	char path_ctrwayref[256];
 	osmdb_chunk_path(prefix, OSMDB_TYPE_NODE, path_node);
 	osmdb_chunk_path(prefix, OSMDB_TYPE_WAY, path_way);
-	osmdb_chunk_path(prefix, OSMDB_TYPE_RELATION, path_relation);
+	osmdb_chunk_path(prefix, OSMDB_TYPE_RELATION,
+	                 path_relation);
 	osmdb_chunk_path(prefix, OSMDB_TYPE_CTRNODE, path_ctrnode);
 	osmdb_chunk_path(prefix, OSMDB_TYPE_NODEREF, path_noderef);
 	osmdb_chunk_path(prefix, OSMDB_TYPE_WAYREF, path_wayref);
-	osmdb_chunk_path(prefix, OSMDB_TYPE_CTRNODEREF, path_ctrnoderef);
-	osmdb_chunk_path(prefix, OSMDB_TYPE_CTRWAYREF, path_ctrwayref);
+	osmdb_chunk_path(prefix, OSMDB_TYPE_CTRNODEREF,
+	                 path_ctrnoderef);
+	osmdb_chunk_path(prefix, OSMDB_TYPE_CTRWAYREF,
+	                 path_ctrwayref);
 	if((osmdb_mkdir(path_node)       == 0) ||
 	   (osmdb_mkdir(path_way)        == 0) ||
 	   (osmdb_mkdir(path_relation)   == 0) ||

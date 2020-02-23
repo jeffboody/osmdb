@@ -22,14 +22,14 @@
  */
 
 #include <stdlib.h>
-#include <assert.h>
 #include <string.h>
-#include "../libxmlstream/xml_istream.h"
-#include "../libpak/pak_file.h"
-#include "osmdb_style.h"
 
 #define LOG_TAG "osmdb"
-#include "../libxmlstream/xml_log.h"
+#include "../libcc/cc_log.h"
+#include "../libcc/cc_memory.h"
+#include "../libpak/pak_file.h"
+#include "../libxmlstream/xml_istream.h"
+#include "osmdb_style.h"
 
 /***********************************************************
 * private                                                  *
@@ -37,7 +37,7 @@
 
 static void osmdb_style_finish(osmdb_style_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	cc_mapIter_t  iterator;
 	cc_mapIter_t* iter;
@@ -47,7 +47,7 @@ static void osmdb_style_finish(osmdb_style_t* self)
 		osmdb_styleClass_t* class;
 		class = (osmdb_styleClass_t*)
 		        cc_map_remove(self->classes, &iter);
-		free(class);
+		FREE(class);
 	}
 
 	iter = cc_map_head(self->polys, &iterator);
@@ -56,7 +56,7 @@ static void osmdb_style_finish(osmdb_style_t* self)
 		osmdb_stylePolygon_t* poly;
 		poly = (osmdb_stylePolygon_t*)
 		       cc_map_remove(self->polys, &iter);
-		free(poly);
+		FREE(poly);
 	}
 
 	iter = cc_map_head(self->lines, &iterator);
@@ -65,7 +65,7 @@ static void osmdb_style_finish(osmdb_style_t* self)
 		osmdb_styleLine_t* line;
 		line = (osmdb_styleLine_t*)
 		       cc_map_remove(self->lines, &iter);
-		free(line);
+		FREE(line);
 	}
 
 	iter = cc_map_head(self->points, &iterator);
@@ -74,7 +74,7 @@ static void osmdb_style_finish(osmdb_style_t* self)
 		osmdb_stylePoint_t* point;
 		point = (osmdb_stylePoint_t*)
 		        cc_map_remove(self->points, &iter);
-		free(point);
+		FREE(point);
 	}
 
 	iter = cc_map_head(self->colors, &iterator);
@@ -91,7 +91,7 @@ static void osmdb_style_finish(osmdb_style_t* self)
 	{
 		int* layerp = (int*)
 		              cc_map_remove(self->layers, &iter);
-		free(layerp);
+		FREE(layerp);
 	}
 }
 
@@ -101,7 +101,7 @@ static void osmdb_style_finish(osmdb_style_t* self)
 
 static int osmdb_style_parseLineMode(const char* mode)
 {
-	assert(mode);
+	ASSERT(mode);
 
 	char str[256];
 	int  m   = 0;
@@ -148,8 +148,8 @@ static int
 osmdb_style_beginOsm(osmdb_style_t* self,
                      int line, const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSMDB_STYLE_STATE_OSM;
 
@@ -160,8 +160,8 @@ static int
 osmdb_style_beginOsmLayer(osmdb_style_t* self,
                           int line, const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSMDB_STYLE_STATE_LAYER;
 
@@ -187,10 +187,10 @@ osmdb_style_beginOsmLayer(osmdb_style_t* self,
 		return 0;
 	}
 
-	int* layerp = (int*) malloc(sizeof(int));
+	int* layerp = (int*) MALLOC(sizeof(int));
 	if(layerp == NULL)
 	{
-		LOGE("malloc failed");
+		LOGE("MALLOC failed");
 		return 0;
 	}
 	*layerp = cc_map_size(self->layers);
@@ -206,7 +206,7 @@ osmdb_style_beginOsmLayer(osmdb_style_t* self,
 
 	// failure
 	fail_add:
-		free(layerp);
+		FREE(layerp);
 	return 0;
 }
 
@@ -214,8 +214,8 @@ static int
 osmdb_style_beginOsmColor(osmdb_style_t* self,
                           int line, const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSMDB_STYLE_STATE_COLOR;
 
@@ -277,8 +277,8 @@ static int
 osmdb_style_beginOsmPoint(osmdb_style_t* self,
                           int line, const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSMDB_STYLE_STATE_POINT;
 
@@ -342,7 +342,8 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 		      cc_map_find(self->colors, &iter, text_color1);
 		if(tc1 == NULL)
 		{
-			LOGE("invalid line=%i text_color1=%s", line, text_color1);
+			LOGE("invalid line=%i text_color1=%s",
+			     line, text_color1);
 			return 0;
 		}
 	}
@@ -354,7 +355,8 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 		      cc_map_find(self->colors, &iter, text_color2);
 		if(tc2 == NULL)
 		{
-			LOGE("invalid line=%i text_color2=%s", line, text_color2);
+			LOGE("invalid line=%i text_color2=%s",
+			     line, text_color2);
 			return 0;
 		}
 	}
@@ -366,7 +368,8 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 		      cc_map_find(self->colors, &iter, marker_color1);
 		if(mc1 == NULL)
 		{
-			LOGE("invalid line=%i marker_color1=%s", line, marker_color1);
+			LOGE("invalid line=%i marker_color1=%s",
+			     line, marker_color1);
 			return 0;
 		}
 	}
@@ -378,7 +381,8 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 		      cc_map_find(self->colors, &iter, marker_color2);
 		if(mc2 == NULL)
 		{
-			LOGE("invalid line=%i marker_color2=%s", line, marker_color2);
+			LOGE("invalid line=%i marker_color2=%s",
+			     line, marker_color2);
 			return 0;
 		}
 	}
@@ -441,11 +445,12 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 		}
 	}
 
-	osmdb_stylePoint_t* point = (osmdb_stylePoint_t*)
-	                            malloc(sizeof(osmdb_stylePoint_t));
+	osmdb_stylePoint_t* point;
+	point = (osmdb_stylePoint_t*)
+	        MALLOC(sizeof(osmdb_stylePoint_t));
 	if(point == NULL)
 	{
-		LOGE("malloc failed");
+		LOGE("MALLOC failed");
 		return 0;
 	}
 
@@ -468,7 +473,7 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 
 	// failure
 	fail_add:
-		free(point);
+		FREE(point);
 	return 0;
 }
 
@@ -476,8 +481,8 @@ static int
 osmdb_style_beginOsmLine(osmdb_style_t* self,
                          int line, const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSMDB_STYLE_STATE_LINE;
 
@@ -560,11 +565,12 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 		w = strtod(width, NULL);
 	}
 
-	osmdb_styleLine_t* linep = (osmdb_styleLine_t*)
-	                           malloc(sizeof(osmdb_styleLine_t));
+	osmdb_styleLine_t* linep;
+	linep = (osmdb_styleLine_t*)
+	        MALLOC(sizeof(osmdb_styleLine_t));
 	if(linep == NULL)
 	{
-		LOGE("malloc failed");
+		LOGE("MALLOC failed");
 		return 0;
 	}
 	linep->width  = w;
@@ -583,7 +589,7 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 
 	// failure
 	fail_add:
-		free(linep);
+		FREE(linep);
 	return 0;
 }
 
@@ -591,8 +597,8 @@ static int
 osmdb_style_beginOsmPoly(osmdb_style_t* self,
                          int line, const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSMDB_STYLE_STATE_POLY;
 
@@ -636,11 +642,12 @@ osmdb_style_beginOsmPoly(osmdb_style_t* self,
 		}
 	}
 
-	osmdb_stylePolygon_t* poly = (osmdb_stylePolygon_t*)
-	                             malloc(sizeof(osmdb_stylePolygon_t));
+	osmdb_stylePolygon_t* poly;
+	poly = (osmdb_stylePolygon_t*)
+	       MALLOC(sizeof(osmdb_stylePolygon_t));
 	if(poly == NULL)
 	{
-		LOGE("malloc failed");
+		LOGE("MALLOC failed");
 		return 0;
 	}
 	poly->color = c;
@@ -656,7 +663,7 @@ osmdb_style_beginOsmPoly(osmdb_style_t* self,
 
 	// failure
 	fail_add:
-		free(poly);
+		FREE(poly);
 	return 0;
 }
 
@@ -664,8 +671,8 @@ static int
 osmdb_style_beginOsmClass(osmdb_style_t* self,
                           int line, const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSMDB_STYLE_STATE_CLASS;
 
@@ -761,11 +768,12 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 		}
 	}
 
-	osmdb_styleClass_t* class = (osmdb_styleClass_t*)
-	                            malloc(sizeof(osmdb_styleClass_t));
+	osmdb_styleClass_t* class;
+	class = (osmdb_styleClass_t*)
+	        MALLOC(sizeof(osmdb_styleClass_t));
 	if(class == NULL)
 	{
-		LOGE("malloc failed");
+		LOGE("MALLOC failed");
 		return 0;
 	}
 	class->layer = layeri;
@@ -784,18 +792,17 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 
 	// failure
 	fail_add:
-		free(class);
+		FREE(class);
 	return 0;
 }
 
-static int osmdb_style_start(void* priv,
-                             int line,
-                             const char* name,
-                             const char** atts)
+static int
+osmdb_style_start(void* priv, int line,
+                  const char* name, const char** atts)
 {
-	assert(priv);
-	assert(name);
-	assert(atts);
+	ASSERT(priv);
+	ASSERT(name);
+	ASSERT(atts);
 
 	osmdb_style_t* self = (osmdb_style_t*) priv;
 
@@ -835,19 +842,17 @@ static int osmdb_style_start(void* priv,
 		}
 	}
 
-	LOGE("state=%i, name=%s, line=%i",
-	     state, name, line);
+	LOGE("state=%i, name=%s, line=%i", state, name, line);
 	return 0;
 }
 
-static int osmdb_style_end(void* priv,
-                           int line,
-                           const char* name,
-                           const char* content)
+static int
+osmdb_style_end(void* priv, int line,
+                const char* name, const char* content)
 {
 	// content may be NULL
-	assert(priv);
-	assert(name);
+	ASSERT(priv);
+	ASSERT(name);
 
 	osmdb_style_t* self = (osmdb_style_t*) priv;
 
@@ -874,14 +879,14 @@ static int osmdb_style_end(void* priv,
 osmdb_style_t*
 osmdb_style_new(const char* resource, const char* fname)
 {
-	assert(resource);
-	assert(fname);
+	ASSERT(resource);
+	ASSERT(fname);
 
-	osmdb_style_t* self = (osmdb_style_t*)
-	                      malloc(sizeof(osmdb_style_t));
+	osmdb_style_t* self;
+	self = (osmdb_style_t*) MALLOC(sizeof(osmdb_style_t));
 	if(self == NULL)
 	{
-		LOGE("malloc failed");
+		LOGE("MALLOC failed");
 		return NULL;
 	}
 	self->state = OSMDB_STYLE_STATE_INIT;
@@ -967,13 +972,13 @@ osmdb_style_new(const char* resource, const char* fname)
 	fail_colors:
 		cc_map_delete(&self->layers);
 	fail_layers:
-		free(self);
+		FREE(self);
 	return NULL;
 }
 
 void osmdb_style_delete(osmdb_style_t** _self)
 {
-	assert(_self);
+	ASSERT(_self);
 
 	osmdb_style_t* self = *_self;
 	if(self)
@@ -985,7 +990,7 @@ void osmdb_style_delete(osmdb_style_t** _self)
 		cc_map_delete(&self->points);
 		cc_map_delete(&self->colors);
 		cc_map_delete(&self->layers);
-		free(self);
+		FREE(self);
 		*_self = NULL;
 	}
 }
@@ -993,8 +998,8 @@ void osmdb_style_delete(osmdb_style_t** _self)
 osmdb_styleClass_t* osmdb_style_class(osmdb_style_t* self,
                                       const char* name)
 {
-	assert(self);
-	assert(name);
+	ASSERT(self);
+	ASSERT(name);
 
 	cc_mapIter_t iter;
 	return (osmdb_styleClass_t*)

@@ -21,18 +21,18 @@
  *
  */
 
-#include <stdlib.h>
-#include <assert.h>
-#include <string.h>
 #include <math.h>
-#include "../libcc/cc_unit.h"
-#include "../libcc/math/cc_vec2f.h"
-#include "../terrain/terrain_util.h"
-#include "osmdb_way.h"
-#include "osmdb_util.h"
+#include <stdlib.h>
+#include <string.h>
 
 #define LOG_TAG "osmdb"
-#include "../libxmlstream/xml_log.h"
+#include "../libcc/math/cc_vec2f.h"
+#include "../libcc/cc_log.h"
+#include "../libcc/cc_memory.h"
+#include "../libcc/cc_unit.h"
+#include "../terrain/terrain_util.h"
+#include "osmdb_util.h"
+#include "osmdb_way.h"
 
 /***********************************************************
 * public                                                   *
@@ -40,7 +40,7 @@
 
 osmdb_way_t* osmdb_way_new(const char** atts, int line)
 {
-	assert(atts);
+	ASSERT(atts);
 
 	const char* id      = NULL;
 	const char* name    = NULL;
@@ -125,11 +125,11 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 	}
 
 	// create the way
-	osmdb_way_t* self = (osmdb_way_t*)
-	                    calloc(1, sizeof(osmdb_way_t));
+	osmdb_way_t* self;
+	self = (osmdb_way_t*) CALLOC(1, sizeof(osmdb_way_t));
 	if(self == NULL)
 	{
-		LOGE("calloc failed");
+		LOGE("CALLOC failed");
 		return NULL;
 	}
 
@@ -145,10 +145,10 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 	if(name)
 	{
 		int len = strlen(name) + 1;
-		self->name = (char*) malloc(len*sizeof(char));
+		self->name = (char*) MALLOC(len*sizeof(char));
 		if(self->name == NULL)
 		{
-			LOGE("malloc failed");
+			LOGE("MALLOC failed");
 			goto fail_name;
 		}
 		snprintf(self->name, len, "%s", name);
@@ -157,10 +157,10 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 	if(abrev)
 	{
 		int len = strlen(abrev) + 1;
-		self->abrev = (char*) malloc(len*sizeof(char));
+		self->abrev = (char*) MALLOC(len*sizeof(char));
 		if(self->abrev == NULL)
 		{
-			LOGE("malloc failed");
+			LOGE("MALLOC failed");
 			goto fail_abrev;
 		}
 		snprintf(self->abrev, len, "%s", abrev);
@@ -221,17 +221,17 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 
 	// failure
 	fail_abrev:
-		free(self->name);
+		FREE(self->name);
 	fail_name:
 		cc_list_delete(&self->nds);
 	fail_nds:
-		free(self);
+		FREE(self);
 	return NULL;
 }
 
 osmdb_way_t* osmdb_way_copy(osmdb_way_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	osmdb_way_t* copy = osmdb_way_copyEmpty(self);
 	if(copy == NULL)
@@ -270,13 +270,13 @@ osmdb_way_t* osmdb_way_copy(osmdb_way_t* self)
 osmdb_way_t*
 osmdb_way_copyEmpty(osmdb_way_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
-	osmdb_way_t* copy = (osmdb_way_t*)
-	                    calloc(1, sizeof(osmdb_way_t));
+	osmdb_way_t* copy;
+	copy = (osmdb_way_t*) CALLOC(1, sizeof(osmdb_way_t));
 	if(copy == NULL)
 	{
-		LOGE("calloc failed");
+		LOGE("CALLOC failed");
 		return NULL;
 	}
 
@@ -289,10 +289,10 @@ osmdb_way_copyEmpty(osmdb_way_t* self)
 	if(self->name)
 	{
 		int len = strlen(self->name) + 1;
-		copy->name = (char*) malloc(len*sizeof(char));
+		copy->name = (char*) MALLOC(len*sizeof(char));
 		if(copy->name == NULL)
 		{
-			LOGE("malloc failed");
+			LOGE("MALLOC failed");
 			goto fail_name;
 		}
 		snprintf(copy->name, len, "%s", self->name);
@@ -301,10 +301,10 @@ osmdb_way_copyEmpty(osmdb_way_t* self)
 	if(self->abrev)
 	{
 		int len = strlen(self->abrev) + 1;
-		copy->abrev = (char*) malloc(len*sizeof(char));
+		copy->abrev = (char*) MALLOC(len*sizeof(char));
 		if(copy->abrev == NULL)
 		{
-			LOGE("malloc failed");
+			LOGE("MALLOC failed");
 			goto fail_abrev;
 		}
 		snprintf(copy->abrev, len, "%s", self->abrev);
@@ -327,40 +327,40 @@ osmdb_way_copyEmpty(osmdb_way_t* self)
 
 	// failure
 	fail_abrev:
-		free(copy->name);
+		FREE(copy->name);
 	fail_name:
 		cc_list_delete(&copy->nds);
 	fail_nds:
-		free(copy);
+		FREE(copy);
 	return NULL;
 }
 
 void osmdb_way_delete(osmdb_way_t** _self)
 {
-	assert(_self);
+	ASSERT(_self);
 
 	osmdb_way_t* self = *_self;
 	if(self)
 	{
 		osmdb_way_discardNds(self);
 		cc_list_delete(&self->nds);
-		free(self->name);
-		free(self->abrev);
-		free(self);
+		FREE(self->name);
+		FREE(self->abrev);
+		FREE(self);
 		*_self = NULL;
 	}
 }
 
 void osmdb_way_incref(osmdb_way_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	++self->refcount;
 }
 
 int osmdb_way_decref(osmdb_way_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	--self->refcount;
 	return (self->refcount == 0) ? 1 : 0;
@@ -368,8 +368,8 @@ int osmdb_way_decref(osmdb_way_t* self)
 
 int osmdb_way_export(osmdb_way_t* self, xml_ostream_t* os)
 {
-	assert(self);
-	assert(os);
+	ASSERT(self);
+	ASSERT(os);
 
 	int ret = 1;
 	ret &= xml_ostream_begin(os, "way");
@@ -389,23 +389,28 @@ int osmdb_way_export(osmdb_way_t* self, xml_ostream_t* os)
 	}
 	if(self->layer)
 	{
-		ret &= xml_ostream_attrf(os, "layer", "%i", self->layer);
+		ret &= xml_ostream_attrf(os, "layer", "%i",
+		                         self->layer);
 	}
 	if(self->oneway)
 	{
-		ret &= xml_ostream_attrf(os, "oneway", "%i", self->oneway);
+		ret &= xml_ostream_attrf(os, "oneway", "%i",
+		                         self->oneway);
 	}
 	if(self->bridge)
 	{
-		ret &= xml_ostream_attrf(os, "bridge", "%i", self->bridge);
+		ret &= xml_ostream_attrf(os, "bridge", "%i",
+		                         self->bridge);
 	}
 	if(self->tunnel)
 	{
-		ret &= xml_ostream_attrf(os, "tunnel", "%i", self->tunnel);
+		ret &= xml_ostream_attrf(os, "tunnel", "%i",
+		                         self->tunnel);
 	}
 	if(self->cutting)
 	{
-		ret &= xml_ostream_attrf(os, "cutting", "%i", self->cutting);
+		ret &= xml_ostream_attrf(os, "cutting", "%i",
+		                         self->cutting);
 	}
 	if((self->latT == 0.0) && (self->lonL == 0.0) &&
 	   (self->latB == 0.0) && (self->lonR == 0.0))
@@ -437,7 +442,7 @@ int osmdb_way_export(osmdb_way_t* self, xml_ostream_t* os)
 
 int osmdb_way_size(osmdb_way_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	int size = sizeof(osmdb_way_t);
 	if(self->name)
@@ -453,10 +458,11 @@ int osmdb_way_size(osmdb_way_t* self)
 	return size;
 }
 
-int osmdb_way_nd(osmdb_way_t* self, const char** atts, int line)
+int osmdb_way_nd(osmdb_way_t* self, const char** atts,
+                 int line)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	const char* ref = NULL;
 
@@ -492,8 +498,8 @@ int osmdb_way_nd(osmdb_way_t* self, const char** atts, int line)
 void osmdb_way_updateRange(osmdb_way_t* self,
                            osmdb_range_t* range)
 {
-	assert(self);
-	assert(range);
+	ASSERT(self);
+	ASSERT(range);
 
 	self->latT = range->latT;
 	self->lonL = range->lonL;
@@ -504,13 +510,13 @@ void osmdb_way_updateRange(osmdb_way_t* self,
 int osmdb_way_ref(osmdb_way_t* self,
                   double ref)
 {
-	assert(self);
+	ASSERT(self);
 
 	// create the nd
-	double* _ref = (double*) malloc(sizeof(double));
+	double* _ref = (double*) MALLOC(sizeof(double));
 	if(_ref == NULL)
 	{
-		LOGE("malloc failed");
+		LOGE("MALLOC failed");
 		return 0;
 	}
 	*_ref = ref;
@@ -527,19 +533,19 @@ int osmdb_way_ref(osmdb_way_t* self,
 
 	// failure
 	fail_append:
-		free(_ref);
+		FREE(_ref);
 	return 0;
 }
 
 void osmdb_way_discardNds(osmdb_way_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	cc_listIter_t* iter = cc_list_head(self->nds);
 	while(iter)
 	{
 		double* ref = (double*)
 		              cc_list_remove(self->nds, &iter);
-		free(ref);
+		FREE(ref);
 	}
 }

@@ -21,27 +21,27 @@
  *
  */
 
+#include <math.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include <math.h>
-#include "../libcc/cc_timestamp.h"
-#include "../libcc/cc_multimap.h"
-#include "../libcc/cc_unit.h"
+
+#define LOG_TAG "osmdb"
 #include "../libcc/math/cc_vec2f.h"
+#include "../libcc/cc_log.h"
+#include "../libcc/cc_memory.h"
+#include "../libcc/cc_multimap.h"
+#include "../libcc/cc_timestamp.h"
+#include "../libcc/cc_unit.h"
 #include "../terrain/terrain_tile.h"
 #include "../terrain/terrain_util.h"
 #include "osmdb_chunk.h"
-#include "osmdb_tile.h"
 #include "osmdb_index.h"
 #include "osmdb_node.h"
-#include "osmdb_way.h"
 #include "osmdb_relation.h"
+#include "osmdb_tile.h"
 #include "osmdb_util.h"
-
-#define LOG_TAG "osmdb"
-#include "../libxmlstream/xml_log.h"
+#include "osmdb_way.h"
 
 const int OSMDB_INDEX_ONE = 1;
 
@@ -63,9 +63,9 @@ osmdb_way_join(osmdb_way_t* a, osmdb_way_t* b,
                double ref1, double* ref2,
                struct osmdb_index_s* index)
 {
-	assert(a);
-	assert(b);
-	assert(index);
+	ASSERT(a);
+	ASSERT(b);
+	ASSERT(index);
 
 	// don't join a way with itself
 	if(a == b)
@@ -250,9 +250,9 @@ osmdb_index_addJoin(osmdb_way_t* way,
                     cc_map_t* map_ways_work,
                     cc_multimap_t* mm_nds_join)
 {
-	assert(way);
-	assert(map_ways_work);
-	assert(mm_nds_join);
+	ASSERT(way);
+	ASSERT(map_ways_work);
+	ASSERT(mm_nds_join);
 
 	osmdb_way_t* copy = osmdb_way_copy(way);
 	if(copy == NULL)
@@ -276,7 +276,7 @@ osmdb_index_addJoin(osmdb_way_t* way,
 	}
 
 	double* id1_copy = (double*)
-	                   malloc(sizeof(double));
+	                   MALLOC(sizeof(double));
 	if(id1_copy == NULL)
 	{
 		return 0;
@@ -284,10 +284,10 @@ osmdb_index_addJoin(osmdb_way_t* way,
 	*id1_copy = copy->id;
 
 	double* id2_copy = (double*)
-	                   malloc(sizeof(double));
+	                   MALLOC(sizeof(double));
 	if(id2_copy == NULL)
 	{
-		free(id1_copy);
+		FREE(id1_copy);
 		return 0;
 	}
 	*id2_copy = copy->id;
@@ -295,15 +295,15 @@ osmdb_index_addJoin(osmdb_way_t* way,
 	if(cc_multimap_addf(mm_nds_join, (const void*) id1_copy,
 	                    "%0.0lf", *ref1) == 0)
 	{
-		free(id1_copy);
-		free(id2_copy);
+		FREE(id1_copy);
+		FREE(id2_copy);
 		return 0;
 	}
 
 	if(cc_multimap_addf(mm_nds_join, (const void*) id2_copy,
 	                    "%0.0lf", *ref2) == 0)
 	{
-		free(id2_copy);
+		FREE(id2_copy);
 		return 0;
 	}
 
@@ -314,8 +314,8 @@ static void
 osmdb_index_discardJoin(cc_map_t* map_ways_work,
                         cc_multimap_t* mm_nds_join)
 {
-	assert(map_ways_work);
-	assert(mm_nds_join);
+	ASSERT(map_ways_work);
+	ASSERT(mm_nds_join);
 
 	cc_mapIter_t  iterator;
 	cc_mapIter_t* iter;
@@ -335,13 +335,13 @@ osmdb_index_discardJoin(cc_map_t* map_ways_work,
 	{
 		double* ref;
 		ref = (double*) cc_multimap_remove(mm_nds_join, &miter);
-		free(ref);
+		FREE(ref);
 	}
 }
 
 static void osmdb_index_computeMinDist(osmdb_index_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	// compute tile at home location
 	double home_lat = 40.061295;
@@ -431,7 +431,7 @@ static void osmdb_index_computeMinDist(osmdb_index_t* self)
 static cc_map_t*
 osmdb_index_getMap(osmdb_index_t* self, int type)
 {
-	assert(self);
+	ASSERT(self);
 
 	if(type == OSMDB_TYPE_NODE)
 	{
@@ -474,7 +474,7 @@ osmdb_index_getMap(osmdb_index_t* self, int type)
 static int
 osmdb_index_flushChunks(osmdb_index_t* self, int type)
 {
-	assert(self);
+	ASSERT(self);
 
 	cc_map_t* map = osmdb_index_getMap(self, type);
 	if(map == NULL)
@@ -504,8 +504,8 @@ osmdb_index_flushChunks(osmdb_index_t* self, int type)
 static void
 osmdb_index_trimChunks(osmdb_index_t* self, int max_size)
 {
-	assert(self);
-	assert(max_size >= 0);
+	ASSERT(self);
+	ASSERT(max_size >= 0);
 
 	cc_listIter_t* item = cc_list_head(self->chunks);
 	while(item)
@@ -578,8 +578,8 @@ osmdb_index_trimChunks(osmdb_index_t* self, int max_size)
 static void
 osmdb_index_trimTiles(osmdb_index_t* self, int max_size)
 {
-	assert(self);
-	assert(max_size >= 0);
+	ASSERT(self);
+	ASSERT(max_size >= 0);
 
 	cc_listIter_t* item = cc_list_head(self->tiles);
 	while(item)
@@ -642,10 +642,10 @@ osmdb_index_getChunk(osmdb_index_t* self,
                      int find,
                      cc_listIter_t** list_iter)
 {
-	assert(self);
-	assert(map);
-	assert(key);
-	assert(list_iter);
+	ASSERT(self);
+	ASSERT(map);
+	ASSERT(key);
+	ASSERT(list_iter);
 
 	double t0 = cc_timestamp();
 	self->stats_chunk_get += 1.0;
@@ -740,9 +740,9 @@ osmdb_index_getTile(osmdb_index_t* self,
                     const char* key,
                     cc_listIter_t** list_iter)
 {
-	assert(self);
-	assert(key);
-	assert(list_iter);
+	ASSERT(self);
+	ASSERT(key);
+	ASSERT(list_iter);
 
 	double t0 = cc_timestamp();
 	self->stats_tile_get += 1.0;
@@ -827,18 +827,19 @@ osmdb_index_getTile(osmdb_index_t* self,
 osmdb_indexIter_t*
 osmdb_indexIter_new(struct osmdb_index_s* index, int type)
 {
-	assert(index);
+	ASSERT(index);
 
 	if(osmdb_index_flushChunks(index, type) == 0)
 	{
 		return NULL;
 	}
 
-	osmdb_indexIter_t* self = (osmdb_indexIter_t*)
-	                          malloc(sizeof(osmdb_indexIter_t));
+	osmdb_indexIter_t* self;
+	self = (osmdb_indexIter_t*)
+	       MALLOC(sizeof(osmdb_indexIter_t));
 	if(self == NULL)
 	{
-		LOGE("malloc failed");
+		LOGE("MALLOC failed");
 		return NULL;
 	}
 
@@ -870,26 +871,26 @@ osmdb_indexIter_new(struct osmdb_index_s* index, int type)
 	fail_de:
 		closedir(self->dir);
 	fail_dir:
-		free(self);
+		FREE(self);
 	return NULL;
 }
 
 void osmdb_indexIter_delete(osmdb_indexIter_t** _self)
 {
-	assert(_self);
+	ASSERT(_self);
 
 	osmdb_indexIter_t* self = *_self;
 	if(self)
 	{
 		closedir(self->dir);
-		free(self);
+		FREE(self);
 		*_self = NULL;
 	}
 }
 
 osmdb_indexIter_t* osmdb_indexIter_next(osmdb_indexIter_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	// get the next item in the chunk
 	if(self->chunk_iter)
@@ -897,13 +898,15 @@ osmdb_indexIter_t* osmdb_indexIter_next(osmdb_indexIter_t* self)
 		self->chunk_iter = cc_map_next(self->chunk_iter);
 		if(self->chunk_iter)
 		{
-			cc_list_moven(self->index->chunks, self->list_iter, NULL);
+			cc_list_moven(self->index->chunks, self->list_iter,
+			              NULL);
 			return self;
 		}
 		else
 		{
-			osmdb_chunk_t* chunk = (osmdb_chunk_t*)
-			                       cc_list_peekIter(self->list_iter);
+			osmdb_chunk_t* chunk;
+			chunk = (osmdb_chunk_t*)
+			        cc_list_peekIter(self->list_iter);
 			osmdb_chunk_unlock(chunk);
 			self->list_iter = NULL;
 		}
@@ -977,7 +980,7 @@ osmdb_indexIter_t* osmdb_indexIter_next(osmdb_indexIter_t* self)
 
 const void* osmdb_indexIter_peek(osmdb_indexIter_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	if(self->chunk_iter == NULL)
 	{
@@ -992,8 +995,8 @@ osmdb_index_sampleWay(osmdb_index_t* self,
                       int zoom,
                       osmdb_way_t* way)
 {
-	assert(self);
-	assert(way);
+	ASSERT(self);
+	ASSERT(way);
 
 	float min_dist;
 	if(zoom == 14)
@@ -1061,7 +1064,7 @@ osmdb_index_sampleWay(osmdb_index_t* self,
 			double* ref;
 			ref = (double*)
 			      cc_list_remove(way->nds, &iter);
-			free(ref);
+			FREE(ref);
 		}
 
 		first = 0;
@@ -1075,9 +1078,9 @@ osmdb_index_gatherNode(osmdb_index_t* self,
                        xml_ostream_t* os, double id,
                        cc_map_t* map_nodes)
 {
-	assert(self);
-	assert(os);
-	assert(map_nodes);
+	ASSERT(self);
+	ASSERT(os);
+	ASSERT(map_nodes);
 
 	// check if id already included
 	cc_mapIter_t iter;
@@ -1112,10 +1115,10 @@ osmdb_index_gatherWay(osmdb_index_t* self,
                       cc_map_t* map_nodes,
                       cc_map_t* map_ways)
 {
-	assert(self);
-	assert(os);
-	assert(map_nodes);
-	assert(map_ways);
+	ASSERT(self);
+	ASSERT(os);
+	ASSERT(map_nodes);
+	ASSERT(map_ways);
 
 	// check if id already included
 	cc_mapIter_t iterator;
@@ -1223,11 +1226,11 @@ osmdb_index_fetchWay(osmdb_index_t* self,
                      cc_map_t* map_ways_work,
                      cc_multimap_t* mm_nds_join)
 {
-	assert(self);
-	assert(os);
-	assert(map_ways);
-	assert(map_ways_work);
-	assert(mm_nds_join);
+	ASSERT(self);
+	ASSERT(os);
+	ASSERT(map_ways);
+	ASSERT(map_ways_work);
+	ASSERT(mm_nds_join);
 
 	// check if id already included by a relation
 	// which we don't want to join because it could
@@ -1261,9 +1264,9 @@ osmdb_index_joinWays(osmdb_index_t* self,
                      cc_map_t* map_ways_work,
                      cc_multimap_t* mm_nds_join)
 {
-	assert(self);
-	assert(map_ways_work);
-	assert(mm_nds_join);
+	ASSERT(self);
+	ASSERT(map_ways_work);
+	ASSERT(mm_nds_join);
 
 	osmdb_way_t*       way1;
 	osmdb_way_t*       way2;
@@ -1373,8 +1376,8 @@ static int
 osmdb_index_sampleWays(osmdb_index_t* self, int zoom,
                        cc_map_t* map_ways_work)
 {
-	assert(self);
-	assert(map_ways_work);
+	ASSERT(self);
+	ASSERT(map_ways_work);
 
 	cc_mapIter_t  hiterator;
 	cc_mapIter_t* hiter;
@@ -1427,17 +1430,17 @@ osmdb_index_sampleWays(osmdb_index_t* self, int zoom,
 
 static double osmdb_dot(double* a, double* b)
 {
-	assert(a);
-	assert(b);
+	ASSERT(a);
+	ASSERT(b);
 
 	return a[0]*b[0] + a[1]*b[1];
 }
 
 static int osmdb_quadrant(double* pc, double* tlc, double* trc)
 {
-	assert(pc);
-	assert(tlc);
-	assert(trc);
+	ASSERT(pc);
+	ASSERT(tlc);
+	ASSERT(trc);
 
 	double tl = osmdb_dot(tlc, pc);
 	double tr = osmdb_dot(trc, pc);
@@ -1459,7 +1462,7 @@ static int osmdb_quadrant(double* pc, double* tlc, double* trc)
 
 static void osmdb_normalize(double* p)
 {
-	assert(p);
+	ASSERT(p);
 
 	double mag = sqrt(p[0]*p[0] + p[1]*p[1]);
 	p[0] = p[0]/mag;
@@ -1472,8 +1475,8 @@ osmdb_index_clipWay(osmdb_index_t* self,
                     double latT, double lonL,
                     double latB, double lonR)
 {
-	assert(self);
-	assert(way);
+	ASSERT(self);
+	ASSERT(way);
 
 	// don't clip short ways
 	if(cc_list_size(way->nds) <= 2)
@@ -1616,14 +1619,14 @@ osmdb_index_clipWay(osmdb_index_t* self,
 		if(prev && (q0 == q2) && (q1 == q2))
 		{
 			ref = (double*) cc_list_remove(way->nds, &prev);
-			free(ref);
+			FREE(ref);
 		}
 
 		// clip last node
 		if(clip_last)
 		{
 			ref = (double*) cc_list_remove(way->nds, &iter);
-			free(ref);
+			FREE(ref);
 			return;
 		}
 
@@ -1639,8 +1642,8 @@ osmdb_index_clipWays(osmdb_index_t* self,
                      int zoom, int x, int y,
                      cc_map_t* map_ways_work)
 {
-	assert(self);
-	assert(map_ways_work);
+	ASSERT(self);
+	ASSERT(map_ways_work);
 
 	// compute the tile bounding box
 	double latT;
@@ -1694,10 +1697,10 @@ osmdb_index_exportWays(osmdb_index_t* self,
                        cc_map_t* map_ways_work,
                        cc_map_t* map_nodes)
 {
-	assert(self);
-	assert(os);
-	assert(map_ways_work);
-	assert(map_nodes);
+	ASSERT(self);
+	ASSERT(os);
+	ASSERT(map_ways_work);
+	ASSERT(map_nodes);
 
 	cc_mapIter_t  hiterator;
 	cc_mapIter_t* hiter;
@@ -1739,11 +1742,11 @@ osmdb_index_gatherRelation(osmdb_index_t* self,
                            cc_map_t* map_ways,
                            cc_map_t* map_relations)
 {
-	assert(self);
-	assert(os);
-	assert(map_nodes);
-	assert(map_ways);
-	assert(map_relations);
+	ASSERT(self);
+	ASSERT(os);
+	ASSERT(map_nodes);
+	ASSERT(map_ways);
+	ASSERT(map_relations);
 
 	// check if id already included
 	cc_mapIter_t iterator;
@@ -1809,14 +1812,14 @@ osmdb_index_gatherTile(osmdb_index_t* self,
                        cc_map_t* map_ways_work,
                        cc_multimap_t* mm_nds_join)
 {
-	assert(self);
-	assert(os);
-	assert(tile);
-	assert(map_nodes);
-	assert(map_ways);
-	assert(map_relations);
-	assert(map_ways_work);
-	assert(mm_nds_join);
+	ASSERT(self);
+	ASSERT(os);
+	ASSERT(tile);
+	ASSERT(map_nodes);
+	ASSERT(map_ways);
+	ASSERT(map_relations);
+	ASSERT(map_ways_work);
+	ASSERT(mm_nds_join);
 
 	cc_mapIter_t  iterator;
 	cc_mapIter_t* iter;
@@ -1898,7 +1901,7 @@ static int osmdb_index_addTileXY(osmdb_index_t* self,
                                  int zoom, int x, int y,
                                  int type, double id)
 {
-	assert(self);
+	ASSERT(self);
 
 	double t0 = cc_timestamp();
 	self->stats_tile_add += 1.0;
@@ -1951,8 +1954,8 @@ static int osmdb_index_addTile(osmdb_index_t* self,
                                int zoom,
                                int type, double id)
  {
-	assert(self);
-	assert(range);
+	ASSERT(self);
+	ASSERT(range);
 
 	// ignore null range
 	if(range->pts == 0)
@@ -2024,9 +2027,9 @@ osmdb_index_rangeWay(osmdb_index_t* self,
                      int center,
                      osmdb_range_t* range)
 {
-	assert(self);
-	assert(way);
-	assert(range);
+	ASSERT(self);
+	ASSERT(way);
+	ASSERT(range);
 
 	osmdb_range_init(range);
 
@@ -2069,9 +2072,9 @@ osmdb_index_rangeRelation(osmdb_index_t* self,
                           int center,
                           osmdb_range_t* range)
 {
-	assert(self);
-	assert(relation);
-	assert(range);
+	ASSERT(self);
+	ASSERT(relation);
+	ASSERT(range);
 
 	osmdb_range_init(range);
 
@@ -2137,13 +2140,13 @@ osmdb_index_rangeRelation(osmdb_index_t* self,
 
 osmdb_index_t* osmdb_index_new(const char* base)
 {
-	assert(base);
+	ASSERT(base);
 
 	osmdb_index_t* self = (osmdb_index_t*)
-	                      malloc(sizeof(osmdb_index_t));
+	                      MALLOC(sizeof(osmdb_index_t));
 	if(self == NULL)
 	{
-		LOGE("malloc failed");
+		LOGE("MALLOC failed");
 		return NULL;
 	}
 
@@ -2280,13 +2283,13 @@ osmdb_index_t* osmdb_index_new(const char* base)
 	fail_nodes:
 		cc_list_delete(&self->chunks);
 	fail_chunks:
-		free(self);
+		FREE(self);
 	return NULL;
 }
 
 int osmdb_index_delete(osmdb_index_t** _self)
 {
-	assert(_self);
+	ASSERT(_self);
 
 	int err = 0;
 
@@ -2308,7 +2311,7 @@ int osmdb_index_delete(osmdb_index_t** _self)
 		cc_list_delete(&self->chunks);
 		err = self->err;
 		osmdb_index_stats(self);
-		free(self);
+		FREE(self);
 		*_self = NULL;
 	}
 
@@ -2317,7 +2320,7 @@ int osmdb_index_delete(osmdb_index_t** _self)
 
 int osmdb_index_error(osmdb_index_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	return self->err;
 }
@@ -2325,8 +2328,8 @@ int osmdb_index_error(osmdb_index_t* self)
 int osmdb_index_addChunk(osmdb_index_t* self,
                          int type, const void* data)
 {
-	assert(self);
-	assert(data);
+	ASSERT(self);
+	ASSERT(data);
 
 	double t0 = cc_timestamp();
 	self->stats_chunk_add += 1.0;
@@ -2428,7 +2431,7 @@ int osmdb_index_addChunk(osmdb_index_t* self,
 		        (type == OSMDB_TYPE_WAYREF)     ||
 		        (type == OSMDB_TYPE_CTRWAYREF))
 		{
-			free(ref);
+			FREE(ref);
 		}
 		else
 		{
@@ -2479,8 +2482,8 @@ int osmdb_index_addNode(osmdb_index_t* self,
                         int selected,
                         osmdb_node_t* node)
 {
-	assert(self);
-	assert(node);
+	ASSERT(self);
+	ASSERT(node);
 
 	if(selected)
 	{
@@ -2515,8 +2518,8 @@ int osmdb_index_addWay(osmdb_index_t* self,
                        int selected,
                        osmdb_way_t* way)
 {
-	assert(self);
-	assert(way);
+	ASSERT(self);
+	ASSERT(way);
 
 	// discard any ways w/o any points
 	osmdb_range_t range;
@@ -2550,8 +2553,8 @@ int osmdb_index_addRelation(osmdb_index_t* self,
                             int zoom, int center,
                             osmdb_relation_t* relation)
 {
-	assert(self);
-	assert(relation);
+	ASSERT(self);
+	ASSERT(relation);
 
 	// discard relations w/o any points
 	osmdb_range_t range;
@@ -2584,8 +2587,8 @@ int osmdb_index_makeTile(osmdb_index_t* self,
                          int zoom, int x, int y,
                          xml_ostream_t* os)
 {
-	assert(self);
-	assert(os);
+	ASSERT(self);
+	ASSERT(os);
 
 	double t0 = cc_timestamp();
 	self->stats_tile_make += 1.0;
@@ -2699,7 +2702,7 @@ int osmdb_index_makeTile(osmdb_index_t* self,
 const void* osmdb_index_find(osmdb_index_t* self,
                              int type, double id)
 {
-	assert(self);
+	ASSERT(self);
 
 	double t0 = cc_timestamp();
 	self->stats_chunk_find += 1.0;
@@ -2739,7 +2742,7 @@ const void* osmdb_index_find(osmdb_index_t* self,
 
 void osmdb_index_stats(osmdb_index_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	LOGI("STATS: %s", self->base);
 	LOGI("==CHUNK==");

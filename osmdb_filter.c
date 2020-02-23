@@ -22,14 +22,14 @@
  */
 
 #include <stdlib.h>
-#include <assert.h>
 #include <string.h>
+
+#define LOG_TAG "osmdb"
+#include "../libcc/cc_log.h"
+#include "../libcc/cc_memory.h"
 #include "../libxmlstream/xml_istream.h"
 #include "osmdb_filter.h"
 #include "osmdb_util.h"
-
-#define LOG_TAG "osmdb"
-#include "../libxmlstream/xml_log.h"
 
 #define OSMDB_CLASS_SELECTED 1
 
@@ -42,11 +42,12 @@ osmdb_filterInfo_new(int zoom, const char* flags)
 {
 	// flags may be NULL
 
-	osmdb_filterInfo_t* self = (osmdb_filterInfo_t*)
-	                           malloc(sizeof(osmdb_filterInfo_t));
+	osmdb_filterInfo_t* self;
+	self = (osmdb_filterInfo_t*)
+	       MALLOC(sizeof(osmdb_filterInfo_t));
 	if(self == NULL)
 	{
-		LOGE("malloc failed");
+		LOGE("MALLOC failed");
 		return NULL;
 	}
 
@@ -112,12 +113,12 @@ osmdb_filterInfo_new(int zoom, const char* flags)
 static void
 osmdb_filterInfo_delete(osmdb_filterInfo_t** _self)
 {
-	assert(_self);
+	ASSERT(_self);
 
 	osmdb_filterInfo_t* self = *_self;
 	if(self)
 	{
-		free(self);
+		FREE(self);
 		*_self = NULL;
 	}
 }
@@ -127,9 +128,9 @@ static int osmdb_filter_start(void* priv,
                               const char* name,
                               const char** atts)
 {
-	assert(priv);
-	assert(name);
-	assert(atts);
+	ASSERT(priv);
+	ASSERT(name);
+	ASSERT(atts);
 
 	osmdb_filter_t* self = (osmdb_filter_t*) priv;
 
@@ -207,24 +208,24 @@ static int osmdb_filter_end(void* priv,
                             const char* content)
 {
 	// content may be NULL
-	assert(priv);
-	assert(name);
+	ASSERT(priv);
+	ASSERT(name);
 
 	return 1;
 }
 
 static void osmdb_filter_discard(osmdb_filter_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	cc_mapIter_t  iterator;
 	cc_mapIter_t* iter;
 	iter = cc_map_head(self->info, &iterator);
 	while(iter)
 	{
-		osmdb_filterInfo_t* info = (osmdb_filterInfo_t*)
-		                           cc_map_remove(self->info,
-		                                         &iter);
+		osmdb_filterInfo_t* info;
+		info = (osmdb_filterInfo_t*)
+		       cc_map_remove(self->info, &iter);
 		osmdb_filterInfo_delete(&info);
 	}
 }
@@ -235,13 +236,13 @@ static void osmdb_filter_discard(osmdb_filter_t* self)
 
 osmdb_filter_t* osmdb_filter_new(const char* fname)
 {
-	assert(fname);
+	ASSERT(fname);
 
-	osmdb_filter_t* self = (osmdb_filter_t*)
-	                       malloc(sizeof(osmdb_filter_t));
+	osmdb_filter_t* self;
+	self = (osmdb_filter_t*) MALLOC(sizeof(osmdb_filter_t));
 	if(self == NULL)
 	{
-		LOGE("malloc failed");
+		LOGE("MALLOC failed");
 		return NULL;
 	}
 
@@ -252,8 +253,7 @@ osmdb_filter_t* osmdb_filter_new(const char* fname)
 	}
 
 	if(xml_istream_parse((void*) self,
-	                     osmdb_filter_start,
-	                     osmdb_filter_end,
+	                     osmdb_filter_start, osmdb_filter_end,
 	                     fname) == 0)
 	{
 		goto fail_parse;
@@ -267,20 +267,20 @@ osmdb_filter_t* osmdb_filter_new(const char* fname)
 		osmdb_filter_discard(self);
 		cc_map_delete(&self->info);
 	fail_info:
-		free(self);
+		FREE(self);
 	return NULL;
 }
 
 void osmdb_filter_delete(osmdb_filter_t** _self)
 {
-	assert(_self);
+	ASSERT(_self);
 
 	osmdb_filter_t* self = *_self;
 	if(self)
 	{
 		osmdb_filter_discard(self);
 		cc_map_delete(&self->info);
-		free(self);
+		FREE(self);
 		*_self = NULL;
 	}
 }
@@ -289,15 +289,15 @@ osmdb_filterInfo_t*
 osmdb_filter_selectNode(osmdb_filter_t* self,
                         osmdb_node_t* node)
 {
-	assert(self);
-	assert(node);
+	ASSERT(self);
+	ASSERT(node);
 
 	const char* class = osmdb_classCodeToName(node->class);
 
 	cc_mapIter_t iter;
-	osmdb_filterInfo_t* info = (osmdb_filterInfo_t*)
-	                           cc_map_find(self->info,
-	                                       &iter, class);
+	osmdb_filterInfo_t* info;
+	info = (osmdb_filterInfo_t*)
+	       cc_map_find(self->info, &iter, class);
 	if(info == NULL)
 	{
 		return NULL;
@@ -316,15 +316,15 @@ osmdb_filterInfo_t*
 osmdb_filter_selectWay(osmdb_filter_t* self,
                        osmdb_way_t* way)
 {
-	assert(self);
-	assert(way);
+	ASSERT(self);
+	ASSERT(way);
 
 	const char* class = osmdb_classCodeToName(way->class);
 
 	cc_mapIter_t iter;
-	osmdb_filterInfo_t* info = (osmdb_filterInfo_t*)
-	                           cc_map_find(self->info,
-	                                       &iter, class);
+	osmdb_filterInfo_t* info;
+	info = (osmdb_filterInfo_t*)
+	       cc_map_find(self->info, &iter, class);
 	if(info == NULL)
 	{
 		return NULL;
@@ -343,15 +343,15 @@ osmdb_filterInfo_t*
 osmdb_filter_selectRelation(osmdb_filter_t* self,
                             osmdb_relation_t* relation)
 {
-	assert(self);
-	assert(relation);
+	ASSERT(self);
+	ASSERT(relation);
 
 	const char* class = osmdb_classCodeToName(relation->class);
 
 	cc_mapIter_t iter;
-	osmdb_filterInfo_t* info = (osmdb_filterInfo_t*)
-	                           cc_map_find(self->info,
-	                                       &iter, class);
+	osmdb_filterInfo_t* info;
+	info = (osmdb_filterInfo_t*)
+	       cc_map_find(self->info, &iter, class);
 	if(info == NULL)
 	{
 		return NULL;

@@ -22,16 +22,16 @@
  */
 
 #include <stdlib.h>
-#include <assert.h>
 #include <string.h>
-#include "../libxmlstream/xml_ostream.h"
-#include "osmdb_tile.h"
-#include "osmdb_util.h"
-#include "osmdb_index.h"
-#include "osmdb_parser.h"
 
 #define LOG_TAG "osmdb"
-#include "../libxmlstream/xml_log.h"
+#include "../libcc/cc_log.h"
+#include "../libcc/cc_memory.h"
+#include "../libxmlstream/xml_ostream.h"
+#include "osmdb_index.h"
+#include "osmdb_parser.h"
+#include "osmdb_tile.h"
+#include "osmdb_util.h"
 
 const int OSMDB_TILE_ONE = 1;
 
@@ -41,16 +41,15 @@ const int OSMDB_TILE_ONE = 1;
 
 static int osmdb_tile_finish(osmdb_tile_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	int success = 1;
 	xml_ostream_t* os = NULL;
 	if(self->dirty)
 	{
 		char fname[256];
-		osmdb_tile_fname(self->base,
-		                 self->zoom, self->x, self->y,
-		                 fname);
+		osmdb_tile_fname(self->base, self->zoom, self->x,
+		                 self->y, fname);
 
 		// ignore error
 		osmdb_mkdir(fname);
@@ -121,9 +120,9 @@ static int osmdb_tile_finish(osmdb_tile_t* self)
 
 static int nodeRefFn(void* priv, double ref)
 {
-	assert(priv);
+	ASSERT(priv);
 
-	osmdb_tile_t*  self = (osmdb_tile_t*) priv;
+	osmdb_tile_t* self = (osmdb_tile_t*) priv;
 	cc_map_t* map = self->map_nodes;
 
 	if(cc_map_addf(map, (const void*) &OSMDB_TILE_ONE,
@@ -137,9 +136,9 @@ static int nodeRefFn(void* priv, double ref)
 
 static int wayRefFn(void* priv, double ref)
 {
-	assert(priv);
+	ASSERT(priv);
 
-	osmdb_tile_t*  self = (osmdb_tile_t*) priv;
+	osmdb_tile_t* self = (osmdb_tile_t*) priv;
 	cc_map_t* map = self->map_ways;
 
 	if(cc_map_addf(map, (const void*) &OSMDB_TILE_ONE,
@@ -153,9 +152,9 @@ static int wayRefFn(void* priv, double ref)
 
 static int relationRefFn(void* priv, double ref)
 {
-	assert(priv);
+	ASSERT(priv);
 
-	osmdb_tile_t*  self = (osmdb_tile_t*) priv;
+	osmdb_tile_t* self = (osmdb_tile_t*) priv;
 	cc_map_t* map = self->map_relations;
 
 	if(cc_map_addf(map, (const void*) &OSMDB_TILE_ONE,
@@ -169,7 +168,7 @@ static int relationRefFn(void* priv, double ref)
 
 static int osmdb_tile_import(osmdb_tile_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	char fname[256];
 	osmdb_tile_fname(self->base,
@@ -177,7 +176,8 @@ static int osmdb_tile_import(osmdb_tile_t* self)
 	                 fname);
 
 	if(osmdb_parseRefs(fname, (void*) self,
-	                   nodeRefFn, wayRefFn, relationRefFn) == 0)
+	                   nodeRefFn, wayRefFn,
+	                   relationRefFn) == 0)
 	{
 		osmdb_tile_finish(self);
 		return 0;
@@ -190,16 +190,17 @@ static int osmdb_tile_import(osmdb_tile_t* self)
 * public                                                   *
 ***********************************************************/
 
-osmdb_tile_t* osmdb_tile_new(int zoom, int x, int y,
-                             const char* base, int import)
+osmdb_tile_t*
+osmdb_tile_new(int zoom, int x, int y,
+               const char* base, int import)
 {
-	assert(base);
+	ASSERT(base);
 
-	osmdb_tile_t* self = (osmdb_tile_t*)
-	                     malloc(sizeof(osmdb_tile_t));
+	osmdb_tile_t* self;
+	self = (osmdb_tile_t*) MALLOC(sizeof(osmdb_tile_t));
 	if(self == NULL)
 	{
-		LOGE("malloc failed");
+		LOGE("MALLOC failed");
 		return NULL;
 	}
 
@@ -244,13 +245,13 @@ osmdb_tile_t* osmdb_tile_new(int zoom, int x, int y,
 	fail_map_ways:
 		cc_map_delete(&self->map_nodes);
 	fail_map_nodes:
-		free(self);
+		FREE(self);
 	return NULL;
 }
 
 int osmdb_tile_delete(osmdb_tile_t** _self)
 {
-	assert(_self);
+	ASSERT(_self);
 
 	int success = 1;
 	osmdb_tile_t* self = *_self;
@@ -260,7 +261,7 @@ int osmdb_tile_delete(osmdb_tile_t** _self)
 		cc_map_delete(&self->map_nodes);
 		cc_map_delete(&self->map_ways);
 		cc_map_delete(&self->map_relations);
-		free(self);
+		FREE(self);
 		*_self = NULL;
 	}
 	return success;
@@ -268,7 +269,7 @@ int osmdb_tile_delete(osmdb_tile_t** _self)
 
 int osmdb_tile_size(osmdb_tile_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	return (int)
 	       (cc_map_sizeof(self->map_nodes) +
@@ -279,7 +280,7 @@ int osmdb_tile_size(osmdb_tile_t* self)
 int osmdb_tile_find(osmdb_tile_t* self,
                     int type, double id)
 {
-	assert(self);
+	ASSERT(self);
 
 	cc_map_t* map;
 	if(type == OSMDB_TYPE_NODE)
@@ -307,7 +308,7 @@ int osmdb_tile_find(osmdb_tile_t* self,
 int osmdb_tile_add(osmdb_tile_t* self,
                    int type, double id)
 {
-	assert(self);
+	ASSERT(self);
 
 	cc_map_t* map;
 	if(type == OSMDB_TYPE_NODE)
@@ -333,12 +334,11 @@ int osmdb_tile_add(osmdb_tile_t* self,
 	return 1;
 }
 
-void osmdb_tile_fname(const char* base,
-                      int zoom, int x, int y,
-                      char* fname)
+void osmdb_tile_fname(const char* base, int zoom,
+                      int x, int y, char* fname)
 {
-	assert(base);
-	assert(fname);
+	ASSERT(base);
+	ASSERT(fname);
 
 	snprintf(fname, 256, "%s/tile/%i/%i/%i.xml.gz",
 	         base, zoom, x, y);

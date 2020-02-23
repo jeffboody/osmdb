@@ -22,16 +22,16 @@
  */
 
 #include <stdlib.h>
-#include <assert.h>
 #include <string.h>
 #include <math.h>
+
+#define LOG_TAG "osmdb"
+#include "libcc/cc_log.h"
+#include "libcc/cc_memory.h"
 #include "libxmlstream/xml_istream.h"
 #include "libxmlstream/xml_ostream.h"
 #include "osm_parser.h"
 #include "../osmdb_util.h"
-
-#define LOG_TAG "osmdb"
-#include "libxmlstream/xml_log.h"
 
 #define OSM_STATE_INIT            0
 #define OSM_STATE_OSM             1
@@ -60,8 +60,8 @@ typedef struct
 
 static int osm_abreviateWord(const char* a, char* b)
 {
-	assert(a);
-	assert(b);
+	ASSERT(a);
+	ASSERT(b);
 
 	int abreviate = 1;
 
@@ -181,8 +181,8 @@ static int osm_abreviateWord(const char* a, char* b)
 
 static void osm_catWord(char* str, char* word)
 {
-	assert(str);
-	assert(word);
+	ASSERT(str);
+	ASSERT(word);
 
 	strncat(str, word, 256);
 	str[255] = '\0';
@@ -192,8 +192,8 @@ static const char* osm_parseWord(int line,
                                  const char* str,
                                  osm_token_t* tok)
 {
-	assert(str);
-	assert(tok);
+	ASSERT(str);
+	ASSERT(tok);
 
 	tok->abreviate = 0;
 	tok->word[0]   = '\0';
@@ -248,7 +248,8 @@ static const char* osm_parseWord(int line,
 		else
 		{
 			// eat invalid characters
-			LOGW("invalid line=%i, c=0x%X, str=%s", line, (unsigned int) c, str);
+			LOGW("invalid line=%i, c=0x%X, str=%s",
+			     line, (unsigned int) c, str);
 			++i;
 			continue;
 		}
@@ -292,14 +293,13 @@ static const char* osm_parseWord(int line,
 	}
 }
 
-static int osm_parseName(int line,
-                         const char* input,
-                         char* name,
-                         char* abrev)
+static int
+osm_parseName(int line, const char* input, char* name,
+              char* abrev)
 {
-	assert(input);
-	assert(name);
-	assert(abrev);
+	ASSERT(input);
+	ASSERT(name);
+	ASSERT(abrev);
 
 	// initialize output string
 	name[0]  = '\0';
@@ -425,7 +425,7 @@ static int osm_parseName(int line,
 
 static int osm_parseEle(int line, const char* a, int ft)
 {
-	assert(a);
+	ASSERT(a);
 
 	// assume the ele is in meters
 	float ele = strtof(a, NULL);
@@ -479,7 +479,7 @@ static int osm_parseEle(int line, const char* a, int ft)
 
 static int osm_parseSt(const char* num)
 {
-	assert(num);
+	ASSERT(num);
 
 	int code = (int) strtol(num, NULL, 10);
 	if((code < 0) || (code >= 60))
@@ -503,7 +503,7 @@ static int osm_parseSt(const char* num)
 
 static void osm_parser_init(osm_parser_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	self->attr_id         = 0.0;
 	self->attr_lat        = 0.0;
@@ -524,8 +524,8 @@ static int
 osm_parser_beginOsm(osm_parser_t* self, int line,
                     const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSM_STATE_OSM;
 	xml_ostream_begin(self->os_nodes, "osmdb");
@@ -540,7 +540,7 @@ osm_parser_endOsm(osm_parser_t* self, int line,
                   const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSM_STATE_DONE;
 	xml_ostream_end(self->os_relations);
@@ -554,8 +554,8 @@ static int
 osm_parser_beginOsmBounds(osm_parser_t* self, int line,
                           const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSM_STATE_OSM_BOUNDS;
 
@@ -567,7 +567,7 @@ osm_parser_endOsmBounds(osm_parser_t* self, int line,
                         const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSM_STATE_OSM;
 
@@ -578,8 +578,8 @@ static int
 osm_parser_beginOsmNode(osm_parser_t* self, int line,
                         const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSM_STATE_OSM_NODE;
 	xml_ostream_begin(self->os_nodes, "node");
@@ -614,15 +614,18 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
                       const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSM_STATE_OSM;
 
-	xml_ostream_attrf(self->os_nodes, "id", "%0.0lf", self->attr_id);
+	xml_ostream_attrf(self->os_nodes, "id", "%0.0lf",
+	                  self->attr_id);
 	if((self->attr_lat != 0.0) || (self->attr_lon != 0.0))
 	{
-		xml_ostream_attrf(self->os_nodes, "lat", "%lf", self->attr_lat);
-		xml_ostream_attrf(self->os_nodes, "lon", "%lf", self->attr_lon);
+		xml_ostream_attrf(self->os_nodes, "lat", "%lf",
+		                  self->attr_lat);
+		xml_ostream_attrf(self->os_nodes, "lon", "%lf",
+		                  self->attr_lon);
 	}
 	if(self->tag_name[0] != '\0')
 	{
@@ -630,11 +633,13 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 	}
 	if(self->tag_abrev[0] != '\0')
 	{
-		xml_ostream_attr(self->os_nodes, "abrev", self->tag_abrev);
+		xml_ostream_attr(self->os_nodes, "abrev",
+		                 self->tag_abrev);
 	}
 	if(self->tag_ele)
 	{
-		xml_ostream_attrf(self->os_nodes, "ele", "%i", self->tag_ele);
+		xml_ostream_attrf(self->os_nodes, "ele", "%i",
+		                  self->tag_ele);
 	}
 	if(self->tag_st)
 	{
@@ -654,7 +659,8 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 	if(fmod(self->stats_nodes, 100000.0) == 0.0)
 	{
 		LOGI("line=%i, nodes=%0.0lf, ways=%0.0lf, relations=%0.0lf",
-		     line, self->stats_nodes, self->stats_ways, self->stats_relations);
+		     line, self->stats_nodes, self->stats_ways,
+		     self->stats_relations);
 	}
 
 	return 1;
@@ -664,8 +670,8 @@ static int
 osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
                            const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSM_STATE_OSM_NODE_TAG;
 
@@ -734,7 +740,7 @@ osm_parser_endOsmNodeTag(osm_parser_t* self, int line,
                          const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSM_STATE_OSM_NODE;
 
@@ -745,8 +751,8 @@ static int
 osm_parser_beginOsmWay(osm_parser_t* self, int line,
                        const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSM_STATE_OSM_WAY;
 	xml_ostream_begin(self->os_ways, "way");
@@ -773,11 +779,12 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
                      const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSM_STATE_OSM;
 
-	xml_ostream_attrf(self->os_ways, "id", "%0.0lf", self->attr_id);
+	xml_ostream_attrf(self->os_ways, "id", "%0.0lf",
+	                  self->attr_id);
 	if(self->tag_name[0] != '\0')
 	{
 		xml_ostream_attr(self->os_ways, "name", self->tag_name);
@@ -826,7 +833,7 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 		xml_ostream_begin(self->os_ways, "nd");
 		xml_ostream_attrf(self->os_ways, "ref", "%0.0lf", *ref);
 		xml_ostream_end(self->os_ways);
-		free(ref);
+		FREE(ref);
 	}
 	xml_ostream_end(self->os_ways);
 
@@ -836,7 +843,8 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	if(fmod(self->stats_ways, 100000.0) == 0.0)
 	{
 		LOGI("line=%i, nodes=%0.0lf, ways=%0.0lf, relations=%0.0lf",
-		     line, self->stats_nodes, self->stats_ways, self->stats_relations);
+		     line, self->stats_nodes, self->stats_ways,
+		     self->stats_relations);
 	}
 
 	return 1;
@@ -846,8 +854,8 @@ static int
 osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
                           const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSM_STATE_OSM_WAY_TAG;
 
@@ -929,7 +937,7 @@ osm_parser_endOsmWayTag(osm_parser_t* self, int line,
                         const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSM_STATE_OSM_WAY;
 
@@ -940,15 +948,15 @@ static int
 osm_parser_beginOsmWayNd(osm_parser_t* self, int line,
                          const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSM_STATE_OSM_WAY_ND;
 
-	double* ref = (double*) malloc(sizeof(double));
+	double* ref = (double*) MALLOC(sizeof(double));
 	if(ref == NULL)
 	{
-		LOGE("malloc failed");
+		LOGE("MALLOC failed");
 		return 0;
 	}
 	*ref = 0.0;
@@ -970,7 +978,7 @@ osm_parser_beginOsmWayNd(osm_parser_t* self, int line,
 	   (cc_list_append(self->way_nds, NULL,
 	                   (const void*) ref) == NULL))
 	{
-		free(ref);
+		FREE(ref);
 		return 0;
 	}
 
@@ -982,7 +990,7 @@ osm_parser_endOsmWayNd(osm_parser_t* self, int line,
                        const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSM_STATE_OSM_WAY;
 
@@ -993,8 +1001,8 @@ static int
 osm_parser_beginOsmRel(osm_parser_t* self, int line,
                        const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSM_STATE_OSM_REL;
 	xml_ostream_begin(self->os_relations, "relation");
@@ -1021,18 +1029,21 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
                      const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSM_STATE_OSM;
 
-	xml_ostream_attrf(self->os_relations, "id", "%0.0lf", self->attr_id);
+	xml_ostream_attrf(self->os_relations, "id", "%0.0lf",
+	                  self->attr_id);
 	if(self->tag_name[0] != '\0')
 	{
-		xml_ostream_attr(self->os_relations, "name", self->tag_name);
+		xml_ostream_attr(self->os_relations, "name",
+		                 self->tag_name);
 	}
 	if(self->tag_abrev[0] != '\0')
 	{
-		xml_ostream_attr(self->os_relations, "abrev", self->tag_abrev);
+		xml_ostream_attr(self->os_relations, "abrev",
+		                 self->tag_abrev);
 	}
 
 	if(self->rel_type)
@@ -1059,12 +1070,13 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 			xml_ostream_begin(self->os_relations, "member");
 			xml_ostream_attr(self->os_relations, "type",
 			                 osmdb_relationMemberCodeToType(m->type));
-			xml_ostream_attrf(self->os_relations, "ref", "%0.0lf", m->ref);
+			xml_ostream_attrf(self->os_relations, "ref", "%0.0lf",
+			                  m->ref);
 			xml_ostream_attr(self->os_relations, "role",
 			                 osmdb_relationMemberCodeToRole(m->role));
 			xml_ostream_end(self->os_relations);
 		}
-		free(m);
+		FREE(m);
 	}
 	xml_ostream_end(self->os_relations);
 
@@ -1074,7 +1086,8 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 	if(fmod(self->stats_relations, 100000.0) == 0.0)
 	{
 		LOGI("line=%i, nodes=%0.0lf, ways=%0.0lf, relations=%0.0lf",
-		     line, self->stats_nodes, self->stats_ways, self->stats_relations);
+		     line, self->stats_nodes, self->stats_ways,
+		     self->stats_relations);
 	}
 
 	return 1;
@@ -1084,8 +1097,8 @@ static int
 osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
                           const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSM_STATE_OSM_REL_TAG;
 
@@ -1141,7 +1154,7 @@ osm_parser_endOsmRelTag(osm_parser_t* self, int line,
                         const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSM_STATE_OSM_REL;
 
@@ -1152,17 +1165,17 @@ static int
 osm_parser_beginOsmRelMember(osm_parser_t* self, int line,
                              const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSM_STATE_OSM_REL_MEMBER;
 
 	osm_relationMember_t* m;
 	m = (osm_relationMember_t*)
-	    calloc(1, sizeof(osm_relationMember_t));
+	    CALLOC(1, sizeof(osm_relationMember_t));
 	if(m == NULL)
 	{
-		LOGE("calloc failed");
+		LOGE("CALLOC failed");
 		return 0;
 	}
 
@@ -1190,7 +1203,7 @@ osm_parser_beginOsmRelMember(osm_parser_t* self, int line,
 	if(cc_list_append(self->rel_members, NULL,
 	                  (const void*) m) == NULL)
 	{
-		free(m);
+		FREE(m);
 		return 0;
 	}
 
@@ -1202,7 +1215,7 @@ osm_parser_endOsmRelMember(osm_parser_t* self, int line,
                            const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSM_STATE_OSM_REL;
 
@@ -1217,15 +1230,15 @@ osm_parser_t* osm_parser_new(xml_ostream_t* os_nodes,
                              xml_ostream_t* os_ways,
                              xml_ostream_t* os_relations)
 {
-	assert(os_nodes);
-	assert(os_ways);
-	assert(os_relations);
+	ASSERT(os_nodes);
+	ASSERT(os_ways);
+	ASSERT(os_relations);
 
 	osm_parser_t* self = (osm_parser_t*)
-	                     calloc(1, sizeof(osm_parser_t));
+	                     CALLOC(1, sizeof(osm_parser_t));
 	if(self == NULL)
 	{
-		LOGE("calloc failed");
+		LOGE("CALLOC failed");
 		return NULL;
 	}
 
@@ -1243,10 +1256,11 @@ osm_parser_t* osm_parser_new(xml_ostream_t* os_nodes,
 
 	int cnt = osmdb_classCount();
 	self->histogram = (osm_classHistogram_t*)
-	                  calloc(cnt, sizeof(osm_classHistogram_t));
+	                  CALLOC(cnt,
+	                         sizeof(osm_classHistogram_t));
 	if(self->histogram == NULL)
 	{
-		LOGE("calloc failed");
+		LOGE("CALLOC failed");
 		goto fail_histogram;
 	}
 
@@ -1270,20 +1284,21 @@ osm_parser_t* osm_parser_new(xml_ostream_t* os_nodes,
 	fail_rel_members:
 		cc_list_delete(&self->way_nds);
 	fail_way_nds:
-		free(self);
+		FREE(self);
 	return NULL;
 }
 
 void osm_parser_delete(osm_parser_t** _self)
 {
-	assert(_self);
+	ASSERT(_self);
 
 	osm_parser_t* self = *_self;
 	if(self)
 	{
 		// print histogram
 		LOGI("nodes=%0.0lf, ways=%0.0lf, relations=%0.0lf",
-		     self->stats_nodes, self->stats_ways, self->stats_relations);
+		     self->stats_nodes, self->stats_ways,
+		     self->stats_relations);
 		int idx;
 		int cnt = osmdb_classCount();
 		for(idx = 0; idx < cnt; ++idx)
@@ -1299,7 +1314,7 @@ void osm_parser_delete(osm_parser_t** _self)
 				     self->histogram[idx].rels);
 			}
 		}
-		free(self->histogram);
+		FREE(self->histogram);
 
 		cc_listIter_t* iter = cc_list_head(self->rel_members);
 		while(iter)
@@ -1307,7 +1322,7 @@ void osm_parser_delete(osm_parser_t** _self)
 			osm_relationMember_t* m;
 			m = (osm_relationMember_t*)
 			    cc_list_remove(self->rel_members, &iter);
-			free(m);
+			FREE(m);
 		}
 
 		iter = cc_list_head(self->way_nds);
@@ -1315,24 +1330,22 @@ void osm_parser_delete(osm_parser_t** _self)
 		{
 			double* ref = (double*)
 			              cc_list_remove(self->way_nds, &iter);
-			free(ref);
+			FREE(ref);
 		}
 
 		cc_list_delete(&self->rel_members);
 		cc_list_delete(&self->way_nds);
-		free(self);
+		FREE(self);
 		*_self = NULL;
 	}
 }
 
-int osm_parser_start(void* priv,
-                     int line,
-                     const char* name,
-                     const char** atts)
+int osm_parser_start(void* priv, int line,
+                     const char* name, const char** atts)
 {
-	assert(priv);
-	assert(name);
-	assert(atts);
+	ASSERT(priv);
+	ASSERT(name);
+	ASSERT(atts);
 
 	osm_parser_t* self = (osm_parser_t*) priv;
 
@@ -1398,14 +1411,12 @@ int osm_parser_start(void* priv,
 	return 0;
 }
 
-int osm_parser_end(void* priv,
-                   int line,
-                   const char* name,
-                   const char* content)
+int osm_parser_end(void* priv, int line,
+                   const char* name, const char* content)
 {
 	// content may be NULL
-	assert(priv);
-	assert(name);
+	ASSERT(priv);
+	ASSERT(name);
 
 	osm_parser_t* self = (osm_parser_t*) priv;
 

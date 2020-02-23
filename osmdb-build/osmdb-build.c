@@ -22,15 +22,14 @@
  */
 
 #include <stdlib.h>
-#include <assert.h>
 #include <string.h>
+
+#define LOG_TAG "osmdb"
+#include "libcc/cc_log.h"
 #include "libcc/cc_timestamp.h"
 #include "libxmlstream/xml_istream.h"
 #include "libxmlstream/xml_ostream.h"
 #include "osm_parser.h"
-
-#define LOG_TAG "osmdb"
-#include "libxmlstream/xml_log.h"
 
 /***********************************************************
 * public                                                   *

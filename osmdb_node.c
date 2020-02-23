@@ -22,13 +22,13 @@
  */
 
 #include <stdlib.h>
-#include <assert.h>
 #include <string.h>
-#include "osmdb_node.h"
-#include "osmdb_util.h"
 
 #define LOG_TAG "osmdb"
-#include "../libxmlstream/xml_log.h"
+#include "../libcc/cc_log.h"
+#include "../libcc/cc_memory.h"
+#include "osmdb_node.h"
+#include "osmdb_util.h"
 
 /***********************************************************
 * public                                                   *
@@ -36,7 +36,7 @@
 
 osmdb_node_t* osmdb_node_new(const char** atts, int line)
 {
-	assert(atts);
+	ASSERT(atts);
 
 	const char* id    = NULL;
 	const char* lat   = NULL;
@@ -97,10 +97,10 @@ osmdb_node_t* osmdb_node_new(const char** atts, int line)
 
 	// create the node
 	osmdb_node_t* self = (osmdb_node_t*)
-	                     calloc(1, sizeof(osmdb_node_t));
+	                     CALLOC(1, sizeof(osmdb_node_t));
 	if(self == NULL)
 	{
-		LOGE("calloc failed");
+		LOGE("CALLOC failed");
 		return NULL;
 	}
 
@@ -112,7 +112,7 @@ osmdb_node_t* osmdb_node_new(const char** atts, int line)
 	if(name)
 	{
 		int len = strlen(name) + 1;
-		self->name = (char*) malloc(len*sizeof(char));
+		self->name = (char*) MALLOC(len*sizeof(char));
 		if(self->name == NULL)
 		{
 			goto fail_name;
@@ -123,7 +123,7 @@ osmdb_node_t* osmdb_node_new(const char** atts, int line)
 	if(abrev)
 	{
 		int len = strlen(abrev) + 1;
-		self->abrev = (char*) malloc(len*sizeof(char));
+		self->abrev = (char*) MALLOC(len*sizeof(char));
 		if(self->abrev == NULL)
 		{
 			goto fail_abrev;
@@ -151,36 +151,36 @@ osmdb_node_t* osmdb_node_new(const char** atts, int line)
 
 	// failure
 	fail_abrev:
-		free(self->name);
+		FREE(self->name);
 	fail_name:
-		free(self);
+		FREE(self);
 	return NULL;
 }
 
 void osmdb_node_delete(osmdb_node_t** _self)
 {
-	assert(_self);
+	ASSERT(_self);
 
 	osmdb_node_t* self = *_self;
 	if(self)
 	{
-		free(self->name);
-		free(self->abrev);
-		free(self);
+		FREE(self->name);
+		FREE(self->abrev);
+		FREE(self);
 		*_self = NULL;
 	}
 }
 
 void osmdb_node_incref(osmdb_node_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	++self->refcount;
 }
 
 int osmdb_node_decref(osmdb_node_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	--self->refcount;
 	return (self->refcount == 0) ? 1 : 0;
@@ -188,8 +188,8 @@ int osmdb_node_decref(osmdb_node_t* self)
 
 int osmdb_node_export(osmdb_node_t* self, xml_ostream_t* os)
 {
-	assert(self);
-	assert(os);
+	ASSERT(self);
+	ASSERT(os);
 
 	int ret = 1;
 	ret &= xml_ostream_begin(os, "node");
@@ -225,7 +225,7 @@ int osmdb_node_export(osmdb_node_t* self, xml_ostream_t* os)
 
 int osmdb_node_size(osmdb_node_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	int size = sizeof(osmdb_node_t);
 	if(self->name)

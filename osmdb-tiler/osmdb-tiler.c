@@ -21,21 +21,19 @@
  *
  */
 
-#include <stdlib.h>
-#include <assert.h>
-#include <string.h>
 #include <math.h>
-
-#include "terrain/terrain_tile.h"
-#include "osmdb/osmdb_index.h"
-#include "osmdb/osmdb_node.h"
-#include "osmdb/osmdb_way.h"
-#include "osmdb/osmdb_relation.h"
-#include "osmdb/osmdb_util.h"
-#include "libcc/cc_timestamp.h"
+#include <stdlib.h>
+#include <string.h>
 
 #define LOG_TAG "osmdb"
-#include "libxmlstream/xml_log.h"
+#include "libcc/cc_log.h"
+#include "libcc/cc_timestamp.h"
+#include "osmdb/osmdb_index.h"
+#include "osmdb/osmdb_node.h"
+#include "osmdb/osmdb_relation.h"
+#include "osmdb/osmdb_util.h"
+#include "osmdb/osmdb_way.h"
+#include "terrain/terrain_tile.h"
 
 /***********************************************************
 * private                                                  *
@@ -48,7 +46,7 @@ double stats_tiles = 0.0;
 static int osmdb_makeTile(osmdb_index_t* index,
                           int zoom, int x, int y)
 {
-	assert(index);
+	ASSERT(index);
 
 	stats_tiles += 1.0;
 	if(fmod(stats_tiles, 10000.0) == 0.0)
@@ -93,10 +91,11 @@ static int osmdb_makeTile(osmdb_index_t* index,
 	return 0;
 }
 
-static int osmdb_makeTileR(osmdb_index_t* index,
-                           int zoom, int x, int y)
+static int
+osmdb_makeTileR(osmdb_index_t* index, int zoom,
+                int x, int y)
 {
-	assert(index);
+	ASSERT(index);
 
 	if(zoom < 3)
 	{

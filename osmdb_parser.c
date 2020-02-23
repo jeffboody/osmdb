@@ -22,13 +22,13 @@
  */
 
 #include <stdlib.h>
-#include <assert.h>
 #include <string.h>
-#include "../libxmlstream/xml_istream.h"
-#include "osmdb_parser.h"
 
 #define LOG_TAG "osmdb"
-#include "../libxmlstream/xml_log.h"
+#include "../libcc/cc_log.h"
+#include "../libcc/cc_memory.h"
+#include "../libxmlstream/xml_istream.h"
+#include "osmdb_parser.h"
 
 #define OSMDB_STATE_INIT              0
 #define OSMDB_STATE_OSMDB             1
@@ -71,8 +71,8 @@ typedef struct
 static int
 osmdb_parser_defaultNodeFn(void* priv, osmdb_node_t* node)
 {
-	assert(priv);
-	assert(node);
+	ASSERT(priv);
+	ASSERT(node);
 
 	return 0;
 }
@@ -80,8 +80,8 @@ osmdb_parser_defaultNodeFn(void* priv, osmdb_node_t* node)
 static int
 osmdb_parser_defaultWayFn(void* priv, osmdb_way_t* way)
 {
-	assert(priv);
-	assert(way);
+	ASSERT(priv);
+	ASSERT(way);
 
 	return 0;
 }
@@ -90,8 +90,8 @@ static int
 osmdb_parser_defaultRelationFn(void* priv,
                                osmdb_relation_t* relation)
 {
-	assert(priv);
-	assert(relation);
+	ASSERT(priv);
+	ASSERT(relation);
 
 	return 0;
 }
@@ -99,7 +99,7 @@ osmdb_parser_defaultRelationFn(void* priv,
 static int
 osmdb_parser_defaultRefFn(void* priv, double ref)
 {
-	assert(priv);
+	ASSERT(priv);
 
 	return 0;
 }
@@ -108,8 +108,8 @@ static int
 osmdb_parser_beginOsm(osmdb_parser_t* self, int line,
                       const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSMDB_STATE_OSMDB;
 
@@ -121,7 +121,7 @@ osmdb_parser_endOsm(osmdb_parser_t* self, int line,
                     const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSMDB_STATE_DONE;
 
@@ -132,8 +132,8 @@ static int
 osmdb_parser_beginOsmNode(osmdb_parser_t* self, int line,
                           const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSMDB_STATE_OSMDB_NODE;
 	self->node  = osmdb_node_new(atts, line);
@@ -145,7 +145,7 @@ osmdb_parser_endOsmNode(osmdb_parser_t* self, int line,
                         const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSMDB_STATE_OSMDB;
 	if(self->node == NULL)
@@ -166,8 +166,8 @@ static int
 osmdb_parser_beginOsmWay(osmdb_parser_t* self, int line,
                          const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSMDB_STATE_OSMDB_WAY;
 	self->way   = osmdb_way_new(atts, line);
@@ -179,7 +179,7 @@ osmdb_parser_endOsmWay(osmdb_parser_t* self, int line,
                        const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSMDB_STATE_OSMDB;
 	if(self->way == NULL)
@@ -200,8 +200,8 @@ static int
 osmdb_parser_beginOsmWayNd(osmdb_parser_t* self, int line,
                            const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSMDB_STATE_OSMDB_WAY_ND;
 	if(self->way == NULL)
@@ -222,7 +222,7 @@ osmdb_parser_endOsmWayNd(osmdb_parser_t* self, int line,
                          const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSMDB_STATE_OSMDB_WAY;
 	return 1;
@@ -232,8 +232,8 @@ static int
 osmdb_parser_beginOsmRel(osmdb_parser_t* self, int line,
                          const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state    = OSMDB_STATE_OSMDB_REL;
 	self->relation = osmdb_relation_new(atts, line);
@@ -245,7 +245,7 @@ osmdb_parser_endOsmRel(osmdb_parser_t* self, int line,
                        const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSMDB_STATE_OSMDB;
 	if(self->relation == NULL)
@@ -266,8 +266,8 @@ static int
 osmdb_parser_beginOsmRelMember(osmdb_parser_t* self, int line,
                                const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSMDB_STATE_OSMDB_REL_MEMBER;
 	if(self->relation == NULL)
@@ -288,7 +288,7 @@ osmdb_parser_endOsmRelMember(osmdb_parser_t* self, int line,
                              const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSMDB_STATE_OSMDB_REL;
 	return 1;
@@ -298,8 +298,8 @@ static int
 osmdb_parser_beginOsmNodeRef(osmdb_parser_t* self, int line,
                              const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSMDB_STATE_OSMDB_NODE_REF;
 
@@ -332,7 +332,7 @@ osmdb_parser_endOsmNodeRef(osmdb_parser_t* self, int line,
                            const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSMDB_STATE_OSMDB;
 	return 1;
@@ -342,8 +342,8 @@ static int
 osmdb_parser_beginOsmWayRef(osmdb_parser_t* self, int line,
                             const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSMDB_STATE_OSMDB_WAY_REF;
 
@@ -376,7 +376,7 @@ osmdb_parser_endOsmWayRef(osmdb_parser_t* self, int line,
                           const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSMDB_STATE_OSMDB;
 	return 1;
@@ -386,8 +386,8 @@ static int
 osmdb_parser_beginOsmRelationRef(osmdb_parser_t* self, int line,
                                  const char** atts)
 {
-	assert(self);
-	assert(atts);
+	ASSERT(self);
+	ASSERT(atts);
 
 	self->state = OSMDB_STATE_OSMDB_REL_REF;
 
@@ -420,7 +420,7 @@ osmdb_parser_endOsmRelationRef(osmdb_parser_t* self, int line,
                                const char* content)
 {
 	// content may be NULL
-	assert(self);
+	ASSERT(self);
 
 	self->state = OSMDB_STATE_OSMDB;
 	return 1;
@@ -435,18 +435,18 @@ osmdb_parser_new(void* priv,
                  osmdb_parser_wayRefFn wref_fn,
                  osmdb_parser_relationRefFn rref_fn)
 {
-	assert(node_fn);
-	assert(way_fn);
-	assert(relation_fn);
-	assert(nref_fn);
-	assert(wref_fn);
-	assert(rref_fn);
+	ASSERT(node_fn);
+	ASSERT(way_fn);
+	ASSERT(relation_fn);
+	ASSERT(nref_fn);
+	ASSERT(wref_fn);
+	ASSERT(rref_fn);
 
-	osmdb_parser_t* self = (osmdb_parser_t*)
-	                       calloc(1, sizeof(osmdb_parser_t));
+	osmdb_parser_t* self;
+	self = (osmdb_parser_t*) CALLOC(1, sizeof(osmdb_parser_t));
 	if(self == NULL)
 	{
-		LOGE("calloc failed");
+		LOGE("CALLOC failed");
 		return NULL;
 	}
 
@@ -463,7 +463,7 @@ osmdb_parser_new(void* priv,
 
 static void osmdb_parser_delete(osmdb_parser_t** _self)
 {
-	assert(_self);
+	ASSERT(_self);
 
 	osmdb_parser_t* self = *_self;
 	if(self)
@@ -483,7 +483,7 @@ static void osmdb_parser_delete(osmdb_parser_t** _self)
 			osmdb_relation_delete(&self->relation);
 		}
 
-		free(self);
+		FREE(self);
 		*_self = NULL;
 	}
 }
@@ -493,9 +493,9 @@ static int osmdb_parser_start(void* priv,
                               const char* name,
                               const char** atts)
 {
-	assert(priv);
-	assert(name);
-	assert(atts);
+	ASSERT(priv);
+	ASSERT(name);
+	ASSERT(atts);
 
 	osmdb_parser_t* self = (osmdb_parser_t*) priv;
 
@@ -560,8 +560,8 @@ static int osmdb_parser_end(void* priv,
                             const char* content)
 {
 	// content may be NULL
-	assert(priv);
-	assert(name);
+	ASSERT(priv);
+	ASSERT(name);
 
 	osmdb_parser_t* self = (osmdb_parser_t*) priv;
 
@@ -618,10 +618,10 @@ int osmdb_parse(const char* fname, void* priv,
                 osmdb_parser_relationFn relation_fn)
 {
 	// priv may be NULL
-	assert(fname);
-	assert(node_fn);
-	assert(way_fn);
-	assert(relation_fn);
+	ASSERT(fname);
+	ASSERT(node_fn);
+	ASSERT(way_fn);
+	ASSERT(relation_fn);
 
 	osmdb_parser_t* self;
 	self = osmdb_parser_new(priv, node_fn, way_fn, relation_fn,
@@ -658,10 +658,10 @@ int osmdb_parseRefs(const char* fname, void* priv,
                     osmdb_parser_relationRefFn rref_fn)
 {
 	// priv may be NULL
-	assert(fname);
-	assert(nref_fn);
-	assert(wref_fn);
-	assert(rref_fn);
+	ASSERT(fname);
+	ASSERT(nref_fn);
+	ASSERT(wref_fn);
+	ASSERT(rref_fn);
 
 	osmdb_parser_t* self;
 	self = osmdb_parser_new(priv,

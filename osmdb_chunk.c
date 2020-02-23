@@ -22,18 +22,18 @@
  */
 
 #include <stdlib.h>
-#include <assert.h>
-#include "osmdb_node.h"
-#include "osmdb_way.h"
-#include "osmdb_relation.h"
-#include "osmdb_chunk.h"
-#include "osmdb_index.h"
-#include "osmdb_parser.h"
-#include "osmdb_util.h"
-#include "../libxmlstream/xml_ostream.h"
 
 #define LOG_TAG "osmdb"
-#include "../libxmlstream/xml_log.h"
+#include "../libcc/cc_log.h"
+#include "../libcc/cc_memory.h"
+#include "../libxmlstream/xml_ostream.h"
+#include "osmdb_chunk.h"
+#include "osmdb_index.h"
+#include "osmdb_node.h"
+#include "osmdb_parser.h"
+#include "osmdb_relation.h"
+#include "osmdb_util.h"
+#include "osmdb_way.h"
 
 /***********************************************************
 * private                                                  *
@@ -41,7 +41,7 @@
 
 static int osmdb_chunk_finish(osmdb_chunk_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	int success = 1;
 	xml_ostream_t* os = NULL;
@@ -113,7 +113,7 @@ static int osmdb_chunk_finish(osmdb_chunk_t* self)
 				success &= xml_ostream_attrf(os, "ref", "%0.0lf", *ref);
 				success &= xml_ostream_end(os);
 			}
-			free(ref);
+			FREE(ref);
 		}
 		else if((self->type == OSMDB_TYPE_WAYREF) ||
 		        (self->type == OSMDB_TYPE_CTRWAYREF))
@@ -126,7 +126,7 @@ static int osmdb_chunk_finish(osmdb_chunk_t* self)
 				success &= xml_ostream_attrf(os, "ref", "%0.0lf", *ref);
 				success &= xml_ostream_end(os);
 			}
-			free(ref);
+			FREE(ref);
 		}
 		else
 		{
@@ -152,8 +152,8 @@ static int
 osmdb_chunk_nodeFn(void* priv,
                    osmdb_node_t* node)
 {
-	assert(priv);
-	assert(node);
+	ASSERT(priv);
+	ASSERT(node);
 
 	osmdb_chunk_t* self = (osmdb_chunk_t*) priv;
 	if((self->type == OSMDB_TYPE_NODE) ||
@@ -185,8 +185,8 @@ static int
 osmdb_chunk_wayFn(void* priv,
                   osmdb_way_t* way)
 {
-	assert(priv);
-	assert(way);
+	ASSERT(priv);
+	ASSERT(way);
 
 	osmdb_chunk_t* self = (osmdb_chunk_t*) priv;
 	if(self->type == OSMDB_TYPE_WAY)
@@ -217,8 +217,8 @@ static int
 osmdb_chunk_relationFn(void* priv,
                        osmdb_relation_t* relation)
 {
-	assert(priv);
-	assert(relation);
+	ASSERT(priv);
+	ASSERT(relation);
 
 	osmdb_chunk_t* self = (osmdb_chunk_t*) priv;
 	if(self->type == OSMDB_TYPE_RELATION)
@@ -249,7 +249,7 @@ static int
 osmdb_chunk_nodeRefFn(void* priv,
                       double ref)
 {
-	assert(priv);
+	ASSERT(priv);
 
 	osmdb_chunk_t* self = (osmdb_chunk_t*) priv;
 	if((self->type == OSMDB_TYPE_NODEREF) ||
@@ -268,10 +268,10 @@ osmdb_chunk_nodeRefFn(void* priv,
 	osmdb_splitId(ref, &idu, &idl);
 
 	double* _ref = (double*)
-	               malloc(sizeof(double));
+	               MALLOC(sizeof(double));
 	if(_ref == NULL)
 	{
-		LOGE("malloc failed");
+		LOGE("MALLOC failed");
 		return 0;
 	}
 	*_ref = ref;
@@ -288,7 +288,7 @@ osmdb_chunk_nodeRefFn(void* priv,
 
 	// failure
 	fail_add:
-		free(_ref);
+		FREE(_ref);
 	return 0;
 }
 
@@ -296,7 +296,7 @@ static int
 osmdb_chunk_wayRefFn(void* priv,
                      double ref)
 {
-	assert(priv);
+	ASSERT(priv);
 
 	osmdb_chunk_t* self = (osmdb_chunk_t*) priv;
 	if((self->type == OSMDB_TYPE_WAYREF) ||
@@ -315,10 +315,10 @@ osmdb_chunk_wayRefFn(void* priv,
 	osmdb_splitId(ref, &idu, &idl);
 
 	double* _ref = (double*)
-	               malloc(sizeof(double));
+	               MALLOC(sizeof(double));
 	if(_ref == NULL)
 	{
-		LOGE("malloc failed");
+		LOGE("MALLOC failed");
 		return 0;
 	}
 	*_ref = ref;
@@ -335,7 +335,7 @@ osmdb_chunk_wayRefFn(void* priv,
 
 	// failure
 	fail_add:
-		free(_ref);
+		FREE(_ref);
 	return 0;
 }
 
@@ -349,7 +349,7 @@ osmdb_chunk_relationRefFn(void* priv,
 
 static int osmdb_chunk_import(osmdb_chunk_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	char fname[256];
 	osmdb_chunk_fname(self->base, self->type,
@@ -400,14 +400,14 @@ osmdb_chunk_t* osmdb_chunk_new(const char* base,
                                double idu, int type,
                                int import, int* dsize)
 {
-	assert(base);
-	assert(dsize);
+	ASSERT(base);
+	ASSERT(dsize);
 
 	osmdb_chunk_t* self = (osmdb_chunk_t*)
-	                      malloc(sizeof(osmdb_chunk_t));
+	                      MALLOC(sizeof(osmdb_chunk_t));
 	if(self == NULL)
 	{
-		LOGE("malloc failed");
+		LOGE("MALLOC failed");
 		return NULL;
 	}
 
@@ -438,14 +438,14 @@ osmdb_chunk_t* osmdb_chunk_new(const char* base,
 	fail_import:
 		cc_map_delete(&self->map);
 	fail_map:
-		free(self);
+		FREE(self);
 	return NULL;
 }
 
 int osmdb_chunk_delete(osmdb_chunk_t** _self, int* dsize)
 {
-	assert(_self);
-	assert(dsize);
+	ASSERT(_self);
+	ASSERT(dsize);
 
 	*dsize = 0;
 
@@ -456,7 +456,7 @@ int osmdb_chunk_delete(osmdb_chunk_t** _self, int* dsize)
 		*dsize = self->size;
 		success = osmdb_chunk_finish(self);
 		cc_map_delete(&self->map);
-		free(self);
+		FREE(self);
 		*_self = NULL;
 	}
 	return success;
@@ -464,28 +464,28 @@ int osmdb_chunk_delete(osmdb_chunk_t** _self, int* dsize)
 
 void osmdb_chunk_lock(osmdb_chunk_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	self->locked = 1;
 }
 
 void osmdb_chunk_unlock(osmdb_chunk_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	self->locked = 0;
 }
 
 int osmdb_chunk_locked(osmdb_chunk_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	return self->locked;
 }
 
 const void* osmdb_chunk_find(osmdb_chunk_t* self, double idl)
 {
-	assert(self);
+	ASSERT(self);
 
 	cc_mapIter_t iterator;
 	return cc_map_findf(self->map, &iterator, "%0.0lf", idl);
@@ -494,8 +494,8 @@ const void* osmdb_chunk_find(osmdb_chunk_t* self, double idl)
 int osmdb_chunk_add(osmdb_chunk_t* self,
                     const void* data, double idl, int dsize)
 {
-	assert(self);
-	assert(data);
+	ASSERT(self);
+	ASSERT(data);
 
 	if(cc_map_addf(self->map, data, "%0.0f", idl) == 0)
 	{
@@ -509,7 +509,7 @@ int osmdb_chunk_add(osmdb_chunk_t* self,
 
 int osmdb_chunk_flush(osmdb_chunk_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	if(self->dirty == 0)
 	{
@@ -596,8 +596,8 @@ void osmdb_chunk_fname(const char* base,
                        int type, double idu,
                        char* fname)
 {
-	assert(base);
-	assert(fname);
+	ASSERT(base);
+	ASSERT(fname);
 
 	if(type == OSMDB_TYPE_NODE)
 	{
@@ -650,8 +650,8 @@ void osmdb_chunk_fname(const char* base,
 void osmdb_chunk_path(const char* base,
                       int type, char* path)
 {
-	assert(base);
-	assert(path);
+	ASSERT(base);
+	ASSERT(path);
 
 	if(type == OSMDB_TYPE_NODE)
 	{

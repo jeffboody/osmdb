@@ -22,13 +22,11 @@
  */
 
 #include <stdlib.h>
-#include <assert.h>
-
-#include "osmdb_range.h"
-#include "osmdb_index.h"
 
 #define LOG_TAG "osmdb"
-#include "../libxmlstream/xml_log.h"
+#include "../libcc/cc_log.h"
+#include "osmdb_index.h"
+#include "osmdb_range.h"
 
 /***********************************************************
 * public                                                   *
@@ -36,7 +34,7 @@
 
 void osmdb_range_init(osmdb_range_t* self)
 {
-	assert(self);
+	ASSERT(self);
 
 	self->pts  = 0;
 	self->latT = 0.0;
@@ -48,7 +46,7 @@ void osmdb_range_init(osmdb_range_t* self)
 void osmdb_range_addPt(osmdb_range_t* self,
                        double lat, double lon)
 {
-	assert(self);
+	ASSERT(self);
 
 	if(self->pts)
 	{
@@ -84,7 +82,7 @@ int osmdb_range_clip(osmdb_range_t* self,
                      double latT, double lonL,
                      double latB, double lonR)
 {
-	assert(self);
+	ASSERT(self);
 
 	if(self->pts == 0)
 	{

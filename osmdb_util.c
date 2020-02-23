@@ -21,20 +21,19 @@
  *
  */
 
-#include <stdlib.h>
-#include <assert.h>
-#include <string.h>
-#include <stdio.h>
-#include <math.h>
-#include <unistd.h>
-#include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include "osmdb_chunk.h"
-#include "osmdb_util.h"
+#include <errno.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #define LOG_TAG "osmdb"
-#include "../libxmlstream/xml_log.h"
+#include "../libcc/cc_log.h"
+#include "osmdb_chunk.h"
+#include "osmdb_util.h"
 
 /***********************************************************
 * private                                                  *
@@ -1139,7 +1138,7 @@ const char* const OSM_UTIL_RELATION_MEMBER_ROLE[] =
 
 int osmdb_stNameToCode(const char* name)
 {
-	assert(name);
+	ASSERT(name);
 
 	int i;
 	for(i = 0; i < 60; ++i)
@@ -1155,7 +1154,7 @@ int osmdb_stNameToCode(const char* name)
 
 int osmdb_stAbrevToCode(const char* abrev)
 {
-	assert(abrev);
+	ASSERT(abrev);
 
 	if((abrev[0] != '\0') &&
 	   (abrev[1] != '\0') &&
@@ -1191,21 +1190,21 @@ int osmdb_stAbrevToCode(const char* abrev)
 
 const char* osmdb_stCodeToName(int code)
 {
-	assert((code >= 0) && (code < 60));
+	ASSERT((code >= 0) && (code < 60));
 
 	return OSM_UTIL_ST[code].state;
 }
 
 const char* osmdb_stCodeToAbrev(int code)
 {
-	assert((code >= 0) && (code < 60));
+	ASSERT((code >= 0) && (code < 60));
 
 	return OSM_UTIL_ST[code].st;
 }
 
 int osmdb_classNameToCode(const char* name)
 {
-	assert(name);
+	ASSERT(name);
 
 	int idx = 0;
 	while(OSM_UTIL_CLASSES[idx])
@@ -1223,8 +1222,8 @@ int osmdb_classNameToCode(const char* name)
 
 int osmdb_classKVToCode(const char* k, const char* v)
 {
-	assert(k);
-	assert(v);
+	ASSERT(k);
+	ASSERT(v);
 
 	char name[256];
 	snprintf(name, 256, "%s:%s", k, v);
@@ -1257,7 +1256,7 @@ int osmdb_classCount(void)
 
 int osmdb_relationTagTypeToCode(const char* type)
 {
-	assert(type);
+	ASSERT(type);
 
 	int idx = 0;
 	while(OSM_UTIL_RELATION_TAG_TYPE[idx])
@@ -1289,7 +1288,7 @@ const char* osmdb_relationTagCodeToType(int code)
 
 int osmdb_relationMemberTypeToCode(const char* type)
 {
-	assert(type);
+	ASSERT(type);
 
 	int idx = 0;
 	while(OSM_UTIL_RELATION_MEMBER_TYPE[idx])
@@ -1321,7 +1320,7 @@ const char* osmdb_relationMemberCodeToType(int code)
 
 int osmdb_relationMemberRoleToCode(const char* role)
 {
-	assert(role);
+	ASSERT(role);
 
 	int idx = 0;
 	while(OSM_UTIL_RELATION_MEMBER_ROLE[idx])
@@ -1353,7 +1352,7 @@ const char* osmdb_relationMemberCodeToRole(int code)
 
 int osmdb_fileExists(const char* fname)
 {
-	assert(fname);
+	ASSERT(fname);
 
 	if(access(fname, F_OK) != 0)
 	{
@@ -1364,7 +1363,7 @@ int osmdb_fileExists(const char* fname)
 
 int osmdb_mkdir(const char* path)
 {
-	assert(path);
+	ASSERT(path);
 
 	int  len = strnlen(path, 255);
 	char dir[256];
@@ -1383,7 +1382,8 @@ int osmdb_mkdir(const char* path)
 			}
 
 			// try to mkdir
-			if(mkdir(dir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1)
+			if(mkdir(dir, S_IRWXU | S_IRWXG | S_IROTH |
+			              S_IXOTH) == -1)
 			{
 				if(errno == EEXIST)
 				{
@@ -1404,8 +1404,8 @@ int osmdb_mkdir(const char* path)
 void osmdb_splitId(double id,
                    double* idu, double* idl)
 {
-	assert(idu);
-	assert(idl);
+	ASSERT(idu);
+	ASSERT(idl);
 
 	// splits id to upper and lower digets
 	double s = (double) OSMDB_CHUNK_COUNT;
