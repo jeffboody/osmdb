@@ -1650,12 +1650,7 @@ osmdb_index_clipWays(osmdb_index_t* self,
 	double lonL;
 	double latB;
 	double lonR;
-	terrain_sample2coord(x, y, zoom,
-	                     0, 0, &latT, &lonL);
-	terrain_sample2coord(x, y, zoom,
-	                     TERRAIN_SAMPLES_TILE - 1,
-	                     TERRAIN_SAMPLES_TILE - 1,
-	                     &latB, &lonR);
+	terrain_bounds(x, y, zoom, &latT, &lonL, &latB, &lonR);
 
 	// elements are defined with zero width but in
 	// practice are drawn with non-zero width
