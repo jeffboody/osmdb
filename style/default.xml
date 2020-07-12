@@ -188,6 +188,7 @@
 	<class name="core:special"           layer="core"        line="core:special"    point="core" />
 	<class name="core:mineral"           layer="core"        line="core:mineral"    point="core" />
 
+	<class name="default:waypoint"           point="default" />
 	<class name="natural:peak"               point="peak" />
 	<class name="natural:volcano"            point="peak" />
 	<class name="natural:saddle"             point="saddle" />

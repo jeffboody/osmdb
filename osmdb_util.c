@@ -1102,6 +1102,7 @@ const char* const OSM_UTIL_CLASSES[] =
 	"core:recreation",
 	"core:special",
 	"core:mineral",
+	"default:waypoint",
 	NULL
 };
 
