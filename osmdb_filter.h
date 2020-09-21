@@ -51,5 +51,7 @@ osmdb_filterInfo_t* osmdb_filter_selectWay(osmdb_filter_t* self,
                                            osmdb_way_t* way);
 osmdb_filterInfo_t* osmdb_filter_selectRelation(osmdb_filter_t* self,
                                                 osmdb_relation_t* relation);
+osmdb_filterInfo_t* osmdb_filter_selectClass(osmdb_filter_t* self,
+                                             int class_code);
 
 #endif

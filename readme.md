@@ -54,3 +54,25 @@ reformat osm data (e.g.)
 	osmdb-build Boulder | tee build.log
 	osmdb-indexer filter/default.xml Boulder | tee indexer.log
 	osmdb-tiler . Boulder | tee tiler.log
+
+SQLite
+======
+
+To initialize SQLite3 Database:
+
+	./osmdb-sqlite BASE
+	./shell BASE.sqlite3
+	> .read init.sql
+	> .mode csv
+	> .separator |
+	> .import BASE-tbl_nodes.data tbl_nodes
+	> .import BASE-tbl_ways.data tbl_ways
+	> .import BASE-tbl_rels.data tbl_rels
+	> .import BASE-tbl_ways_nds.data tbl_ways_nds
+	> .import BASE-tbl_nodes_members.data tbl_nodes_members
+	> .import BASE-tbl_ways_members.data tbl_ways_members
+	> .import BASE-tbl_nodes_selected.data tbl_nodes_selected
+	> .import BASE-tbl_ways_selected.data tbl_ways_selected
+	> .import BASE-tbl_ways_center.data tbl_ways_center
+	> .import BASE-tbl_rels_center.data tbl_rels_center
+	> .read process.sql

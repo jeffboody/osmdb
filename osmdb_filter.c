@@ -365,3 +365,16 @@ osmdb_filter_selectRelation(osmdb_filter_t* self,
 
 	return info;
 }
+
+osmdb_filterInfo_t*
+osmdb_filter_selectClass(osmdb_filter_t* self,
+                         int class_code)
+{
+	ASSERT(self);
+
+	const char* class = osmdb_classCodeToName(class_code);
+
+	cc_mapIter_t iter;
+	return (osmdb_filterInfo_t*)
+	       cc_map_find(self->info, &iter, class);
+}
