@@ -133,3 +133,12 @@ CREATE TABLE tbl_rels_center
 	rid INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_rels,
 	center INTEGER
 );
+
+-- COORD INDEXES
+-- These indexes optimize searches for coordinates. See
+-- EXPLAIN QUERY PLAN to verify if the indexes are used.
+-- e.g. SELECT * FROM tbl_nodes WHERE lat>0 AND lon>0;
+
+CREATE INDEX idx_nodes_coords ON tbl_nodes (lat, lon);
+CREATE INDEX idx_ways_range_coords ON tbl_ways_range (latT, lonL, latB, lonR);
+CREATE INDEX idx_rels_range_coords ON tbl_rels_range (latT, lonL, latB, lonR);
