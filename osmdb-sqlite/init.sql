@@ -118,20 +118,16 @@ CREATE TABLE tbl_ways_selected
 -- These tables contain references and a center flag. The
 -- center flag is used to determine which relations can
 -- discard their member ways and which ways can discard
--- their nds. Note that the center flag is always 1 because
--- these tables are joined with a LEFT OUTER JOIN to
--- discard ways and nodes where the center flag is NULL.
+-- their nds.
 
 CREATE TABLE tbl_ways_center
 (
-	wid INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_ways,
-	center INTEGER
+	wid INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_ways
 );
 
 CREATE TABLE tbl_rels_center
 (
-	rid INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_rels,
-	center INTEGER
+	rid INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_rels
 );
 
 -- COORD INDEXES

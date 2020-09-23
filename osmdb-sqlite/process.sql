@@ -24,26 +24,28 @@
 -- compute the range of all relations
 INSERT INTO tbl_rels_range (rid, latT, lonL, latB, lonR)
 	SELECT rid, max(lat) AS latT, min(lon) AS lonL, min(lat) AS latB, max(lon) AS lonR
-		FROM tbl_rels AS a
-		JOIN tbl_ways_members AS b USING (rid)
-		JOIN tbl_ways_nds AS c USING (wid)
-		JOIN tbl_nodes AS d USING (nid)
-		GROUP BY a.rid;
+		FROM tbl_rels
+		JOIN tbl_ways_members USING (rid)
+		JOIN tbl_ways_nds USING (wid)
+		JOIN tbl_nodes USING (nid)
+		GROUP BY rid;
+
+-- delete way members for centered relations
+DELETE FROM tbl_ways_members WHERE EXISTS
+	( SELECT * FROM tbl_rels_center WHERE
+		tbl_ways_members.rid=tbl_rels_center.rid );
 
 -- insert nodes transitively selected from relations
 INSERT OR IGNORE INTO tbl_nodes_selected (nid)
 	SELECT nid
-		FROM tbl_rels AS a
-		JOIN tbl_nodes_members AS b USING (rid);
+		FROM tbl_rels
+		JOIN tbl_nodes_members USING (rid);
 
 -- insert ways transitively selected from relations
--- ignoring the ways from centered relations
 INSERT OR IGNORE INTO tbl_ways_selected (wid)
 	SELECT wid
-		FROM tbl_rels AS a
-		LEFT OUTER JOIN tbl_rels_center AS b USING (rid)
-		JOIN tbl_ways_members AS c USING (rid)
-		WHERE b.center IS NULL;
+		FROM tbl_rels
+		JOIN tbl_ways_members USING (rid);
 
 -- delete ways which were not selected by during the
 -- construction phase or were not transitively selected
@@ -55,19 +57,21 @@ DELETE FROM tbl_ways WHERE NOT EXISTS
 -- compute the range of all selected ways
 INSERT INTO tbl_ways_range (wid, latT, lonL, latB, lonR)
 	SELECT wid, max(lat) AS latT, min(lon) AS lonL, min(lat) AS latB, max(lon) AS lonR
-		FROM tbl_ways_selected AS a
-		JOIN tbl_ways_nds AS b USING (wid)
-		JOIN tbl_nodes AS c USING (nid)
-		GROUP BY a.wid;
+		FROM tbl_ways_selected
+		JOIN tbl_ways_nds USING (wid)
+		JOIN tbl_nodes USING (nid)
+		GROUP BY wid;
+
+-- delete way nds for centered ways
+DELETE FROM tbl_ways_nds WHERE EXISTS
+	( SELECT * FROM tbl_ways_center WHERE
+		tbl_ways_nds.wid=tbl_ways_center.wid );
 
 -- insert nodes transitively selected from ways
--- ignoring the nodes from centered ways
 INSERT OR IGNORE INTO tbl_nodes_selected (nid)
 	SELECT nid
-		FROM tbl_ways AS a
-		LEFT OUTER JOIN tbl_ways_center AS b USING (wid)
-		JOIN tbl_ways_nds AS c USING (wid)
-		WHERE b.center IS NULL;
+		FROM tbl_ways
+		JOIN tbl_ways_nds USING (wid);
 
 -- delete nodes which were not selected by during the
 -- construction phase or were not transitively selected

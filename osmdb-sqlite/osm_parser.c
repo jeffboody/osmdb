@@ -802,7 +802,7 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 
 	if(center)
 	{
-		fprintf(self->tbl_ways_center, "%0.0lf|1\n",
+		fprintf(self->tbl_ways_center, "%0.0lf\n",
 		        self->attr_id);
 	}
 
@@ -1030,7 +1030,7 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 
 	if(info->center)
 	{
-		fprintf(self->tbl_rels_center, "%0.0lf|1\n",
+		fprintf(self->tbl_rels_center, "%0.0lf\n",
 		        self->attr_id);
 	}
 
