@@ -75,4 +75,6 @@ To initialize SQLite3 Database:
 	> .import BASE-tbl_ways_selected.data tbl_ways_selected
 	> .import BASE-tbl_ways_center.data tbl_ways_center
 	> .import BASE-tbl_rels_center.data tbl_rels_center
+	> .import BASE-tbl_ways_polygon.data tbl_ways_polygon
+	> .import BASE-tbl_rels_polygon.data tbl_rels_polygon
 	> .read process.sql

@@ -115,10 +115,9 @@ CREATE TABLE tbl_ways_selected
 );
 
 -- WORKING CENTER TABLES
--- These tables contain references and a center flag. The
--- center flag is used to determine which relations can
--- discard their member ways and which ways can discard
--- their nds.
+-- These tables contain references to determine which
+-- ways can discard their nds and which relations can
+-- discard their member ways
 
 CREATE TABLE tbl_ways_center
 (
@@ -126,6 +125,20 @@ CREATE TABLE tbl_ways_center
 );
 
 CREATE TABLE tbl_rels_center
+(
+	rid INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_rels
+);
+
+-- WORKING POLYGON TABLES
+-- These tables contain references to determine which
+-- ways and relations are drawn as polygons.
+
+CREATE TABLE tbl_ways_polygon
+(
+	wid INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_ways
+);
+
+CREATE TABLE tbl_rels_polygon
 (
 	rid INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_rels
 );

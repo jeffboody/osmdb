@@ -21,6 +21,10 @@
  *
  */
 
+/*
+ * PROCESS RELATIONS
+ */
+
 -- compute the range of all relations
 INSERT INTO tbl_rels_range (rid, latT, lonL, latB, lonR)
 	SELECT rid, max(lat) AS latT, min(lon) AS lonL, min(lat) AS latB, max(lon) AS lonR
@@ -29,6 +33,19 @@ INSERT INTO tbl_rels_range (rid, latT, lonL, latB, lonR)
 		JOIN tbl_ways_nds USING (wid)
 		JOIN tbl_nodes USING (nid)
 		GROUP BY rid;
+
+-- center large polygon relations
+-- large areas are defined to be 50% of the area covered
+-- by a "typical" zoom 14 tile. e.g.
+-- 14/3403/6198:
+-- latT=40.078071, lonL=-105.227051,
+-- latB=40.061257, lonR=-105.205078,
+-- area=0.000369
+INSERT OR IGNORE INTO tbl_rels_center (rid)
+	SELECT rid
+		FROM tbl_rels_polygon
+		JOIN tbl_rels_range USING (rid)
+		WHERE (0.5*(latT-latB)*(lonR-lonL))>0.000369;
 
 -- delete way members for centered relations
 DELETE FROM tbl_ways_members WHERE EXISTS
@@ -47,6 +64,10 @@ INSERT OR IGNORE INTO tbl_ways_selected (wid)
 		FROM tbl_rels
 		JOIN tbl_ways_members USING (rid);
 
+/*
+ * PROCESS WAYS
+ */
+
 -- delete ways which were not selected by during the
 -- construction phase or were not transitively selected
 -- from relations
@@ -62,6 +83,13 @@ INSERT INTO tbl_ways_range (wid, latT, lonL, latB, lonR)
 		JOIN tbl_nodes USING (nid)
 		GROUP BY wid;
 
+-- center large polygon ways
+INSERT OR IGNORE INTO tbl_ways_center (wid)
+	SELECT wid
+		FROM tbl_ways_polygon
+		JOIN tbl_ways_range USING (wid)
+		WHERE (0.5*(latT-latB)*(lonR-lonL))>0.000369;
+
 -- delete way nds for centered ways
 DELETE FROM tbl_ways_nds WHERE EXISTS
 	( SELECT * FROM tbl_ways_center WHERE
@@ -73,12 +101,20 @@ INSERT OR IGNORE INTO tbl_nodes_selected (nid)
 		FROM tbl_ways
 		JOIN tbl_ways_nds USING (wid);
 
+/*
+ * PROCESS NODES
+ */
+
 -- delete nodes which were not selected by during the
 -- construction phase or were not transitively selected
 -- from ways/relations
 DELETE FROM tbl_nodes WHERE NOT EXISTS
 	( SELECT * FROM tbl_nodes_selected WHERE
 		tbl_nodes_selected.nid=tbl_nodes.nid );
+
+/*
+ * CLEAN UP
+ */
 
 -- drop working tables
 DROP TABLE tbl_nodes_selected;
