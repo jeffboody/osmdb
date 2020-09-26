@@ -612,17 +612,18 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 
 	self->state = OSM_STATE_OSM;
 
-	int selected = 1;
+	int selected = 0;
 
-	osmdb_filterInfo_t* info;
-	info = osmdb_filter_selectClass(self->filter,
-	                                self->tag_class);
-	if((info == NULL) ||
-	   (info && info->named && (self->tag_name[0] == '\0')))
+	// select nodes when a point and name exists
+	osmdb_styleClass_t* sc;
+	sc = osmdb_style_class(self->style,
+	                       osmdb_classCodeToName(self->tag_class));
+	if(sc && sc->point && (self->tag_name[0] != '\0'))
 	{
-		selected = 0;
+		selected = 1;
 	}
 
+	// always add nodes since they may be transitively selected
 	fprintf(self->tbl_nodes, "%0.0lf|%i|%lf|%lf|%s|%s|%i|%i\n",
 	        self->attr_id, self->tag_class,
 	        self->attr_lat, self->attr_lon,
@@ -765,28 +766,24 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	self->state = OSM_STATE_OSM;
 
 	int center   = 0;
-	int selected = 1;
+	int selected = 0;
 
-	osmdb_filterInfo_t* info;
-	info = osmdb_filter_selectClass(self->filter,
-	                                self->tag_class);
-	if(info)
+	// select ways when a line/poly exists or when
+	// a point and name exists
+	osmdb_styleClass_t* sc;
+	sc = osmdb_style_class(self->style,
+	                       osmdb_classCodeToName(self->tag_class));
+	if(sc && (sc->line || sc->poly))
 	{
-		if(info->named && (self->tag_name[0] == '\0'))
-		{
-			selected = 0;
-		}
-
-		if(info->center)
-		{
-			center = 1;
-		}
+		selected = 1;
 	}
-	else
+	if(sc && sc->point && (self->tag_name[0] != '\0'))
 	{
-		selected = 0;
+		selected = 1;
+		center   = 1;
 	}
 
+	// always add ways since they may be transitively selected
 	fprintf(self->tbl_ways, "%0.0lf|%i|%i|%s|%s|%i|%i|%i|%i\n",
 	        self->attr_id, self->tag_class,
 	        self->tag_way_layer,
@@ -1014,13 +1011,27 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 
 	self->state = OSM_STATE_OSM;
 
-	osmdb_filterInfo_t* info;
-	info = osmdb_filter_selectClass(self->filter,
-	                                self->tag_class);
-	if((info == NULL) ||
-	   (info && info->named && (self->tag_name[0] == '\0')))
+	int selected = 0;
+	int center   = 0;
+
+	// select relations when a line/poly exists or
+	// when a point and name exists
+	osmdb_styleClass_t* sc;
+	sc = osmdb_style_class(self->style,
+	                       osmdb_classCodeToName(self->tag_class));
+	if(sc && (sc->line || sc->poly))
 	{
-		// discard relations when not selected
+		selected = 1;
+	}
+	else if(sc && sc->point && (self->tag_name[0] != '\0'))
+	{
+		selected = 1;
+		center   = 1;
+	}
+
+	// discard relations when not selected
+	if(selected == 0)
+	{
 		return 1;
 	}
 
@@ -1028,7 +1039,7 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 	        self->attr_id, self->tag_class,
 	        self->tag_name, self->tag_abrev);
 
-	if(info->center)
+	if(center)
 	{
 		fprintf(self->tbl_rels_center, "%0.0lf\n",
 		        self->attr_id);
@@ -1218,10 +1229,10 @@ osm_parser_t* osm_parser_new(const char* base)
 		return NULL;
 	}
 
-	self->filter = osmdb_filter_new("../filter/default.xml");
-	if(self->filter == NULL)
+	self->style = osmdb_style_newFile("../style/default.xml");
+	if(self->style == NULL)
 	{
-		goto fail_filter;
+		goto fail_style;
 	}
 
 	char tbl_nodes[256];
@@ -1364,8 +1375,8 @@ osm_parser_t* osm_parser_new(const char* base)
 	fail_tbl_ways:
 		fclose(self->tbl_nodes);
 	fail_tbl_nodes:
-		osmdb_filter_delete(&self->filter);
-	fail_filter:
+		osmdb_style_delete(&self->style);
+	fail_style:
 		FREE(self);
 	return NULL;
 }
@@ -1427,7 +1438,7 @@ void osm_parser_delete(osm_parser_t** _self)
 		fclose(self->tbl_rels);
 		fclose(self->tbl_ways);
 		fclose(self->tbl_nodes);
-		osmdb_filter_delete(&self->filter);
+		osmdb_style_delete(&self->style);
 		FREE(self);
 		*_self = NULL;
 	}

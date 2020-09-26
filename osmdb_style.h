@@ -95,6 +95,7 @@ typedef struct
 
 osmdb_style_t*      osmdb_style_new(const char* resource,
                                     const char* fname);
+osmdb_style_t*      osmdb_style_newFile(const char* fname);
 void                osmdb_style_delete(osmdb_style_t** _self);
 osmdb_styleClass_t* osmdb_style_class(osmdb_style_t* self,
                                       const char* name);

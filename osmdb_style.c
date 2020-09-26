@@ -187,10 +187,10 @@ osmdb_style_beginOsmLayer(osmdb_style_t* self,
 		return 0;
 	}
 
-	int* layerp = (int*) MALLOC(sizeof(int));
+	int* layerp = (int*) CALLOC(1, sizeof(int));
 	if(layerp == NULL)
 	{
-		LOGE("MALLOC failed");
+		LOGE("CALLOC failed");
 		return 0;
 	}
 	*layerp = cc_map_size(self->layers);
@@ -447,10 +447,10 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 
 	osmdb_stylePoint_t* point;
 	point = (osmdb_stylePoint_t*)
-	        MALLOC(sizeof(osmdb_stylePoint_t));
+	        CALLOC(1, sizeof(osmdb_stylePoint_t));
 	if(point == NULL)
 	{
-		LOGE("MALLOC failed");
+		LOGE("CALLOC failed");
 		return 0;
 	}
 
@@ -567,10 +567,10 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 
 	osmdb_styleLine_t* linep;
 	linep = (osmdb_styleLine_t*)
-	        MALLOC(sizeof(osmdb_styleLine_t));
+	        CALLOC(1, sizeof(osmdb_styleLine_t));
 	if(linep == NULL)
 	{
-		LOGE("MALLOC failed");
+		LOGE("CALLOC failed");
 		return 0;
 	}
 	linep->width  = w;
@@ -644,10 +644,10 @@ osmdb_style_beginOsmPoly(osmdb_style_t* self,
 
 	osmdb_stylePolygon_t* poly;
 	poly = (osmdb_stylePolygon_t*)
-	       MALLOC(sizeof(osmdb_stylePolygon_t));
+	       CALLOC(1, sizeof(osmdb_stylePolygon_t));
 	if(poly == NULL)
 	{
-		LOGE("MALLOC failed");
+		LOGE("CALLOC failed");
 		return 0;
 	}
 	poly->color = c;
@@ -770,10 +770,10 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 
 	osmdb_styleClass_t* class;
 	class = (osmdb_styleClass_t*)
-	        MALLOC(sizeof(osmdb_styleClass_t));
+	        CALLOC(1, sizeof(osmdb_styleClass_t));
 	if(class == NULL)
 	{
-		LOGE("MALLOC failed");
+		LOGE("CALLOC failed");
 		return 0;
 	}
 	class->layer = layeri;
@@ -883,10 +883,11 @@ osmdb_style_new(const char* resource, const char* fname)
 	ASSERT(fname);
 
 	osmdb_style_t* self;
-	self = (osmdb_style_t*) MALLOC(sizeof(osmdb_style_t));
+	self = (osmdb_style_t*)
+	       CALLOC(1, sizeof(osmdb_style_t));
 	if(self == NULL)
 	{
-		LOGE("MALLOC failed");
+		LOGE("CALLOC failed");
 		return NULL;
 	}
 	self->state = OSMDB_STYLE_STATE_INIT;
@@ -960,6 +961,85 @@ osmdb_style_new(const char* resource, const char* fname)
 	fail_seek:
 		pak_file_close(&pak);
 	fail_pak:
+		cc_map_delete(&self->classes);
+	fail_classes:
+		cc_map_delete(&self->polys);
+	fail_polys:
+		cc_map_delete(&self->lines);
+	fail_lines:
+		cc_map_delete(&self->points);
+	fail_points:
+		cc_map_delete(&self->colors);
+	fail_colors:
+		cc_map_delete(&self->layers);
+	fail_layers:
+		FREE(self);
+	return NULL;
+}
+
+osmdb_style_t* osmdb_style_newFile(const char* fname)
+{
+	ASSERT(fname);
+
+	osmdb_style_t* self;
+	self = (osmdb_style_t*) CALLOC(1, sizeof(osmdb_style_t));
+	if(self == NULL)
+	{
+		LOGE("CALLOC failed");
+		return NULL;
+	}
+	self->state = OSMDB_STYLE_STATE_INIT;
+
+	self->layers = cc_map_new();
+	if(self->layers == NULL)
+	{
+		goto fail_layers;
+	}
+
+	self->colors = cc_map_new();
+	if(self->colors == NULL)
+	{
+		goto fail_colors;
+	}
+
+	self->points = cc_map_new();
+	if(self->points == NULL)
+	{
+		goto fail_points;
+	}
+
+	self->lines = cc_map_new();
+	if(self->lines == NULL)
+	{
+		goto fail_lines;
+	}
+
+	self->polys = cc_map_new();
+	if(self->polys == NULL)
+	{
+		goto fail_polys;
+	}
+
+	self->classes = cc_map_new();
+	if(self->classes == NULL)
+	{
+		goto fail_classes;
+	}
+
+	if(xml_istream_parse((void*) self,
+	                     osmdb_style_start,
+	                     osmdb_style_end,
+	                     fname) == 0)
+	{
+		goto fail_parse;
+	}
+
+	// success
+	return self;
+
+	// failure
+	fail_parse:
+		osmdb_style_finish(self);
 		cc_map_delete(&self->classes);
 	fail_classes:
 		cc_map_delete(&self->polys);

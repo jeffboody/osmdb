@@ -25,7 +25,7 @@
 #define osm_parser_H
 
 #include "libcc/cc_list.h"
-#include "../osmdb_filter.h"
+#include "../osmdb_style.h"
 
 typedef struct
 {
@@ -57,7 +57,7 @@ typedef struct
 	FILE* tbl_ways_center;
 	FILE* tbl_rels_center;
 
-	osmdb_filter_t* filter;
+	osmdb_style_t* style;
 
 	// attributes
 	double attr_id;
