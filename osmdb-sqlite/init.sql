@@ -32,7 +32,8 @@ CREATE TABLE tbl_nodes
 	name     TEXT,
 	abrev    TEXT,
 	ele      INTEGER,
-	st       INTEGER
+	st       INTEGER,
+	selected INTEGER
 );
 
 CREATE TABLE tbl_ways
@@ -45,7 +46,8 @@ CREATE TABLE tbl_ways
 	oneway   INTEGER,
 	bridge   INTEGER,
 	tunnel   INTEGER,
-	cutting  INTEGER
+	cutting  INTEGER,
+	selected INTEGER
 );
 
 CREATE TABLE tbl_rels
@@ -102,7 +104,11 @@ CREATE TABLE tbl_rels_range
 -- These tables contain references to all nodes/ways which
 -- were selected during the initial construction phase and
 -- those which were transitively selected by relations or
--- ways.
+-- ways. Note that the selected flag on tbl_nodes and
+-- tbl_ways only reflects nodes/ways which were selected
+-- during the initial construction phase. This is necessary
+-- because we need the ability to select the non-transitive
+-- nodes/ways for tiling.
 
 CREATE TABLE tbl_nodes_selected
 (

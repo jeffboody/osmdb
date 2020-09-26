@@ -624,11 +624,11 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 	}
 
 	// always add nodes since they may be transitively selected
-	fprintf(self->tbl_nodes, "%0.0lf|%i|%lf|%lf|%s|%s|%i|%i\n",
+	fprintf(self->tbl_nodes, "%0.0lf|%i|%lf|%lf|%s|%s|%i|%i|%i\n",
 	        self->attr_id, self->tag_class,
 	        self->attr_lat, self->attr_lon,
 	        self->tag_name, self->tag_abrev,
-	        self->tag_ele, self->tag_st);
+	        self->tag_ele, self->tag_st, selected);
 
 	if(selected)
 	{
@@ -790,12 +790,13 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	}
 
 	// always add ways since they may be transitively selected
-	fprintf(self->tbl_ways, "%0.0lf|%i|%i|%s|%s|%i|%i|%i|%i\n",
+	fprintf(self->tbl_ways, "%0.0lf|%i|%i|%s|%s|%i|%i|%i|%i|%i\n",
 	        self->attr_id, self->tag_class,
 	        self->tag_way_layer,
 	        self->tag_name, self->tag_abrev,
 	        self->tag_way_oneway, self->tag_way_bridge,
-	        self->tag_way_tunnel, self->tag_way_cutting);
+	        self->tag_way_tunnel, self->tag_way_cutting,
+	        selected);
 
 	if(selected)
 	{
