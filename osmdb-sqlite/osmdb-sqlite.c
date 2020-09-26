@@ -38,17 +38,14 @@ int main(int argc, char** argv)
 {
 	double t0 = cc_timestamp();
 
-	if(argc != 2)
+	if(argc != 1)
 	{
-		LOGE("%s [prefix]", argv[0]);
+		LOGE("%s", argv[0]);
 		return EXIT_FAILURE;
 	}
 
-	char fname[256];
-	snprintf(fname, 256, "%s.osm", argv[1]);
-
 	osm_parser_t* parser;
-	parser = osm_parser_new(argv[1]);
+	parser = osm_parser_new("OSMDB");
 	if(parser == NULL)
 	{
 		return EXIT_FAILURE;
@@ -57,7 +54,7 @@ int main(int argc, char** argv)
 	if(xml_istream_parse((void*) parser,
 	                     osm_parser_start,
 	                     osm_parser_end,
-	                     fname) == 0)
+	                     "OSMDB.osm") == 0)
 	{
 		goto fail_parse;
 	}

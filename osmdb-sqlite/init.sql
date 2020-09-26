@@ -21,7 +21,11 @@
  *
  */
 
--- MAIN TABLES
+/*
+ * CREATE MAIN TABLES
+ */
+
+.print 'CREATE MAIN TABLES'
 
 CREATE TABLE tbl_nodes
 (
@@ -80,7 +84,11 @@ CREATE TABLE tbl_ways_members
 	role INTEGER
 );
 
--- DERIVED TABLES
+/*
+ * CREATE DERIVED TABLES
+ */
+
+.print 'CREATE DERIVED TABLES'
 
 CREATE TABLE tbl_ways_range
 (
@@ -100,15 +108,19 @@ CREATE TABLE tbl_rels_range
 	lonR FLOAT
 );
 
--- WORKING SELECTED TABLES
--- These tables contain references to all nodes/ways which
--- were selected during the initial construction phase and
--- those which were transitively selected by relations or
--- ways. Note that the selected flag on tbl_nodes and
--- tbl_ways only reflects nodes/ways which were selected
--- during the initial construction phase. This is necessary
--- because we need the ability to select the non-transitive
--- nodes/ways for tiling.
+/*
+ * CREATE WORKING SELECTED TABLES
+ * These tables contain references to all nodes/ways which
+ * were selected during the initial construction phase and
+ * those which were transitively selected by relations or
+ * ways. Note that the selected flag on tbl_nodes and
+ * tbl_ways only reflects nodes/ways which were selected
+ * during the initial construction phase. This is necessary
+ * because we need the ability to select the non-transitive
+ * nodes/ways for tiling.
+ */
+
+.print 'CREATE WORKING SELECTED TABLES'
 
 CREATE TABLE tbl_nodes_selected
 (
@@ -120,10 +132,14 @@ CREATE TABLE tbl_ways_selected
 	wid INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_ways
 );
 
--- WORKING CENTER TABLES
--- These tables contain references to determine which
--- ways can discard their nds and which relations can
--- discard their member ways
+/*
+ * WORKING CENTER TABLES
+ * These tables contain references to determine which
+ * ways can discard their nds and which relations can
+ * discard their member ways
+ */
+
+.print 'CREATE WORKING CENTER TABLES'
 
 CREATE TABLE tbl_ways_center
 (
@@ -135,9 +151,13 @@ CREATE TABLE tbl_rels_center
 	rid INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_rels
 );
 
--- WORKING POLYGON TABLES
--- These tables contain references to determine which
--- ways and relations are drawn as polygons.
+/*
+ * CREATE WORKING POLYGON TABLES
+ * These tables contain references to determine which
+ * ways and relations are drawn as polygons.
+ */
+
+.print 'CREATE WORKING POLYGON TABLES'
 
 CREATE TABLE tbl_ways_polygon
 (
@@ -149,11 +169,160 @@ CREATE TABLE tbl_rels_polygon
 	rid INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_rels
 );
 
--- COORD INDEXES
--- These indexes optimize searches for coordinates. See
--- EXPLAIN QUERY PLAN to verify if the indexes are used.
--- e.g. SELECT * FROM tbl_nodes WHERE lat>0 AND lon>0;
+/*
+ * CREATE COORD INDEXES
+ * These indexes optimize searches for coordinates. See
+ * EXPLAIN QUERY PLAN to verify if the indexes are used.
+ * e.g. SELECT * FROM tbl_nodes WHERE lat>0 AND lon>0;
+ */
+
+.print 'CREATE COORD INDEXES'
 
 CREATE INDEX idx_nodes_coords ON tbl_nodes (lat, lon);
 CREATE INDEX idx_ways_range_coords ON tbl_ways_range (latT, lonL, latB, lonR);
 CREATE INDEX idx_rels_range_coords ON tbl_rels_range (latT, lonL, latB, lonR);
+
+/*
+ * IMPORT TABLES
+ */
+
+.mode csv
+.separator |
+.print 'IMPORT tbl_nodes'
+.import OSMDB-tbl_nodes.data tbl_nodes
+.print 'IMPORT tbl_ways'
+.import OSMDB-tbl_ways.data tbl_ways
+.print 'IMPORT tbl_rels'
+.import OSMDB-tbl_rels.data tbl_rels
+.print 'IMPORT tbl_ways_nds'
+.import OSMDB-tbl_ways_nds.data tbl_ways_nds
+.print 'IMPORT tbl_nodes_members'
+.import OSMDB-tbl_nodes_members.data tbl_nodes_members
+.print 'IMPORT tbl_ways_members'
+.import OSMDB-tbl_ways_members.data tbl_ways_members
+.print 'IMPORT tbl_nodes_selected'
+.import OSMDB-tbl_nodes_selected.data tbl_nodes_selected
+.print 'IMPORT tbl_ways_selected'
+.import OSMDB-tbl_ways_selected.data tbl_ways_selected
+.print 'IMPORT tbl_ways_center'
+.import OSMDB-tbl_ways_center.data tbl_ways_center
+.print 'IMPORT tbl_rels_center'
+.import OSMDB-tbl_rels_center.data tbl_rels_center
+.print 'IMPORT tbl_ways_polygon'
+.import OSMDB-tbl_ways_polygon.data tbl_ways_polygon
+.print 'IMPORT tbl_rels_polygon'
+.import OSMDB-tbl_rels_polygon.data tbl_rels_polygon
+
+/*
+ * PROCESS RELATIONS
+ */
+
+.print 'PROCESS RELATIONS'
+
+-- compute the range of all relations
+INSERT INTO tbl_rels_range (rid, latT, lonL, latB, lonR)
+	SELECT rid, max(lat) AS latT, min(lon) AS lonL, min(lat) AS latB, max(lon) AS lonR
+		FROM tbl_rels
+		JOIN tbl_ways_members USING (rid)
+		JOIN tbl_ways_nds USING (wid)
+		JOIN tbl_nodes USING (nid)
+		GROUP BY rid;
+
+-- center large polygon relations
+-- large areas are defined to be 50% of the area covered
+-- by a "typical" zoom 14 tile. e.g.
+-- 14/3403/6198:
+-- latT=40.078071, lonL=-105.227051,
+-- latB=40.061257, lonR=-105.205078,
+-- area=0.000369
+INSERT OR IGNORE INTO tbl_rels_center (rid)
+	SELECT rid
+		FROM tbl_rels_polygon
+		JOIN tbl_rels_range USING (rid)
+		WHERE (0.5*(latT-latB)*(lonR-lonL))>0.000369;
+
+-- delete way members for centered relations
+DELETE FROM tbl_ways_members WHERE EXISTS
+	( SELECT * FROM tbl_rels_center WHERE
+		tbl_ways_members.rid=tbl_rels_center.rid );
+
+-- insert nodes transitively selected from relations
+INSERT OR IGNORE INTO tbl_nodes_selected (nid)
+	SELECT nid
+		FROM tbl_rels
+		JOIN tbl_nodes_members USING (rid);
+
+-- insert ways transitively selected from relations
+INSERT OR IGNORE INTO tbl_ways_selected (wid)
+	SELECT wid
+		FROM tbl_rels
+		JOIN tbl_ways_members USING (rid);
+
+/*
+ * PROCESS WAYS
+ */
+
+.print 'PROCESS WAYS'
+
+-- delete ways which were not selected by during the
+-- construction phase or were not transitively selected
+-- from relations
+DELETE FROM tbl_ways WHERE NOT EXISTS
+	( SELECT * FROM tbl_ways_selected WHERE
+		tbl_ways_selected.wid=tbl_ways.wid );
+
+-- compute the range of all selected ways
+INSERT INTO tbl_ways_range (wid, latT, lonL, latB, lonR)
+	SELECT wid, max(lat) AS latT, min(lon) AS lonL, min(lat) AS latB, max(lon) AS lonR
+		FROM tbl_ways_selected
+		JOIN tbl_ways_nds USING (wid)
+		JOIN tbl_nodes USING (nid)
+		GROUP BY wid;
+
+-- center large polygon ways
+INSERT OR IGNORE INTO tbl_ways_center (wid)
+	SELECT wid
+		FROM tbl_ways_polygon
+		JOIN tbl_ways_range USING (wid)
+		WHERE (0.5*(latT-latB)*(lonR-lonL))>0.000369;
+
+-- delete way nds for centered ways
+DELETE FROM tbl_ways_nds WHERE EXISTS
+	( SELECT * FROM tbl_ways_center WHERE
+		tbl_ways_nds.wid=tbl_ways_center.wid );
+
+-- insert nodes transitively selected from ways
+INSERT OR IGNORE INTO tbl_nodes_selected (nid)
+	SELECT nid
+		FROM tbl_ways
+		JOIN tbl_ways_nds USING (wid);
+
+/*
+ * PROCESS NODES
+ */
+
+.print 'PROCESS NODES'
+
+-- delete nodes which were not selected by during the
+-- construction phase or were not transitively selected
+-- from ways/relations
+DELETE FROM tbl_nodes WHERE NOT EXISTS
+	( SELECT * FROM tbl_nodes_selected WHERE
+		tbl_nodes_selected.nid=tbl_nodes.nid );
+
+/*
+ * CLEAN UP
+ */
+
+.print 'CLEANUP'
+
+-- drop working tables
+DROP TABLE tbl_nodes_selected;
+DROP TABLE tbl_ways_selected;
+DROP TABLE tbl_ways_center;
+DROP TABLE tbl_rels_center;
+
+-- optimize database for read-only access
+VACUUM;
+
+.print 'DONE'
