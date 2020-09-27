@@ -628,11 +628,13 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 	}
 
 	// always add nodes since they may be transitively selected
-	fprintf(self->tbl_nodes, "%0.0lf|%i|%lf|%lf|%s|%s|%i|%i|%i\n",
+	int min_zoom = sc ? osmdb_styleClass_minZoom(sc) : 999;
+	fprintf(self->tbl_nodes, "%0.0lf|%i|%lf|%lf|%s|%s|%i|%i|%i|%i\n",
 	        self->attr_id, self->tag_class,
 	        self->attr_lat, self->attr_lon,
 	        self->tag_name, self->tag_abrev,
-	        self->tag_ele, self->tag_st, selected);
+	        self->tag_ele, self->tag_st,
+	        selected, min_zoom);
 
 	if(selected)
 	{
@@ -794,13 +796,14 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	}
 
 	// always add ways since they may be transitively selected
-	fprintf(self->tbl_ways, "%0.0lf|%i|%i|%s|%s|%i|%i|%i|%i|%i\n",
+	int min_zoom = sc ? osmdb_styleClass_minZoom(sc) : 999;
+	fprintf(self->tbl_ways, "%0.0lf|%i|%i|%s|%s|%i|%i|%i|%i|%i|%i\n",
 	        self->attr_id, self->tag_class,
 	        self->tag_way_layer,
 	        self->tag_name, self->tag_abrev,
 	        self->tag_way_oneway, self->tag_way_bridge,
 	        self->tag_way_tunnel, self->tag_way_cutting,
-	        selected);
+	        selected, min_zoom);
 
 	if(selected)
 	{
@@ -1058,9 +1061,10 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 		return 1;
 	}
 
-	fprintf(self->tbl_rels, "%0.0lf|%i|%s|%s\n",
+	int min_zoom = sc ? osmdb_styleClass_minZoom(sc) : 999;
+	fprintf(self->tbl_rels, "%0.0lf|%i|%s|%s|%i\n",
 	        self->attr_id, self->tag_class,
-	        self->tag_name, self->tag_abrev);
+	        self->tag_name, self->tag_abrev, min_zoom);
 
 	// add working tables
 	if(center)

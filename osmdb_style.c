@@ -328,7 +328,7 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 	}
 
 	// check for required atts
-	if(name == NULL)
+	if((name == NULL) || (min_zoom == NULL))
 	{
 		LOGE("invalid line=%i", line);
 		return 0;
@@ -385,12 +385,6 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 			     line, marker_color2);
 			return 0;
 		}
-	}
-
-	int mz = 11;
-	if(min_zoom)
-	{
-		mz = (int) strtol(min_zoom, NULL, 0);
 	}
 
 	// parse flags
@@ -454,7 +448,7 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 		return 0;
 	}
 
-	point->min_zoom      = mz;
+	point->min_zoom      = (int) strtol(min_zoom, NULL, 0);
 	point->show_ele      = show_ele;
 	point->show_marker   = show_marker;
 	point->text_color1   = tc1;
@@ -486,11 +480,12 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 
 	self->state = OSMDB_STYLE_STATE_LINE;
 
-	const char* name   = NULL;
-	const char* mode   = NULL;
-	const char* color1 = NULL;
-	const char* color2 = NULL;
-	const char* width  = NULL;
+	const char* name     = NULL;
+	const char* mode     = NULL;
+	const char* color1   = NULL;
+	const char* color2   = NULL;
+	const char* min_zoom = NULL;
+	const char* width    = NULL;
 
 	// find atts
 	int idx0 = 0;
@@ -513,6 +508,10 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 		{
 			color2 = atts[idx1];
 		}
+		else if(strcmp(atts[idx0], "min_zoom") == 0)
+		{
+			min_zoom = atts[idx1];
+		}
 		else if(strcmp(atts[idx0], "width") == 0)
 		{
 			width = atts[idx1];
@@ -522,7 +521,7 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 	}
 
 	// check for required atts
-	if(name == NULL)
+	if((name == NULL) || (min_zoom == NULL))
 	{
 		LOGE("invalid line=%i", line);
 		return 0;
@@ -573,10 +572,11 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 		LOGE("CALLOC failed");
 		return 0;
 	}
-	linep->width  = w;
-	linep->mode   = modei;
-	linep->color1 = c1;
-	linep->color2 = c2;
+	linep->min_zoom = (int) strtol(min_zoom, NULL, 0);
+	linep->width    = w;
+	linep->mode     = modei;
+	linep->color1   = c1;
+	linep->color2   = c2;
 
 	if(cc_map_add(self->lines, (const void*) linep,
 	              name) == 0)
@@ -602,8 +602,9 @@ osmdb_style_beginOsmPoly(osmdb_style_t* self,
 
 	self->state = OSMDB_STYLE_STATE_POLY;
 
-	const char* name  = NULL;
-	const char* color = NULL;
+	const char* name     = NULL;
+	const char* min_zoom = NULL;
+	const char* color    = NULL;
 
 	// find atts
 	int idx0 = 0;
@@ -614,6 +615,10 @@ osmdb_style_beginOsmPoly(osmdb_style_t* self,
 		{
 			name = atts[idx1];
 		}
+		else if(strcmp(atts[idx0], "min_zoom") == 0)
+		{
+			min_zoom = atts[idx1];
+		}
 		else if(strcmp(atts[idx0], "color") == 0)
 		{
 			color = atts[idx1];
@@ -623,11 +628,12 @@ osmdb_style_beginOsmPoly(osmdb_style_t* self,
 	}
 
 	// check for required atts
-	if(name == NULL)
+	if((name == NULL) || (min_zoom == NULL))
 	{
 		LOGE("invalid line=%i", line);
 		return 0;
 	}
+
 
 	cc_vec4f_t* c = NULL;
 	cc_mapIter_t iter;
@@ -650,7 +656,8 @@ osmdb_style_beginOsmPoly(osmdb_style_t* self,
 		LOGE("CALLOC failed");
 		return 0;
 	}
-	poly->color = c;
+	poly->min_zoom = (int) strtol(min_zoom, NULL, 0);
+	poly->color    = c;
 
 	if(cc_map_add(self->polys, (const void*) poly,
 	              name) == 0)
@@ -875,6 +882,30 @@ osmdb_style_end(void* priv, int line,
 /***********************************************************
 * public                                                   *
 ***********************************************************/
+
+int osmdb_styleClass_minZoom(osmdb_styleClass_t* self)
+{
+	ASSERT(self);
+
+	int min_zoom = 999;
+
+	if(self->line && (self->line->min_zoom < min_zoom))
+	{
+		min_zoom = self->line->min_zoom;
+	}
+
+	if(self->poly && (self->poly->min_zoom < min_zoom))
+	{
+		min_zoom = self->poly->min_zoom;
+	}
+
+	if(self->point && (self->point->min_zoom < min_zoom))
+	{
+		min_zoom = self->point->min_zoom;
+	}
+
+	return min_zoom;
+}
 
 osmdb_style_t*
 osmdb_style_new(const char* resource, const char* fname)

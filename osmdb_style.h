@@ -56,6 +56,7 @@ typedef struct
 typedef struct
 {
 	// mode: solid|dashed|striped|dashed,striped
+	int   min_zoom;
 	float width;
 	int   mode;
 	cc_vec4f_t* color1;
@@ -64,6 +65,7 @@ typedef struct
 
 typedef struct
 {
+	int         min_zoom;
 	cc_vec4f_t* color;
 } osmdb_stylePolygon_t;
 
@@ -77,6 +79,8 @@ typedef struct
 	osmdb_stylePolygon_t* poly;
 	osmdb_stylePoint_t*   point;
 } osmdb_styleClass_t;
+
+int osmdb_styleClass_minZoom(osmdb_styleClass_t* self);
 
 typedef struct
 {

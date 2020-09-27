@@ -37,7 +37,8 @@ CREATE TABLE tbl_nodes
 	abrev    TEXT,
 	ele      INTEGER,
 	st       INTEGER,
-	selected INTEGER
+	selected INTEGER,
+	min_zoom INTEGER
 );
 
 CREATE TABLE tbl_ways
@@ -51,15 +52,17 @@ CREATE TABLE tbl_ways
 	bridge   INTEGER,
 	tunnel   INTEGER,
 	cutting  INTEGER,
-	selected INTEGER
+	selected INTEGER,
+	min_zoom INTEGER
 );
 
 CREATE TABLE tbl_rels
 (
-	rid   INTEGER PRIMARY KEY NOT NULL,
-	class INTEGER,
-	name  TEXT,
-	abrev TEXT
+	rid      INTEGER PRIMARY KEY NOT NULL,
+	class    INTEGER,
+	name     TEXT,
+	abrev    TEXT,
+	min_zoom INTEGER
 );
 
 CREATE TABLE tbl_ways_nds
