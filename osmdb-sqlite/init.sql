@@ -321,6 +321,8 @@ DROP TABLE tbl_nodes_selected;
 DROP TABLE tbl_ways_selected;
 DROP TABLE tbl_ways_center;
 DROP TABLE tbl_rels_center;
+DROP TABLE tbl_ways_polygon;
+DROP TABLE tbl_rels_polygon;
 
 -- optimize database for read-only access
 VACUUM;
