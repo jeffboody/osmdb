@@ -189,29 +189,29 @@ CREATE INDEX idx_rels_range_coords ON tbl_rels_range (latT, lonL, latB, lonR);
 .mode csv
 .separator |
 .print 'IMPORT tbl_nodes'
-.import OSMDB-tbl_nodes.data tbl_nodes
+.import tbl_nodes.data tbl_nodes
 .print 'IMPORT tbl_ways'
-.import OSMDB-tbl_ways.data tbl_ways
+.import tbl_ways.data tbl_ways
 .print 'IMPORT tbl_rels'
-.import OSMDB-tbl_rels.data tbl_rels
+.import tbl_rels.data tbl_rels
 .print 'IMPORT tbl_ways_nds'
-.import OSMDB-tbl_ways_nds.data tbl_ways_nds
+.import tbl_ways_nds.data tbl_ways_nds
 .print 'IMPORT tbl_nodes_members'
-.import OSMDB-tbl_nodes_members.data tbl_nodes_members
+.import tbl_nodes_members.data tbl_nodes_members
 .print 'IMPORT tbl_ways_members'
-.import OSMDB-tbl_ways_members.data tbl_ways_members
+.import tbl_ways_members.data tbl_ways_members
 .print 'IMPORT tbl_nodes_selected'
-.import OSMDB-tbl_nodes_selected.data tbl_nodes_selected
+.import tbl_nodes_selected.data tbl_nodes_selected
 .print 'IMPORT tbl_ways_selected'
-.import OSMDB-tbl_ways_selected.data tbl_ways_selected
+.import tbl_ways_selected.data tbl_ways_selected
 .print 'IMPORT tbl_ways_center'
-.import OSMDB-tbl_ways_center.data tbl_ways_center
+.import tbl_ways_center.data tbl_ways_center
 .print 'IMPORT tbl_rels_center'
-.import OSMDB-tbl_rels_center.data tbl_rels_center
+.import tbl_rels_center.data tbl_rels_center
 .print 'IMPORT tbl_ways_polygon'
-.import OSMDB-tbl_ways_polygon.data tbl_ways_polygon
+.import tbl_ways_polygon.data tbl_ways_polygon
 .print 'IMPORT tbl_rels_polygon'
-.import OSMDB-tbl_rels_polygon.data tbl_rels_polygon
+.import tbl_rels_polygon.data tbl_rels_polygon
 
 /*
  * PROCESS RELATIONS

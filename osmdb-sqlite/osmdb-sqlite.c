@@ -38,14 +38,14 @@ int main(int argc, char** argv)
 {
 	double t0 = cc_timestamp();
 
-	if(argc != 1)
+	if(argc != 2)
 	{
-		LOGE("%s", argv[0]);
+		LOGE("%s input.osm", argv[0]);
 		return EXIT_FAILURE;
 	}
 
 	osm_parser_t* parser;
-	parser = osm_parser_new("OSMDB");
+	parser = osm_parser_new();
 	if(parser == NULL)
 	{
 		return EXIT_FAILURE;
@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 	if(xml_istream_parse((void*) parser,
 	                     osm_parser_start,
 	                     osm_parser_end,
-	                     "OSMDB.osm") == 0)
+	                     argv[1]) == 0)
 	{
 		goto fail_parse;
 	}

@@ -1242,10 +1242,8 @@ osm_parser_endOsmRelMember(osm_parser_t* self, int line,
 * public                                                   *
 ***********************************************************/
 
-osm_parser_t* osm_parser_new(const char* base)
+osm_parser_t* osm_parser_new(void)
 {
-	ASSERT(base);
-
 	osm_parser_t* self = (osm_parser_t*)
 	                     CALLOC(1, sizeof(osm_parser_t));
 	if(self == NULL)
@@ -1260,30 +1258,18 @@ osm_parser_t* osm_parser_new(const char* base)
 		goto fail_style;
 	}
 
-	char tbl_nodes[256];
-	char tbl_ways[256];
-	char tbl_rels[256];
-	char tbl_ways_nds[256];
-	char tbl_nodes_members[256];
-	char tbl_ways_members[256];
-	char tbl_nodes_selected[256];
-	char tbl_ways_selected[256];
-	char tbl_ways_center[256];
-	char tbl_rels_center[256];
-	char tbl_ways_polygon[256];
-	char tbl_rels_polygon[256];
-	snprintf(tbl_nodes, 256, "%s-tbl_nodes.data", base);
-	snprintf(tbl_ways, 256, "%s-tbl_ways.data", base);
-	snprintf(tbl_rels, 256, "%s-tbl_rels.data", base);
-	snprintf(tbl_ways_nds, 256, "%s-tbl_ways_nds.data", base);
-	snprintf(tbl_nodes_members, 256, "%s-tbl_nodes_members.data", base);
-	snprintf(tbl_ways_members, 256, "%s-tbl_ways_members.data", base);
-	snprintf(tbl_nodes_selected, 256, "%s-tbl_nodes_selected.data", base);
-	snprintf(tbl_ways_selected, 256, "%s-tbl_ways_selected.data", base);
-	snprintf(tbl_ways_center, 256, "%s-tbl_ways_center.data", base);
-	snprintf(tbl_rels_center, 256, "%s-tbl_rels_center.data", base);
-	snprintf(tbl_ways_polygon, 256, "%s-tbl_ways_polygon.data", base);
-	snprintf(tbl_rels_polygon, 256, "%s-tbl_rels_polygon.data", base);
+	const char* tbl_nodes          = "tbl_nodes.data";
+	const char* tbl_ways           = "tbl_ways.data";
+	const char* tbl_rels           = "tbl_rels.data";
+	const char* tbl_ways_nds       = "tbl_ways_nds.data";
+	const char* tbl_nodes_members  = "tbl_nodes_members.data";
+	const char* tbl_ways_members   = "tbl_ways_members.data";
+	const char* tbl_nodes_selected = "tbl_nodes_selected.data";
+	const char* tbl_ways_selected  = "tbl_ways_selected.data";
+	const char* tbl_ways_center    = "tbl_ways_center.data";
+	const char* tbl_rels_center    = "tbl_rels_center.data";
+	const char* tbl_ways_polygon   = "tbl_ways_polygon.data";
+	const char* tbl_rels_polygon   = "tbl_rels_polygon.data";
 
 	self->tbl_nodes = fopen(tbl_nodes, "w");
 	if(self->tbl_nodes == NULL)

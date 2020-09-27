@@ -60,5 +60,8 @@ SQLite
 
 To initialize SQLite3 Database:
 
-	./osmdb-sqlite
-	./shell --init init.sql OSMDB.sqlite3
+	./osmosis/bin/osmosis --read-pbf planet-latest.osm.pbf --write-xml planet-base.osm
+	unaccent UTF-8 < planet-base.osm > planet-unaccent.osm
+	./bin/clean-symbols.sh planet-unaccent.osm planet.osm
+	./osmdb-sqlite planet.osm
+	./shell --init init.sql planet.sqlite3
