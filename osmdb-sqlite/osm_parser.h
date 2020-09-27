@@ -103,7 +103,7 @@ typedef struct
 	osm_classHistogram_t* histogram;
 } osm_parser_t;
 
-osm_parser_t* osm_parser_new(void);
+osm_parser_t* osm_parser_new(const char* style);
 void          osm_parser_delete(osm_parser_t** _self);
 int           osm_parser_start(void* priv, int line,
                                const char* name,

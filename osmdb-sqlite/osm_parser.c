@@ -1246,7 +1246,7 @@ osm_parser_endOsmRelMember(osm_parser_t* self, int line,
 * public                                                   *
 ***********************************************************/
 
-osm_parser_t* osm_parser_new(void)
+osm_parser_t* osm_parser_new(const char* style)
 {
 	osm_parser_t* self = (osm_parser_t*)
 	                     CALLOC(1, sizeof(osm_parser_t));
@@ -1256,7 +1256,7 @@ osm_parser_t* osm_parser_new(void)
 		return NULL;
 	}
 
-	self->style = osmdb_style_newFile("../style/default.xml");
+	self->style = osmdb_style_newFile(style);
 	if(self->style == NULL)
 	{
 		goto fail_style;
