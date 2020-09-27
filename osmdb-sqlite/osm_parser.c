@@ -229,7 +229,6 @@ static const char* osm_parseWord(int line,
 		if((c == '\n') ||
 		   (c == '\t') ||
 		   (c == '\r') ||
-		   (c == '|')  ||
 		   (c == '"'))
 		{
 			// eat unsupported characters
@@ -240,6 +239,11 @@ static const char* osm_parseWord(int line,
 			// }
 			++i;
 			continue;
+		}
+		else if(c == '|')
+		{
+			// pipe is reserved for SQLite tables
+			c = ' ';
 		}
 		else if(((c >= 32) && (c <= 126)) ||
 		        (c == '\0'))
@@ -338,7 +342,7 @@ osm_parseName(int line, const char* input, char* name,
 	else if(words == 1)
 	{
 		// input is single word (don't abreviate)
-		strncpy(name, input, 256);
+		strncpy(name, word[0].word, 256);
 		name[255] = '\0';
 		return 1;
 	}
