@@ -253,8 +253,8 @@ static const char* osm_parseWord(int line,
 		else
 		{
 			// eat invalid characters
-			LOGW("invalid line=%i, c=0x%X, str=%s",
-			     line, (unsigned int) c, str);
+			// LOGW("invalid line=%i, c=0x%X, str=%s",
+			//      line, (unsigned int) c, str);
 			++i;
 			continue;
 		}
@@ -266,7 +266,7 @@ static const char* osm_parseWord(int line,
 		}
 		else if(len == 255)
 		{
-			LOGW("invalid line=%i",line);
+			// LOGW("invalid line=%i",line);
 			return NULL;
 		}
 		else if(c == '\0')
@@ -329,14 +329,14 @@ osm_parseName(int line, const char* input, char* name,
 	if((words >= 2) &&
 	   (strncmp(word[words - 1].word, "ft", 256) == 0))
 	{
-		LOGW("trim %s", input);
+		// LOGW("trim %s", input);
 		words -= 2;
 	}
 
 	if(words == 0)
 	{
 		// input is null string
-		LOGW("invalid line=%i, name=%s", line, input);
+		// LOGW("invalid line=%i, name=%s", line, input);
 		return 0;
 	}
 	else if(words == 1)
@@ -449,7 +449,7 @@ static int osm_parseEle(int line, const char* a, int ft)
 	if(str == NULL)
 	{
 		// input is null string
-		LOGW("invalid line=%i, ele=%s", line, a);
+		// LOGW("invalid line=%i, ele=%s", line, a);
 		return 0;
 	}
 
@@ -473,12 +473,12 @@ static int osm_parseEle(int line, const char* a, int ft)
 		}
 		else
 		{
-			LOGW("invalid line=%i, ele=%s", line, a);
+			// LOGW("invalid line=%i, ele=%s", line, a);
 			return 0;
 		}
 	}
 
-	LOGW("invalid line=%i, ele=%s", line, a);
+	// LOGW("invalid line=%i, ele=%s", line, a);
 	return 0;
 }
 
