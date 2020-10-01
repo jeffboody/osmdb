@@ -50,6 +50,76 @@
 #define ICONV_CONV_ERR ((size_t) (-1))
 
 /***********************************************************
+* private - class utils                                    *
+***********************************************************/
+
+static void osm_parser_discardClass(osm_parser_t* self)
+{
+	ASSERT(self);
+
+	cc_mapIter_t  iterator;
+	cc_mapIter_t* iter;
+	iter = cc_map_head(self->class_map, &iterator);
+	while(iter)
+	{
+		int* cls;
+		cls = (int*) cc_map_remove(self->class_map, &iter);
+		FREE(cls);
+	}
+}
+
+static int osm_parser_findClass(osm_parser_t* self,
+                                const char* key,
+                                const char* val)
+{
+	ASSERT(self);
+	ASSERT(key);
+	ASSERT(val);
+
+	cc_mapIter_t iter;
+	int* cls = (int*) cc_map_findf(self->class_map, &iter,
+	                               "%s:%s", key, val);
+
+	return cls ? *cls : 0;
+}
+
+static int
+osm_parser_fillClass(osm_parser_t* self)
+{
+	ASSERT(self);
+
+	int  i;
+	int* cls;
+	int  class_count = osmdb_classCount();
+	for(i = 0; i < class_count; ++i)
+	{
+		cls = (int*) MALLOC(sizeof(int));
+		if(cls == NULL)
+		{
+			goto fail_malloc;
+		}
+		*cls = i;
+
+		if(cc_map_add(self->class_map,
+		              (const void*) cls,
+		              osmdb_classCodeToName(i)) == 0)
+		{
+			goto fail_add;
+		}
+	}
+
+	// success
+	return 1;
+
+	// failure
+	fail_add:
+		FREE(cls);
+	fail_malloc:
+		osm_parser_discardClass(self);
+	return 0;
+}
+
+/***********************************************************
 * private - parsing utils                                  *
 ***********************************************************/
 
@@ -729,7 +799,8 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 
 			char name[256];
 			char abrev[256];
-			int  class = osmdb_classKVToCode(atts[j], val);
+
+			int class = osm_parser_findClass(self, atts[j], val);
 			if(class)
 			{
 				// set or overwrite generic class
@@ -927,7 +998,8 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 
 			char name[256];
 			char abrev[256];
-			int  class = osmdb_classKVToCode(atts[j], val);
+
+			int class = osm_parser_findClass(self, atts[j], val);
 			if(class)
 			{
 				// set or overwrite generic class
@@ -1199,7 +1271,8 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 
 			char name[256];
 			char abrev[256];
-			int  class = osmdb_classKVToCode(atts[j], val);
+
+			int class = osm_parser_findClass(self, atts[j], val);
 			if(class)
 			{
 				// set or overwrite generic class
@@ -1435,6 +1508,17 @@ osm_parser_t* osm_parser_new(const char* style)
 		goto fail_histogram;
 	}
 
+	self->class_map = cc_map_new();
+	if(self->class_map == NULL)
+	{
+		goto fail_class_map;
+	}
+
+	if(osm_parser_fillClass(self) == 0)
+	{
+		goto fail_fill_class;
+	}
+
 	self->cd = iconv_open("ASCII//TRANSLIT", "UTF-8");
 	if(self->cd == ICONV_OPEN_ERR)
 	{
@@ -1455,6 +1539,10 @@ osm_parser_t* osm_parser_new(const char* style)
 
 	// failure
 	fail_iconv_open:
+		osm_parser_discardClass(self);
+	fail_fill_class:
+		cc_map_delete(&self->class_map);
+	fail_class_map:
 		FREE(self->histogram);
 	fail_histogram:
 		cc_list_delete(&self->rel_members);
@@ -1499,6 +1587,9 @@ void osm_parser_delete(osm_parser_t** _self)
 	if(self)
 	{
 		iconv_close(self->cd);
+
+		osm_parser_discardClass(self);
+		cc_map_delete(&self->class_map);
 
 		// print histogram
 		LOGI("nodes=%0.0lf, ways=%0.0lf, relations=%0.0lf",

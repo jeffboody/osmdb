@@ -27,6 +27,7 @@
 #include <iconv.h>
 
 #include "libcc/cc_list.h"
+#include "libcc/cc_map.h"
 #include "../osmdb_style.h"
 
 typedef struct
@@ -103,6 +104,9 @@ typedef struct
 	double stats_ways;
 	double stats_relations;
 	osm_classHistogram_t* histogram;
+
+	// class name/code map
+	cc_map_t* class_map;
 
 	// UTF-8 to ASCII conversion
 	iconv_t cd;
