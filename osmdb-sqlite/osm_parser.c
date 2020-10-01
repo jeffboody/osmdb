@@ -21,6 +21,7 @@
  *
  */
 
+#include <iconv.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -44,6 +45,9 @@
 #define OSM_STATE_OSM_REL_TAG     9
 #define OSM_STATE_OSM_REL_MEMBER 10
 #define OSM_STATE_DONE           -1
+
+#define ICONV_OPEN_ERR ((iconv_t) (-1))
+#define ICONV_CONV_ERR ((size_t) (-1))
 
 /***********************************************************
 * private - parsing utils                                  *
@@ -506,6 +510,52 @@ static int osm_parseSt(const char* num)
 * private                                                  *
 ***********************************************************/
 
+static void
+osm_parser_iconv(osm_parser_t* self,
+                 const char* input,
+                 char* output)
+{
+	ASSERT(self);
+	ASSERT(input);
+	ASSERT(output);
+
+	// https://rt.cpan.org/Public/Bug/Display.html?id=103901
+	char buf[256];
+	snprintf(buf, 256, "%s", input);
+
+	char*  iptr  = &(buf[0]);
+	char*  optr  = &(output[0]);
+	size_t isize = strlen(iptr) + 1;
+	size_t osize = 256;
+
+	int step = 0;
+	while(step < 16)
+	{
+		int ret = iconv(self->cd, &iptr, &isize, &optr, &osize);
+		if(ret == ICONV_CONV_ERR)
+		{
+			break;
+		}
+		else if(isize == 0)
+		{
+			// reset the iconv state
+			iconv(self->cd, NULL, NULL, NULL, NULL);
+
+			// success
+			return;
+		}
+
+		// some encodings may require multiple steps to convert
+		++step;
+	}
+
+	// reset the iconv state
+	iconv(self->cd, NULL, NULL, NULL, NULL);
+
+	// rely on parseWord to discard unicode characters
+	snprintf(output, 256, "%s", input);
+}
+
 static void osm_parser_init(osm_parser_t* self)
 {
 	ASSERT(self);
@@ -664,18 +714,22 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 
 	self->state = OSM_STATE_OSM_NODE_TAG;
 
-	int i = 0;
-	int j = 1;
-	int m = 2;
-	int n = 3;
+	int  i = 0;
+	int  j = 1;
+	int  m = 2;
+	int  n = 3;
+	char val[256];
 	while(atts[i] && atts[j] && atts[m] && atts[n])
 	{
 		if((strcmp(atts[i], "k") == 0) &&
 		   (strcmp(atts[m], "v") == 0))
 		{
+			// iconv value
+			osm_parser_iconv(self, atts[n], val);
+
 			char name[256];
 			char abrev[256];
-			int  class = osmdb_classKVToCode(atts[j], atts[n]);
+			int  class = osmdb_classKVToCode(atts[j], val);
 			if(class)
 			{
 				// set or overwrite generic class
@@ -691,27 +745,27 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 				}
 			}
 			else if((strcmp(atts[j], "name") == 0) &&
-			        osm_parseName(line, atts[n], name, abrev))
+			        osm_parseName(line, val, name, abrev))
 			{
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
 			}
 			else if(strcmp(atts[j], "ele:ft") == 0)
 			{
-				self->tag_ele = osm_parseEle(line, atts[n], 1);
+				self->tag_ele = osm_parseEle(line, val, 1);
 			}
 			else if(strcmp(atts[j], "ele") == 0)
 			{
-				self->tag_ele = osm_parseEle(line, atts[n], 0);
+				self->tag_ele = osm_parseEle(line, val, 0);
 			}
 			else if((strcmp(atts[j], "gnis:ST_num")   == 0) ||
 			        (strcmp(atts[j], "gnis:state_id") == 0))
 			{
-				self->tag_st = osm_parseSt(atts[n]);
+				self->tag_st = osm_parseSt(val);
 			}
 			else if(strcmp(atts[j], "gnis:ST_alpha") == 0)
 			{
-				self->tag_st = osmdb_stAbrevToCode(atts[n]);
+				self->tag_st = osmdb_stAbrevToCode(val);
 			}
 		}
 
@@ -858,18 +912,22 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 
 	self->state = OSM_STATE_OSM_WAY_TAG;
 
-	int i = 0;
-	int j = 1;
-	int m = 2;
-	int n = 3;
+	int  i = 0;
+	int  j = 1;
+	int  m = 2;
+	int  n = 3;
+	char val[256];
 	while(atts[i] && atts[j] && atts[m] && atts[n])
 	{
 		if((strcmp(atts[i], "k") == 0) &&
 		   (strcmp(atts[m], "v") == 0))
 		{
+			// iconv value
+			osm_parser_iconv(self, atts[n], val);
+
 			char name[256];
 			char abrev[256];
-			int  class = osmdb_classKVToCode(atts[j], atts[n]);
+			int  class = osmdb_classKVToCode(atts[j], val);
 			if(class)
 			{
 				// set or overwrite generic class
@@ -885,38 +943,38 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 				}
 			}
 			else if((strcmp(atts[j], "name") == 0) &&
-			        osm_parseName(line, atts[n], name, abrev))
+			        osm_parseName(line, val, name, abrev))
 			{
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
 			}
 			else if(strcmp(atts[j], "layer") == 0)
 			{
-				self->tag_way_layer = (int) strtol(atts[n], NULL, 0);
+				self->tag_way_layer = (int) strtol(val, NULL, 0);
 			}
 			else if(strcmp(atts[j], "oneway") == 0)
 			{
-				if(strcmp(atts[n], "yes") == 0)
+				if(strcmp(val, "yes") == 0)
 				{
 					self->tag_way_oneway = 1;
 				}
-				else if(strcmp(atts[n], "-1") == 0)
+				else if(strcmp(val, "-1") == 0)
 				{
 					self->tag_way_oneway = -1;
 				}
 			}
 			else if((strcmp(atts[j], "bridge") == 0) &&
-				    (strcmp(atts[n], "no") != 0))
+				    (strcmp(val, "no") != 0))
 			{
 				self->tag_way_bridge = 1;
 			}
 			else if((strcmp(atts[j], "tunnel") == 0) &&
-				    (strcmp(atts[n], "no") != 0))
+				    (strcmp(val, "no") != 0))
 			{
 				self->tag_way_tunnel = 1;
 			}
 			else if((strcmp(atts[j], "cutting") == 0) &&
-				    (strcmp(atts[n], "no") != 0))
+				    (strcmp(val, "no") != 0))
 			{
 				self->tag_way_cutting = 1;
 			}
@@ -1126,18 +1184,22 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 
 	self->state = OSM_STATE_OSM_REL_TAG;
 
-	int i = 0;
-	int j = 1;
-	int m = 2;
-	int n = 3;
+	int  i = 0;
+	int  j = 1;
+	int  m = 2;
+	int  n = 3;
+	char val[256];
 	while(atts[i] && atts[j] && atts[m] && atts[n])
 	{
 		if((strcmp(atts[i], "k") == 0) &&
 		   (strcmp(atts[m], "v") == 0))
 		{
+			// iconv value
+			osm_parser_iconv(self, atts[n], val);
+
 			char name[256];
 			char abrev[256];
-			int  class = osmdb_classKVToCode(atts[j], atts[n]);
+			int  class = osmdb_classKVToCode(atts[j], val);
 			if(class)
 			{
 				// set or overwrite generic class
@@ -1153,14 +1215,14 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 				}
 			}
 			else if((strcmp(atts[j], "name") == 0) &&
-			        osm_parseName(line, atts[n], name, abrev))
+			        osm_parseName(line, val, name, abrev))
 			{
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
 			}
 			else if((strcmp(atts[j], "type") == 0))
 			{
-				self->rel_type = osmdb_relationTagTypeToCode(atts[n]);
+				self->rel_type = osmdb_relationTagTypeToCode(val);
 			}
 		}
 
@@ -1373,6 +1435,13 @@ osm_parser_t* osm_parser_new(const char* style)
 		goto fail_histogram;
 	}
 
+	self->cd = iconv_open("ASCII//TRANSLIT", "UTF-8");
+	if(self->cd == ICONV_OPEN_ERR)
+	{
+		LOGE("iconv_open failed");
+		goto fail_iconv_open;
+	}
+
 	self->class_none   = osmdb_classKVToCode("class",    "none");
 	self->building_yes = osmdb_classKVToCode("building", "yes");
 	self->barrier_yes  = osmdb_classKVToCode("barrier",  "yes");
@@ -1385,6 +1454,8 @@ osm_parser_t* osm_parser_new(const char* style)
 	return self;
 
 	// failure
+	fail_iconv_open:
+		FREE(self->histogram);
 	fail_histogram:
 		cc_list_delete(&self->rel_members);
 	fail_rel_members:
@@ -1427,6 +1498,8 @@ void osm_parser_delete(osm_parser_t** _self)
 	osm_parser_t* self = *_self;
 	if(self)
 	{
+		iconv_close(self->cd);
+
 		// print histogram
 		LOGI("nodes=%0.0lf, ways=%0.0lf, relations=%0.0lf",
 		     self->stats_nodes, self->stats_ways,

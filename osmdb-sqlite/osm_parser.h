@@ -24,6 +24,8 @@
 #ifndef osm_parser_H
 #define osm_parser_H
 
+#include <iconv.h>
+
 #include "libcc/cc_list.h"
 #include "../osmdb_style.h"
 
@@ -101,6 +103,9 @@ typedef struct
 	double stats_ways;
 	double stats_relations;
 	osm_classHistogram_t* histogram;
+
+	// UTF-8 to ASCII conversion
+	iconv_t cd;
 } osm_parser_t;
 
 osm_parser_t* osm_parser_new(const char* style);
