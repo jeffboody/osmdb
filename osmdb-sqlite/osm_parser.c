@@ -633,6 +633,7 @@ static void osm_parser_init(osm_parser_t* self)
 	self->attr_id         = 0.0;
 	self->attr_lat        = 0.0;
 	self->attr_lon        = 0.0;
+	self->name_en         = 0;
 	self->tag_name[0]     = '\0';
 	self->tag_abrev[0]    = '\0';
 	self->tag_ele         = 0;
@@ -816,8 +817,16 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 				}
 			}
 			else if((strcmp(atts[j], "name") == 0) &&
+			        (self->name_en == 0) &&
 			        osm_parseName(line, val, name, abrev))
 			{
+				snprintf(self->tag_name,  256, "%s", name);
+				snprintf(self->tag_abrev, 256, "%s", abrev);
+			}
+			else if((strcmp(atts[j], "name:en") == 0) &&
+			        osm_parseName(line, val, name, abrev))
+			{
+				self->name_en = 1;
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
 			}
@@ -1015,8 +1024,16 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 				}
 			}
 			else if((strcmp(atts[j], "name") == 0) &&
+			        (self->name_en == 0) &&
 			        osm_parseName(line, val, name, abrev))
 			{
+				snprintf(self->tag_name,  256, "%s", name);
+				snprintf(self->tag_abrev, 256, "%s", abrev);
+			}
+			else if((strcmp(atts[j], "name:en") == 0) &&
+			        osm_parseName(line, val, name, abrev))
+			{
+				self->name_en = 1;
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
 			}
@@ -1288,8 +1305,16 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 				}
 			}
 			else if((strcmp(atts[j], "name") == 0) &&
+			        (self->name_en == 0) &&
 			        osm_parseName(line, val, name, abrev))
 			{
+				snprintf(self->tag_name,  256, "%s", name);
+				snprintf(self->tag_abrev, 256, "%s", abrev);
+			}
+			else if((strcmp(atts[j], "name:en") == 0) &&
+			        osm_parseName(line, val, name, abrev))
+			{
+				self->name_en = 1;
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
 			}

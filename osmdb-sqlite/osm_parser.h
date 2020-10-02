@@ -69,6 +69,9 @@ typedef struct
 	double attr_lat;
 	double attr_lon;
 
+	// english flag
+	int name_en;
+
 	// tags
 	char tag_name[256];
 	char tag_abrev[256];
