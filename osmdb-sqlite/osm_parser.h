@@ -49,7 +49,8 @@ typedef struct
 	int state;
 
 	// tables
-	FILE* tbl_nodes;
+	FILE* tbl_nodes_coords;
+	FILE* tbl_nodes_info;
 	FILE* tbl_ways;
 	FILE* tbl_rels;
 	FILE* tbl_ways_nds;

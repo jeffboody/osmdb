@@ -27,17 +27,21 @@
 
 .print 'CREATE MAIN TABLES'
 
-CREATE TABLE tbl_nodes
+CREATE TABLE tbl_nodes_coords
 (
 	nid      INTEGER PRIMARY KEY NOT NULL,
-	class    INTEGER,
 	lat      FLOAT,
-	lon      FLOAT,
+	lon      FLOAT
+);
+
+CREATE TABLE tbl_nodes_info
+(
+	nid      INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_nodes_coords,
+	class    INTEGER,
 	name     TEXT,
 	abrev    TEXT,
 	ele      INTEGER,
 	st       INTEGER,
-	selected INTEGER,
 	min_zoom INTEGER
 );
 
@@ -69,13 +73,13 @@ CREATE TABLE tbl_ways_nds
 (
 	idx INTEGER,
 	wid INTEGER REFERENCES tbl_ways,
-	nid INTEGER REFERENCES tbl_nodes
+	nid INTEGER REFERENCES tbl_nodes_coords
 );
 
 CREATE TABLE tbl_nodes_members
 (
 	rid  INTEGER REFERENCES tbl_rels,
-	nid  INTEGER REFERENCES tbl_nodes,
+	nid  INTEGER REFERENCES tbl_nodes_coords,
 	role INTEGER
 );
 
@@ -116,18 +120,14 @@ CREATE TABLE tbl_rels_range
  * These tables contain references to all nodes/ways which
  * were selected during the initial construction phase and
  * those which were transitively selected by relations or
- * ways. Note that the selected flag on tbl_nodes and
- * tbl_ways only reflects nodes/ways which were selected
- * during the initial construction phase. This is necessary
- * because we need the ability to select the non-transitive
- * nodes/ways for tiling.
+ * ways.
  */
 
 .print 'CREATE WORKING SELECTED TABLES'
 
 CREATE TABLE tbl_nodes_selected
 (
-	nid INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_nodes
+	nid INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_nodes_coords
 );
 
 CREATE TABLE tbl_ways_selected
@@ -176,12 +176,12 @@ CREATE TABLE tbl_rels_polygon
  * CREATE COORD INDEXES
  * These indexes optimize searches for coordinates. See
  * EXPLAIN QUERY PLAN to verify if the indexes are used.
- * e.g. SELECT * FROM tbl_nodes WHERE lat>0 AND lon>0;
+ * e.g. SELECT * FROM tbl_nodes_coords WHERE lat>0 AND lon>0;
  */
 
 .print 'CREATE COORD INDEXES'
 
-CREATE INDEX idx_nodes_coords ON tbl_nodes (lat, lon);
+CREATE INDEX idx_nodes_coords ON tbl_nodes_coords (lat, lon);
 CREATE INDEX idx_ways_range_coords ON tbl_ways_range (latT, lonL, latB, lonR);
 CREATE INDEX idx_rels_range_coords ON tbl_rels_range (latT, lonL, latB, lonR);
 
@@ -191,8 +191,10 @@ CREATE INDEX idx_rels_range_coords ON tbl_rels_range (latT, lonL, latB, lonR);
 
 .mode csv
 .separator |
-.print 'IMPORT tbl_nodes'
-.import tbl_nodes.data tbl_nodes
+.print 'IMPORT tbl_nodes_coords'
+.import tbl_nodes_coords.data tbl_nodes_coords
+.print 'IMPORT tbl_nodes_info'
+.import tbl_nodes_info.data tbl_nodes_info
 .print 'IMPORT tbl_ways'
 .import tbl_ways.data tbl_ways
 .print 'IMPORT tbl_rels'
@@ -228,7 +230,7 @@ INSERT INTO tbl_rels_range (rid, latT, lonL, latB, lonR)
 		FROM tbl_rels
 		JOIN tbl_ways_members USING (rid)
 		JOIN tbl_ways_nds USING (wid)
-		JOIN tbl_nodes USING (nid)
+		JOIN tbl_nodes_coords USING (nid)
 		GROUP BY rid;
 
 -- center large polygon relations
@@ -279,7 +281,7 @@ INSERT INTO tbl_ways_range (wid, latT, lonL, latB, lonR)
 	SELECT wid, max(lat) AS latT, min(lon) AS lonL, min(lat) AS latB, max(lon) AS lonR
 		FROM tbl_ways_selected
 		JOIN tbl_ways_nds USING (wid)
-		JOIN tbl_nodes USING (nid)
+		JOIN tbl_nodes_coords USING (nid)
 		GROUP BY wid;
 
 -- center large polygon ways
@@ -309,9 +311,9 @@ INSERT OR IGNORE INTO tbl_nodes_selected (nid)
 -- delete nodes which were not selected by during the
 -- construction phase or were not transitively selected
 -- from ways/relations
-DELETE FROM tbl_nodes WHERE NOT EXISTS
+DELETE FROM tbl_nodes_coords WHERE NOT EXISTS
 	( SELECT * FROM tbl_nodes_selected WHERE
-		tbl_nodes_selected.nid=tbl_nodes.nid );
+		tbl_nodes_selected.nid=tbl_nodes_coords.nid );
 
 /*
  * CLEAN UP

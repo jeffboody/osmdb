@@ -748,17 +748,17 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 		selected = 1;
 	}
 
-	// always add nodes since they may be transitively selected
-	int min_zoom = sc ? osmdb_styleClass_minZoom(sc) : 999;
-	fprintf(self->tbl_nodes, "%0.0lf|%i|%lf|%lf|%s|%s|%i|%i|%i|%i\n",
-	        self->attr_id, self->tag_class,
-	        self->attr_lat, self->attr_lon,
-	        self->tag_name, self->tag_abrev,
-	        self->tag_ele, self->tag_st,
-	        selected, min_zoom);
+	// node coords may be transitively selected
+	fprintf(self->tbl_nodes_coords, "%0.0lf|%lf|%lf\n",
+	        self->attr_id, self->attr_lat, self->attr_lon);
 
 	if(selected)
 	{
+		int min_zoom = sc ? osmdb_styleClass_minZoom(sc) : 999;
+		fprintf(self->tbl_nodes_info, "%0.0lf|%i|%s|%s|%i|%i|%i\n",
+		        self->attr_id, self->tag_class,
+		        self->tag_name, self->tag_abrev,
+		        self->tag_ele, self->tag_st, min_zoom);
 		fprintf(self->tbl_nodes_selected, "%0.0lf\n",
 		        self->attr_id);
 	}
@@ -1426,7 +1426,8 @@ osm_parser_t* osm_parser_new(const char* style)
 		goto fail_style;
 	}
 
-	const char* tbl_nodes          = "tbl_nodes.data";
+	const char* tbl_nodes_coords   = "tbl_nodes_coords.data";
+	const char* tbl_nodes_info     = "tbl_nodes_info.data";
 	const char* tbl_ways           = "tbl_ways.data";
 	const char* tbl_rels           = "tbl_rels.data";
 	const char* tbl_ways_nds       = "tbl_ways_nds.data";
@@ -1439,10 +1440,16 @@ osm_parser_t* osm_parser_new(const char* style)
 	const char* tbl_ways_polygon   = "tbl_ways_polygon.data";
 	const char* tbl_rels_polygon   = "tbl_rels_polygon.data";
 
-	self->tbl_nodes = fopen(tbl_nodes, "w");
-	if(self->tbl_nodes == NULL)
+	self->tbl_nodes_coords = fopen(tbl_nodes_coords, "w");
+	if(self->tbl_nodes_coords == NULL)
 	{
-		goto fail_tbl_nodes;
+		goto fail_tbl_nodes_coords;
+	}
+
+	self->tbl_nodes_info = fopen(tbl_nodes_info, "w");
+	if(self->tbl_nodes_info == NULL)
+	{
+		goto fail_tbl_nodes_info;
 	}
 
 	self->tbl_ways = fopen(tbl_ways, "w");
@@ -1596,8 +1603,10 @@ osm_parser_t* osm_parser_new(const char* style)
 	fail_tbl_rels:
 		fclose(self->tbl_ways);
 	fail_tbl_ways:
-		fclose(self->tbl_nodes);
-	fail_tbl_nodes:
+		fclose(self->tbl_nodes_info);
+	fail_tbl_nodes_info:
+		fclose(self->tbl_nodes_coords);
+	fail_tbl_nodes_coords:
 		osmdb_style_delete(&self->style);
 	fail_style:
 		FREE(self);
@@ -1667,7 +1676,8 @@ void osm_parser_delete(osm_parser_t** _self)
 		fclose(self->tbl_ways_nds);
 		fclose(self->tbl_rels);
 		fclose(self->tbl_ways);
-		fclose(self->tbl_nodes);
+		fclose(self->tbl_nodes_info);
+		fclose(self->tbl_nodes_coords);
 		osmdb_style_delete(&self->style);
 		FREE(self);
 		*_self = NULL;
