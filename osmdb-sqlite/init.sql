@@ -235,7 +235,7 @@ INSERT OR IGNORE INTO tbl_rels_center (rid)
 
 -- delete way members for centered relations
 DELETE FROM tbl_ways_members WHERE EXISTS
-	( SELECT * FROM tbl_rels_center WHERE
+	( SELECT rid FROM tbl_rels_center WHERE
 		tbl_ways_members.rid=tbl_rels_center.rid );
 
 -- insert nodes transitively selected from relations
@@ -260,7 +260,7 @@ INSERT OR IGNORE INTO tbl_ways_selected (wid)
 -- construction phase or were not transitively selected
 -- from relations
 DELETE FROM tbl_ways WHERE NOT EXISTS
-	( SELECT * FROM tbl_ways_selected WHERE
+	( SELECT wid FROM tbl_ways_selected WHERE
 		tbl_ways_selected.wid=tbl_ways.wid );
 
 -- compute the range of all selected ways
@@ -280,7 +280,7 @@ INSERT OR IGNORE INTO tbl_ways_center (wid)
 
 -- delete way nds for centered ways
 DELETE FROM tbl_ways_nds WHERE EXISTS
-	( SELECT * FROM tbl_ways_center WHERE
+	( SELECT wid FROM tbl_ways_center WHERE
 		tbl_ways_nds.wid=tbl_ways_center.wid );
 
 -- insert nodes transitively selected from ways
@@ -299,7 +299,7 @@ INSERT OR IGNORE INTO tbl_nodes_selected (nid)
 -- construction phase or were not transitively selected
 -- from ways/relations
 DELETE FROM tbl_nodes_coords WHERE NOT EXISTS
-	( SELECT * FROM tbl_nodes_selected WHERE
+	( SELECT nid FROM tbl_nodes_selected WHERE
 		tbl_nodes_selected.nid=tbl_nodes_coords.nid );
 
 /*
