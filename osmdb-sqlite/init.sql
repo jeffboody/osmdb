@@ -173,19 +173,6 @@ CREATE TABLE tbl_rels_polygon
 );
 
 /*
- * CREATE COORD INDEXES
- * These indexes optimize searches for coordinates. See
- * EXPLAIN QUERY PLAN to verify if the indexes are used.
- * e.g. SELECT * FROM tbl_nodes_coords WHERE lat>0 AND lon>0;
- */
-
-.print 'CREATE COORD INDEXES'
-
-CREATE INDEX idx_nodes_coords ON tbl_nodes_coords (lat, lon);
-CREATE INDEX idx_ways_range_coords ON tbl_ways_range (latT, lonL, latB, lonR);
-CREATE INDEX idx_rels_range_coords ON tbl_rels_range (latT, lonL, latB, lonR);
-
-/*
  * IMPORT TABLES
  */
 
@@ -314,6 +301,19 @@ INSERT OR IGNORE INTO tbl_nodes_selected (nid)
 DELETE FROM tbl_nodes_coords WHERE NOT EXISTS
 	( SELECT * FROM tbl_nodes_selected WHERE
 		tbl_nodes_selected.nid=tbl_nodes_coords.nid );
+
+/*
+ * CREATE COORD INDEXES
+ * These indexes optimize searches for coordinates. See
+ * EXPLAIN QUERY PLAN to verify if the indexes are used.
+ * e.g. SELECT * FROM tbl_nodes_coords WHERE lat>0 AND lon>0;
+ */
+
+.print 'CREATE COORD INDEXES'
+
+CREATE INDEX idx_nodes_coords ON tbl_nodes_coords (lat, lon);
+CREATE INDEX idx_ways_range_coords ON tbl_ways_range (latT, lonL, latB, lonR);
+CREATE INDEX idx_rels_range_coords ON tbl_rels_range (latT, lonL, latB, lonR);
 
 /*
  * CLEAN UP
