@@ -21,6 +21,8 @@
  *
  */
 
+PRAGMA temp_store_directory = '.';
+
 /*
  * CREATE MAIN TABLES
  */
