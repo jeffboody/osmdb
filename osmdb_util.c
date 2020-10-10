@@ -1103,6 +1103,11 @@ const char* const OSM_UTIL_CLASSES[] =
 	"core:special",
 	"core:mineral",
 	"default:waypoint",
+	"core:coal_methane",
+	"core:historic",
+	"rec:wilderness",
+	"rec:special",
+	"rec:mineral",
 	NULL
 };
 

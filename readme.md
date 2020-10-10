@@ -55,6 +55,19 @@ reformat osm data (e.g.)
 	osmdb-indexer filter/default.xml Boulder | tee indexer.log
 	osmdb-tiler . Boulder | tee tiler.log
 
+KML Data
+========
+
+Convert shapefiles to KML files (https://www.igismap.com/shp-to-kml/).
+
+	sudo apt install gdal-bin
+	ogr2ogr -f KML CORE_Act.kml CORE_Act.shp
+	ogr2ogr -f KML REC_Act.kml REC_Act.shp
+
+Convert KML files to tables.
+
+	./kml2data CORE_Act.kml REC_Act.kml
+
 SQLite
 ======
 
@@ -62,4 +75,11 @@ To initialize SQLite3 Database:
 
 	./osmosis/bin/osmosis --read-pbf planet-latest.osm.pbf --write-xml planet.osm
 	./osmdb-sqlite style.xml planet.osm
+
+Import planet.
+
 	./shell --init init.sql planet.sqlite3
+
+Import KML.
+
+	./shell --init import-kml.sql planet.sqlite3
