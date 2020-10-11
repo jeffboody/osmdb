@@ -212,23 +212,33 @@ CREATE TABLE tbl_rels_polygon
  */
 
 .print 'CREATE idx_ways_members'
-CREATE INDEX idx_ways_members ON tbl_ways_members (wid, rid);
+CREATE INDEX idx_ways_members ON tbl_ways_members (rid);
 .print 'CREATE idx_ways_nds'
-CREATE INDEX idx_ways_nds ON tbl_ways_nds (wid, nid);
+CREATE INDEX idx_ways_nds ON tbl_ways_nds (wid);
 
 /*
- * PROCESS RELATIONS
+ * PROCESS RANGE
  */
+
+-- compute the range of all ways
+.print 'PROCESS tbl_ways_range'
+INSERT INTO tbl_ways_range (wid, latT, lonL, latB, lonR)
+	SELECT wid, max(lat) AS latT, min(lon) AS lonL, min(lat) AS latB, max(lon) AS lonR
+		FROM tbl_ways_nds
+		JOIN tbl_nodes_coords USING (nid)
+		GROUP BY wid;
 
 -- compute the range of all relations
 .print 'PROCESS tbl_rels_range'
 INSERT INTO tbl_rels_range (rid, latT, lonL, latB, lonR)
-	SELECT rid, max(lat) AS latT, min(lon) AS lonL, min(lat) AS latB, max(lon) AS lonR
-		FROM tbl_rels
-		JOIN tbl_ways_members USING (rid)
-		JOIN tbl_ways_nds USING (wid)
-		JOIN tbl_nodes_coords USING (nid)
+	SELECT rid, max(latT) AS latT, min(lonL) AS lonL, min(latB) AS latB, max(lonR) AS lonR
+		FROM tbl_ways_members
+		JOIN tbl_ways_range USING (wid)
 		GROUP BY rid;
+
+/*
+ * PROCESS RELATIONS
+ */
 
 -- center large polygon relations
 -- large areas are defined to be 50% of the area covered
@@ -253,20 +263,12 @@ DELETE FROM tbl_ways_members WHERE EXISTS
 -- insert nodes transitively selected from relations
 .print 'PROCESS tbl_nodes_selected'
 INSERT OR IGNORE INTO tbl_nodes_selected (nid)
-	SELECT nid
-		FROM tbl_rels
-		JOIN tbl_nodes_members USING (rid);
+	SELECT nid FROM tbl_nodes_members;
 
 -- insert ways transitively selected from relations
 .print 'PROCESS tbl_ways_selected'
 INSERT OR IGNORE INTO tbl_ways_selected (wid)
-	SELECT wid
-		FROM tbl_rels
-		JOIN tbl_ways_members USING (rid);
-
-/*
- * PROCESS WAYS
- */
+	SELECT wid FROM tbl_ways_members;
 
 -- delete ways which were not selected by during the
 -- construction phase or were not transitively selected
@@ -275,15 +277,14 @@ INSERT OR IGNORE INTO tbl_ways_selected (wid)
 DELETE FROM tbl_ways WHERE NOT EXISTS
 	( SELECT wid FROM tbl_ways_selected WHERE
 		tbl_ways_selected.wid=tbl_ways.wid );
-
--- compute the range of all selected ways
 .print 'PROCESS tbl_ways_range'
-INSERT INTO tbl_ways_range (wid, latT, lonL, latB, lonR)
-	SELECT wid, max(lat) AS latT, min(lon) AS lonL, min(lat) AS latB, max(lon) AS lonR
-		FROM tbl_ways_selected
-		JOIN tbl_ways_nds USING (wid)
-		JOIN tbl_nodes_coords USING (nid)
-		GROUP BY wid;
+DELETE FROM tbl_ways_range WHERE NOT EXISTS
+	( SELECT wid FROM tbl_ways_selected WHERE
+		tbl_ways_selected.wid=tbl_ways_range.wid );
+
+/*
+ * PROCESS WAYS
+ */
 
 -- center large polygon ways
 .print 'PROCESS tbl_ways_center'
@@ -302,9 +303,7 @@ DELETE FROM tbl_ways_nds WHERE EXISTS
 -- insert nodes transitively selected from ways
 .print 'PROCESS tbl_nodes_selected'
 INSERT OR IGNORE INTO tbl_nodes_selected (nid)
-	SELECT nid
-		FROM tbl_ways
-		JOIN tbl_ways_nds USING (wid);
+	SELECT nid FROM tbl_ways_nds;
 
 /*
  * PROCESS NODES
