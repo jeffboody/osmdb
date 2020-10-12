@@ -180,6 +180,8 @@ CREATE TABLE tbl_rels_polygon
  * IMPORT TABLES
  */
 
+.stats on
+.timer on
 .mode csv
 .separator |
 .print 'IMPORT tbl_nodes_coords'
@@ -223,7 +225,7 @@ CREATE INDEX idx_ways_nds ON tbl_ways_nds (wid);
  */
 
 -- compute the range of all ways
-.print 'PROCESS tbl_ways_range'
+.print 'INSERT INTO tbl_ways_range'
 INSERT INTO tbl_ways_range (wid, lonL, lonR, latB, latT)
 	SELECT wid, min(lon), max(lon), min(lat), max(lat)
 		FROM tbl_ways_nds
@@ -231,7 +233,7 @@ INSERT INTO tbl_ways_range (wid, lonL, lonR, latB, latT)
 		GROUP BY wid;
 
 -- compute the range of all relations
-.print 'PROCESS tbl_rels_range'
+.print 'INSERT INTO tbl_rels_range'
 INSERT INTO tbl_rels_range (rid, lonL, lonR, latB, latT)
 	SELECT rid, min(lonL), max(lonR), min(latB), max(latT)
 		FROM tbl_ways_members
@@ -249,7 +251,7 @@ INSERT INTO tbl_rels_range (rid, lonL, lonR, latB, latT)
 -- latT=40.078071, lonL=-105.227051,
 -- latB=40.061257, lonR=-105.205078,
 -- area=0.000369
-.print 'PROCESS tbl_rels_center'
+.print 'INSERT INTO tbl_rels_center'
 INSERT OR IGNORE INTO tbl_rels_center (rid)
 	SELECT rid
 		FROM tbl_rels_polygon
@@ -257,29 +259,29 @@ INSERT OR IGNORE INTO tbl_rels_center (rid)
 		WHERE (0.5*(latT-latB)*(lonR-lonL))>0.000369;
 
 -- delete way members for centered relations
-.print 'PROCESS tbl_ways_members'
+.print 'DELETE FROM tbl_ways_members'
 DELETE FROM tbl_ways_members WHERE EXISTS
 	( SELECT rid FROM tbl_rels_center WHERE
 		tbl_ways_members.rid=tbl_rels_center.rid );
 
 -- insert nodes transitively selected from relations
-.print 'PROCESS tbl_nodes_selected'
+.print 'INSERT INTO tbl_nodes_selected'
 INSERT OR IGNORE INTO tbl_nodes_selected (nid)
 	SELECT nid FROM tbl_nodes_members;
 
 -- insert ways transitively selected from relations
-.print 'PROCESS tbl_ways_selected'
+.print 'INSERT INTO tbl_ways_selected'
 INSERT OR IGNORE INTO tbl_ways_selected (wid)
 	SELECT wid FROM tbl_ways_members;
 
 -- delete ways which were not selected by during the
 -- construction phase or were not transitively selected
 -- from relations
-.print 'PROCESS tbl_ways'
+.print 'DELETE FROM tbl_ways'
 DELETE FROM tbl_ways WHERE NOT EXISTS
 	( SELECT wid FROM tbl_ways_selected WHERE
 		tbl_ways_selected.wid=tbl_ways.wid );
-.print 'PROCESS tbl_ways_range'
+.print 'DELETE FROM tbl_ways_range'
 DELETE FROM tbl_ways_range WHERE NOT EXISTS
 	( SELECT wid FROM tbl_ways_selected WHERE
 		tbl_ways_selected.wid=tbl_ways_range.wid );
@@ -289,7 +291,7 @@ DELETE FROM tbl_ways_range WHERE NOT EXISTS
  */
 
 -- center large polygon ways
-.print 'PROCESS tbl_ways_center'
+.print 'INSERT INTO tbl_ways_center'
 INSERT OR IGNORE INTO tbl_ways_center (wid)
 	SELECT wid
 		FROM tbl_ways_polygon
@@ -297,13 +299,13 @@ INSERT OR IGNORE INTO tbl_ways_center (wid)
 		WHERE (0.5*(latT-latB)*(lonR-lonL))>0.000369;
 
 -- delete way nds for centered ways
-.print 'PROCESS tbl_ways_nds'
+.print 'DELETE FROM tbl_ways_nds'
 DELETE FROM tbl_ways_nds WHERE EXISTS
 	( SELECT wid FROM tbl_ways_center WHERE
 		tbl_ways_nds.wid=tbl_ways_center.wid );
 
 -- insert nodes transitively selected from ways
-.print 'PROCESS tbl_nodes_selected'
+.print 'INSERT INTO tbl_nodes_selected'
 INSERT OR IGNORE INTO tbl_nodes_selected (nid)
 	SELECT nid FROM tbl_ways_nds;
 
@@ -314,7 +316,7 @@ INSERT OR IGNORE INTO tbl_nodes_selected (nid)
 -- delete nodes which were not selected by during the
 -- construction phase or were not transitively selected
 -- from ways/relations
-.print 'PROCESS tbl_nodes_coords'
+.print 'DELETE FROM tbl_nodes_coords'
 DELETE FROM tbl_nodes_coords WHERE NOT EXISTS
 	( SELECT nid FROM tbl_nodes_selected WHERE
 		tbl_nodes_selected.nid=tbl_nodes_coords.nid );
@@ -323,17 +325,22 @@ DELETE FROM tbl_nodes_coords WHERE NOT EXISTS
  * CLEAN UP
  */
 
-.print 'CLEANUP'
-
 -- drop working tables
+.print 'DROP tbl_nodes_selected'
 DROP TABLE tbl_nodes_selected;
+.print 'DROP tbl_ways_selected'
 DROP TABLE tbl_ways_selected;
+.print 'DROP tbl_ways_center'
 DROP TABLE tbl_ways_center;
+.print 'DROP tbl_rels_center'
 DROP TABLE tbl_rels_center;
+.print 'DROP tbl_ways_polygon'
 DROP TABLE tbl_ways_polygon;
+.print 'DROP tbl_rels_polygon'
 DROP TABLE tbl_rels_polygon;
 
 -- optimize database for read-only access
+.print 'VACUUM'
 VACUUM;
 
 .print 'DONE'

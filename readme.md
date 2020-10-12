@@ -78,7 +78,7 @@ To initialize SQLite3 Database:
 
 Import planet.
 
-	./shell --init init.sql planet.sqlite3
+	./shell --init init.sql planet.sqlite3 | tee log.txt
 
 Import KML.
 
