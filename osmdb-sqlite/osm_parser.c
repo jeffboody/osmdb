@@ -30,6 +30,7 @@
 #include "libcc/cc_log.h"
 #include "libcc/cc_memory.h"
 #include "libxmlstream/xml_istream.h"
+#include "terrain/terrain_util.h"
 #include "osm_parser.h"
 #include "../osmdb_util.h"
 
@@ -754,11 +755,39 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 
 	if(selected)
 	{
-		int min_zoom = sc ? osmdb_styleClass_minZoom(sc) : 999;
-		fprintf(self->tbl_nodes_info, "%0.0lf|%i|%s|%s|%i|%i|%i\n",
+		float x;
+		float y;
+		int   min_zoom = sc ? osmdb_styleClass_minZoom(sc) : 999;
+		int   tile8  = -1;
+		int   tile11 = -1;
+		int   tile14 = -1;
+		if(min_zoom <= 8)
+		{
+			terrain_coord2tile(self->attr_lat, self->attr_lon, 8,
+			                   &x, &y);
+			tile8 = ((int) y)*256 + ((int) x);
+		}
+
+		if(min_zoom <= 11)
+		{
+			terrain_coord2tile(self->attr_lat, self->attr_lon, 11,
+			                   &x, &y);
+			tile11 = ((int) y)*2048 + ((int) x);
+		}
+
+		if(min_zoom <= 14)
+		{
+			terrain_coord2tile(self->attr_lat, self->attr_lon, 14,
+			                   &x, &y);
+			tile14 = ((int) y)*16384 + ((int) x);
+		}
+
+		fprintf(self->tbl_nodes_info,
+		        "%0.0lf|%i|%s|%s|%i|%i|%i|%i|%i\n",
 		        self->attr_id, self->tag_class,
 		        self->tag_name, self->tag_abrev,
-		        self->tag_ele, self->tag_st, min_zoom);
+		        self->tag_ele, self->tag_st,
+		        tile8, tile11, tile14);
 		fprintf(self->tbl_nodes_selected, "%0.0lf\n",
 		        self->attr_id);
 	}

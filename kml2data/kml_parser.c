@@ -32,6 +32,7 @@
 #include "libcc/cc_log.h"
 #include "libcc/cc_memory.h"
 #include "osmdb/osmdb_util.h"
+#include "terrain/terrain_util.h"
 
 #define KML_STATE_INIT             0
 #define KML_STATE_KML              1
@@ -165,8 +166,8 @@ kml_parser_wayAddSeg(kml_parser_t* self)
 		fprintf(self->tbl_ways, "%0.0lf|%i|0|||0|0|0|0|1|11\n",
 		        self->wid, self->class);
 		fprintf(self->tbl_ways_range, "%0.0lf|%lf|%lf|%lf|%lf\n",
-		        self->wid, self->seg_latT, self->seg_lonL,
-		        self->seg_latB, self->seg_lonR);
+		        self->wid, self->seg_lonL, self->seg_lonR,
+		        self->seg_latB, self->seg_latT);
 	}
 	self->wid     -= 1.0;
 	self->seg_nds  = 0;
@@ -449,10 +450,19 @@ kml_parser_endPlacemark(kml_parser_t* self, int line,
 		             (self->way_latT - self->way_latB)/2.0;
 		double lon = self->way_lonL +
 		             (self->way_lonR - self->way_lonL)/2.0;
+
+		// compute tile addresses
+		float x;
+		float y;
+		terrain_coord2tile(lat, lon, 11, &x, &y);
+		int tile11 = ((int) y)*2048 + ((int) x);
+		terrain_coord2tile(lat, lon, 14, &x, &y);
+		int tile14 = ((int) y)*16384 + ((int) x);
+
 		fprintf(self->tbl_nodes_coords, "%0.0lf|%lf|%lf\n",
 		        self->nid, lat, lon);
-		fprintf(self->tbl_nodes_info, "%0.0lf|%i|%s||0||11\n",
-		        self->nid, self->class, self->name);
+		fprintf(self->tbl_nodes_info, "%0.0lf|%i|%s||0|0|-1|%i|%i\n",
+		        self->nid, self->class, self->name, tile11, tile14);
 
 		// advance the next node id
 		self->nid -= 1.0;

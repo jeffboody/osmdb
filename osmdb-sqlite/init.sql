@@ -44,7 +44,9 @@ CREATE TABLE tbl_nodes_info
 	abrev    TEXT,
 	ele      INTEGER,
 	st       INTEGER,
-	min_zoom INTEGER
+	tile8    INTEGER,
+	tile11   INTEGER,
+	tile14   INTEGER
 );
 
 CREATE TABLE tbl_ways
@@ -94,27 +96,27 @@ CREATE TABLE tbl_ways_members
 );
 
 /*
- * CREATE DERIVED TABLES
+ * CREATE RANGE TABLES
  */
 
-.print 'CREATE DERIVED TABLES'
+.print 'CREATE RANGE TABLES'
 
-CREATE TABLE tbl_ways_range
+CREATE VIRTUAL TABLE tbl_ways_range USING rtree
 (
-	wid  INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_ways,
-	latT FLOAT,
-	lonL FLOAT,
-	latB FLOAT,
-	lonR FLOAT
+	wid,
+	lonL,
+	lonR,
+	latB,
+	latT
 );
 
-CREATE TABLE tbl_rels_range
+CREATE VIRTUAL TABLE tbl_rels_range USING rtree
 (
-	rid  INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_rels,
-	latT FLOAT,
-	lonL FLOAT,
-	latB FLOAT,
-	lonR FLOAT
+	rid,
+	lonL,
+	lonR,
+	latB,
+	latT
 );
 
 /*
@@ -222,16 +224,16 @@ CREATE INDEX idx_ways_nds ON tbl_ways_nds (wid);
 
 -- compute the range of all ways
 .print 'PROCESS tbl_ways_range'
-INSERT INTO tbl_ways_range (wid, latT, lonL, latB, lonR)
-	SELECT wid, max(lat) AS latT, min(lon) AS lonL, min(lat) AS latB, max(lon) AS lonR
+INSERT INTO tbl_ways_range (wid, lonL, lonR, latB, latT)
+	SELECT wid, min(lon), max(lon), min(lat), max(lat)
 		FROM tbl_ways_nds
 		JOIN tbl_nodes_coords USING (nid)
 		GROUP BY wid;
 
 -- compute the range of all relations
 .print 'PROCESS tbl_rels_range'
-INSERT INTO tbl_rels_range (rid, latT, lonL, latB, lonR)
-	SELECT rid, max(latT) AS latT, min(lonL) AS lonL, min(latB) AS latB, max(lonR) AS lonR
+INSERT INTO tbl_rels_range (rid, lonL, lonR, latB, latT)
+	SELECT rid, min(lonL), max(lonR), min(latB), max(latT)
 		FROM tbl_ways_members
 		JOIN tbl_ways_range USING (wid)
 		GROUP BY rid;
@@ -316,20 +318,6 @@ INSERT OR IGNORE INTO tbl_nodes_selected (nid)
 DELETE FROM tbl_nodes_coords WHERE NOT EXISTS
 	( SELECT nid FROM tbl_nodes_selected WHERE
 		tbl_nodes_selected.nid=tbl_nodes_coords.nid );
-
-/*
- * CREATE COORD INDEXES
- * These indexes optimize searches for coordinates. See
- * EXPLAIN QUERY PLAN to verify if the indexes are used.
- * e.g. SELECT * FROM tbl_nodes_coords WHERE lat>0 AND lon>0;
- */
-
-.print 'CREATE idx_nodes_coords'
-CREATE INDEX idx_nodes_coords ON tbl_nodes_coords (lat, lon);
-.print 'CREATE idx_ways_range_coords'
-CREATE INDEX idx_ways_range_coords ON tbl_ways_range (latT, lonL, latB, lonR);
-.print 'CREATE idx_rels_range_coords'
-CREATE INDEX idx_rels_range_coords ON tbl_rels_range (latT, lonL, latB, lonR);
 
 /*
  * CLEAN UP
