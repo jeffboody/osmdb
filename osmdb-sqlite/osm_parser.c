@@ -952,7 +952,7 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 
 		selected = 1;
 	}
-	if(sc && sc->point && (self->tag_name[0] != '\0'))
+	else if(sc && sc->point && (self->tag_name[0] != '\0'))
 	{
 		selected = 1;
 		center   = 1;
