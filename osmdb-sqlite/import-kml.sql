@@ -38,13 +38,4 @@
 .print 'IMPORT tbl_ways_range'
 .import tbl_ways_range.data tbl_ways_range
 
-/*
- * CLEAN UP
- */
-
-.print 'CLEANUP'
-
--- optimize database for read-only access
-VACUUM;
-
 .print 'DONE'
