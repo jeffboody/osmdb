@@ -1234,6 +1234,15 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 	// discard relations when not selected
 	if(selected == 0)
 	{
+		cc_listIter_t* iter = cc_list_head(self->rel_members);
+		while(iter)
+		{
+			osm_relationMember_t* m;
+			m = (osm_relationMember_t*)
+			    cc_list_remove(self->rel_members, &iter);
+			FREE(m);
+		}
+
 		return 1;
 	}
 
