@@ -32,7 +32,6 @@
 #include "libcc/cc_log.h"
 #include "libcc/cc_memory.h"
 #include "osmdb/osmdb_util.h"
-#include "terrain/terrain_util.h"
 
 #define KML_STATE_INIT             0
 #define KML_STATE_KML              1
@@ -451,18 +450,10 @@ kml_parser_endPlacemark(kml_parser_t* self, int line,
 		double lon = self->way_lonL +
 		             (self->way_lonR - self->way_lonL)/2.0;
 
-		// compute tile addresses
-		float x;
-		float y;
-		terrain_coord2tile(lat, lon, 11, &x, &y);
-		int tile11 = ((int) y)*2048 + ((int) x);
-		terrain_coord2tile(lat, lon, 14, &x, &y);
-		int tile14 = ((int) y)*16384 + ((int) x);
-
 		fprintf(self->tbl_nodes_coords, "%0.0lf|%lf|%lf\n",
 		        self->nid, lat, lon);
-		fprintf(self->tbl_nodes_info, "%0.0lf|%i|%s||0|0|-1|%i|%i\n",
-		        self->nid, self->class, self->name, tile11, tile14);
+		fprintf(self->tbl_nodes_info, "%0.0lf|%i|%s||0|0|11\n",
+		        self->nid, self->class, self->name);
 
 		// advance the next node id
 		self->nid -= 1.0;

@@ -44,9 +44,7 @@ CREATE TABLE tbl_nodes_info
 	abrev    TEXT,
 	ele      INTEGER,
 	st       INTEGER,
-	tile8    INTEGER,
-	tile11   INTEGER,
-	tile14   INTEGER
+	min_zoom INTEGER
 );
 
 CREATE TABLE tbl_ways
@@ -100,6 +98,15 @@ CREATE TABLE tbl_ways_members
  */
 
 .print 'CREATE RANGE TABLES'
+
+CREATE VIRTUAL TABLE tbl_nodes_range USING rtree
+(
+	nid,
+	lonL,
+	lonR,
+	latB,
+	latT
+);
 
 CREATE VIRTUAL TABLE tbl_ways_range USING rtree
 (
@@ -223,6 +230,13 @@ CREATE INDEX idx_ways_nds ON tbl_ways_nds (wid);
 /*
  * PROCESS RANGE
  */
+
+-- compute the range of selected nodes
+.print 'INSERT INTO tbl_nodes_range'
+INSERT INTO tbl_nodes_range (nid, lonL, lonR, latB, latT)
+	SELECT nid, lon, lon, lat, lat
+		FROM tbl_nodes_info
+		JOIN tbl_nodes_coords USING (nid);
 
 -- compute the range of all ways
 .print 'INSERT INTO tbl_ways_range'
