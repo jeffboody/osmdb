@@ -22,6 +22,7 @@
  */
 
 #include <iconv.h>
+#include <locale.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -1588,6 +1589,9 @@ osm_parser_t* osm_parser_new(const char* style)
 	{
 		goto fail_fill_class;
 	}
+
+	// initialize locale for iconv
+	setlocale(LC_CTYPE, "");
 
 	self->cd = iconv_open("ASCII//TRANSLIT", "UTF-8");
 	if(self->cd == ICONV_OPEN_ERR)
