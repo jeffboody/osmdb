@@ -401,7 +401,6 @@ const char* const OSM_UTIL_CLASSES[] =
 	"craft:mint",
 	"craft:optician",
 	"craft:painter",
-	"craft:parquet_layer,"
 	"craft:photographer",
 	"craft:photographic_laboratory",
 	"craft:piano_tuner",
@@ -1108,6 +1107,7 @@ const char* const OSM_UTIL_CLASSES[] =
 	"rec:wilderness",
 	"rec:special",
 	"rec:mineral",
+	"craft:parquet_layer",
 	NULL
 };
 
