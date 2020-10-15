@@ -162,7 +162,7 @@ kml_parser_wayAddSeg(kml_parser_t* self)
 	// see init.sql for table definition
 	if(self->seg_nds)
 	{
-		fprintf(self->tbl_ways, "%0.0lf|%i|0|||0|0|0|0|1|11\n",
+		fprintf(self->tbl_ways, "%0.0lf|%i|0|||0|0|0|0|0|0|1|11\n",
 		        self->wid, self->class);
 		fprintf(self->tbl_ways_range, "%0.0lf|%lf|%lf|%lf|%lf\n",
 		        self->wid, self->seg_lonL, self->seg_lonR,

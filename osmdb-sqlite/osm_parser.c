@@ -752,8 +752,6 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 		        self->attr_id, self->tag_class,
 		        self->tag_name, self->tag_abrev,
 		        self->tag_ele, self->tag_st, min_zoom);
-		fprintf(self->tbl_nodes_selected, "%0.0lf\n",
-		        self->attr_id);
 	}
 
 	// node coords may be transitively selected
@@ -928,31 +926,13 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 
 	// always add ways since they may be transitively selected
 	int min_zoom = sc ? osmdb_styleClass_minZoom(sc) : 999;
-	fprintf(self->tbl_ways, "%0.0lf|%i|%i|%s|%s|%i|%i|%i|%i|%i|%i\n",
+	fprintf(self->tbl_ways, "%0.0lf|%i|%i|%s|%s|%i|%i|%i|%i|%i|%i|%i|%i\n",
 	        self->attr_id, self->tag_class,
 	        self->tag_way_layer,
 	        self->tag_name, self->tag_abrev,
 	        self->tag_way_oneway, self->tag_way_bridge,
 	        self->tag_way_tunnel, self->tag_way_cutting,
-	        selected, min_zoom);
-
-	if(selected)
-	{
-		fprintf(self->tbl_ways_selected, "%0.0lf\n",
-		        self->attr_id);
-	}
-
-	// add working tables
-	if(center)
-	{
-		fprintf(self->tbl_ways_center, "%0.0lf\n",
-		        self->attr_id);
-	}
-	else if(polygon)
-	{
-		fprintf(self->tbl_ways_polygon, "%0.0lf\n",
-		        self->attr_id);
-	}
+	        center, polygon, selected, min_zoom);
 
 	// write way nds
 	int idx = 0;
@@ -1215,21 +1195,10 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 	}
 
 	int min_zoom = sc ? osmdb_styleClass_minZoom(sc) : 999;
-	fprintf(self->tbl_rels, "%0.0lf|%i|%s|%s|%i\n",
+	fprintf(self->tbl_rels, "%0.0lf|%i|%s|%s|%i|%i|%i\n",
 	        self->attr_id, self->tag_class,
-	        self->tag_name, self->tag_abrev, min_zoom);
-
-	// add working tables
-	if(center)
-	{
-		fprintf(self->tbl_rels_center, "%0.0lf\n",
-		        self->attr_id);
-	}
-	else if(polygon)
-	{
-		fprintf(self->tbl_rels_polygon, "%0.0lf\n",
-		        self->attr_id);
-	}
+	        self->tag_name, self->tag_abrev,
+	        center, polygon, min_zoom);
 
 	// write rel members
 	int idx = 0;
@@ -1439,12 +1408,6 @@ osm_parser_t* osm_parser_new(const char* style)
 	const char* tbl_ways_nds       = "tbl_ways_nds.data";
 	const char* tbl_nodes_members  = "tbl_nodes_members.data";
 	const char* tbl_ways_members   = "tbl_ways_members.data";
-	const char* tbl_nodes_selected = "tbl_nodes_selected.data";
-	const char* tbl_ways_selected  = "tbl_ways_selected.data";
-	const char* tbl_ways_center    = "tbl_ways_center.data";
-	const char* tbl_rels_center    = "tbl_rels_center.data";
-	const char* tbl_ways_polygon   = "tbl_ways_polygon.data";
-	const char* tbl_rels_polygon   = "tbl_rels_polygon.data";
 
 	self->tbl_nodes_coords = fopen(tbl_nodes_coords, "w");
 	if(self->tbl_nodes_coords == NULL)
@@ -1486,42 +1449,6 @@ osm_parser_t* osm_parser_new(const char* style)
 	if(self->tbl_ways_members == NULL)
 	{
 		goto fail_tbl_ways_members;
-	}
-
-	self->tbl_nodes_selected = fopen(tbl_nodes_selected, "w");
-	if(self->tbl_nodes_selected == NULL)
-	{
-		goto fail_tbl_nodes_selected;
-	}
-
-	self->tbl_ways_selected = fopen(tbl_ways_selected, "w");
-	if(self->tbl_ways_selected == NULL)
-	{
-		goto fail_tbl_ways_selected;
-	}
-
-	self->tbl_ways_center = fopen(tbl_ways_center, "w");
-	if(self->tbl_ways_center == NULL)
-	{
-		goto fail_tbl_ways_center;
-	}
-
-	self->tbl_rels_center = fopen(tbl_rels_center, "w");
-	if(self->tbl_rels_center == NULL)
-	{
-		goto fail_tbl_rels_center;
-	}
-
-	self->tbl_ways_polygon = fopen(tbl_ways_polygon, "w");
-	if(self->tbl_ways_polygon == NULL)
-	{
-		goto fail_tbl_ways_polygon;
-	}
-
-	self->tbl_rels_polygon = fopen(tbl_rels_polygon, "w");
-	if(self->tbl_rels_polygon == NULL)
-	{
-		goto fail_tbl_rels_polygon;
 	}
 
 	self->way_nds = cc_list_new();
@@ -1590,18 +1517,6 @@ osm_parser_t* osm_parser_new(const char* style)
 	fail_rel_members:
 		cc_list_delete(&self->way_nds);
 	fail_way_nds:
-		fclose(self->tbl_rels_polygon);
-	fail_tbl_rels_polygon:
-		fclose(self->tbl_ways_polygon);
-	fail_tbl_ways_polygon:
-		fclose(self->tbl_rels_center);
-	fail_tbl_rels_center:
-		fclose(self->tbl_ways_center);
-	fail_tbl_ways_center:
-		fclose(self->tbl_ways_selected);
-	fail_tbl_ways_selected:
-		fclose(self->tbl_nodes_selected);
-	fail_tbl_nodes_selected:
 		fclose(self->tbl_ways_members);
 	fail_tbl_ways_members:
 		fclose(self->tbl_nodes_members);
@@ -1674,12 +1589,6 @@ void osm_parser_delete(osm_parser_t** _self)
 
 		cc_list_delete(&self->rel_members);
 		cc_list_delete(&self->way_nds);
-		fclose(self->tbl_rels_polygon);
-		fclose(self->tbl_ways_polygon);
-		fclose(self->tbl_rels_center);
-		fclose(self->tbl_ways_center);
-		fclose(self->tbl_ways_selected);
-		fclose(self->tbl_nodes_selected);
 		fclose(self->tbl_ways_members);
 		fclose(self->tbl_nodes_members);
 		fclose(self->tbl_ways_nds);

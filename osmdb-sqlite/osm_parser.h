@@ -56,12 +56,6 @@ typedef struct
 	FILE* tbl_ways_nds;
 	FILE* tbl_nodes_members;
 	FILE* tbl_ways_members;
-	FILE* tbl_nodes_selected;
-	FILE* tbl_ways_selected;
-	FILE* tbl_ways_center;
-	FILE* tbl_rels_center;
-	FILE* tbl_ways_polygon;
-	FILE* tbl_rels_polygon;
 
 	osmdb_style_t* style;
 
