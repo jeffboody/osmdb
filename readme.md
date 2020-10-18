@@ -82,4 +82,4 @@ Import planet.
 
 Import KML.
 
-	./shell --init import-kml.sql planet.sqlite3
+	./shell --init init-kml.sql planet.sqlite3
