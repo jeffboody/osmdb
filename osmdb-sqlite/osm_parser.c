@@ -376,15 +376,17 @@ static const char* osm_parseWord(int line,
 
 static int
 osm_parseName(int line, const char* input, char* name,
-              char* abrev)
+              char* abrev, char* text)
 {
 	ASSERT(input);
 	ASSERT(name);
 	ASSERT(abrev);
+	ASSERT(text);
 
 	// initialize output string
 	name[0]  = '\0';
 	abrev[0] = '\0';
+	text[0]  = '\0';
 
 	// parse all words
 	const char* str   = input;
@@ -409,6 +411,23 @@ osm_parseName(int line, const char* input, char* name,
 		words -= 2;
 	}
 
+	// parse the search text
+	int n = 0;
+	for(n = 0; n < words; ++n)
+	{
+		if(n > 0)
+		{
+			osm_catWord(text, " ");
+		}
+
+		osm_catWord(text, word[n].word);
+		if(word[n].abreviate)
+		{
+			osm_catWord(text, " ");
+			osm_catWord(text, word[n].abrev);
+		}
+	}
+
 	if(words == 0)
 	{
 		// input is null string
@@ -418,8 +437,7 @@ osm_parseName(int line, const char* input, char* name,
 	else if(words == 1)
 	{
 		// input is single word (don't abreviate)
-		strncpy(name, word[0].word, 256);
-		name[255] = '\0';
+		snprintf(name, 256, "%s", word[0].word);
 		return 1;
 	}
 	else if(words == 2)
@@ -474,7 +492,7 @@ osm_parseName(int line, const char* input, char* name,
 	}
 
 	// parse the rest of the line
-	int n = 2;
+	n = 2;
 	while(n < words)
 	{
 		osm_catWord(name, word[n - 1].sep);
@@ -638,6 +656,7 @@ static void osm_parser_init(osm_parser_t* self)
 	self->name_en         = 0;
 	self->tag_name[0]     = '\0';
 	self->tag_abrev[0]    = '\0';
+	self->tag_text[0]     = '\0';
 	self->tag_ele         = 0;
 	self->tag_st          = 0;
 	self->tag_class       = 0;
@@ -752,6 +771,23 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 		        self->attr_id, self->tag_class,
 		        self->tag_name, self->tag_abrev,
 		        self->tag_ele, self->tag_st, min_zoom);
+
+		// add search text
+		if(self->tag_text[0] != '\0')
+		{
+			if(self->tag_st)
+			{
+				fprintf(self->tbl_nodes_text, "%0.0lf|%s %s %s\n",
+				        self->attr_id, self->tag_text,
+				        osmdb_stCodeToName(self->tag_st),
+				        osmdb_stCodeToAbrev(self->tag_st));
+			}
+			else
+			{
+				fprintf(self->tbl_nodes_text, "%0.0lf|%s\n",
+				        self->attr_id, self->tag_text);
+			}
+		}
 	}
 
 	// node coords may be transitively selected
@@ -795,6 +831,7 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 
 			char name[256];
 			char abrev[256];
+			char text[256];
 
 			int class = osm_parser_findClass(self, atts[j], val);
 			if(class)
@@ -813,17 +850,19 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 			}
 			else if((strcmp(atts[j], "name") == 0) &&
 			        (self->name_en == 0) &&
-			        osm_parseName(line, val, name, abrev))
+			        osm_parseName(line, val, name, abrev, text))
 			{
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
+				snprintf(self->tag_text,  256, "%s", text);
 			}
 			else if((strcmp(atts[j], "name:en") == 0) &&
-			        osm_parseName(line, val, name, abrev))
+			        osm_parseName(line, val, name, abrev, text))
 			{
 				self->name_en = 1;
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
+				snprintf(self->tag_text,  256, "%s", text);
 			}
 			else if(strcmp(atts[j], "ele:ft") == 0)
 			{
@@ -934,6 +973,13 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	        self->tag_way_tunnel, self->tag_way_cutting,
 	        center, polygon, selected, min_zoom);
 
+	// add search text
+	if(self->tag_text[0] != '\0')
+	{
+		fprintf(self->tbl_ways_text, "%0.0lf|%s\n",
+		        self->attr_id, self->tag_text);
+	}
+
 	// write way nds
 	int idx = 0;
 	cc_listIter_t* iter = cc_list_head(self->way_nds);
@@ -984,6 +1030,7 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 
 			char name[256];
 			char abrev[256];
+			char text[256];
 
 			int class = osm_parser_findClass(self, atts[j], val);
 			if(class)
@@ -1002,17 +1049,19 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 			}
 			else if((strcmp(atts[j], "name") == 0) &&
 			        (self->name_en == 0) &&
-			        osm_parseName(line, val, name, abrev))
+			        osm_parseName(line, val, name, abrev, text))
 			{
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
+				snprintf(self->tag_text,  256, "%s", text);
 			}
 			else if((strcmp(atts[j], "name:en") == 0) &&
-			        osm_parseName(line, val, name, abrev))
+			        osm_parseName(line, val, name, abrev, text))
 			{
 				self->name_en = 1;
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
+				snprintf(self->tag_text,  256, "%s", text);
 			}
 			else if(strcmp(atts[j], "layer") == 0)
 			{
@@ -1200,6 +1249,13 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 	        self->tag_name, self->tag_abrev,
 	        center, polygon, min_zoom);
 
+	// add search text
+	if(self->tag_text[0] != '\0')
+	{
+		fprintf(self->tbl_rels_text, "%0.0lf|%s\n",
+		        self->attr_id, self->tag_text);
+	}
+
 	// write rel members
 	int idx = 0;
 	cc_listIter_t* iter = cc_list_head(self->rel_members);
@@ -1263,6 +1319,7 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 
 			char name[256];
 			char abrev[256];
+			char text[256];
 
 			int class = osm_parser_findClass(self, atts[j], val);
 			if(class)
@@ -1281,17 +1338,19 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 			}
 			else if((strcmp(atts[j], "name") == 0) &&
 			        (self->name_en == 0) &&
-			        osm_parseName(line, val, name, abrev))
+			        osm_parseName(line, val, name, abrev, text))
 			{
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
+				snprintf(self->tag_text,  256, "%s", text);
 			}
 			else if((strcmp(atts[j], "name:en") == 0) &&
-			        osm_parseName(line, val, name, abrev))
+			        osm_parseName(line, val, name, abrev, text))
 			{
 				self->name_en = 1;
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
+				snprintf(self->tag_text,  256, "%s", text);
 			}
 			else if((strcmp(atts[j], "type") == 0))
 			{
@@ -1408,6 +1467,9 @@ osm_parser_t* osm_parser_new(const char* style)
 	const char* tbl_ways_nds       = "tbl_ways_nds.data";
 	const char* tbl_nodes_members  = "tbl_nodes_members.data";
 	const char* tbl_ways_members   = "tbl_ways_members.data";
+	const char* tbl_nodes_text     = "tbl_nodes_text.data";
+	const char* tbl_ways_text      = "tbl_ways_text.data";
+	const char* tbl_rels_text      = "tbl_rels_text.data";
 
 	self->tbl_nodes_coords = fopen(tbl_nodes_coords, "w");
 	if(self->tbl_nodes_coords == NULL)
@@ -1461,6 +1523,24 @@ osm_parser_t* osm_parser_new(const char* style)
 	if(self->rel_members == NULL)
 	{
 		goto fail_rel_members;
+	}
+
+	self->tbl_nodes_text = fopen(tbl_nodes_text, "w");
+	if(self->tbl_nodes_text == NULL)
+	{
+		goto fail_tbl_nodes_text;
+	}
+
+	self->tbl_ways_text = fopen(tbl_ways_text, "w");
+	if(self->tbl_ways_text == NULL)
+	{
+		goto fail_tbl_ways_text;
+	}
+
+	self->tbl_rels_text = fopen(tbl_rels_text, "w");
+	if(self->tbl_rels_text == NULL)
+	{
+		goto fail_tbl_rels_text;
 	}
 
 	int cnt = osmdb_classCount();
@@ -1517,6 +1597,12 @@ osm_parser_t* osm_parser_new(const char* style)
 	fail_rel_members:
 		cc_list_delete(&self->way_nds);
 	fail_way_nds:
+		fclose(self->tbl_rels_text);
+	fail_tbl_rels_text:
+		fclose(self->tbl_ways_text);
+	fail_tbl_ways_text:
+		fclose(self->tbl_nodes_text);
+	fail_tbl_nodes_text:
 		fclose(self->tbl_ways_members);
 	fail_tbl_ways_members:
 		fclose(self->tbl_nodes_members);
@@ -1589,6 +1675,9 @@ void osm_parser_delete(osm_parser_t** _self)
 
 		cc_list_delete(&self->rel_members);
 		cc_list_delete(&self->way_nds);
+		fclose(self->tbl_rels_text);
+		fclose(self->tbl_ways_text);
+		fclose(self->tbl_nodes_text);
 		fclose(self->tbl_ways_members);
 		fclose(self->tbl_nodes_members);
 		fclose(self->tbl_ways_nds);

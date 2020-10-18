@@ -56,6 +56,9 @@ typedef struct
 	FILE* tbl_ways_nds;
 	FILE* tbl_nodes_members;
 	FILE* tbl_ways_members;
+	FILE* tbl_nodes_text;
+	FILE* tbl_ways_text;
+	FILE* tbl_rels_text;
 
 	osmdb_style_t* style;
 
@@ -70,6 +73,7 @@ typedef struct
 	// tags
 	char tag_name[256];
 	char tag_abrev[256];
+	char tag_text[256];
 	int  tag_ele;
 	int  tag_st;
 	int  tag_class;

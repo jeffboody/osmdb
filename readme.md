@@ -83,3 +83,7 @@ Import planet.
 Import KML.
 
 	./shell --init init-kml.sql planet.sqlite3
+
+Import search text.
+
+	./shell --init init-search.sql planet.sqlite3
