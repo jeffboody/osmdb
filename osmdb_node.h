@@ -39,7 +39,16 @@ typedef struct
 	int    class;
 } osmdb_node_t;
 
-osmdb_node_t* osmdb_node_new(const char** atts, int line);
+osmdb_node_t* osmdb_node_new(double id,
+                             double lat,
+                             double lon,
+                             const char* name,
+                             const char* abrev,
+                             int ele,
+                             int st,
+                             int class);
+osmdb_node_t* osmdb_node_newXml(const char** atts,
+                                int line);
 void          osmdb_node_delete(osmdb_node_t** _self);
 void          osmdb_node_incref(osmdb_node_t* self);
 int           osmdb_node_decref(osmdb_node_t* self);

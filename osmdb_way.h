@@ -49,7 +49,26 @@ typedef struct
 	cc_list_t* nds;
 } osmdb_way_t;
 
-osmdb_way_t* osmdb_way_new(const char** atts, int line);
+osmdb_way_t* osmdb_way_new(double id,
+                           const char* name,
+                           const char* abrev,
+                           int class,
+                           int layer,
+                           int oneway,
+                           int bridge,
+                           int tunnel,
+                           int cutting,
+                           double latT,
+                           double lonL,
+                           double latB,
+                           double lonR);
+osmdb_way_t* osmdb_way_newXml(const char** atts,
+                              int line);
+int          osmdb_way_newNd(osmdb_way_t* self,
+                             double ref);
+int          osmdb_way_newNdXml(osmdb_way_t* self,
+                                const char** atts,
+                                int line);
 osmdb_way_t* osmdb_way_copy(osmdb_way_t* self);
 osmdb_way_t* osmdb_way_copyEmpty(osmdb_way_t* self);
 void         osmdb_way_delete(osmdb_way_t** _self);
@@ -58,12 +77,8 @@ int          osmdb_way_decref(osmdb_way_t* self);
 int          osmdb_way_export(osmdb_way_t* self,
                               xml_ostream_t* os);
 int          osmdb_way_size(osmdb_way_t* self);
-int          osmdb_way_nd(osmdb_way_t* self,
-                          const char** atts, int line);
 void         osmdb_way_updateRange(osmdb_way_t* self,
                                    osmdb_range_t* range);
-int          osmdb_way_ref(osmdb_way_t* self,
-                           double ref);
 void         osmdb_way_discardNds(osmdb_way_t* self);
 
 #endif

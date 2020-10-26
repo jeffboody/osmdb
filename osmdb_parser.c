@@ -136,7 +136,7 @@ osmdb_parser_beginOsmNode(osmdb_parser_t* self, int line,
 	ASSERT(atts);
 
 	self->state = OSMDB_STATE_OSMDB_NODE;
-	self->node  = osmdb_node_new(atts, line);
+	self->node  = osmdb_node_newXml(atts, line);
 	return self->node ? 1 : 0;
 }
 
@@ -170,7 +170,7 @@ osmdb_parser_beginOsmWay(osmdb_parser_t* self, int line,
 	ASSERT(atts);
 
 	self->state = OSMDB_STATE_OSMDB_WAY;
-	self->way   = osmdb_way_new(atts, line);
+	self->way   = osmdb_way_newXml(atts, line);
 	return self->way ? 1 : 0;
 }
 
@@ -208,7 +208,7 @@ osmdb_parser_beginOsmWayNd(osmdb_parser_t* self, int line,
 	{
 		return 0;
 	}
-	else if(osmdb_way_nd(self->way, atts, line) == 0)
+	else if(osmdb_way_newNdXml(self->way, atts, line) == 0)
 	{
 		osmdb_way_delete(&self->way);
 		return 0;
@@ -236,7 +236,7 @@ osmdb_parser_beginOsmRel(osmdb_parser_t* self, int line,
 	ASSERT(atts);
 
 	self->state    = OSMDB_STATE_OSMDB_REL;
-	self->relation = osmdb_relation_new(atts, line);
+	self->relation = osmdb_relation_newXml(atts, line);
 	return self->relation ? 1 : 0;
 }
 
@@ -274,7 +274,8 @@ osmdb_parser_beginOsmRelMember(osmdb_parser_t* self, int line,
 	{
 		return 0;
 	}
-	else if(osmdb_relation_member(self->relation, atts, line) == 0)
+	else if(osmdb_relation_newMemberXml(self->relation, atts,
+	                                    line) == 0)
 	{
 		osmdb_relation_delete(&self->relation);
 		return 0;

@@ -38,93 +38,16 @@
 * public                                                   *
 ***********************************************************/
 
-osmdb_way_t* osmdb_way_new(const char** atts, int line)
+osmdb_way_t*
+osmdb_way_new(double id, const char* name,
+              const char* abrev, int class,
+              int layer, int oneway, int bridge,
+              int tunnel, int cutting,
+              double latT, double lonL,
+              double latB, double lonR)
 {
-	ASSERT(atts);
+	// name and abrev may be NULL
 
-	const char* id      = NULL;
-	const char* name    = NULL;
-	const char* abrev   = NULL;
-	const char* class   = NULL;
-	const char* layer   = NULL;
-	const char* oneway  = NULL;
-	const char* bridge  = NULL;
-	const char* tunnel  = NULL;
-	const char* cutting = NULL;
-	const char* latT    = NULL;
-	const char* lonL    = NULL;
-	const char* latB    = NULL;
-	const char* lonR    = NULL;
-
-	// find atts
-	int idx0 = 0;
-	int idx1 = 1;
-	while(atts[idx0] && atts[idx1])
-	{
-		if(strcmp(atts[idx0], "id") == 0)
-		{
-			id = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "name") == 0)
-		{
-			name = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "abrev") == 0)
-		{
-			abrev = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "class") == 0)
-		{
-			class = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "layer") == 0)
-		{
-			layer = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "oneway") == 0)
-		{
-			oneway = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "bridge") == 0)
-		{
-			bridge = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "tunnel") == 0)
-		{
-			tunnel = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "cutting") == 0)
-		{
-			cutting = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "latT") == 0)
-		{
-			latT = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "lonL") == 0)
-		{
-			lonL = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "latB") == 0)
-		{
-			latB = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "lonR") == 0)
-		{
-			lonR = atts[idx1];
-		}
-		idx0 += 2;
-		idx1 += 2;
-	}
-
-	// check for required atts
-	if(id == NULL)
-	{
-		LOGE("invalid line=%i", line);
-		return NULL;
-	}
-
-	// create the way
 	osmdb_way_t* self;
 	self = (osmdb_way_t*) CALLOC(1, sizeof(osmdb_way_t));
 	if(self == NULL)
@@ -133,16 +56,19 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 		return NULL;
 	}
 
-	self->nds = cc_list_new();
-	if(self->nds == NULL)
-	{
-		goto fail_nds;
-	}
+	self->id      = id;
+	self->class   = class;
+	self->layer   = layer;
+	self->oneway  = oneway;
+	self->bridge  = bridge;
+	self->tunnel  = tunnel;
+	self->cutting = cutting;
+	self->latT    = latT;
+	self->lonL    = lonL;
+	self->latB    = latB;
+	self->lonR    = lonR;
 
-	self->refcount = 0;
-	self->id  = strtod(id, NULL);
-
-	if(name)
+	if(name && (name[0] != '\0'))
 	{
 		int len = strlen(name) + 1;
 		self->name = (char*) MALLOC(len*sizeof(char));
@@ -154,7 +80,7 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 		snprintf(self->name, len, "%s", name);
 	}
 
-	if(abrev)
+	if(abrev && (abrev[0] != '\0'))
 	{
 		int len = strlen(abrev) + 1;
 		self->abrev = (char*) MALLOC(len*sizeof(char));
@@ -166,67 +92,243 @@ osmdb_way_t* osmdb_way_new(const char** atts, int line)
 		snprintf(self->abrev, len, "%s", abrev);
 	}
 
-	if(class)
+	self->nds = cc_list_new();
+	if(self->nds == NULL)
 	{
-		self->class = osmdb_classNameToCode(class);
-	}
-
-	if(layer)
-	{
-		self->layer = (int) strtol(layer, NULL, 0);
-	}
-
-	if(oneway)
-	{
-		self->oneway = (int) strtol(oneway, NULL, 0);
-	}
-
-	if(bridge)
-	{
-		self->bridge = (int) strtol(bridge, NULL, 0);
-	}
-
-	if(tunnel)
-	{
-		self->tunnel = (int) strtol(tunnel, NULL, 0);
-	}
-
-	if(cutting)
-	{
-		self->cutting = (int) strtol(cutting, NULL, 0);
-	}
-
-	if(latT)
-	{
-		self->latT = strtod(latT, NULL);
-	}
-
-	if(lonL)
-	{
-		self->lonL = strtod(lonL, NULL);
-	}
-
-	if(latB)
-	{
-		self->latB = strtod(latB, NULL);
-	}
-
-	if(lonR)
-	{
-		self->lonR = strtod(lonR, NULL);
+		goto fail_nds;
 	}
 
 	// success
 	return self;
 
 	// failure
+	fail_nds:
+		FREE(self->abrev);
 	fail_abrev:
 		FREE(self->name);
 	fail_name:
-		cc_list_delete(&self->nds);
-	fail_nds:
 		FREE(self);
 	return NULL;
+}
+
+osmdb_way_t*
+osmdb_way_newXml(const char** atts, int line)
+{
+	ASSERT(atts);
+
+	const char* att_id      = NULL;
+	const char* att_name    = NULL;
+	const char* att_abrev   = NULL;
+	const char* att_class   = NULL;
+	const char* att_layer   = NULL;
+	const char* att_oneway  = NULL;
+	const char* att_bridge  = NULL;
+	const char* att_tunnel  = NULL;
+	const char* att_cutting = NULL;
+	const char* att_latT    = NULL;
+	const char* att_lonL    = NULL;
+	const char* att_latB    = NULL;
+	const char* att_lonR    = NULL;
+
+	// find atts
+	int idx0 = 0;
+	int idx1 = 1;
+	while(atts[idx0] && atts[idx1])
+	{
+		if(strcmp(atts[idx0], "id") == 0)
+		{
+			att_id = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "name") == 0)
+		{
+			att_name = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "abrev") == 0)
+		{
+			att_abrev = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "class") == 0)
+		{
+			att_class = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "layer") == 0)
+		{
+			att_layer = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "oneway") == 0)
+		{
+			att_oneway = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "bridge") == 0)
+		{
+			att_bridge = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "tunnel") == 0)
+		{
+			att_tunnel = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "cutting") == 0)
+		{
+			att_cutting = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "latT") == 0)
+		{
+			att_latT = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "lonL") == 0)
+		{
+			att_lonL = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "latB") == 0)
+		{
+			att_latB = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "lonR") == 0)
+		{
+			att_lonR = atts[idx1];
+		}
+		idx0 += 2;
+		idx1 += 2;
+	}
+
+	// check for required atts
+	if(att_id == NULL)
+	{
+		LOGE("invalid line=%i", line);
+		return NULL;
+	}
+
+	double id = strtod(att_id, NULL);
+
+	int class = 0;
+	if(att_class)
+	{
+		class = osmdb_classNameToCode(att_class);
+	}
+
+	int layer = 0;
+	if(att_layer)
+	{
+		layer = (int) strtol(att_layer, NULL, 0);
+	}
+
+	int oneway = 0;
+	if(att_oneway)
+	{
+		oneway = (int) strtol(att_oneway, NULL, 0);
+	}
+
+	int bridge = 0;
+	if(att_bridge)
+	{
+		bridge = (int) strtol(att_bridge, NULL, 0);
+	}
+
+	int tunnel = 0;
+	if(att_tunnel)
+	{
+		tunnel = (int) strtol(att_tunnel, NULL, 0);
+	}
+
+	int cutting = 0;
+	if(att_cutting)
+	{
+		cutting = (int) strtol(att_cutting, NULL, 0);
+	}
+
+	double latT = 0.0;
+	if(att_latT)
+	{
+		latT = strtod(att_latT, NULL);
+	}
+
+	double lonL = 0.0;
+	if(att_lonL)
+	{
+		lonL = strtod(att_lonL, NULL);
+	}
+
+	double latB = 0.0;
+	if(att_latB)
+	{
+		latB = strtod(att_latB, NULL);
+	}
+
+	double lonR = 0.0;
+	if(att_lonR)
+	{
+		lonR = strtod(att_lonR, NULL);
+	}
+
+	return osmdb_way_new(id, att_name, att_abrev, class, layer,
+	                     oneway, bridge, tunnel, cutting,
+	                     latT, lonL, latB, lonR);
+}
+
+int osmdb_way_newNd(osmdb_way_t* self, double ref)
+{
+	ASSERT(self);
+
+	// create the nd
+	double* _ref = (double*) MALLOC(sizeof(double));
+	if(_ref == NULL)
+	{
+		LOGE("MALLOC failed");
+		return 0;
+	}
+	*_ref = ref;
+
+	// add nd to list
+	if(cc_list_append(self->nds, NULL,
+	                  (const void*) _ref) == NULL)
+	{
+		goto fail_append;
+	}
+
+	// success
+	return 1;
+
+	// failure
+	fail_append:
+		FREE(_ref);
+	return 0;
+}
+
+int osmdb_way_newNdXml(osmdb_way_t* self, const char** atts,
+                       int line)
+{
+	ASSERT(self);
+	ASSERT(atts);
+
+	const char* ref = NULL;
+
+	// find atts
+	int idx0 = 0;
+	int idx1 = 1;
+	while(atts[idx0] && atts[idx1])
+	{
+		if(strcmp(atts[idx0], "ref") == 0)
+		{
+			ref = atts[idx1];
+		}
+		idx0 += 2;
+		idx1 += 2;
+	}
+
+	// check for required atts
+	if(ref == NULL)
+	{
+		LOGE("invalid line=%i", line);
+		return 0;
+	}
+
+	// add the nd
+	if(osmdb_way_newNd(self, strtod(ref, NULL)) == 0)
+	{
+		return 0;
+	}
+
+	return 1;
 }
 
 osmdb_way_t* osmdb_way_copy(osmdb_way_t* self)
@@ -244,8 +346,7 @@ osmdb_way_t* osmdb_way_copy(osmdb_way_t* self)
 	while(iter)
 	{
 		double* ref = (double*) cc_list_peekIter(iter);
-
-		if(osmdb_way_ref(copy, *ref) == 0)
+		if(osmdb_way_newNd(copy, *ref) == 0)
 		{
 			goto fail_nd;
 		}
@@ -458,43 +559,6 @@ int osmdb_way_size(osmdb_way_t* self)
 	return size;
 }
 
-int osmdb_way_nd(osmdb_way_t* self, const char** atts,
-                 int line)
-{
-	ASSERT(self);
-	ASSERT(atts);
-
-	const char* ref = NULL;
-
-	// find atts
-	int idx0 = 0;
-	int idx1 = 1;
-	while(atts[idx0] && atts[idx1])
-	{
-		if(strcmp(atts[idx0], "ref") == 0)
-		{
-			ref = atts[idx1];
-		}
-		idx0 += 2;
-		idx1 += 2;
-	}
-
-	// check for required atts
-	if(ref == NULL)
-	{
-		LOGE("invalid line=%i", line);
-		return 0;
-	}
-
-	// add the ref
-	if(osmdb_way_ref(self, strtod(ref, NULL)) == 0)
-	{
-		return 0;
-	}
-
-	return 1;
-}
-
 void osmdb_way_updateRange(osmdb_way_t* self,
                            osmdb_range_t* range)
 {
@@ -505,36 +569,6 @@ void osmdb_way_updateRange(osmdb_way_t* self,
 	self->lonL = range->lonL;
 	self->latB = range->latB;
 	self->lonR = range->lonR;
-}
-
-int osmdb_way_ref(osmdb_way_t* self,
-                  double ref)
-{
-	ASSERT(self);
-
-	// create the nd
-	double* _ref = (double*) MALLOC(sizeof(double));
-	if(_ref == NULL)
-	{
-		LOGE("MALLOC failed");
-		return 0;
-	}
-	*_ref = ref;
-
-	// add nd to list
-	if(cc_list_append(self->nds, NULL,
-	                  (const void*) _ref) == NULL)
-	{
-		goto fail_append;
-	}
-
-	// success
-	return 1;
-
-	// failure
-	fail_append:
-		FREE(_ref);
-	return 0;
 }
 
 void osmdb_way_discardNds(osmdb_way_t* self)

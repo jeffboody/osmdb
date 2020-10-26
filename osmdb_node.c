@@ -34,66 +34,16 @@
 * public                                                   *
 ***********************************************************/
 
-osmdb_node_t* osmdb_node_new(const char** atts, int line)
+osmdb_node_t* osmdb_node_new(double id,
+                             double lat,
+                             double lon,
+                             const char* name,
+                             const char* abrev,
+                             int ele,
+                             int st,
+                             int class)
 {
-	ASSERT(atts);
-
-	const char* id    = NULL;
-	const char* lat   = NULL;
-	const char* lon   = NULL;
-	const char* name  = NULL;
-	const char* abrev = NULL;
-	const char* ele   = NULL;
-	const char* st    = NULL;
-	const char* class = NULL;
-
-	// find atts
-	int idx0 = 0;
-	int idx1 = 1;
-	while(atts[idx0] && atts[idx1])
-	{
-		if(strcmp(atts[idx0], "id") == 0)
-		{
-			id = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "lat") == 0)
-		{
-			lat = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "lon") == 0)
-		{
-			lon = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "name") == 0)
-		{
-			name = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "abrev") == 0)
-		{
-			abrev = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "ele") == 0)
-		{
-			ele = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "st") == 0)
-		{
-			st = atts[idx1];
-		}
-		else if(strcmp(atts[idx0], "class") == 0)
-		{
-			class = atts[idx1];
-		}
-		idx0 += 2;
-		idx1 += 2;
-	}
-
-	// check for required atts
-	if((id == NULL) || (lat == NULL) || (lon == NULL))
-	{
-		LOGE("invalid line=%i", line);
-		return NULL;
-	}
+	// name and abrev may be NULL
 
 	// create the node
 	osmdb_node_t* self = (osmdb_node_t*)
@@ -104,12 +54,14 @@ osmdb_node_t* osmdb_node_new(const char** atts, int line)
 		return NULL;
 	}
 
-	self->refcount = 0;
-	self->id  = strtod(id, NULL);
-	self->lat = strtod(lat, NULL);
-	self->lon = strtod(lon, NULL);
+	self->id    = id;
+	self->lat   = lat;
+	self->lon   = lon;
+	self->ele   = ele;
+	self->st    = st;
+	self->class = class;
 
-	if(name)
+	if(name && (name[0] != '\0'))
 	{
 		int len = strlen(name) + 1;
 		self->name = (char*) MALLOC(len*sizeof(char));
@@ -120,7 +72,7 @@ osmdb_node_t* osmdb_node_new(const char** atts, int line)
 		snprintf(self->name, len, "%s", name);
 	}
 
-	if(abrev)
+	if(abrev && (abrev[0] != '\0'))
 	{
 		int len = strlen(abrev) + 1;
 		self->abrev = (char*) MALLOC(len*sizeof(char));
@@ -129,21 +81,6 @@ osmdb_node_t* osmdb_node_new(const char** atts, int line)
 			goto fail_abrev;
 		}
 		snprintf(self->abrev, len, "%s", abrev);
-	}
-
-	if(ele)
-	{
-		self->ele = (int) strtol(ele, NULL, 0);
-	}
-
-	if(st)
-	{
-		self->st = osmdb_stNameToCode(st);
-	}
-
-	if(class)
-	{
-		self->class = osmdb_classNameToCode(class);
 	}
 
 	// success
@@ -155,6 +92,95 @@ osmdb_node_t* osmdb_node_new(const char** atts, int line)
 	fail_name:
 		FREE(self);
 	return NULL;
+}
+
+osmdb_node_t* osmdb_node_newXml(const char** atts, int line)
+{
+	ASSERT(atts);
+
+	const char* att_id    = NULL;
+	const char* att_lat   = NULL;
+	const char* att_lon   = NULL;
+	const char* att_name  = NULL;
+	const char* att_abrev = NULL;
+	const char* att_ele   = NULL;
+	const char* att_st    = NULL;
+	const char* att_class = NULL;
+
+	// find atts
+	int idx0 = 0;
+	int idx1 = 1;
+	while(atts[idx0] && atts[idx1])
+	{
+		if(strcmp(atts[idx0], "id") == 0)
+		{
+			att_id = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "lat") == 0)
+		{
+			att_lat = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "lon") == 0)
+		{
+			att_lon = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "name") == 0)
+		{
+			att_name = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "abrev") == 0)
+		{
+			att_abrev = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "ele") == 0)
+		{
+			att_ele = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "st") == 0)
+		{
+			att_st = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "class") == 0)
+		{
+			att_class = atts[idx1];
+		}
+		idx0 += 2;
+		idx1 += 2;
+	}
+
+	// check for required atts
+	if((att_id == NULL) || (att_lat == NULL) ||
+	   (att_lon == NULL))
+	{
+		LOGE("invalid line=%i", line);
+		return NULL;
+	}
+
+	double id  = strtod(att_id, NULL);
+	double lat = strtod(att_lat, NULL);
+	double lon = strtod(att_lon, NULL);
+
+	int ele = 0;
+	if(att_ele)
+	{
+		ele = (int) strtol(att_ele, NULL, 0);
+	}
+
+	int st = 0;
+	if(att_st)
+	{
+		st = osmdb_stNameToCode(att_st);
+	}
+
+	int class = 0;
+	if(att_class)
+	{
+		class = osmdb_classNameToCode(att_class);
+	}
+
+	return osmdb_node_new(id, lat, lon,
+	                      att_name, att_abrev,
+	                      ele, st, class);
 }
 
 void osmdb_node_delete(osmdb_node_t** _self)

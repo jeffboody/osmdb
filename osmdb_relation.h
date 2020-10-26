@@ -51,22 +51,34 @@ typedef struct
 	cc_list_t* members;
 } osmdb_relation_t;
 
-osmdb_relation_t* osmdb_relation_new(const char** atts, int line);
+osmdb_relation_t* osmdb_relation_new(double id,
+                                     const char* name,
+                                     const char* abrev,
+                                     int class,
+                                     double latT,
+                                     double lonL,
+                                     double latB,
+                                     double lonR);
+osmdb_relation_t* osmdb_relation_newXml(const char** atts,
+                                        int line);
+int               osmdb_relation_newMember(osmdb_relation_t* self,
+                                           int type, double ref,
+                                           int role);
+int               osmdb_relation_newMemberXml(osmdb_relation_t* self,
+                                              const char** atts,
+                                              int line);
+void              osmdb_relation_delete(osmdb_relation_t** _self);
 osmdb_relation_t* osmdb_relation_copy(osmdb_relation_t* self);
 osmdb_relation_t* osmdb_relation_copyEmpty(osmdb_relation_t* self);
-void              osmdb_relation_delete(osmdb_relation_t** _self);
+int               osmdb_relation_copyMember(osmdb_relation_t* self,
+                                            osmdb_member_t* member);
 void              osmdb_relation_incref(osmdb_relation_t* self);
 int               osmdb_relation_decref(osmdb_relation_t* self);
 int               osmdb_relation_export(osmdb_relation_t* self,
                                         xml_ostream_t* os);
 int               osmdb_relation_size(osmdb_relation_t* self);
-int               osmdb_relation_member(osmdb_relation_t* self,
-                                        const char** atts,
-                                        int line);
 void              osmdb_relation_updateRange(osmdb_relation_t* self,
                                              osmdb_range_t* range);
-int               osmdb_relation_copyMember(osmdb_relation_t* self,
-                                            osmdb_member_t* member);
 void              osmdb_relation_discardMembers(osmdb_relation_t* self);
 
 #endif
