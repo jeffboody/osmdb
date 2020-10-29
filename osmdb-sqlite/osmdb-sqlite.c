@@ -28,7 +28,34 @@
 #include "libcc/cc_log.h"
 #include "libcc/cc_timestamp.h"
 #include "libxmlstream/xml_istream.h"
+#include "../osmdb_util.h"
 #include "osm_parser.h"
+
+/***********************************************************
+* private                                                  *
+***********************************************************/
+
+static int
+osmdb_sqlite_mkTblClassRank(void)
+{
+	FILE* f = fopen("tbl_class_rank.data", "w");
+	if(f == NULL)
+	{
+		LOGE("fopen tbl_class_rank.data failed");
+		return 0;
+	}
+
+	int code;
+	int count = osmdb_classCount();
+	for(code = 0; code < count; ++code)
+	{
+		fprintf(f, "%i|%i\n",
+		        code, osmdb_classCodeToRank(code));
+	}
+
+	fclose(f);
+	return 1;
+}
 
 /***********************************************************
 * public                                                   *
@@ -41,6 +68,11 @@ int main(int argc, char** argv)
 	if(argc != 3)
 	{
 		LOGE("%s style.xml input.osm", argv[0]);
+		return EXIT_FAILURE;
+	}
+
+	if(osmdb_sqlite_mkTblClassRank() == 0)
+	{
 		return EXIT_FAILURE;
 	}
 

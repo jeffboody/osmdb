@@ -29,6 +29,12 @@ PRAGMA temp_store_directory = '.';
 
 .print 'CREATE MAIN TABLES'
 
+CREATE TABLE tbl_class_rank
+(
+	class INTEGER PRIMARY KEY NOT NULL,
+	rank  INTEGER
+);
+
 CREATE TABLE tbl_nodes_coords
 (
 	nid      INTEGER PRIMARY KEY NOT NULL,
@@ -39,7 +45,7 @@ CREATE TABLE tbl_nodes_coords
 CREATE TABLE tbl_nodes_info
 (
 	nid      INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_nodes_coords,
-	class    INTEGER,
+	class    INTEGER REFERENCES tbl_class_rank,
 	name     TEXT,
 	abrev    TEXT,
 	ele      INTEGER,
@@ -50,7 +56,7 @@ CREATE TABLE tbl_nodes_info
 CREATE TABLE tbl_ways
 (
 	wid      INTEGER PRIMARY KEY NOT NULL,
-	class    INTEGER,
+	class    INTEGER REFERENCES tbl_class_rank,
 	layer    INTEGER,
 	name     TEXT,
 	abrev    TEXT,
@@ -67,7 +73,7 @@ CREATE TABLE tbl_ways
 CREATE TABLE tbl_rels
 (
 	rid      INTEGER PRIMARY KEY NOT NULL,
-	class    INTEGER,
+	class    INTEGER REFERENCES tbl_class_rank,
 	name     TEXT,
 	abrev    TEXT,
 	center   INTEGER,
@@ -138,6 +144,8 @@ CREATE VIRTUAL TABLE tbl_rels_range USING rtree
 .timer on
 .mode csv
 .separator |
+.print 'IMPORT tbl_class_rank'
+.import tbl_class_rank.data tbl_class_rank
 .print 'IMPORT tbl_nodes_coords'
 .import tbl_nodes_coords.data tbl_nodes_coords
 .print 'IMPORT tbl_nodes_info'

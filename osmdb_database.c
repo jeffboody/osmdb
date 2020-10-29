@@ -318,7 +318,10 @@ osmdb_database_t* osmdb_database_new(const char* fname)
 		"SELECT class, name, abrev, ele, st, lat, lon FROM tbl_nodes_text"
 		"	JOIN tbl_nodes_info USING (nid)"
 		"	JOIN tbl_nodes_coords USING (nid)"
-		"	WHERE txt MATCH @arg;";
+		"	JOIN tbl_class_rank USING (class)"
+		"	WHERE txt MATCH @arg"
+		"	ORDER BY rank DESC"
+		"	LIMIT 10;";
 
 	if(sqlite3_prepare_v2(self->db, sql_search_nodes, -1,
 	                      &self->stmt_search_nodes,
@@ -332,7 +335,10 @@ osmdb_database_t* osmdb_database_new(const char* fname)
 		"SELECT class, name, abrev, latT, lonL, latB, lonR FROM tbl_ways_text"
 		"	JOIN tbl_ways USING (wid)"
 		"	JOIN tbl_ways_range USING (wid)"
-		"	WHERE txt MATCH @arg;";
+		"	JOIN tbl_class_rank USING (class)"
+		"	WHERE txt MATCH @arg"
+		"	ORDER BY rank DESC"
+		"	LIMIT 10;";
 
 	if(sqlite3_prepare_v2(self->db, sql_search_ways, -1,
 	                      &self->stmt_search_ways,
@@ -346,7 +352,10 @@ osmdb_database_t* osmdb_database_new(const char* fname)
 		"SELECT class, name, abrev, latT, lonL, latB, lonR FROM tbl_rels_text"
 		"	JOIN tbl_rels USING (rid)"
 		"	JOIN tbl_rels_range USING (rid)"
-		"	WHERE txt MATCH @arg;";
+		"	JOIN tbl_class_rank USING (class)"
+		"	WHERE txt MATCH @arg"
+		"	ORDER BY rank DESC"
+		"	LIMIT 10;";
 
 	if(sqlite3_prepare_v2(self->db, sql_search_rels, -1,
 	                      &self->stmt_search_rels,
