@@ -37,11 +37,65 @@ typedef struct
 	sqlite3_stmt* stmt_search_ways;
 	sqlite3_stmt* stmt_search_rels;
 
+	// select statements
+	sqlite3_stmt* stmt_select_nodes_range;
+	sqlite3_stmt* stmt_select_node;
+	sqlite3_stmt* stmt_select_rels_range;
+	sqlite3_stmt* stmt_select_relation;
+	sqlite3_stmt* stmt_select_mnodes;
+	sqlite3_stmt* stmt_select_mways;
+	sqlite3_stmt* stmt_select_way;
+	sqlite3_stmt* stmt_select_wnds;
+	sqlite3_stmt* stmt_select_ways_range;
+
 	// search arguments
 	int idx_spellfix_arg;
 	int idx_search_nodes_arg;
 	int idx_search_ways_arg;
 	int idx_search_rels_arg;
+
+	// select arguments
+	int idx_select_nodes_range_latT;
+	int idx_select_nodes_range_lonL;
+	int idx_select_nodes_range_latB;
+	int idx_select_nodes_range_lonR;
+	int idx_select_nodes_range_zoom;
+	int idx_select_node_nid;
+	int idx_select_rels_range_latT;
+	int idx_select_rels_range_lonL;
+	int idx_select_rels_range_latB;
+	int idx_select_rels_range_lonR;
+	int idx_select_rels_range_zoom;
+	int idx_select_relation_rid;
+	int idx_select_mnodes_rid;
+	int idx_select_mways_rid;
+	int idx_select_way_wid;
+	int idx_select_wnds_wid;
+	int idx_select_ways_range_latT;
+	int idx_select_ways_range_lonL;
+	int idx_select_ways_range_latB;
+	int idx_select_ways_range_lonR;
+	int idx_select_ways_range_zoom;
+
+	// select way column indices
+	int idx_select_way_name;
+	int idx_select_way_abrev;
+	int idx_select_way_class;
+	int idx_select_way_layer;
+	int idx_select_way_oneway;
+	int idx_select_way_bridge;
+	int idx_select_way_tunnel;
+	int idx_select_way_cutting;
+	int idx_select_way_center;
+	int idx_select_way_latT;
+	int idx_select_way_lonL;
+	int idx_select_way_latB;
+	int idx_select_way_lonR;
+
+	// sampling constants
+	float min_dist14;
+	float min_dist11;
+	float min_dist8;
 } osmdb_database_t;
 
 osmdb_database_t* osmdb_database_new(const char* fname);
@@ -52,5 +106,8 @@ void              osmdb_database_spellfix(osmdb_database_t* self,
 int               osmdb_database_search(osmdb_database_t* self,
                                         const char* text,
                                         xml_ostream_t* os);
+int               osmdb_database_tile(osmdb_database_t* self,
+                                      int zoom, int x, int y,
+                                      xml_ostream_t* os);
 
 #endif

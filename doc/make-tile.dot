@@ -1,0 +1,52 @@
+// sudo apt-get install graphviz
+// sudo apt-get install xdot
+// xdot tiler.dot
+digraph TILER
+{
+	label="Tiler";
+	fontsize=20;
+	size="3,2";
+	ratio=fill;
+
+	osmdb_node_export     [fillcolor=palegreen, style=filled];
+	osmdb_way_export      [fillcolor=palegreen, style=filled];
+	osmdb_relation_export [fillcolor=palegreen, style=filled];
+	tile                  [fillcolor=yellow,    style=filled, label="tile\nmap_export: [n|w|r]id=>ONE"];
+	gatherNodes           [fillcolor=orange,    style=filled, label="gatherNodes\nmap_export\n----------\na) select nodes\nb) gather node"];
+	gatherNode            [fillcolor=orange,    style=filled, label="gatherNode\nmap_export\n----------\na) check if nid already included\nb) node may not exist due to osmosis\nc) mark the node as found\nd) export the node"];
+	gatherMemberWay       [fillcolor=gold,      style=filled, label="gatherMemberWay\nmap_export\n----------\na) check if wid already included\nb) way may not exist due to osmosis\nc) sample the way\nd) gather nds\ne) mark the way as found\nf) export the way"];
+	gatherWays            [fillcolor=gold,      style=filled, label="gatherWays\nmap_export\nmap_ways: wid=>copy\nmm_nds_join\n----------\na) select ways\nb) gather each way\nc) join ways\nd) sample ways\ne) clip ways\nf) export ways"];
+	gatherWay             [fillcolor=gold,      style=filled, label="gatherWay\nmap_export, map_ways, mm_nds_join\n----------\na) check if wid already included (by relations)\nb) way may not exist due to osmosis\nc) add join"];
+	sampleWays            [fillcolor=gold,      style=filled, label="sampleWays\nmap_ways\n----------\na) foreach way in map_ways\nb) sample the way"];
+	sampleWay             [fillcolor=gold,      style=filled, label="sampleWay\nway\n----------\na) foreach nd in way\nb) select node\nc) discard nds"];
+	clipWays              [fillcolor=gold,      style=filled, label="clipWays\nmap_ways\n----------\na) foreach way in map_ways\nb) clipWay"];
+	clipWay               [fillcolor=gold,      style=filled, label="clipWay\nway"];
+	joinWays              [fillcolor=gold,      style=filled, label="joinWays\nmap_ways, mm_nds_join\n----------\na) for each nd pair in join\nb) join ways"];
+	exportWays            [fillcolor=gold,      style=filled, label="exportWays\nmap_export, map_ways\n----------\na) foreach way in map_ways\nb) gather node"];
+	joinWay               [fillcolor=gold,      style=filled, label="joinWay\na, b"];
+	gatherRelations       [fillcolor=skyblue,   style=filled, label="gatherRelations\nmap_export\n----------\na) select relations\nb) gather relation"];
+	gatherRelation        [fillcolor=skyblue,   style=filled, label="gatherRelation\nmap_export\n----------\na) check if rid already included\nb) relation may not exist due to osmosis\nc) gather members (nodes/ways)\nd) mark the relation as found\ne) export the relation"];
+
+	tile            -> gatherNodes     [label="1"];
+	tile            -> gatherRelations [label="2"];
+	tile            -> gatherWays      [label="3"];
+	gatherWays      -> gatherWay       [label="1"];
+	gatherWays      -> joinWays        [label="2"];
+	gatherWays      -> sampleWays      [label="3"];
+	gatherWays      -> clipWays        [label="4"];
+	gatherWays      -> exportWays      [label="5"];
+	sampleWays      -> sampleWay;
+	joinWays        -> joinWay;
+	clipWays        -> clipWay;
+	gatherNodes     -> gatherNode;
+	gatherRelations -> gatherRelation;
+	gatherRelation  -> gatherNode            [label="1"];
+	gatherRelation  -> gatherMemberWay       [label="2"];
+	gatherRelation  -> osmdb_relation_export [label="3"];
+	gatherMemberWay -> sampleWay             [label="1"];
+	gatherMemberWay -> gatherNode            [label="2"];
+	gatherMemberWay -> osmdb_way_export      [label="3"];
+	exportWays      -> gatherNode            [label="1"];
+	exportWays      -> osmdb_way_export      [label="2"];
+	gatherNode      -> osmdb_node_export;
+}
