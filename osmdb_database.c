@@ -320,7 +320,7 @@ osmdb_database_searchTblRels(osmdb_database_t* self,
 	return 1;
 }
 
-int
+static int
 osmdb_database_getNode(osmdb_database_t* self, double nid,
                        osmdb_node_t** _node)
 {
@@ -388,7 +388,7 @@ osmdb_database_getNode(osmdb_database_t* self, double nid,
 	return ret;
 }
 
-int
+static int
 osmdb_database_getWayNds(osmdb_database_t* self,
                          osmdb_way_t* way)
 {
@@ -432,9 +432,10 @@ osmdb_database_getWayNds(osmdb_database_t* self,
 	return 0;
 }
 
-int osmdb_database_getWayCopy(osmdb_database_t* self,
-                              int wid, int as_member,
-                              osmdb_way_t** _way)
+static int
+osmdb_database_getWayCopy(osmdb_database_t* self,
+                          int wid, int as_member,
+                          osmdb_way_t** _way)
 {
 	ASSERT(self);
 	ASSERT(_way);
@@ -534,8 +535,9 @@ int osmdb_database_getWayCopy(osmdb_database_t* self,
 	return ret;
 }
 
-void osmdb_database_putNode(osmdb_database_t* self,
-                            osmdb_node_t** _node)
+static void
+osmdb_database_putNode(osmdb_database_t* self,
+                       osmdb_node_t** _node)
 {
 	ASSERT(self);
 	ASSERT(_node);
@@ -547,7 +549,7 @@ void osmdb_database_putNode(osmdb_database_t* self,
 	}
 }
 
-int
+static int
 osmdb_database_getMemberNodes(osmdb_database_t* self,
                               osmdb_relation_t* rel)
 {
@@ -593,7 +595,7 @@ osmdb_database_getMemberNodes(osmdb_database_t* self,
 	return 0;
 }
 
-int
+static int
 osmdb_database_getMemberWays(osmdb_database_t* self,
                              osmdb_relation_t* rel)
 {
@@ -639,7 +641,7 @@ osmdb_database_getMemberWays(osmdb_database_t* self,
 	return 0;
 }
 
-int
+static int
 osmdb_database_getRelation(osmdb_database_t* self,
                            double rid,
                            double latT, double lonL,
@@ -735,8 +737,9 @@ osmdb_database_getRelation(osmdb_database_t* self,
 	return ret;
 }
 
-void osmdb_database_putRelation(osmdb_database_t* self,
-                                osmdb_relation_t** _rel)
+static void
+osmdb_database_putRelation(osmdb_database_t* self,
+                           osmdb_relation_t** _rel)
 {
 	ASSERT(self);
 	ASSERT(_rel);
@@ -1462,6 +1465,7 @@ osmdb_database_sampleWays(osmdb_database_t* self, int zoom,
 
 	return 1;
 }
+
 static void
 osmdb_database_clipWay(osmdb_database_t* self,
                        osmdb_way_t* way,
