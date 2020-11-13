@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Jeff Boody
+ * Copyright (c) 2020 Jeff Boody
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -21,40 +21,18 @@
  *
  */
 
-#ifndef osmdb_node_H
-#define osmdb_node_H
+#ifndef osmdb_object_H
+#define osmdb_object_H
 
-#include "osmdb_object.h"
-#include "../libxmlstream/xml_ostream.h"
+#define OSMDB_OBJECT_TYPE_NODE     0
+#define OSMDB_OBJECT_TYPE_WAY      1
+#define OSMDB_OBJECT_TYPE_RELATION 2
 
 typedef struct
 {
-	osmdb_object_t base;
-
-	double lat;
-	double lon;
-	char*  name;
-	char*  abrev;
-	int    ele;
-	int    st;
-	int    class;
-} osmdb_node_t;
-
-osmdb_node_t* osmdb_node_new(double id,
-                             double lat,
-                             double lon,
-                             const char* name,
-                             const char* abrev,
-                             int ele,
-                             int st,
-                             int class);
-osmdb_node_t* osmdb_node_newXml(const char** atts,
-                                int line);
-void          osmdb_node_delete(osmdb_node_t** _self);
-void          osmdb_node_incref(osmdb_node_t* self);
-int           osmdb_node_decref(osmdb_node_t* self);
-int           osmdb_node_export(osmdb_node_t* self,
-                                xml_ostream_t* os);
-int           osmdb_node_size(osmdb_node_t* self);
+	int    type;
+	int    refcount;
+	double id;
+} osmdb_object_t;
 
 #endif

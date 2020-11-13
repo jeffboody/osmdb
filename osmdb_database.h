@@ -24,6 +24,8 @@
 #ifndef osmdb_database_H
 #define osmdb_database_H
 
+#include "libcc/cc_list.h"
+#include "libcc/cc_map.h"
 #include "libsqlite3/sqlite3.h"
 #include "libxmlstream/xml_ostream.h"
 
@@ -96,6 +98,11 @@ typedef struct
 	float min_dist14;
 	float min_dist11;
 	float min_dist8;
+
+	// cache protected by object mutex
+	cc_list_t*      object_list;
+	cc_map_t*       object_map;
+	pthread_mutex_t object_mutex;
 } osmdb_database_t;
 
 osmdb_database_t* osmdb_database_new(const char* fname);

@@ -54,12 +54,13 @@ osmdb_node_t* osmdb_node_new(double id,
 		return NULL;
 	}
 
-	self->id    = id;
-	self->lat   = lat;
-	self->lon   = lon;
-	self->ele   = ele;
-	self->st    = st;
-	self->class = class;
+	self->base.type = OSMDB_OBJECT_TYPE_NODE;
+	self->base.id   = id;
+	self->lat       = lat;
+	self->lon       = lon;
+	self->ele       = ele;
+	self->st        = st;
+	self->class     = class;
 
 	if(name && (name[0] != '\0'))
 	{
@@ -201,15 +202,15 @@ void osmdb_node_incref(osmdb_node_t* self)
 {
 	ASSERT(self);
 
-	++self->refcount;
+	++self->base.refcount;
 }
 
 int osmdb_node_decref(osmdb_node_t* self)
 {
 	ASSERT(self);
 
-	--self->refcount;
-	return (self->refcount == 0) ? 1 : 0;
+	--self->base.refcount;
+	return (self->base.refcount == 0) ? 1 : 0;
 }
 
 int osmdb_node_export(osmdb_node_t* self, xml_ostream_t* os)
@@ -219,7 +220,7 @@ int osmdb_node_export(osmdb_node_t* self, xml_ostream_t* os)
 
 	int ret = 1;
 	ret &= xml_ostream_begin(os, "node");
-	ret &= xml_ostream_attrf(os, "id", "%0.0lf", self->id);
+	ret &= xml_ostream_attrf(os, "id", "%0.0lf", self->base.id);
 	ret &= xml_ostream_attrf(os, "lat", "%lf", self->lat);
 	ret &= xml_ostream_attrf(os, "lon", "%lf", self->lon);
 	if(self->name)

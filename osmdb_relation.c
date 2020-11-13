@@ -51,12 +51,13 @@ osmdb_relation_new(double id, const char* name,
 		return NULL;
 	}
 
-	self->id    = id;
-	self->class = class;
-	self->latT  = latT;
-	self->lonL  = lonL;
-	self->latB  = latB;
-	self->lonR  = lonR;
+	self->base.type = OSMDB_OBJECT_TYPE_RELATION;
+	self->base.id   = id;
+	self->class     = class;
+	self->latT      = latT;
+	self->lonL      = lonL;
+	self->latB      = latB;
+	self->lonR      = lonR;
 
 	if(name && (name[0] != '\0'))
 	{
@@ -380,12 +381,12 @@ osmdb_relation_copyEmpty(osmdb_relation_t* self)
 		snprintf(copy->abrev, len, "%s", self->abrev);
 	}
 
-	copy->id    = self->id;
-	copy->class = self->class;
-	copy->latT  = self->latT;
-	copy->lonL  = self->lonL;
-	copy->latB  = self->latB;
-	copy->lonR  = self->lonR;
+	copy->base.id = self->base.id;
+	copy->class   = self->class;
+	copy->latT    = self->latT;
+	copy->lonL    = self->lonL;
+	copy->latB    = self->latB;
+	copy->lonR    = self->lonR;
 
 	// success
 	return copy;
@@ -439,15 +440,15 @@ void osmdb_relation_incref(osmdb_relation_t* self)
 {
 	ASSERT(self);
 
-	++self->refcount;
+	++self->base.refcount;
 }
 
 int osmdb_relation_decref(osmdb_relation_t* self)
 {
 	ASSERT(self);
 
-	--self->refcount;
-	return (self->refcount == 0) ? 1 : 0;
+	--self->base.refcount;
+	return (self->base.refcount == 0) ? 1 : 0;
 }
 
 int osmdb_relation_export(osmdb_relation_t* self,
@@ -458,7 +459,7 @@ int osmdb_relation_export(osmdb_relation_t* self,
 
 	int ret = 1;
 	ret &= xml_ostream_begin(os, "relation");
-	ret &= xml_ostream_attrf(os, "id", "%0.0lf", self->id);
+	ret &= xml_ostream_attrf(os, "id", "%0.0lf", self->base.id);
 	if(self->name)
 	{
 		ret &= xml_ostream_attr(os, "name", self->name);

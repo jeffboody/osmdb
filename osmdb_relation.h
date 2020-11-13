@@ -26,6 +26,7 @@
 
 #include "../libcc/cc_list.h"
 #include "../libxmlstream/xml_ostream.h"
+#include "osmdb_object.h"
 #include "osmdb_range.h"
 
 typedef struct
@@ -37,8 +38,8 @@ typedef struct
 
 typedef struct
 {
-	int    refcount;
-	double id;
+	osmdb_object_t base;
+
 	char*  name;
 	char*  abrev;
 	int    class;

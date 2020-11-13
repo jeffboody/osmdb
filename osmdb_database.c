@@ -22,6 +22,7 @@
  */
 
 #include <math.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -327,6 +328,26 @@ osmdb_database_getNode(osmdb_database_t* self, double nid,
 	ASSERT(self);
 	ASSERT(_node);
 
+	pthread_mutex_lock(&self->object_mutex);
+
+	// check cache
+	osmdb_node_t*  node;
+	cc_mapIter_t   miterator;
+	cc_listIter_t* iter;
+	iter = (cc_listIter_t*)
+	       cc_map_findf(self->object_map, &miterator,
+	                    "n%0.0lf", nid);
+	if(iter)
+	{
+		node = (osmdb_node_t*)
+		       cc_list_peekIter(iter);
+		osmdb_node_incref(node);
+		cc_list_moven(self->object_list, iter, NULL);
+		*_node = node;
+		pthread_mutex_unlock(&self->object_mutex);
+		return 1;
+	}
+
 	int ret = 0;
 	int idx = self->idx_select_node_nid;
 
@@ -334,7 +355,7 @@ osmdb_database_getNode(osmdb_database_t* self, double nid,
 	if(sqlite3_bind_double(stmt, idx, nid) != SQLITE_OK)
 	{
 		LOGE("sqlite3_bind_double failed");
-		return 0;
+		goto fail_bind;
 	}
 
 	int step = sqlite3_step(stmt);
@@ -358,12 +379,25 @@ osmdb_database_getNode(osmdb_database_t* self, double nid,
 	int         st    = sqlite3_column_int(stmt, 5);
 	int         class = sqlite3_column_int(stmt, 6);
 
-	osmdb_node_t* node;
 	node = osmdb_node_new(nid, lat, lon, name, abrev,
 	                      ele, st, class);
 	if(node == NULL)
 	{
 		goto fail_node;
+	}
+
+	// update cache
+	iter = cc_list_append(self->object_list, NULL,
+	                      (const void*) node);
+	if(iter == NULL)
+	{
+		goto fail_list;
+	}
+
+	if(cc_map_addf(self->object_map, (const void*) iter,
+	               "n%0.0lf", nid) == 0)
+	{
+		goto fail_map;
 	}
 
 	if(sqlite3_reset(stmt) != SQLITE_OK)
@@ -372,11 +406,17 @@ osmdb_database_getNode(osmdb_database_t* self, double nid,
 	}
 
 	*_node = node;
+	osmdb_node_incref(node);
+	pthread_mutex_unlock(&self->object_mutex);
 
 	// succcess
 	return 1;
 
 	// failure
+	fail_map:
+		cc_list_remove(self->object_list, &iter);
+	fail_list:
+		osmdb_node_delete(&node);
 	fail_node:
 	fail_step:
 	{
@@ -385,12 +425,14 @@ osmdb_database_getNode(osmdb_database_t* self, double nid,
 			LOGW("sqlite3_reset failed");
 		}
 	}
+	fail_bind:
+		pthread_mutex_unlock(&self->object_mutex);
 	return ret;
 }
 
 static int
-osmdb_database_getWayNds(osmdb_database_t* self,
-                         osmdb_way_t* way)
+osmdb_database_getWayNdsLocked(osmdb_database_t* self,
+                               osmdb_way_t* way)
 {
 	ASSERT(self);
 	ASSERT(way);
@@ -398,7 +440,7 @@ osmdb_database_getWayNds(osmdb_database_t* self,
 	int idx = self->idx_select_wnds_wid;
 
 	sqlite3_stmt* stmt = self->stmt_select_wnds;
-	if(sqlite3_bind_double(stmt, idx, way->id) != SQLITE_OK)
+	if(sqlite3_bind_double(stmt, idx, way->base.id) != SQLITE_OK)
 	{
 		LOGE("sqlite3_bind_double failed");
 		return 0;
@@ -434,7 +476,7 @@ osmdb_database_getWayNds(osmdb_database_t* self,
 
 static int
 osmdb_database_getWayCopy(osmdb_database_t* self,
-                          int wid, int as_member,
+                          double wid, int as_member,
                           osmdb_way_t** _way)
 {
 	ASSERT(self);
@@ -456,11 +498,30 @@ osmdb_database_getWayCopy(osmdb_database_t* self,
 	int ilatB    = self->idx_select_way_latB;
 	int ilonR    = self->idx_select_way_lonR;
 
+	pthread_mutex_lock(&self->object_mutex);
+
+	// check cache
+	osmdb_way_t*   way;
+	cc_mapIter_t   miterator;
+	cc_listIter_t* iter;
+	iter = (cc_listIter_t*)
+	       cc_map_findf(self->object_map, &miterator,
+	                    "w%0.0lf", wid);
+	if(iter)
+	{
+		way = (osmdb_way_t*)
+		      cc_list_peekIter(iter);
+		cc_list_moven(self->object_list, iter, NULL);
+		*_way = osmdb_way_copy(way);
+		pthread_mutex_unlock(&self->object_mutex);
+		return *_way ? 1 : 0;
+	}
+
 	sqlite3_stmt* stmt = self->stmt_select_way;
 	if(sqlite3_bind_double(stmt, idx, wid) != SQLITE_OK)
 	{
 		LOGE("sqlite3_bind_double failed");
-		return 0;
+		goto fail_bind;
 	}
 
 	int step = sqlite3_step(stmt);
@@ -492,7 +553,6 @@ osmdb_database_getWayCopy(osmdb_database_t* self,
 	double      latB    = sqlite3_column_double(stmt, ilatB);
 	double      lonR    = sqlite3_column_double(stmt, ilonR);
 
-	osmdb_way_t* way;
 	way = osmdb_way_new(wid, name, abrev, class, layer,
 	                    oneway, bridge, tunnel, cutting,
 	                    latT, lonL, latB, lonR);
@@ -505,10 +565,24 @@ osmdb_database_getWayCopy(osmdb_database_t* self,
 	// but do not center way members
 	if(as_member || (center == 0))
 	{
-		if(osmdb_database_getWayNds(self, way) == 0)
+		if(osmdb_database_getWayNdsLocked(self, way) == 0)
 		{
 			goto fail_way_nds;
 		}
+	}
+
+	// update cache
+	iter = cc_list_append(self->object_list, NULL,
+	                      (const void*) way);
+	if(iter == NULL)
+	{
+		goto fail_list;
+	}
+
+	if(cc_map_addf(self->object_map, (const void*) iter,
+	               "w%0.0lf", wid) == 0)
+	{
+		goto fail_map;
 	}
 
 	if(sqlite3_reset(stmt) != SQLITE_OK)
@@ -516,12 +590,17 @@ osmdb_database_getWayCopy(osmdb_database_t* self,
 		LOGW("sqlite3_reset failed");
 	}
 
-	*_way = way;
+	*_way = osmdb_way_copy(way);
+	pthread_mutex_unlock(&self->object_mutex);
 
 	// succcess
-	return 1;
+	return *_way ? 1 : 0;
 
 	// failure
+	fail_map:
+		cc_list_remove(self->object_list, &iter);
+	fail_list:
+		osmdb_way_delete(&way);
 	fail_way_nds:
 		osmdb_way_delete(&way);
 	fail_way:
@@ -532,6 +611,8 @@ osmdb_database_getWayCopy(osmdb_database_t* self,
 			LOGW("sqlite3_reset failed");
 		}
 	}
+	fail_bind:
+		pthread_mutex_unlock(&self->object_mutex);
 	return ret;
 }
 
@@ -545,13 +626,16 @@ osmdb_database_putNode(osmdb_database_t* self,
 	osmdb_node_t* node = *_node;
 	if(node)
 	{
-		osmdb_node_delete(_node);
+		pthread_mutex_lock(&self->object_mutex);
+		osmdb_node_decref(node);
+		*_node = NULL;
+		pthread_mutex_unlock(&self->object_mutex);
 	}
 }
 
 static int
-osmdb_database_getMemberNodes(osmdb_database_t* self,
-                              osmdb_relation_t* rel)
+osmdb_database_getMemberNodesLocked(osmdb_database_t* self,
+                                    osmdb_relation_t* rel)
 {
 	ASSERT(self);
 	ASSERT(rel);
@@ -559,7 +643,7 @@ osmdb_database_getMemberNodes(osmdb_database_t* self,
 	int idx = self->idx_select_mnodes_rid;
 
 	sqlite3_stmt* stmt = self->stmt_select_mnodes;
-	if(sqlite3_bind_double(stmt, idx, rel->id) != SQLITE_OK)
+	if(sqlite3_bind_double(stmt, idx, rel->base.id) != SQLITE_OK)
 	{
 		LOGE("sqlite3_bind_double failed");
 		return 0;
@@ -596,8 +680,8 @@ osmdb_database_getMemberNodes(osmdb_database_t* self,
 }
 
 static int
-osmdb_database_getMemberWays(osmdb_database_t* self,
-                             osmdb_relation_t* rel)
+osmdb_database_getMemberWaysLocked(osmdb_database_t* self,
+                                   osmdb_relation_t* rel)
 {
 	ASSERT(self);
 	ASSERT(rel);
@@ -605,7 +689,7 @@ osmdb_database_getMemberWays(osmdb_database_t* self,
 	int idx = self->idx_select_mways_rid;
 
 	sqlite3_stmt* stmt = self->stmt_select_mways;
-	if(sqlite3_bind_double(stmt, idx, rel->id) != SQLITE_OK)
+	if(sqlite3_bind_double(stmt, idx, rel->base.id) != SQLITE_OK)
 	{
 		LOGE("sqlite3_bind_double failed");
 		return 0;
@@ -653,12 +737,32 @@ osmdb_database_getRelation(osmdb_database_t* self,
 	int ret = 0;
 	int idx = self->idx_select_relation_rid;
 
+	pthread_mutex_lock(&self->object_mutex);
+
+	// check cache
+	osmdb_relation_t* rel;
+	cc_mapIter_t      miterator;
+	cc_listIter_t*    iter;
+	iter = (cc_listIter_t*)
+	       cc_map_findf(self->object_map, &miterator,
+	                    "r%0.0lf", rid);
+	if(iter)
+	{
+		rel = (osmdb_relation_t*)
+		      cc_list_peekIter(iter);
+		osmdb_relation_incref(rel);
+		cc_list_moven(self->object_list, iter, NULL);
+		*_rel = rel;
+		pthread_mutex_unlock(&self->object_mutex);
+		return 1;
+	}
+
 	// select relation
 	sqlite3_stmt* stmt = self->stmt_select_relation;
 	if(sqlite3_bind_double(stmt, idx, rid) != SQLITE_OK)
 	{
 		LOGE("sqlite3_bind_double failed");
-		return 0;
+		goto fail_bind;
 	}
 
 	int step = sqlite3_step(stmt);
@@ -680,7 +784,6 @@ osmdb_database_getRelation(osmdb_database_t* self,
 	int         center  = sqlite3_column_int(stmt, 3);
 	int         polygon = sqlite3_column_int(stmt, 4);
 
-	osmdb_relation_t* rel;
 	rel = osmdb_relation_new(rid, name, abrev, class,
 	                         latT, lonL, latB, lonR);
 	if(rel == NULL)
@@ -693,7 +796,7 @@ osmdb_database_getRelation(osmdb_database_t* self,
 		LOGW("sqlite3_reset failed");
 	}
 
-	if(osmdb_database_getMemberNodes(self, rel) == 0)
+	if(osmdb_database_getMemberNodesLocked(self, rel) == 0)
 	{
 		goto fail_member_nodes;
 	}
@@ -711,18 +814,37 @@ osmdb_database_getRelation(osmdb_database_t* self,
 	   ((polygon == 0) ||
 	    (polygon && (0.5f*area < 0.000369f))))
 	{
-		if(osmdb_database_getMemberWays(self, rel) == 0)
+		if(osmdb_database_getMemberWaysLocked(self, rel) == 0)
 		{
 			goto fail_member_ways;
 		}
 	}
 
+	// update cache
+	iter = cc_list_append(self->object_list, NULL,
+	                      (const void*) rel);
+	if(iter == NULL)
+	{
+		goto fail_list;
+	}
+
+	if(cc_map_addf(self->object_map, (const void*) iter,
+	               "r%0.0lf", rid) == 0)
+	{
+		goto fail_map;
+	}
+
 	*_rel = rel;
+	osmdb_relation_incref(rel);
+	pthread_mutex_unlock(&self->object_mutex);
 
 	// succcess
 	return 1;
 
 	// failure
+	fail_map:
+		cc_list_remove(self->object_list, &iter);
+	fail_list:
 	fail_member_ways:
 	fail_member_nodes:
 		osmdb_relation_delete(&rel);
@@ -734,6 +856,8 @@ osmdb_database_getRelation(osmdb_database_t* self,
 			LOGW("sqlite3_reset failed");
 		}
 	}
+	fail_bind:
+		pthread_mutex_unlock(&self->object_mutex);
 	return ret;
 }
 
@@ -747,7 +871,10 @@ osmdb_database_putRelation(osmdb_database_t* self,
 	osmdb_relation_t* rel = *_rel;
 	if(rel)
 	{
-		osmdb_relation_delete(_rel);
+		pthread_mutex_lock(&self->object_mutex);
+		osmdb_relation_decref(rel);
+		*_rel = NULL;
+		pthread_mutex_unlock(&self->object_mutex);
 	}
 }
 
@@ -2323,10 +2450,34 @@ osmdb_database_t* osmdb_database_new(const char* fname)
 
 	osmdb_database_computeMinDist(self);
 
+	self->object_list = cc_list_new();
+	if(self->object_list == NULL)
+	{
+		goto fail_object_list;
+	}
+
+	self->object_map = cc_map_new();
+	if(self->object_map == NULL)
+	{
+		goto fail_object_map;
+	}
+
+	if(pthread_mutex_init(&self->object_mutex, NULL) != 0)
+	{
+		LOGE("pthread_mutex_init failed");
+		goto fail_object_mutex;
+	}
+
 	// success
 	return self;
 
 	// failure
+	fail_object_mutex:
+		cc_map_delete(&self->object_map);
+	fail_object_map:
+		cc_list_delete(&self->object_list);
+	fail_object_list:
+		sqlite3_finalize(self->stmt_select_ways_range);
 	fail_prepare_select_ways_range:
 		sqlite3_finalize(self->stmt_select_wnds);
 	fail_prepare_select_wnds:
@@ -2378,6 +2529,36 @@ void osmdb_database_delete(osmdb_database_t** _self)
 	osmdb_database_t* self = *_self;
 	if(self)
 	{
+		// empty list/map
+		cc_mapIter_t    miterator;
+		cc_mapIter_t*   miter;
+		cc_listIter_t*  iter;
+		osmdb_object_t* obj;
+		miter = cc_map_head(self->object_map, &miterator);
+		while(miter)
+		{
+			iter = (cc_listIter_t*)
+			       cc_map_remove(self->object_map, &miter);
+			obj  = (osmdb_object_t*)
+			       cc_list_remove(self->object_list, &iter);
+
+			if(obj->type == OSMDB_OBJECT_TYPE_NODE)
+			{
+				osmdb_node_delete((osmdb_node_t**) &obj);
+			}
+			else if(obj->type == OSMDB_OBJECT_TYPE_WAY)
+			{
+				osmdb_way_delete((osmdb_way_t**) &obj);
+			}
+			else if(obj->type == OSMDB_OBJECT_TYPE_RELATION)
+			{
+				osmdb_relation_delete((osmdb_relation_t**) &obj);
+			}
+		}
+
+		pthread_mutex_destroy(&self->object_mutex);
+		cc_map_delete(&self->object_map);
+		cc_list_delete(&self->object_list);
 		sqlite3_finalize(self->stmt_select_ways_range);
 		sqlite3_finalize(self->stmt_select_wnds);
 		sqlite3_finalize(self->stmt_select_way);

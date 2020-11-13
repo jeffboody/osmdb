@@ -56,17 +56,18 @@ osmdb_way_new(double id, const char* name,
 		return NULL;
 	}
 
-	self->id      = id;
-	self->class   = class;
-	self->layer   = layer;
-	self->oneway  = oneway;
-	self->bridge  = bridge;
-	self->tunnel  = tunnel;
-	self->cutting = cutting;
-	self->latT    = latT;
-	self->lonL    = lonL;
-	self->latB    = latB;
-	self->lonR    = lonR;
+	self->base.type = OSMDB_OBJECT_TYPE_WAY;
+	self->base.id   = id;
+	self->class     = class;
+	self->layer     = layer;
+	self->oneway    = oneway;
+	self->bridge    = bridge;
+	self->tunnel    = tunnel;
+	self->cutting   = cutting;
+	self->latT      = latT;
+	self->lonL      = lonL;
+	self->latB      = latB;
+	self->lonR      = lonR;
 
 	if(name && (name[0] != '\0'))
 	{
@@ -411,7 +412,7 @@ osmdb_way_copyEmpty(osmdb_way_t* self)
 		snprintf(copy->abrev, len, "%s", self->abrev);
 	}
 
-	copy->id      = self->id;
+	copy->base.id = self->base.id;
 	copy->class   = self->class;
 	copy->layer   = self->layer;
 	copy->oneway  = self->oneway;
@@ -456,15 +457,15 @@ void osmdb_way_incref(osmdb_way_t* self)
 {
 	ASSERT(self);
 
-	++self->refcount;
+	++self->base.refcount;
 }
 
 int osmdb_way_decref(osmdb_way_t* self)
 {
 	ASSERT(self);
 
-	--self->refcount;
-	return (self->refcount == 0) ? 1 : 0;
+	--self->base.refcount;
+	return (self->base.refcount == 0) ? 1 : 0;
 }
 
 int osmdb_way_export(osmdb_way_t* self, xml_ostream_t* os)
@@ -474,7 +475,7 @@ int osmdb_way_export(osmdb_way_t* self, xml_ostream_t* os)
 
 	int ret = 1;
 	ret &= xml_ostream_begin(os, "way");
-	ret &= xml_ostream_attrf(os, "id", "%0.0lf", self->id);
+	ret &= xml_ostream_attrf(os, "id", "%0.0lf", self->base.id);
 	if(self->name)
 	{
 		ret &= xml_ostream_attr(os, "name", self->name);
