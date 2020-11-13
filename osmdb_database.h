@@ -33,22 +33,24 @@ typedef struct
 {
 	sqlite3* db;
 
+	int nthreads;
+
 	// search statements
-	sqlite3_stmt* stmt_spellfix;
-	sqlite3_stmt* stmt_search_nodes;
-	sqlite3_stmt* stmt_search_ways;
-	sqlite3_stmt* stmt_search_rels;
+	sqlite3_stmt** stmt_spellfix;
+	sqlite3_stmt** stmt_search_nodes;
+	sqlite3_stmt** stmt_search_ways;
+	sqlite3_stmt** stmt_search_rels;
 
 	// select statements
-	sqlite3_stmt* stmt_select_nodes_range;
-	sqlite3_stmt* stmt_select_node;
-	sqlite3_stmt* stmt_select_rels_range;
-	sqlite3_stmt* stmt_select_relation;
-	sqlite3_stmt* stmt_select_mnodes;
-	sqlite3_stmt* stmt_select_mways;
-	sqlite3_stmt* stmt_select_way;
-	sqlite3_stmt* stmt_select_wnds;
-	sqlite3_stmt* stmt_select_ways_range;
+	sqlite3_stmt** stmt_select_nodes_range;
+	sqlite3_stmt*  stmt_select_node;
+	sqlite3_stmt** stmt_select_rels_range;
+	sqlite3_stmt*  stmt_select_relation;
+	sqlite3_stmt*  stmt_select_mnodes;
+	sqlite3_stmt*  stmt_select_mways;
+	sqlite3_stmt*  stmt_select_way;
+	sqlite3_stmt*  stmt_select_wnds;
+	sqlite3_stmt** stmt_select_ways_range;
 
 	// search arguments
 	int idx_spellfix_arg;
@@ -105,15 +107,19 @@ typedef struct
 	pthread_mutex_t object_mutex;
 } osmdb_database_t;
 
-osmdb_database_t* osmdb_database_new(const char* fname);
+osmdb_database_t* osmdb_database_new(const char* fname,
+                                     int nthreads);
 void              osmdb_database_delete(osmdb_database_t** _self);
 void              osmdb_database_spellfix(osmdb_database_t* self,
+                                          int tid,
                                           const char* text,
                                           char* spellfix);
 int               osmdb_database_search(osmdb_database_t* self,
+                                        int tid,
                                         const char* text,
                                         xml_ostream_t* os);
 int               osmdb_database_tile(osmdb_database_t* self,
+                                      int tid,
                                       int zoom, int x, int y,
                                       xml_ostream_t* os);
 

@@ -189,7 +189,7 @@ int main(int argc, const char** argv)
 		return EXIT_FAILURE;
 	}
 
-	osmdb_database_t* db = osmdb_database_new(fname);
+	osmdb_database_t* db = osmdb_database_new(fname, 1);
 	if(db == NULL)
 	{
 		return EXIT_FAILURE;
@@ -204,12 +204,12 @@ int main(int argc, const char** argv)
 	if(type == OSMDB_REQUEST_TYPE_SEARCH)
 	{
 		char spellfix[256];
-		osmdb_database_spellfix(db, search, spellfix);
-		osmdb_database_search(db, spellfix, os);
+		osmdb_database_spellfix(db, 0, search, spellfix);
+		osmdb_database_search(db, 0, spellfix, os);
 	}
 	else if(type == OSMDB_REQUEST_TYPE_OSMDB)
 	{
-		osmdb_database_tile(db, zoom, x, y, os);
+		osmdb_database_tile(db, 0, zoom, x, y, os);
 	}
 
 	xml_ostream_delete(&os);

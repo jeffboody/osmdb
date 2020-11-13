@@ -46,6 +46,8 @@
 
 static int OSMDB_ONE = 1;
 
+#define OSMDB_DATABASE_CACHESIZE 4000000000
+
 #define OSMDB_QUADRANT_NONE   0
 #define OSMDB_QUADRANT_TOP    1
 #define OSMDB_QUADRANT_LEFT   2
@@ -115,27 +117,97 @@ osmdb_database_cat(char* words, int* len, const char* word)
 }
 
 static int
+osmdb_database_prepareSet(osmdb_database_t* self,
+                          const char* sql,
+                          sqlite3_stmt*** _stmt)
+{
+	ASSERT(self);
+	ASSERT(sql);
+	ASSERT(_stmt);
+
+	// note that the calling function should log an error
+
+	sqlite3_stmt** stmt;
+	stmt = (sqlite3_stmt**)
+	        CALLOC(self->nthreads, sizeof(sqlite3_stmt*));
+	if(stmt == NULL)
+	{
+		LOGE("CALLOC failed");
+		return 0;
+	}
+
+	int i;
+	for(i = 0; i < self->nthreads; ++i)
+	{
+		if(sqlite3_prepare_v2(self->db, sql, -1,
+		                      &(stmt[i]),
+		                      NULL) != SQLITE_OK)
+		{
+			goto fail_prepare;
+		}
+	}
+
+	*_stmt = stmt;
+
+	// succcess
+	return 1;
+
+	// failure
+	fail_prepare:
+	{
+		int j;
+		for(j = 0; j < i; ++j)
+		{
+			sqlite3_finalize(stmt[j]);
+		}
+		FREE(stmt);
+	}
+	return 0;
+}
+
+static void
+osmdb_database_finalizeSet(osmdb_database_t* self,
+                           sqlite3_stmt*** _stmt)
+{
+	ASSERT(self);
+	ASSERT(_stmt);
+
+	sqlite3_stmt** stmt = *_stmt;
+	if(stmt)
+	{
+		int i;
+		for(i = 0; i < self->nthreads; ++i)
+		{
+			sqlite3_finalize(stmt[i]);
+		}
+		FREE(stmt);
+		*_stmt = NULL;
+	}
+}
+
+static int
 osmdb_database_spellfixWord(osmdb_database_t* self,
-                            const char* word,
+                            int tid, const char* word,
                             char* spellfix, int* len)
 {
 	ASSERT(self);
 	ASSERT(word);
 	ASSERT(spellfix);
 
+	sqlite3_stmt* stmt = self->stmt_spellfix[tid];
+
 	int bytes = strlen(word) + 1;
-	if(sqlite3_bind_text(self->stmt_spellfix,
-	                     self->idx_spellfix_arg, word,
+	if(sqlite3_bind_text(stmt, self->idx_spellfix_arg, word,
 	                     bytes, SQLITE_STATIC) != SQLITE_OK)
 	{
 		LOGE("sqlite3_bind_text failed");
 		return 0;
 	}
 
-	if(sqlite3_step(self->stmt_spellfix) == SQLITE_ROW)
+	if(sqlite3_step(stmt) == SQLITE_ROW)
 	{
 		const unsigned char* v;
-		v = sqlite3_column_text(self->stmt_spellfix, 0);
+		v = sqlite3_column_text(stmt, 0);
 		osmdb_database_cat(spellfix, len, (const char*) v);
 	}
 	else
@@ -143,7 +215,7 @@ osmdb_database_spellfixWord(osmdb_database_t* self,
 		osmdb_database_cat(spellfix, len, word);
 	}
 
-	if(sqlite3_reset(self->stmt_spellfix) != SQLITE_OK)
+	if(sqlite3_reset(stmt) != SQLITE_OK)
 	{
 		LOGW("sqlite3_reset failed");
 	}
@@ -153,6 +225,7 @@ osmdb_database_spellfixWord(osmdb_database_t* self,
 
 static int
 osmdb_database_searchTblNodes(osmdb_database_t* self,
+                              int tid,
                               const char* text,
                               xml_ostream_t* os)
 {
@@ -161,7 +234,7 @@ osmdb_database_searchTblNodes(osmdb_database_t* self,
 	ASSERT(os);
 
 	int           idx  = self->idx_search_nodes_arg;
-	sqlite3_stmt* stmt = self->stmt_search_nodes;
+	sqlite3_stmt* stmt = self->stmt_search_nodes[tid];
 
 	int bytes = strlen(text) + 1;
 	if(sqlite3_bind_text(stmt, idx, text, bytes,
@@ -213,6 +286,7 @@ osmdb_database_searchTblNodes(osmdb_database_t* self,
 
 static int
 osmdb_database_searchTblWays(osmdb_database_t* self,
+                             int tid,
                              const char* text,
                              xml_ostream_t* os)
 {
@@ -221,7 +295,7 @@ osmdb_database_searchTblWays(osmdb_database_t* self,
 	ASSERT(os);
 
 	int           idx  = self->idx_search_ways_arg;
-	sqlite3_stmt* stmt = self->stmt_search_ways;
+	sqlite3_stmt* stmt = self->stmt_search_ways[tid];
 
 	int bytes = strlen(text) + 1;
 	if(sqlite3_bind_text(stmt, idx, text, bytes,
@@ -268,6 +342,7 @@ osmdb_database_searchTblWays(osmdb_database_t* self,
 
 static int
 osmdb_database_searchTblRels(osmdb_database_t* self,
+                             int tid,
                              const char* text,
                              xml_ostream_t* os)
 {
@@ -276,7 +351,7 @@ osmdb_database_searchTblRels(osmdb_database_t* self,
 	ASSERT(os);
 
 	int           idx  = self->idx_search_rels_arg;
-	sqlite3_stmt* stmt = self->stmt_search_rels;
+	sqlite3_stmt* stmt = self->stmt_search_rels[tid];
 
 	int bytes = strlen(text) + 1;
 	if(sqlite3_bind_text(stmt, idx, text, bytes,
@@ -1165,7 +1240,7 @@ osmdb_database_gatherRelation(osmdb_database_t* self,
 
 static int
 osmdb_database_gatherNodes(osmdb_database_t* self,
-                           int zoom,
+                           int tid, int zoom,
                            double latT, double lonL,
                            double latB, double lonR,
                            cc_map_t* map_export,
@@ -1181,7 +1256,7 @@ osmdb_database_gatherNodes(osmdb_database_t* self,
 	int idx_lonR = self->idx_select_nodes_range_lonR;
 	int idx_zoom = self->idx_select_nodes_range_zoom;
 
-	sqlite3_stmt* stmt = self->stmt_select_nodes_range;
+	sqlite3_stmt* stmt = self->stmt_select_nodes_range[tid];
 	if((sqlite3_bind_double(stmt, idx_latT, latT) != SQLITE_OK) ||
 	   (sqlite3_bind_double(stmt, idx_lonL, lonL) != SQLITE_OK) ||
 	   (sqlite3_bind_double(stmt, idx_latB, latB) != SQLITE_OK) ||
@@ -1214,7 +1289,7 @@ osmdb_database_gatherNodes(osmdb_database_t* self,
 
 static int
 osmdb_database_gatherRelations(osmdb_database_t* self,
-                               int zoom,
+                               int tid, int zoom,
                                double latT, double lonL,
                                double latB, double lonR,
                                cc_map_t* map_export,
@@ -1230,7 +1305,7 @@ osmdb_database_gatherRelations(osmdb_database_t* self,
 	int idx_lonR  = self->idx_select_rels_range_lonR;
 	int idx_zoom  = self->idx_select_rels_range_zoom;
 
-	sqlite3_stmt* stmt = self->stmt_select_rels_range;
+	sqlite3_stmt* stmt = self->stmt_select_rels_range[tid];
 
 	if((sqlite3_bind_double(stmt, idx_latT, latT) != SQLITE_OK) ||
 	   (sqlite3_bind_double(stmt, idx_lonL, lonL) != SQLITE_OK) ||
@@ -1925,7 +2000,7 @@ osmdb_database_gatherWay(osmdb_database_t* self,
 
 static int
 osmdb_database_gatherWays(osmdb_database_t* self,
-                          int zoom,
+                          int tid, int zoom,
                           double latT, double lonL,
                           double latB, double lonR,
                           cc_map_t* map_export,
@@ -1955,7 +2030,7 @@ osmdb_database_gatherWays(osmdb_database_t* self,
 		goto fail_mm_nds_join;
 	}
 
-	sqlite3_stmt* stmt = self->stmt_select_ways_range;
+	sqlite3_stmt* stmt = self->stmt_select_ways_range[tid];
 	if((sqlite3_bind_double(stmt, idx_latT, latT) != SQLITE_OK) ||
 	   (sqlite3_bind_double(stmt, idx_lonL, lonL) != SQLITE_OK) ||
 	   (sqlite3_bind_double(stmt, idx_latB, latB) != SQLITE_OK) ||
@@ -2134,11 +2209,65 @@ osmdb_database_computeMinDist(osmdb_database_t* self)
 	self->min_dist14 = s*cc_vec3f_distance(&pb_14, &pa_14)/pix;
 }
 
+static void
+osmdb_database_trimCache(osmdb_database_t* self)
+{
+	ASSERT(self);
+
+	pthread_mutex_lock(&self->object_mutex);
+
+	cc_listIter_t* iter;
+	iter = cc_list_head(self->object_list);
+	while(iter)
+	{
+		if(MEMSIZE() <= OSMDB_DATABASE_CACHESIZE)
+		{
+			break;
+		}
+
+		osmdb_object_t* obj;
+		obj = (osmdb_object_t*) cc_list_peekIter(iter);
+		if(obj->refcount)
+		{
+			iter = cc_list_next(iter);
+			continue;
+		}
+
+		cc_mapIter_t  miterator;
+		cc_mapIter_t* miter = &miterator;
+		if(obj->type == OSMDB_OBJECT_TYPE_NODE)
+		{
+			cc_map_findf(self->object_map, miter,
+			             "n%0.0lf", obj->id);
+			cc_map_remove(self->object_map, &miter);
+			osmdb_node_delete((osmdb_node_t**) &obj);
+		}
+		else if(obj->type == OSMDB_OBJECT_TYPE_WAY)
+		{
+			cc_map_findf(self->object_map, miter,
+			             "w%0.0lf", obj->id);
+			cc_map_remove(self->object_map, &miter);
+			osmdb_way_delete((osmdb_way_t**) &obj);
+		}
+		else if(obj->type == OSMDB_OBJECT_TYPE_RELATION)
+		{
+			cc_map_findf(self->object_map, miter,
+			             "r%0.0lf", obj->id);
+			cc_map_remove(self->object_map, &miter);
+			osmdb_relation_delete((osmdb_relation_t**) &obj);
+		}
+		cc_list_remove(self->object_list, &iter);
+	}
+
+	pthread_mutex_unlock(&self->object_mutex);
+}
+
 /***********************************************************
 * public                                                   *
 ***********************************************************/
 
-osmdb_database_t* osmdb_database_new(const char* fname)
+osmdb_database_t* osmdb_database_new(const char* fname,
+                                     int nthreads)
 {
 	ASSERT(fname);
 
@@ -2150,6 +2279,8 @@ osmdb_database_t* osmdb_database_new(const char* fname)
 		LOGE("CALLOC failed");
 		return NULL;
 	}
+
+	self->nthreads = nthreads;
 
 	if(sqlite3_initialize() != SQLITE_OK)
 	{
@@ -2177,9 +2308,8 @@ osmdb_database_t* osmdb_database_new(const char* fname)
 		"SELECT word FROM tbl_spellfix"
 		"	WHERE word MATCH @arg AND top=5;";
 
-	if(sqlite3_prepare_v2(self->db, sql_spellfix, -1,
-	                      &self->stmt_spellfix,
-	                      NULL) != SQLITE_OK)
+	if(osmdb_database_prepareSet(self, sql_spellfix,
+	                             &self->stmt_spellfix) == 0)
 	{
 		LOGE("sqlite3_prepare_v2 failed");
 		goto fail_prepare_spellfix;
@@ -2194,9 +2324,8 @@ osmdb_database_t* osmdb_database_new(const char* fname)
 		"	ORDER BY rank DESC"
 		"	LIMIT 10;";
 
-	if(sqlite3_prepare_v2(self->db, sql_search_nodes, -1,
-	                      &self->stmt_search_nodes,
-	                      NULL) != SQLITE_OK)
+	if(osmdb_database_prepareSet(self, sql_search_nodes,
+	                             &self->stmt_search_nodes) == 0)
 	{
 		LOGE("sqlite3_prepare_v2 failed");
 		goto fail_prepare_search_nodes;
@@ -2211,9 +2340,8 @@ osmdb_database_t* osmdb_database_new(const char* fname)
 		"	ORDER BY rank DESC"
 		"	LIMIT 10;";
 
-	if(sqlite3_prepare_v2(self->db, sql_search_ways, -1,
-	                      &self->stmt_search_ways,
-	                      NULL) != SQLITE_OK)
+	if(osmdb_database_prepareSet(self, sql_search_ways,
+	                             &self->stmt_search_ways) == 0)
 	{
 		LOGE("sqlite3_prepare_v2 failed");
 		goto fail_prepare_search_ways;
@@ -2228,9 +2356,8 @@ osmdb_database_t* osmdb_database_new(const char* fname)
 		"	ORDER BY rank DESC"
 		"	LIMIT 10;";
 
-	if(sqlite3_prepare_v2(self->db, sql_search_rels, -1,
-	                      &self->stmt_search_rels,
-	                      NULL) != SQLITE_OK)
+	if(osmdb_database_prepareSet(self, sql_search_rels,
+	                             &self->stmt_search_rels) == 0)
 	{
 		LOGE("sqlite3_prepare_v2 failed");
 		goto fail_prepare_search_rels;
@@ -2243,9 +2370,8 @@ osmdb_database_t* osmdb_database_new(const char* fname)
 		"	      latB<@arg_latT AND lonR>@arg_lonL AND"
 		"	      min_zoom<=@arg_zoom;";
 
-	if(sqlite3_prepare_v2(self->db, sql_select_nodes_range, -1,
-	                      &self->stmt_select_nodes_range,
-	                      NULL) != SQLITE_OK)
+	if(osmdb_database_prepareSet(self, sql_select_nodes_range,
+	                             &self->stmt_select_nodes_range) == 0)
 	{
 		LOGE("sqlite3_prepare_v2 failed");
 		goto fail_prepare_select_nodes_range;
@@ -2271,9 +2397,8 @@ osmdb_database_t* osmdb_database_new(const char* fname)
 		"	      latB<@arg_latT AND lonR>@arg_lonL AND"
 		"	      min_zoom<=@arg_zoom;";
 
-	if(sqlite3_prepare_v2(self->db, sql_select_rels_range, -1,
-	                      &self->stmt_select_rels_range,
-	                      NULL) != SQLITE_OK)
+	if(osmdb_database_prepareSet(self, sql_select_rels_range,
+	                             &self->stmt_select_rels_range) == 0)
 	{
 		LOGE("sqlite3_prepare_v2 failed");
 		goto fail_prepare_select_rels_range;
@@ -2349,40 +2474,39 @@ osmdb_database_t* osmdb_database_new(const char* fname)
 		"	      latB<@arg_latT AND lonR>@arg_lonL AND"
 		"	      min_zoom<=@arg_zoom AND selected=1;";
 
-	if(sqlite3_prepare_v2(self->db, sql_select_ways_range, -1,
-	                      &self->stmt_select_ways_range,
-	                      NULL) != SQLITE_OK)
+	if(osmdb_database_prepareSet(self, sql_select_ways_range,
+	                             &self->stmt_select_ways_range) == 0)
 	{
 		LOGE("sqlite3_prepare_v2 failed");
 		goto fail_prepare_select_ways_range;
 	}
 
-	self->idx_spellfix_arg     = sqlite3_bind_parameter_index(self->stmt_spellfix, "@arg");
-	self->idx_search_nodes_arg = sqlite3_bind_parameter_index(self->stmt_search_nodes, "@arg");
-	self->idx_search_ways_arg  = sqlite3_bind_parameter_index(self->stmt_search_ways, "@arg");
-	self->idx_search_rels_arg  = sqlite3_bind_parameter_index(self->stmt_search_rels, "@arg");
+	self->idx_spellfix_arg     = sqlite3_bind_parameter_index(self->stmt_spellfix[0], "@arg");
+	self->idx_search_nodes_arg = sqlite3_bind_parameter_index(self->stmt_search_nodes[0], "@arg");
+	self->idx_search_ways_arg  = sqlite3_bind_parameter_index(self->stmt_search_ways[0], "@arg");
+	self->idx_search_rels_arg  = sqlite3_bind_parameter_index(self->stmt_search_rels[0], "@arg");
 
-	self->idx_select_nodes_range_latT = sqlite3_bind_parameter_index(self->stmt_select_nodes_range, "@arg_latT");
-	self->idx_select_nodes_range_lonL = sqlite3_bind_parameter_index(self->stmt_select_nodes_range, "@arg_lonL");
-	self->idx_select_nodes_range_latB = sqlite3_bind_parameter_index(self->stmt_select_nodes_range, "@arg_latB");
-	self->idx_select_nodes_range_lonR = sqlite3_bind_parameter_index(self->stmt_select_nodes_range, "@arg_lonR");
-	self->idx_select_nodes_range_zoom = sqlite3_bind_parameter_index(self->stmt_select_nodes_range, "@arg_zoom");
+	self->idx_select_nodes_range_latT = sqlite3_bind_parameter_index(self->stmt_select_nodes_range[0], "@arg_latT");
+	self->idx_select_nodes_range_lonL = sqlite3_bind_parameter_index(self->stmt_select_nodes_range[0], "@arg_lonL");
+	self->idx_select_nodes_range_latB = sqlite3_bind_parameter_index(self->stmt_select_nodes_range[0], "@arg_latB");
+	self->idx_select_nodes_range_lonR = sqlite3_bind_parameter_index(self->stmt_select_nodes_range[0], "@arg_lonR");
+	self->idx_select_nodes_range_zoom = sqlite3_bind_parameter_index(self->stmt_select_nodes_range[0], "@arg_zoom");
 	self->idx_select_node_nid         = sqlite3_bind_parameter_index(self->stmt_select_node, "@arg");
-	self->idx_select_rels_range_latT  = sqlite3_bind_parameter_index(self->stmt_select_rels_range, "@arg_latT");
-	self->idx_select_rels_range_lonL  = sqlite3_bind_parameter_index(self->stmt_select_rels_range, "@arg_lonL");
-	self->idx_select_rels_range_latB  = sqlite3_bind_parameter_index(self->stmt_select_rels_range, "@arg_latB");
-	self->idx_select_rels_range_lonR  = sqlite3_bind_parameter_index(self->stmt_select_rels_range, "@arg_lonR");
-	self->idx_select_rels_range_zoom  = sqlite3_bind_parameter_index(self->stmt_select_rels_range, "@arg_zoom");
+	self->idx_select_rels_range_latT  = sqlite3_bind_parameter_index(self->stmt_select_rels_range[0], "@arg_latT");
+	self->idx_select_rels_range_lonL  = sqlite3_bind_parameter_index(self->stmt_select_rels_range[0], "@arg_lonL");
+	self->idx_select_rels_range_latB  = sqlite3_bind_parameter_index(self->stmt_select_rels_range[0], "@arg_latB");
+	self->idx_select_rels_range_lonR  = sqlite3_bind_parameter_index(self->stmt_select_rels_range[0], "@arg_lonR");
+	self->idx_select_rels_range_zoom  = sqlite3_bind_parameter_index(self->stmt_select_rels_range[0], "@arg_zoom");
 	self->idx_select_relation_rid     = sqlite3_bind_parameter_index(self->stmt_select_relation, "@arg");
 	self->idx_select_mnodes_rid       = sqlite3_bind_parameter_index(self->stmt_select_mnodes, "@arg");
 	self->idx_select_mways_rid        = sqlite3_bind_parameter_index(self->stmt_select_mways, "@arg");
 	self->idx_select_way_wid          = sqlite3_bind_parameter_index(self->stmt_select_way, "@arg");
 	self->idx_select_wnds_wid         = sqlite3_bind_parameter_index(self->stmt_select_wnds, "@arg");
-	self->idx_select_ways_range_latT  = sqlite3_bind_parameter_index(self->stmt_select_ways_range, "@arg_latT");
-	self->idx_select_ways_range_lonL  = sqlite3_bind_parameter_index(self->stmt_select_ways_range, "@arg_lonL");
-	self->idx_select_ways_range_latB  = sqlite3_bind_parameter_index(self->stmt_select_ways_range, "@arg_latB");
-	self->idx_select_ways_range_lonR  = sqlite3_bind_parameter_index(self->stmt_select_ways_range, "@arg_lonR");
-	self->idx_select_ways_range_zoom  = sqlite3_bind_parameter_index(self->stmt_select_ways_range, "@arg_zoom");
+	self->idx_select_ways_range_latT  = sqlite3_bind_parameter_index(self->stmt_select_ways_range[0], "@arg_latT");
+	self->idx_select_ways_range_lonL  = sqlite3_bind_parameter_index(self->stmt_select_ways_range[0], "@arg_lonL");
+	self->idx_select_ways_range_latB  = sqlite3_bind_parameter_index(self->stmt_select_ways_range[0], "@arg_latB");
+	self->idx_select_ways_range_lonR  = sqlite3_bind_parameter_index(self->stmt_select_ways_range[0], "@arg_lonR");
+	self->idx_select_ways_range_zoom  = sqlite3_bind_parameter_index(self->stmt_select_ways_range[0], "@arg_zoom");
 
 	// sqlite only allows for the selection of up to 10 items
 	// which is not enough to construct a way so we must
@@ -2477,7 +2601,8 @@ osmdb_database_t* osmdb_database_new(const char* fname)
 	fail_object_map:
 		cc_list_delete(&self->object_list);
 	fail_object_list:
-		sqlite3_finalize(self->stmt_select_ways_range);
+		osmdb_database_finalizeSet(self,
+		                           &self->stmt_select_ways_range);
 	fail_prepare_select_ways_range:
 		sqlite3_finalize(self->stmt_select_wnds);
 	fail_prepare_select_wnds:
@@ -2489,19 +2614,22 @@ osmdb_database_t* osmdb_database_new(const char* fname)
 	fail_prepare_select_mnodes:
 		sqlite3_finalize(self->stmt_select_relation);
 	fail_prepare_select_relation:
-		sqlite3_finalize(self->stmt_select_rels_range);
+		osmdb_database_finalizeSet(self,
+		                           &self->stmt_select_rels_range);
 	fail_prepare_select_rels_range:
 		sqlite3_finalize(self->stmt_select_node);
 	fail_prepare_select_node:
-		sqlite3_finalize(self->stmt_select_nodes_range);
+		osmdb_database_finalizeSet(self,
+		                           &self->stmt_select_nodes_range);
 	fail_prepare_select_nodes_range:
-		sqlite3_finalize(self->stmt_search_rels);
+		osmdb_database_finalizeSet(self, &self->stmt_search_rels);
 	fail_prepare_search_rels:
-		sqlite3_finalize(self->stmt_search_ways);
+		osmdb_database_finalizeSet(self, &self->stmt_search_ways);
 	fail_prepare_search_ways:
-		sqlite3_finalize(self->stmt_search_nodes);
+		osmdb_database_finalizeSet(self,
+		                           &self->stmt_search_nodes);
 	fail_prepare_search_nodes:
-		sqlite3_finalize(self->stmt_spellfix);
+		osmdb_database_finalizeSet(self, &self->stmt_spellfix);
 	fail_prepare_spellfix:
 	fail_extension:
 	fail_open:
@@ -2559,19 +2687,22 @@ void osmdb_database_delete(osmdb_database_t** _self)
 		pthread_mutex_destroy(&self->object_mutex);
 		cc_map_delete(&self->object_map);
 		cc_list_delete(&self->object_list);
-		sqlite3_finalize(self->stmt_select_ways_range);
+		osmdb_database_finalizeSet(self,
+		                           &self->stmt_select_ways_range);
 		sqlite3_finalize(self->stmt_select_wnds);
 		sqlite3_finalize(self->stmt_select_way);
 		sqlite3_finalize(self->stmt_select_mways);
 		sqlite3_finalize(self->stmt_select_mnodes);
 		sqlite3_finalize(self->stmt_select_relation);
-		sqlite3_finalize(self->stmt_select_rels_range);
+		osmdb_database_finalizeSet(self,
+		                           &self->stmt_select_rels_range);
 		sqlite3_finalize(self->stmt_select_node);
-		sqlite3_finalize(self->stmt_select_nodes_range);
-		sqlite3_finalize(self->stmt_search_rels);
-		sqlite3_finalize(self->stmt_search_ways);
-		sqlite3_finalize(self->stmt_search_nodes);
-		sqlite3_finalize(self->stmt_spellfix);
+		osmdb_database_finalizeSet(self,
+		                           &self->stmt_select_nodes_range);
+		osmdb_database_finalizeSet(self, &self->stmt_search_rels);
+		osmdb_database_finalizeSet(self, &self->stmt_search_ways);
+		osmdb_database_finalizeSet(self, &self->stmt_search_nodes);
+		osmdb_database_finalizeSet(self, &self->stmt_spellfix);
 
 		if(sqlite3_close_v2(self->db) != SQLITE_OK)
 		{
@@ -2589,6 +2720,7 @@ void osmdb_database_delete(osmdb_database_t** _self)
 }
 
 void osmdb_database_spellfix(osmdb_database_t* self,
+                             int tid,
                              const char* text,
                              char* spellfix)
 {
@@ -2610,13 +2742,15 @@ void osmdb_database_spellfix(osmdb_database_t* self,
 		if(words[idx] == ' ')
 		{
 			words[idx] = '\0';
-			osmdb_database_spellfixWord(self, word, spellfix, &len);
+			osmdb_database_spellfixWord(self, tid, word,
+			                            spellfix, &len);
 			osmdb_database_cat(spellfix, &len, " ");
 			word = &(words[idx + 1]);
 		}
 		else if(words[idx] == '\0')
 		{
-			osmdb_database_spellfixWord(self, word, spellfix, &len);
+			osmdb_database_spellfixWord(self, tid, word,
+			                            spellfix, &len);
 			return;
 		}
 
@@ -2625,6 +2759,7 @@ void osmdb_database_spellfix(osmdb_database_t* self,
 }
 
 int osmdb_database_search(osmdb_database_t* self,
+                          int tid,
                           const char* text,
                           xml_ostream_t* os)
 {
@@ -2634,9 +2769,9 @@ int osmdb_database_search(osmdb_database_t* self,
 
 	xml_ostream_begin(os, "db");
 
-	osmdb_database_searchTblNodes(self, text, os);
-	osmdb_database_searchTblWays(self, text, os);
-	osmdb_database_searchTblRels(self, text, os);
+	osmdb_database_searchTblNodes(self, tid, text, os);
+	osmdb_database_searchTblWays(self, tid, text, os);
+	osmdb_database_searchTblRels(self, tid, text, os);
 
 	xml_ostream_end(os);
 
@@ -2644,7 +2779,7 @@ int osmdb_database_search(osmdb_database_t* self,
 }
 
 int osmdb_database_tile(osmdb_database_t* self,
-                        int zoom, int x, int y,
+                        int tid, int zoom, int x, int y,
                         xml_ostream_t* os)
 {
 	ASSERT(self);
@@ -2663,21 +2798,21 @@ int osmdb_database_tile(osmdb_database_t* self,
 	}
 
 	xml_ostream_begin(os, "osmdb");
-	if(osmdb_database_gatherNodes(self, zoom,
+	if(osmdb_database_gatherNodes(self, tid, zoom,
 	                              latT, lonL, latB, lonR,
 	                              map_export, os) == 0)
 	{
 		goto fail_gather_nodes;
 	}
 
-	if(osmdb_database_gatherRelations(self, zoom,
+	if(osmdb_database_gatherRelations(self, tid, zoom,
 	                                  latT, lonL, latB, lonR,
 	                                  map_export, os) == 0)
 	{
 		goto fail_gather_relations;
 	}
 
-	if(osmdb_database_gatherWays(self, zoom,
+	if(osmdb_database_gatherWays(self, tid, zoom,
 	                             latT, lonL, latB, lonR,
 	                             map_export, os) == 0)
 	{
@@ -2688,6 +2823,8 @@ int osmdb_database_tile(osmdb_database_t* self,
 
 	cc_map_discard(map_export);
 	cc_map_delete(&map_export);
+
+	osmdb_database_trimCache(self);
 
 	// success
 	return 1;
