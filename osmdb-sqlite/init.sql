@@ -22,6 +22,7 @@
  */
 
 PRAGMA temp_store_directory = '.';
+PRAGMA cache_size = 100000;
 
 /*
  * CREATE MAIN TABLES
