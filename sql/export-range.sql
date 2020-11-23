@@ -21,21 +21,17 @@
  *
  */
 
-/*
- * IMPORT TABLES
- */
-
 .mode csv
 .separator |
-.print 'IMPORT tbl_nodes_coords'
-.import tbl_nodes_coords.data tbl_nodes_coords
-.print 'IMPORT tbl_nodes_info'
-.import tbl_nodes_info.data tbl_nodes_info
-.print 'IMPORT tbl_ways'
-.import tbl_ways.data tbl_ways
-.print 'IMPORT tbl_ways_nds'
-.import tbl_ways_nds.data tbl_ways_nds
-.print 'IMPORT tbl_ways_range'
-.import tbl_ways_range.data tbl_ways_range
 
-.print 'DONE'
+/*
+ * EXPORT RANGE
+ */
+
+.print 'EXPORT tbl_ways_range/tbl_rels_range'
+
+.output tbl_ways_range.data
+SELECT * FROM tbl_ways_range;
+
+.output tbl_rels_range.data
+SELECT * FROM tbl_rels_range;

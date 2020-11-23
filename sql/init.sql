@@ -24,6 +24,11 @@
 PRAGMA temp_store_directory = '.';
 PRAGMA cache_size = 100000;
 
+.stats on
+.timer on
+.mode csv
+.separator |
+
 /*
  * CREATE MAIN TABLES
  */
@@ -141,10 +146,6 @@ CREATE VIRTUAL TABLE tbl_rels_range USING rtree
  * IMPORT TABLES
  */
 
-.stats on
-.timer on
-.mode csv
-.separator |
 .print 'IMPORT tbl_class_rank'
 .import tbl_class_rank.data tbl_class_rank
 .print 'IMPORT tbl_nodes_coords'
@@ -170,33 +171,6 @@ CREATE VIRTUAL TABLE tbl_rels_range USING rtree
 CREATE INDEX idx_ways_members ON tbl_ways_members (rid);
 .print 'CREATE idx_ways_nds'
 CREATE INDEX idx_ways_nds ON tbl_ways_nds (wid);
-
-/*
- * PROCESS RANGE
- */
-
--- compute the range of info nodes
-.print 'INSERT INTO tbl_nodes_range'
-INSERT INTO tbl_nodes_range (nid, lonL, lonR, latB, latT)
-	SELECT nid, lon, lon, lat, lat
-		FROM tbl_nodes_info
-		JOIN tbl_nodes_coords USING (nid);
-
--- compute the range of all ways
-.print 'INSERT INTO tbl_ways_range'
-INSERT INTO tbl_ways_range (wid, lonL, lonR, latB, latT)
-	SELECT wid, min(lon), max(lon), min(lat), max(lat)
-		FROM tbl_ways_nds
-		JOIN tbl_nodes_coords USING (nid)
-		GROUP BY wid;
-
--- compute the range of all relations
-.print 'INSERT INTO tbl_rels_range'
-INSERT INTO tbl_rels_range (rid, lonL, lonR, latB, latT)
-	SELECT rid, min(lonL), max(lonR), min(latB), max(latT)
-		FROM tbl_ways_members
-		JOIN tbl_ways_range USING (wid)
-		GROUP BY rid;
 
 /*
  * FINISH

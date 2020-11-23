@@ -66,24 +66,35 @@ Convert shapefiles to KML files (https://www.igismap.com/shp-to-kml/).
 
 Convert KML files to tables.
 
-	./kml2data CORE_Act.kml REC_Act.kml
+	kml2data/kml2data CORE_Act.kml REC_Act.kml
 
 SQLite
 ======
 
-To initialize SQLite3 Database:
+Generate tables.
 
-	./osmosis/bin/osmosis --read-pbf planet-latest.osm.pbf --write-xml planet.osm
-	./osmdb-sqlite style.xml planet.osm
+	osmosis/bin/osmosis --read-pbf planet-latest.osm.pbf --write-xml planet.osm
+	osmdb-sqlite style/default.xml planet.osm
 
-Import planet.
+Import tables.
 
-	./shell --init init.sql planet.sqlite3 | tee log.txt
+	libsqlite3/shell --init sql/init.sql planet.sqlite3
+
+Init or update ranges.
+
+	libsqlite3/shell --init sql/init-range.sql planet.sqlite3
+
+	OR
+
+	libsqlite3/shell --init sql/export-range.sql old/planet.sqlite3
+	libsqlite3/shell --init sql/import-range.sql planet.sqlite3
+	osmdb-changeset change_id changeset.osm planet.sqlite3
+	libsqlite3/shell --init sql/update-range.sql planet.sqlite3
 
 Import KML.
 
-	./shell --init init-kml.sql planet.sqlite3
+	libsqlite3/shell --init sql/init-kml.sql planet.sqlite3
 
 Import search text.
 
-	./shell --init init-search.sql planet.sqlite3
+	libsqlite3/shell --init sql/init-search.sql planet.sqlite3
