@@ -5,17 +5,17 @@ CLASSES  = osm_parser ../osmdb_filter ../osmdb_util ../osmdb_style
 SOURCE   = $(TARGET).c $(CLASSES:%=%.c)
 OBJECTS  = $(TARGET).o $(CLASSES:%=%.o)
 HFILES   = $(CLASSES:%=%.h)
-OPT      = -O2 -Wall
+OPT      = -O2 -Wall -Wno-format-truncation
 CFLAGS   = $(OPT) -I.
-LDFLAGS  = -Llibcc -lcc -Lterrain -lterrain -Llibpak -lpak -Llibxmlstream -lxmlstream -Llibexpat/expat/lib -lexpat -lm -lz
+LDFLAGS  = -Llibsqlite3 -lsqlite3 -Llibcc -lcc -Lterrain -lterrain -Llibpak -lpak -Llibxmlstream -lxmlstream -Llibexpat/expat/lib -lexpat -ldl -lpthread -lm -lz
 CCC      = gcc
 
 all: $(TARGET)
 
-$(TARGET): $(OBJECTS) libcc terrain libpak xmlstream libexpat
+$(TARGET): $(OBJECTS) libsqlite3 libcc terrain libpak xmlstream libexpat
 	$(CCC) $(OPT) $(OBJECTS) -o $@ $(LDFLAGS)
 
-.PHONY: libcc terrain libpak xmlstream libexpat
+.PHONY: libsqlite3 libcc terrain libpak xmlstream libexpat
 
 libcc:
 	$(MAKE) -C libcc
@@ -32,6 +32,9 @@ xmlstream:
 libexpat:
 	$(MAKE) -C libexpat/expat/lib
 
+libsqlite3:
+	$(MAKE) -C libsqlite3
+
 clean:
 	rm -f $(OBJECTS) *~ \#*\# $(TARGET)
 	$(MAKE) -C libcc clean
@@ -39,6 +42,7 @@ clean:
 	$(MAKE) -C libpak clean
 	$(MAKE) -C libxmlstream clean
 	$(MAKE) -C libexpat/expat/lib clean
-	rm libcc terrain libpak libxmlstream libexpat
+	$(MAKE) -C libsqlite3 clean
+	rm libsqlite3 libcc terrain libpak libxmlstream libexpat
 
 $(OBJECTS): $(HFILES)

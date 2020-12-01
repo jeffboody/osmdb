@@ -28,34 +28,7 @@
 #include "libcc/cc_log.h"
 #include "libcc/cc_timestamp.h"
 #include "libxmlstream/xml_istream.h"
-#include "../osmdb_util.h"
 #include "osm_parser.h"
-
-/***********************************************************
-* private                                                  *
-***********************************************************/
-
-static int
-osmdb_sqlite_mkTblClassRank(void)
-{
-	FILE* f = fopen("tbl_class_rank.data", "w");
-	if(f == NULL)
-	{
-		LOGE("fopen tbl_class_rank.data failed");
-		return 0;
-	}
-
-	int code;
-	int count = osmdb_classCount();
-	for(code = 0; code < count; ++code)
-	{
-		fprintf(f, "%i|%i\n",
-		        code, osmdb_classCodeToRank(code));
-	}
-
-	fclose(f);
-	return 1;
-}
 
 /***********************************************************
 * public                                                   *
@@ -65,30 +38,42 @@ int main(int argc, char** argv)
 {
 	double t0 = cc_timestamp();
 
-	if(argc != 3)
+	if(argc != 4)
 	{
-		LOGE("%s style.xml input.osm", argv[0]);
-		return EXIT_FAILURE;
-	}
-
-	if(osmdb_sqlite_mkTblClassRank() == 0)
-	{
+		LOGE("%s style.xml input.osm output.sqlite3", argv[0]);
 		return EXIT_FAILURE;
 	}
 
 	osm_parser_t* parser;
-	parser = osm_parser_new(argv[1]);
+	parser = osm_parser_new(argv[1], argv[3]);
 	if(parser == NULL)
 	{
 		return EXIT_FAILURE;
 	}
 
-	if(xml_istream_parse((void*) parser,
-	                     osm_parser_start,
-	                     osm_parser_end,
-	                     argv[2]) == 0)
+	if(osm_parser_initClassRank(parser) == 0)
+	{
+		goto fail_rank;
+	}
+
+	if(osm_parser_parseFile(parser, argv[2]) == 0)
 	{
 		goto fail_parse;
+	}
+
+	if(osm_parser_createIndices(parser) == 0)
+	{
+		goto fail_createIndices;
+	}
+
+	if(osm_parser_initRange(parser) == 0)
+	{
+		goto fail_createRange;
+	}
+
+	if(osm_parser_initSearch(parser) == 0)
+	{
+		goto fail_initSearch;
 	}
 
 	osm_parser_delete(&parser);
@@ -98,7 +83,11 @@ int main(int argc, char** argv)
 	return EXIT_SUCCESS;
 
 	// failure
+	fail_initSearch:
+	fail_createRange:
+	fail_createIndices:
 	fail_parse:
+	fail_rank:
 		osm_parser_delete(&parser);
 	LOGI("FAILURE dt=%lf", cc_timestamp() - t0);
 	return EXIT_FAILURE;

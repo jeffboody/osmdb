@@ -28,6 +28,7 @@
 
 #include "libcc/cc_list.h"
 #include "libcc/cc_map.h"
+#include "libsqlite3/sqlite3.h"
 #include "../osmdb_style.h"
 
 typedef struct
@@ -47,18 +48,105 @@ typedef struct
 typedef struct
 {
 	int state;
+	int batch_size;
 
-	// tables
-	FILE* tbl_nodes_coords;
-	FILE* tbl_nodes_info;
-	FILE* tbl_ways;
-	FILE* tbl_rels;
-	FILE* tbl_ways_nds;
-	FILE* tbl_nodes_members;
-	FILE* tbl_ways_members;
-	FILE* tbl_nodes_text;
-	FILE* tbl_ways_text;
-	FILE* tbl_rels_text;
+	double t0;
+	double t1;
+
+	sqlite3* db;
+
+	// statements
+	sqlite3_stmt* stmt_begin;
+	sqlite3_stmt* stmt_end;
+	sqlite3_stmt* stmt_rollback;
+	sqlite3_stmt* stmt_select_nodes;
+	sqlite3_stmt* stmt_select_ways;
+	sqlite3_stmt* stmt_select_rels;
+	sqlite3_stmt* stmt_select_nodes_range;
+	sqlite3_stmt* stmt_select_ways_range;
+	sqlite3_stmt* stmt_select_rels_range;
+	sqlite3_stmt* stmt_insert_class_rank;
+	sqlite3_stmt* stmt_insert_nodes_coords;
+	sqlite3_stmt* stmt_insert_nodes_info;
+	sqlite3_stmt* stmt_insert_ways;
+	sqlite3_stmt* stmt_insert_rels;
+	sqlite3_stmt* stmt_insert_ways_nds;
+	sqlite3_stmt* stmt_insert_nodes_members;
+	sqlite3_stmt* stmt_insert_ways_members;
+	sqlite3_stmt* stmt_insert_nodes_range;
+	sqlite3_stmt* stmt_insert_ways_range;
+	sqlite3_stmt* stmt_insert_rels_range;
+	sqlite3_stmt* stmt_insert_nodes_text;
+	sqlite3_stmt* stmt_insert_ways_text;
+	sqlite3_stmt* stmt_insert_rels_text;
+
+	// indices
+	int idx_select_nodes_range_nid;
+	int idx_select_ways_range_wid;
+	int idx_select_rels_range_rid;
+	int idx_insert_class_rank_class;
+	int idx_insert_class_rank_rank;
+	int idx_insert_nodes_coords_nid;
+	int idx_insert_nodes_coords_lat;
+	int idx_insert_nodes_coords_lon;
+	int idx_insert_nodes_info_nid;
+	int idx_insert_nodes_info_class;
+	int idx_insert_nodes_info_name;
+	int idx_insert_nodes_info_abrev;
+	int idx_insert_nodes_info_ele;
+	int idx_insert_nodes_info_st;
+	int idx_insert_nodes_info_min_zoom;
+	int idx_insert_ways_wid;
+	int idx_insert_ways_class;
+	int idx_insert_ways_layer;
+	int idx_insert_ways_name;
+	int idx_insert_ways_abrev;
+	int idx_insert_ways_oneway;
+	int idx_insert_ways_bridge;
+	int idx_insert_ways_tunnel;
+	int idx_insert_ways_cutting;
+	int idx_insert_ways_center;
+	int idx_insert_ways_polygon;
+	int idx_insert_ways_selected;
+	int idx_insert_ways_min_zoom;
+	int idx_insert_rels_rid;
+	int idx_insert_rels_class;
+	int idx_insert_rels_name;
+	int idx_insert_rels_abrev;
+	int idx_insert_rels_center;
+	int idx_insert_rels_polygon;
+	int idx_insert_rels_min_zoom;
+	int idx_insert_ways_nds_idx;
+	int idx_insert_ways_nds_wid;
+	int idx_insert_ways_nds_nid;
+	int idx_insert_nodes_members_rid;
+	int idx_insert_nodes_members_nid;
+	int idx_insert_nodes_members_role;
+	int idx_insert_ways_members_idx;
+	int idx_insert_ways_members_rid;
+	int idx_insert_ways_members_wid;
+	int idx_insert_ways_members_role;
+	int idx_insert_nodes_range_nid;
+	int idx_insert_nodes_range_lonL;
+	int idx_insert_nodes_range_lonR;
+	int idx_insert_nodes_range_latB;
+	int idx_insert_nodes_range_latT;
+	int idx_insert_ways_range_wid;
+	int idx_insert_ways_range_lonL;
+	int idx_insert_ways_range_lonR;
+	int idx_insert_ways_range_latB;
+	int idx_insert_ways_range_latT;
+	int idx_insert_rels_range_rid;
+	int idx_insert_rels_range_lonL;
+	int idx_insert_rels_range_lonR;
+	int idx_insert_rels_range_latB;
+	int idx_insert_rels_range_latT;
+	int idx_insert_nodes_text_nid;
+	int idx_insert_nodes_text_txt;
+	int idx_insert_ways_text_wid;
+	int idx_insert_ways_text_txt;
+	int idx_insert_rels_text_rid;
+	int idx_insert_rels_text_txt;
 
 	osmdb_style_t* style;
 
@@ -114,8 +202,20 @@ typedef struct
 	iconv_t cd;
 } osm_parser_t;
 
-osm_parser_t* osm_parser_new(const char* style);
+osm_parser_t* osm_parser_new(const char* style,
+                             const char* db_name);
 void          osm_parser_delete(osm_parser_t** _self);
+int           osm_parser_beginTransaction(osm_parser_t* self);
+int           osm_parser_endTransaction(osm_parser_t* self);
+void          osm_parser_rollbackTransaction(osm_parser_t* self);
+int           osm_parser_createTables(osm_parser_t* self);
+int           osm_parser_createIndices(osm_parser_t* self);
+int           osm_parser_initClassRank(osm_parser_t* self);
+int           osm_parser_initRange(osm_parser_t* self);
+int           osm_parser_initSearch(osm_parser_t* self);
+int           osm_parser_dropAuxTables(osm_parser_t* self);
+int           osm_parser_parseFile(osm_parser_t* self,
+                                   const char* fname);
 int           osm_parser_start(void* priv, int line,
                                const char* name,
                                const char** atts);
