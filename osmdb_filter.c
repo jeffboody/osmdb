@@ -125,6 +125,7 @@ osmdb_filterInfo_delete(osmdb_filterInfo_t** _self)
 
 static int osmdb_filter_start(void* priv,
                               int line,
+                              float progress,
                               const char* name,
                               const char** atts)
 {
@@ -204,6 +205,7 @@ static int osmdb_filter_start(void* priv,
 
 static int osmdb_filter_end(void* priv,
                             int line,
+                            float progress,
                             const char* name,
                             const char* content)
 {

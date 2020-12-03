@@ -804,7 +804,7 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 }
 
 static int
-osmdb_style_start(void* priv, int line,
+osmdb_style_start(void* priv, int line, float progress,
                   const char* name, const char** atts)
 {
 	ASSERT(priv);
@@ -854,7 +854,7 @@ osmdb_style_start(void* priv, int line,
 }
 
 static int
-osmdb_style_end(void* priv, int line,
+osmdb_style_end(void* priv, int line, float progress,
                 const char* name, const char* content)
 {
 	// content may be NULL

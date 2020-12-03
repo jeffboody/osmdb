@@ -490,7 +490,7 @@ static void osmdb_parser_delete(osmdb_parser_t** _self)
 }
 
 static int osmdb_parser_start(void* priv,
-                              int line,
+                              int line, float progress,
                               const char* name,
                               const char** atts)
 {
@@ -556,7 +556,7 @@ static int osmdb_parser_start(void* priv,
 }
 
 static int osmdb_parser_end(void* priv,
-                            int line,
+                            int line, float progress,
                             const char* name,
                             const char* content)
 {

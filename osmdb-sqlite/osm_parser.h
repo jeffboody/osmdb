@@ -217,10 +217,12 @@ int           osm_parser_dropAuxTables(osm_parser_t* self);
 int           osm_parser_parseFile(osm_parser_t* self,
                                    const char* fname);
 int           osm_parser_start(void* priv, int line,
+                               float progress,
                                const char* name,
                                const char** atts);
 int           osm_parser_end(void* priv,
                              int line,
+                             float progress,
                              const char* name,
                              const char* content);
 

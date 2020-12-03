@@ -613,7 +613,7 @@ void osm_parser_delete(osm_parser_t** _self)
 	}
 }
 
-int osm_parser_start(void* priv, int line,
+int osm_parser_start(void* priv, int line, float progress,
                      const char* name, const char** atts)
 {
 	ASSERT(priv);
@@ -652,7 +652,7 @@ int osm_parser_start(void* priv, int line,
 	return 0;
 }
 
-int osm_parser_end(void* priv, int line,
+int osm_parser_end(void* priv, int line, float progress,
                    const char* name, const char* content)
 {
 	// content may be NULL

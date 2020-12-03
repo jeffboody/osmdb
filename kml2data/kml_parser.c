@@ -774,7 +774,7 @@ kml_parser_endSimpleData(kml_parser_t* self, int line,
 }
 
 static int kml_parser_start(void* priv,
-                            int line,
+                            int line, float progress,
                             const char* name,
                             const char** atts)
 {
@@ -898,7 +898,7 @@ static int kml_parser_start(void* priv,
 }
 
 static int kml_parser_end(void* priv,
-                          int line,
+                          int line, float progress,
                           const char* name,
                           const char* content)
 {

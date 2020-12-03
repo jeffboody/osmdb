@@ -66,10 +66,12 @@ osm_parser_t* osm_parser_new(double change_id,
                              const char* fname);
 void          osm_parser_delete(osm_parser_t** _self);
 int           osm_parser_start(void* priv, int line,
+                               float progress,
                                const char* name,
                                const char** atts);
 int           osm_parser_end(void* priv,
                              int line,
+                             float progress,
                              const char* name,
                              const char* content);
 int           osm_parser_finish(osm_parser_t* self);

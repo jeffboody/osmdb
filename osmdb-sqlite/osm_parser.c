@@ -919,7 +919,7 @@ osm_parser_insertNodesCoords(osm_parser_t* self)
 
 static int
 osm_parser_endOsmNode(osm_parser_t* self, int line,
-                      const char* content)
+                      float progress, const char* content)
 {
 	// content may be NULL
 	ASSERT(self);
@@ -958,8 +958,8 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 	if(osm_parser_logProgress(self))
 	{
 		double dt = self->t1 - self->t0;
-		LOGI("dt=%0.1lf, line=%i, nodes=%0.0lf",
-		     dt, line, self->stats_nodes);
+		LOGI("dt=%0.0lf, line=%i, progress=%i, nodes=%0.0lf",
+		     dt, line, (int) (100*progress), self->stats_nodes);
 	}
 
 	return 1;
@@ -1248,7 +1248,7 @@ osm_parser_insertWaysNds(osm_parser_t* self, double ref,
 
 static int
 osm_parser_endOsmWay(osm_parser_t* self, int line,
-                     const char* content)
+                     float progress, const char* content)
 {
 	// content may be NULL
 	ASSERT(self);
@@ -1314,8 +1314,8 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	if(osm_parser_logProgress(self))
 	{
 		double dt = self->t1 - self->t0;
-		LOGI("dt=%0.1lf, line=%i, ways=%0.0lf",
-		     dt, line, self->stats_ways);
+		LOGI("dt=%0.0lf, line=%i, progress=%i, ways=%0.0lf",
+		     dt, line, (int) (100*progress), self->stats_ways);
 	}
 
 	return 1;
@@ -1835,7 +1835,7 @@ osm_parser_insertRelsRange(osm_parser_t* self,
 
 static int
 osm_parser_endOsmRel(osm_parser_t* self, int line,
-                     const char* content)
+                     float progress, const char* content)
 {
 	// content may be NULL
 	ASSERT(self);
@@ -1919,8 +1919,9 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 	if(osm_parser_logProgress(self))
 	{
 		double dt = self->t1 - self->t0;
-		LOGI("dt=%0.1lf, line=%i, relations=%0.0lf",
-		     dt, line, self->stats_relations);
+		LOGI("dt=%0.0lf, line=%i, progress=%i, relations=%0.0lf",
+		     dt, line, (int) (100*progress),
+		     self->stats_relations);
 	}
 
 	return 1;
@@ -2585,7 +2586,7 @@ void osm_parser_delete(osm_parser_t** _self)
 
 		// print histogram
 		double dt = cc_timestamp() - self->t0;
-		LOGI("dt=%0.1lf, nodes=%0.0lf, ways=%0.0lf, relations=%0.0lf",
+		LOGI("dt=%0.0lf, nodes=%0.0lf, ways=%0.0lf, relations=%0.0lf",
 		     dt, self->stats_nodes, self->stats_ways,
 		     self->stats_relations);
 		int idx;
@@ -2939,7 +2940,7 @@ int osm_parser_initRangeNodes(osm_parser_t* self)
 		if(osm_parser_logProgress(self))
 		{
 			double dt = self->t1 - self->t0;
-			LOGI("dt=%0.1lf, progress=%lf", dt, 100.0*s/n);
+			LOGI("dt=%0.0lf, progress=%i", dt, (int) (100*s/n));
 		}
 	}
 
@@ -3020,7 +3021,7 @@ int osm_parser_initRangeWays(osm_parser_t* self)
 		if(osm_parser_logProgress(self))
 		{
 			double dt = self->t1 - self->t0;
-			LOGI("dt=%0.1lf, progress=%lf", dt, 100.0*s/n);
+			LOGI("dt=%0.0lf, progress=%i", dt, (int) (100*s/n));
 		}
 	}
 
@@ -3101,7 +3102,7 @@ int osm_parser_initRangeRels(osm_parser_t* self)
 		if(osm_parser_logProgress(self))
 		{
 			double dt = self->t1 - self->t0;
-			LOGI("dt=%0.1lf, progress=%lf", dt, 100.0*s/n);
+			LOGI("dt=%0.0lf, progress=%i", dt, (int) (100*s/n));
 		}
 	}
 
@@ -3226,7 +3227,7 @@ int osm_parser_initSearch(osm_parser_t* self)
 		}
 
 		double dt = cc_timestamp() - self->t0;
-		LOGI("dt=%0.1lf, idx=%i", dt, idx);
+		LOGI("dt=%0.0lf, idx=%i", dt, idx);
 		++idx;
 	}
 
@@ -3251,7 +3252,7 @@ int osm_parser_parseFile(osm_parser_t* self,
 	return osm_parser_endTransaction(self);
 }
 
-int osm_parser_start(void* priv, int line,
+int osm_parser_start(void* priv, int line, float progress,
                      const char* name, const char** atts)
 {
 	ASSERT(priv);
@@ -3322,7 +3323,7 @@ int osm_parser_start(void* priv, int line,
 	return 0;
 }
 
-int osm_parser_end(void* priv, int line,
+int osm_parser_end(void* priv, int line, float progress,
                    const char* name, const char* content)
 {
 	// content may be NULL
@@ -3342,15 +3343,18 @@ int osm_parser_end(void* priv, int line,
 	}
 	else if(state == OSM_STATE_OSM_NODE)
 	{
-		return osm_parser_endOsmNode(self, line, content);
+		return osm_parser_endOsmNode(self, line,
+		                             progress, content);
 	}
 	else if(state == OSM_STATE_OSM_WAY)
 	{
-		return osm_parser_endOsmWay(self, line, content);
+		return osm_parser_endOsmWay(self, line,
+		                            progress, content);
 	}
 	else if(state == OSM_STATE_OSM_REL)
 	{
-		return osm_parser_endOsmRel(self, line, content);
+		return osm_parser_endOsmRel(self, line,
+		                            progress, content);
 	}
 	else if(state == OSM_STATE_OSM_NODE_TAG)
 	{
