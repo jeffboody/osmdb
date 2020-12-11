@@ -21,74 +21,77 @@
  *
  */
 
+#include <sys/types.h>
 #include <stdlib.h>
-#include <string.h>
+#include <unistd.h>
 
 #define LOG_TAG "osmdb"
-#include "libcc/cc_log.h"
-#include "libcc/cc_timestamp.h"
-#include "libxmlstream/xml_istream.h"
-#include "osm_parser.h"
+#include "../libcc/cc_log.h"
+#include "../libcc/cc_memory.h"
+#include "osmdb_page.h"
 
 /***********************************************************
 * public                                                   *
 ***********************************************************/
 
-int main(int argc, char** argv)
+osmdb_page_t* osmdb_page_new(off_t base)
 {
-	double t0 = cc_timestamp();
+	ASSERT(base % OSMDB_PAGE_SIZE == 0);
+	ASSERT(sizeof(double) == 8);
 
-	if(argc != 5)
+	osmdb_page_t* self;
+	self = (osmdb_page_t*)
+	       CALLOC(1, sizeof(osmdb_page_t));
+	if(self == NULL)
 	{
-		LOGE("%s style.xml input.osm output.sqlite3 output.tbl", argv[0]);
-		return EXIT_FAILURE;
+		LOGE("CALLOC failed");
+		return NULL;
 	}
 
-	osm_parser_t* parser;
-	parser = osm_parser_new(argv[1], argv[3], argv[4]);
-	if(parser == NULL)
+	self->base = base;
+
+	return self;
+}
+
+void osmdb_page_delete(osmdb_page_t** _self)
+{
+	ASSERT(_self);
+
+	osmdb_page_t* self = *_self;
+	if(self)
 	{
-		return EXIT_FAILURE;
+		FREE(self);
+		*_self = NULL;
 	}
+}
 
-	if(osm_parser_initClassRank(parser) == 0)
-	{
-		goto fail_rank;
-	}
+void osmdb_page_get(osmdb_page_t* self, double id,
+                    double* coord)
+{
+	ASSERT(self);
+	ASSERT(coord);
 
-	if(osm_parser_parseFile(parser, argv[2]) == 0)
-	{
-		goto fail_parse;
-	}
+	// 16 bytes per coord
+	off_t offset = 16*((off_t) id);
+	int   idx0   = (int) (offset - self->base)/8;
+	int   idx1   = idx0 + 1;
 
-	if(osm_parser_createIndices(parser) == 0)
-	{
-		goto fail_createIndices;
-	}
+	coord[0] = self->coords[idx0];
+	coord[1] = self->coords[idx1];
+}
 
-	if(osm_parser_initRange(parser) == 0)
-	{
-		goto fail_createRange;
-	}
+void osmdb_page_set(osmdb_page_t* self, double id,
+                    double* coord)
+{
+	ASSERT(self);
+	ASSERT(coord);
 
-	if(osm_parser_initSearch(parser) == 0)
-	{
-		goto fail_initSearch;
-	}
+	// 16 bytes per coord
+	off_t offset = 16*((off_t) id);
+	int   idx0   = (int) (offset - self->base)/8;
+	int   idx1   = idx0 + 1;
 
-	osm_parser_delete(&parser);
-
-	// success
-	LOGI("SUCCESS dt=%lf", cc_timestamp() - t0);
-	return EXIT_SUCCESS;
-
-	// failure
-	fail_initSearch:
-	fail_createRange:
-	fail_createIndices:
-	fail_parse:
-	fail_rank:
-		osm_parser_delete(&parser);
-	LOGI("FAILURE dt=%lf", cc_timestamp() - t0);
-	return EXIT_FAILURE;
+	self->dirty        = 1;
+	self->coords[idx0] = coord[0];
+	self->coords[idx1] = coord[1];
 }

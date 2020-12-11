@@ -21,11 +21,15 @@
  *
  */
 
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
 #include <iconv.h>
 #include <locale.h>
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
+
 
 #define LOG_TAG "osmdb"
 #include "libcc/cc_log.h"
@@ -34,7 +38,10 @@
 #include "libxmlstream/xml_istream.h"
 #include "terrain/terrain_util.h"
 #include "osm_parser.h"
+#include "../osmdb_page.h"
 #include "../osmdb_util.h"
+
+#define OSM_PARSER_CACHE_SIZE 4000000000
 
 #define OSM_STATE_INIT            0
 #define OSM_STATE_OSM             1
@@ -683,6 +690,138 @@ static void osm_parser_init(osm_parser_t* self)
 	self->tag_way_bridge  = 0;
 	self->tag_way_tunnel  = 0;
 	self->tag_way_cutting = 0;
+	self->ways_nds_idx    = 0;
+}
+
+static osmdb_page_t*
+osm_parser_findPage(osm_parser_t* self, double id)
+{
+	ASSERT(self);
+
+	// 16 bytes per coord
+	off_t offset = 16*((off_t) id);
+	off_t base   = OSMDB_PAGE_SIZE*(offset/OSMDB_PAGE_SIZE);
+
+	// check for last page used
+	osmdb_page_t*  page;
+	cc_listIter_t* iter = cc_list_tail(self->page_list);
+	if(iter)
+	{
+		page = (osmdb_page_t*) cc_list_peekIter(iter);
+		if(page->base == base)
+		{
+			return page;
+		}
+	}
+
+	// find page in cache
+	cc_mapIter_t   miterator;
+	cc_mapIter_t*  miter = &miterator;
+	iter = (cc_listIter_t*)
+	       cc_map_findf(self->page_map, miter, "%0.0lf",
+	                    (double) base);
+	if(iter)
+	{
+		page = (osmdb_page_t*) cc_list_peekIter(iter);
+		cc_list_moven(self->page_list, iter, NULL);
+		return page;
+	}
+
+	// get a new page
+	page = osmdb_table_get(self->page_table, base);
+	if(page == NULL)
+	{
+		return NULL;
+	}
+
+	// trim list
+	iter = cc_list_head(self->page_list);
+	while(iter)
+	{
+		size_t size = MEMSIZE();
+		if(size < OSM_PARSER_CACHE_SIZE)
+		{
+			break;
+		}
+
+		osmdb_page_t* tmp_page;
+		tmp_page = (osmdb_page_t*)
+		           cc_list_peekIter(iter);
+
+		miter = &miterator;
+		cc_map_findf(self->page_map, miter, "%0.0lf",
+		             (double) tmp_page->base);
+		cc_list_remove(self->page_list, &iter);
+		cc_map_remove(self->page_map, &miter);
+		if(osmdb_table_put(self->page_table, &tmp_page) == 0)
+		{
+			goto fail_trim;
+		}
+	}
+
+	// add page to list
+	iter = cc_list_append(self->page_list, NULL,
+	                      (const void*) page);
+	if(iter == NULL)
+	{
+		goto fail_append;
+	}
+
+	// add page to map
+	if(cc_map_addf(self->page_map, (const void*) iter,
+	               "%0.0lf", (double) base) == 0)
+	{
+		goto fail_add;
+	}
+
+	// success
+	return page;
+
+	// failure
+	fail_add:
+		cc_list_remove(self->page_list, &iter);
+	fail_append:
+	fail_trim:
+		osmdb_table_put(self->page_table, &page);
+	return NULL;
+}
+
+static int
+osm_parser_getCoord(osm_parser_t* self,
+                    double id, double* coord)
+{
+	ASSERT(self);
+	ASSERT(coord);
+
+	osmdb_page_t* page;
+	page = osm_parser_findPage(self, id);
+	if(page == NULL)
+	{
+		return 0;
+	}
+
+	osmdb_page_get(page, id, coord);
+
+	return 1;
+}
+
+static int
+osm_parser_setCoord(osm_parser_t* self,
+                    double id, double* coord)
+{
+	ASSERT(self);
+	ASSERT(coord);
+
+	osmdb_page_t* page;
+	page = osm_parser_findPage(self, id);
+	if(page == NULL)
+	{
+		return 0;
+	}
+
+	osmdb_page_set(page, id, coord);
+
+	return 1;
 }
 
 static int
@@ -877,7 +1016,7 @@ osm_parser_insertNodesText(osm_parser_t* self)
 }
 
 static int
-osm_parser_insertNodesCoords(osm_parser_t* self)
+osm_parser_insertNodesRange(osm_parser_t* self)
 {
 	ASSERT(self);
 
@@ -886,17 +1025,23 @@ osm_parser_insertNodesCoords(osm_parser_t* self)
 		return 0;
 	}
 
-	int idx_nid = self->idx_insert_nodes_coords_nid;
-	int idx_lat = self->idx_insert_nodes_coords_lat;
-	int idx_lon = self->idx_insert_nodes_coords_lon;
+	int idx_nid  = self->idx_insert_nodes_range_nid;
+	int idx_lonL = self->idx_insert_nodes_range_lonL;
+	int idx_lonR = self->idx_insert_nodes_range_lonR;
+	int idx_latB = self->idx_insert_nodes_range_latB;
+	int idx_latT = self->idx_insert_nodes_range_latT;
 
-	sqlite3_stmt* stmt = self->stmt_insert_nodes_coords;
+	sqlite3_stmt* stmt = self->stmt_insert_nodes_range;
 	if((sqlite3_bind_double(stmt, idx_nid,
-	                        self->attr_id) != SQLITE_OK)  ||
-	   (sqlite3_bind_double(stmt, idx_lat,
+	                        self->attr_id) != SQLITE_OK) ||
+	   (sqlite3_bind_double(stmt, idx_lonL,
+	                        self->attr_lon) != SQLITE_OK) ||
+	   (sqlite3_bind_double(stmt, idx_lonR,
+	                        self->attr_lon) != SQLITE_OK) ||
+	   (sqlite3_bind_double(stmt, idx_latB,
 	                        self->attr_lat) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_lon,
-	                        self->attr_lon) != SQLITE_OK))
+	   (sqlite3_bind_double(stmt, idx_latT,
+	                        self->attr_lat) != SQLITE_OK))
 	{
 		LOGE("sqlite3_bind failed");
 		return 0;
@@ -934,20 +1079,17 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 	{
 		int min_zoom = sc->point->min_zoom;
 
-		if(osm_parser_insertNodesInfo(self, min_zoom) == 0)
-		{
-			return 0;
-		}
-
-		// add search text
-		if(osm_parser_insertNodesText(self) == 0)
+		if((osm_parser_insertNodesText(self) == 0)  ||
+		   (osm_parser_insertNodesRange(self) == 0) ||
+		   (osm_parser_insertNodesInfo(self, min_zoom) == 0))
 		{
 			return 0;
 		}
 	}
 
 	// node coords may be transitively selected
-	if(osm_parser_insertNodesCoords(self) == 0)
+	double coord[2] = { self->attr_lat, self->attr_lon };
+	if(osm_parser_setCoord(self, self->attr_id, coord) == 0)
 	{
 		return 0;
 	}
@@ -958,8 +1100,8 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 	if(osm_parser_logProgress(self))
 	{
 		double dt = self->t1 - self->t0;
-		LOGI("dt=%0.0lf, line=%i, progress=%i, nodes=%0.0lf",
-		     dt, line, (int) (100*progress), self->stats_nodes);
+		LOGI("dt=%0.0lf, line=%i, progress=%0.2f, nodes=%0.0lf",
+		     dt, line, 100.0f*progress, self->stats_nodes);
 	}
 
 	return 1;
@@ -1113,8 +1255,15 @@ osm_parser_insertWays(osm_parser_t* self,
 	int idx_polygon  = self->idx_insert_ways_polygon;
 	int idx_selected = self->idx_insert_ways_selected;
 	int idx_min_zoom = self->idx_insert_ways_min_zoom;
+	int idx_nds      = self->idx_insert_ways_nds;
 	int bytes_name   = strlen(self->tag_name)  + 1;
 	int bytes_abrev  = strlen(self->tag_abrev) + 1;
+
+	const void* ways_nds_array = self->ways_nds_array;
+	if(self->ways_nds_idx == 0)
+	{
+		ways_nds_array = NULL;
+	}
 
 	sqlite3_stmt* stmt = self->stmt_insert_ways;
 	if((sqlite3_bind_double(stmt, idx_wid,
@@ -1138,7 +1287,10 @@ osm_parser_insertWays(osm_parser_t* self,
 	   (sqlite3_bind_int(stmt, idx_center, center) != SQLITE_OK) ||
 	   (sqlite3_bind_int(stmt, idx_polygon, polygon) != SQLITE_OK) ||
 	   (sqlite3_bind_int(stmt, idx_selected, selected) != SQLITE_OK) ||
-	   (sqlite3_bind_int(stmt, idx_min_zoom, min_zoom) != SQLITE_OK))
+	   (sqlite3_bind_int(stmt, idx_min_zoom, min_zoom) != SQLITE_OK) ||
+	   (sqlite3_bind_blob(stmt, idx_nds, ways_nds_array,
+	                      self->ways_nds_idx*sizeof(double),
+	                      SQLITE_TRANSIENT) != SQLITE_OK))
 	{
 		LOGE("sqlite3_bind failed");
 		return 0;
@@ -1205,27 +1357,80 @@ osm_parser_insertWaysText(osm_parser_t* self)
 }
 
 static int
-osm_parser_insertWaysNds(osm_parser_t* self, double ref,
-                         int idx)
+osm_parser_insertWaysRange(osm_parser_t* self)
 {
 	ASSERT(self);
+
+	double wid  = self->attr_id;
+	double lonL = 0.0;
+	double lonR = 0.0;
+	double latB = 0.0;
+	double latT = 0.0;
+
+	double coord[2];
+
+	// compute range
+	int i;
+	for(i = 0; i < self->ways_nds_idx; ++i)
+	{
+		double nid = self->ways_nds_array[i];
+		if(osm_parser_getCoord(self, nid, coord) == 0)
+		{
+			return 0;
+		}
+
+		if(i == 0)
+		{
+			lonL = coord[1];
+			lonR = coord[1];
+			latB = coord[0];
+			latT = coord[0];
+			continue;
+		}
+
+		if(coord[1] < lonL)
+		{
+			lonL = coord[1];
+		}
+
+		if(coord[1] > lonR)
+		{
+			lonR = coord[1];
+		}
+
+		if(coord[0] < latB)
+		{
+			latB = coord[0];
+		}
+
+		if(coord[0] > latT)
+		{
+			latT = coord[0];
+		}
+	}
 
 	if(osm_parser_beginTransaction(self) == 0)
 	{
 		return 0;
 	}
 
-	int idx_idx = self->idx_insert_ways_nds_idx;
-	int idx_wid = self->idx_insert_ways_nds_wid;
-	int idx_nid = self->idx_insert_ways_nds_nid;
+	int idx_wid  = self->idx_insert_ways_range_wid;
+	int idx_lonL = self->idx_insert_ways_range_lonL;
+	int idx_lonR = self->idx_insert_ways_range_lonR;
+	int idx_latB = self->idx_insert_ways_range_latB;
+	int idx_latT = self->idx_insert_ways_range_latT;
 
-	sqlite3_stmt* stmt = self->stmt_insert_ways_nds;
-	if((sqlite3_bind_int(stmt, idx_idx,
-	                     idx) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_wid,
-	                        self->attr_id) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_nid,
-	                        ref) != SQLITE_OK))
+	sqlite3_stmt* stmt = self->stmt_insert_ways_range;
+	if((sqlite3_bind_double(stmt, idx_wid,
+	                        wid) != SQLITE_OK) ||
+	   (sqlite3_bind_double(stmt, idx_lonL,
+	                        lonL) != SQLITE_OK) ||
+	   (sqlite3_bind_double(stmt, idx_lonR,
+	                        lonR) != SQLITE_OK) ||
+	   (sqlite3_bind_double(stmt, idx_latB,
+	                        latB) != SQLITE_OK) ||
+	   (sqlite3_bind_double(stmt, idx_latT,
+	                        latT) != SQLITE_OK))
 	{
 		LOGE("sqlite3_bind failed");
 		return 0;
@@ -1293,19 +1498,9 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 		return 0;
 	}
 
-	// write way nds
-	int idx = 0;
-	cc_listIter_t* iter = cc_list_head(self->way_nds);
-	while(iter)
+	if(osm_parser_insertWaysRange(self) == 0)
 	{
-		double* ref = (double*)
-		              cc_list_remove(self->way_nds, &iter);
-		if(osm_parser_insertWaysNds(self, *ref, idx) == 0)
-		{
-			return 0;
-		}
-		++idx;
-		FREE(ref);
+		return 0;
 	}
 
 	// update histogram
@@ -1314,8 +1509,8 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	if(osm_parser_logProgress(self))
 	{
 		double dt = self->t1 - self->t0;
-		LOGI("dt=%0.0lf, line=%i, progress=%i, ways=%0.0lf",
-		     dt, line, (int) (100*progress), self->stats_ways);
+		LOGI("dt=%0.0lf, line=%i, progress=%0.2f, ways=%0.0lf",
+		     dt, line, 100.0f*progress, self->stats_ways);
 	}
 
 	return 1;
@@ -1440,13 +1635,24 @@ osm_parser_beginOsmWayNd(osm_parser_t* self, int line,
 
 	self->state = OSM_STATE_OSM_WAY_ND;
 
-	double* ref = (double*) MALLOC(sizeof(double));
-	if(ref == NULL)
+	// increase size of ways_nds_array
+	if(self->ways_nds_idx == self->ways_nds_count)
 	{
-		LOGE("MALLOC failed");
-		return 0;
+		int cnt = 2*self->ways_nds_count;
+
+		double* tmp;
+		tmp = REALLOC((void*) self->ways_nds_array,
+		              cnt*sizeof(double));
+		if(tmp == NULL)
+		{
+			LOGE("REALLOC failed");
+			return 0;
+		}
+		self->ways_nds_count = cnt;
+		self->ways_nds_array = tmp;
 	}
-	*ref = 0.0;
+
+	double ref = 0.0;
 
 	int i = 0;
 	int j = 1;
@@ -1454,20 +1660,21 @@ osm_parser_beginOsmWayNd(osm_parser_t* self, int line,
 	{
 		if(strcmp(atts[i], "ref")  == 0)
 		{
-			*ref = strtod(atts[j], NULL);
+			ref = strtod(atts[j], NULL);
 		}
 
 		i += 2;
 		j += 2;
 	}
 
-	if((*ref == 0.0) ||
-	   (cc_list_append(self->way_nds, NULL,
-	                   (const void*) ref) == NULL))
+	if(ref == 0.0)
 	{
-		FREE(ref);
 		return 0;
 	}
+
+	// add ref to nds array
+	self->ways_nds_array[self->ways_nds_idx] = ref;
+	++self->ways_nds_idx;
 
 	return 1;
 }
@@ -1685,105 +1892,6 @@ osm_parser_insertMembers(osm_parser_t* self,
 }
 
 static int
-osm_parser_insertNodesRange(osm_parser_t* self,
-                            double nid,
-                            double lat, double lon)
-{
-	ASSERT(self);
-
-	if(osm_parser_beginTransaction(self) == 0)
-	{
-		return 0;
-	}
-
-	int idx_nid  = self->idx_insert_nodes_range_nid;
-	int idx_lonL = self->idx_insert_nodes_range_lonL;
-	int idx_lonR = self->idx_insert_nodes_range_lonR;
-	int idx_latB = self->idx_insert_nodes_range_latB;
-	int idx_latT = self->idx_insert_nodes_range_latT;
-
-	sqlite3_stmt* stmt = self->stmt_insert_nodes_range;
-	if((sqlite3_bind_double(stmt, idx_nid,
-	                        nid) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_lonL,
-	                        lon) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_lonR,
-	                        lon) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_latB,
-	                        lat) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_latT,
-	                        lat) != SQLITE_OK))
-	{
-		LOGE("sqlite3_bind failed");
-		return 0;
-	}
-
-	int ret = 1;
-	if(sqlite3_step(stmt) != SQLITE_DONE)
-	{
-		LOGE("sqlite3_step failed");
-		ret = 0;
-	}
-
-	if(sqlite3_reset(stmt) != SQLITE_OK)
-	{
-		LOGW("sqlite3_reset failed");
-	}
-
-	return ret;
-}
-
-static int
-osm_parser_insertWaysRange(osm_parser_t* self,
-                           double wid,
-                           double lonL, double lonR,
-                           double latB, double latT)
-{
-	ASSERT(self);
-
-	if(osm_parser_beginTransaction(self) == 0)
-	{
-		return 0;
-	}
-
-	int idx_wid  = self->idx_insert_ways_range_wid;
-	int idx_lonL = self->idx_insert_ways_range_lonL;
-	int idx_lonR = self->idx_insert_ways_range_lonR;
-	int idx_latB = self->idx_insert_ways_range_latB;
-	int idx_latT = self->idx_insert_ways_range_latT;
-
-	sqlite3_stmt* stmt = self->stmt_insert_ways_range;
-	if((sqlite3_bind_double(stmt, idx_wid,
-	                        wid) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_lonL,
-	                        lonL) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_lonR,
-	                        lonR) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_latB,
-	                        latB) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_latT,
-	                        latT) != SQLITE_OK))
-	{
-		LOGE("sqlite3_bind failed");
-		return 0;
-	}
-
-	int ret = 1;
-	if(sqlite3_step(stmt) != SQLITE_DONE)
-	{
-		LOGE("sqlite3_step failed");
-		ret = 0;
-	}
-
-	if(sqlite3_reset(stmt) != SQLITE_OK)
-	{
-		LOGW("sqlite3_reset failed");
-	}
-
-	return ret;
-}
-
-static int
 osm_parser_insertRelsRange(osm_parser_t* self,
                            double rid,
                            double lonL, double lonR,
@@ -1919,8 +2027,8 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 	if(osm_parser_logProgress(self))
 	{
 		double dt = self->t1 - self->t0;
-		LOGI("dt=%0.0lf, line=%i, progress=%i, relations=%0.0lf",
-		     dt, line, (int) (100*progress),
+		LOGI("dt=%0.0lf, line=%i, progress=%0.2f, relations=%0.0lf",
+		     dt, line, 100.0f*progress,
 		     self->stats_relations);
 	}
 
@@ -2078,10 +2186,12 @@ osm_parser_endOsmRelMember(osm_parser_t* self, int line,
 
 osm_parser_t*
 osm_parser_new(const char* style,
-               const char* db_name)
+               const char* db_name,
+               const char* tbl_name)
 {
 	ASSERT(style);
 	ASSERT(db_name);
+	ASSERT(tbl_name);
 
 	osm_parser_t* self = (osm_parser_t*)
 	                     CALLOC(1, sizeof(osm_parser_t));
@@ -2148,24 +2258,6 @@ osm_parser_new(const char* style,
 		goto fail_prepare_rollback;
 	}
 
-	const char* sql_select_nodes = "SELECT nid FROM tbl_nodes_info;";
-	if(sqlite3_prepare_v2(self->db, sql_select_nodes, -1,
-	                      &self->stmt_select_nodes,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_select_nodes;
-	}
-
-	const char* sql_select_ways = "SELECT wid FROM tbl_ways;";
-	if(sqlite3_prepare_v2(self->db, sql_select_ways, -1,
-	                      &self->stmt_select_ways,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_select_ways;
-	}
-
 	const char* sql_select_rels = "SELECT rid FROM tbl_rels;";
 	if(sqlite3_prepare_v2(self->db, sql_select_rels, -1,
 	                      &self->stmt_select_rels,
@@ -2173,29 +2265,6 @@ osm_parser_new(const char* style,
 	{
 		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
 		goto fail_prepare_select_rels;
-	}
-
-	const char* sql_select_nodes_range =
-		"SELECT lat, lon FROM tbl_nodes_coords WHERE nid=@arg_nid;";
-	if(sqlite3_prepare_v2(self->db, sql_select_nodes_range, -1,
-	                      &self->stmt_select_nodes_range,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_select_nodes_range;
-	}
-
-	const char* sql_select_ways_range =
-		"SELECT min(lon), max(lon), min(lat), max(lat)"
-		"	FROM tbl_ways_nds"
-		"	JOIN tbl_nodes_coords USING (nid)"
-		"	WHERE wid=@arg_wid;";
-	if(sqlite3_prepare_v2(self->db, sql_select_ways_range, -1,
-	                      &self->stmt_select_ways_range,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_select_ways_range;
 	}
 
 	const char* sql_select_rels_range =
@@ -2222,17 +2291,6 @@ osm_parser_new(const char* style,
 		goto fail_prepare_insert_class_rank;
 	}
 
-	const char* sql_insert_nodes_coords =
-		"INSERT INTO tbl_nodes_coords (nid, lat, lon)"
-		"	VALUES (@arg_nid, @arg_lat, @arg_lon);";
-	if(sqlite3_prepare_v2(self->db, sql_insert_nodes_coords, -1,
-	                      &self->stmt_insert_nodes_coords,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_insert_nodes_coords;
-	}
-
 	const char* sql_insert_nodes_info =
 		"INSERT INTO tbl_nodes_info (nid, class, name, abrev, ele, st, min_zoom)"
 		"	VALUES (@arg_nid, @arg_class, @arg_name, @arg_abrev, @arg_ele, @arg_st, @arg_min_zoom);";
@@ -2245,8 +2303,8 @@ osm_parser_new(const char* style,
 	}
 
 	const char* sql_insert_ways =
-		"INSERT INTO tbl_ways (wid, class, layer, name, abrev, oneway, bridge, tunnel, cutting, center, polygon, selected, min_zoom)"
-		"	VALUES (@arg_wid, @arg_class, @arg_layer, @arg_name, @arg_abrev, @arg_oneway, @arg_bridge, @arg_tunnel, @arg_cutting, @arg_center, @arg_polygon, @arg_selected, @arg_min_zoom);";
+		"INSERT INTO tbl_ways (wid, class, layer, name, abrev, oneway, bridge, tunnel, cutting, center, polygon, selected, min_zoom, nds)"
+		"	VALUES (@arg_wid, @arg_class, @arg_layer, @arg_name, @arg_abrev, @arg_oneway, @arg_bridge, @arg_tunnel, @arg_cutting, @arg_center, @arg_polygon, @arg_selected, @arg_min_zoom, @arg_nds);";
 	if(sqlite3_prepare_v2(self->db, sql_insert_ways, -1,
 	                      &self->stmt_insert_ways,
 	                      NULL) != SQLITE_OK)
@@ -2264,17 +2322,6 @@ osm_parser_new(const char* style,
 	{
 		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
 		goto fail_prepare_insert_rels;
-	}
-
-	const char* sql_insert_ways_nds =
-		"INSERT INTO tbl_ways_nds (idx, wid, nid)"
-		"	VALUES (@arg_idx, @arg_wid, @arg_nid);";
-	if(sqlite3_prepare_v2(self->db, sql_insert_ways_nds, -1,
-	                      &self->stmt_insert_ways_nds,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_insert_ways_nds;
 	}
 
 	const char* sql_insert_nodes_members =
@@ -2365,14 +2412,9 @@ osm_parser_new(const char* style,
 		goto fail_prepare_insert_rels_text;
 	}
 
-	self->idx_select_nodes_range_nid     = sqlite3_bind_parameter_index(self->stmt_select_nodes_range, "@arg_nid");
-	self->idx_select_ways_range_wid      = sqlite3_bind_parameter_index(self->stmt_select_ways_range, "@arg_wid");
 	self->idx_select_rels_range_rid      = sqlite3_bind_parameter_index(self->stmt_select_rels_range, "@arg_rid");
 	self->idx_insert_class_rank_class    = sqlite3_bind_parameter_index(self->stmt_insert_class_rank, "@arg_class");
 	self->idx_insert_class_rank_rank     = sqlite3_bind_parameter_index(self->stmt_insert_class_rank, "@arg_rank");
-	self->idx_insert_nodes_coords_nid    = sqlite3_bind_parameter_index(self->stmt_insert_nodes_coords, "@arg_nid");
-	self->idx_insert_nodes_coords_lat    = sqlite3_bind_parameter_index(self->stmt_insert_nodes_coords, "@arg_lat");
-	self->idx_insert_nodes_coords_lon    = sqlite3_bind_parameter_index(self->stmt_insert_nodes_coords, "@arg_lon");
 	self->idx_insert_nodes_info_nid      = sqlite3_bind_parameter_index(self->stmt_insert_nodes_info, "@arg_nid");
 	self->idx_insert_nodes_info_class    = sqlite3_bind_parameter_index(self->stmt_insert_nodes_info, "@arg_class");
 	self->idx_insert_nodes_info_name     = sqlite3_bind_parameter_index(self->stmt_insert_nodes_info, "@arg_name");
@@ -2393,6 +2435,7 @@ osm_parser_new(const char* style,
 	self->idx_insert_ways_polygon        = sqlite3_bind_parameter_index(self->stmt_insert_ways, "@arg_polygon");
 	self->idx_insert_ways_selected       = sqlite3_bind_parameter_index(self->stmt_insert_ways, "@arg_selected");
 	self->idx_insert_ways_min_zoom       = sqlite3_bind_parameter_index(self->stmt_insert_ways, "@arg_min_zoom");
+	self->idx_insert_ways_nds            = sqlite3_bind_parameter_index(self->stmt_insert_ways, "@arg_nds");
 	self->idx_insert_rels_rid            = sqlite3_bind_parameter_index(self->stmt_insert_rels, "@arg_rid");
 	self->idx_insert_rels_class          = sqlite3_bind_parameter_index(self->stmt_insert_rels, "@arg_class");
 	self->idx_insert_rels_name           = sqlite3_bind_parameter_index(self->stmt_insert_rels, "@arg_name");
@@ -2400,9 +2443,6 @@ osm_parser_new(const char* style,
 	self->idx_insert_rels_center         = sqlite3_bind_parameter_index(self->stmt_insert_rels, "@arg_center");
 	self->idx_insert_rels_polygon        = sqlite3_bind_parameter_index(self->stmt_insert_rels, "@arg_polygon");
 	self->idx_insert_rels_min_zoom       = sqlite3_bind_parameter_index(self->stmt_insert_rels, "@arg_min_zoom");
-	self->idx_insert_ways_nds_idx        = sqlite3_bind_parameter_index(self->stmt_insert_ways_nds, "@arg_idx");
-	self->idx_insert_ways_nds_wid        = sqlite3_bind_parameter_index(self->stmt_insert_ways_nds, "@arg_wid");
-	self->idx_insert_ways_nds_nid        = sqlite3_bind_parameter_index(self->stmt_insert_ways_nds, "@arg_nid");
 	self->idx_insert_nodes_members_rid   = sqlite3_bind_parameter_index(self->stmt_insert_nodes_members, "@arg_rid");
 	self->idx_insert_nodes_members_nid   = sqlite3_bind_parameter_index(self->stmt_insert_nodes_members, "@arg_nid");
 	self->idx_insert_nodes_members_role  = sqlite3_bind_parameter_index(self->stmt_insert_nodes_members, "@arg_role");
@@ -2438,10 +2478,13 @@ osm_parser_new(const char* style,
 		goto fail_style;
 	}
 
-	self->way_nds = cc_list_new();
-	if(self->way_nds == NULL)
+	self->ways_nds_count = 16;
+	self->ways_nds_array = (double*)
+	                       CALLOC(self->ways_nds_count,
+	                              sizeof(double));
+	if(self->ways_nds_array == NULL)
 	{
-		goto fail_way_nds;
+		goto fail_ways_nds_array;
 	}
 
 	self->rel_members = cc_list_new();
@@ -2481,6 +2524,26 @@ osm_parser_new(const char* style,
 		goto fail_iconv_open;
 	}
 
+	int    flags = O_RDWR | O_CREAT | O_EXCL;
+	mode_t mode  = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+	self->page_table = osmdb_table_open(tbl_name, flags, mode);
+	if(self->page_table == NULL)
+	{
+		goto fail_page_table;
+	}
+
+	self->page_list = cc_list_new();
+	if(self->page_list == NULL)
+	{
+		goto fail_page_list;
+	}
+
+	self->page_map = cc_map_new();
+	if(self->page_map == NULL)
+	{
+		goto fail_page_map;
+	}
+
 	self->class_none   = osmdb_classKVToCode("class",    "none");
 	self->building_yes = osmdb_classKVToCode("building", "yes");
 	self->barrier_yes  = osmdb_classKVToCode("barrier",  "yes");
@@ -2493,6 +2556,12 @@ osm_parser_new(const char* style,
 	return self;
 
 	// failure
+	fail_page_map:
+		cc_list_delete(&self->page_list);
+	fail_page_list:
+		osmdb_table_close(&self->page_table);
+	fail_page_table:
+		iconv_close(self->cd);
 	fail_iconv_open:
 		osm_parser_discardClass(self);
 	fail_fill_class:
@@ -2502,8 +2571,8 @@ osm_parser_new(const char* style,
 	fail_histogram:
 		cc_list_delete(&self->rel_members);
 	fail_rel_members:
-		cc_list_delete(&self->way_nds);
-	fail_way_nds:
+		FREE(self->ways_nds_array);
+	fail_ways_nds_array:
 		osmdb_style_delete(&self->style);
 	fail_style:
 		sqlite3_finalize(self->stmt_insert_rels_text);
@@ -2522,30 +2591,18 @@ osm_parser_new(const char* style,
 	fail_prepare_insert_ways_members:
 		sqlite3_finalize(self->stmt_insert_nodes_members);
 	fail_prepare_insert_nodes_members:
-		sqlite3_finalize(self->stmt_insert_ways_nds);
-	fail_prepare_insert_ways_nds:
 		sqlite3_finalize(self->stmt_insert_rels);
 	fail_prepare_insert_rels:
 		sqlite3_finalize(self->stmt_insert_ways);
 	fail_prepare_insert_ways:
 		sqlite3_finalize(self->stmt_insert_nodes_info);
 	fail_prepare_insert_nodes_info:
-		sqlite3_finalize(self->stmt_insert_nodes_coords);
-	fail_prepare_insert_nodes_coords:
 		sqlite3_finalize(self->stmt_insert_class_rank);
 	fail_prepare_insert_class_rank:
 		sqlite3_finalize(self->stmt_select_rels_range);
 	fail_prepare_select_rels_range:
-		sqlite3_finalize(self->stmt_select_ways_range);
-	fail_prepare_select_ways_range:
-		sqlite3_finalize(self->stmt_select_nodes_range);
-	fail_prepare_select_nodes_range:
 		sqlite3_finalize(self->stmt_select_rels);
 	fail_prepare_select_rels:
-		sqlite3_finalize(self->stmt_select_ways);
-	fail_prepare_select_ways:
-		sqlite3_finalize(self->stmt_select_nodes);
-	fail_prepare_select_nodes:
 		sqlite3_finalize(self->stmt_rollback);
 	fail_prepare_rollback:
 		sqlite3_finalize(self->stmt_end);
@@ -2579,6 +2636,30 @@ void osm_parser_delete(osm_parser_t** _self)
 	osm_parser_t* self = *_self;
 	if(self)
 	{
+		osmdb_page_t*  page;
+		cc_listIter_t* iter;
+		cc_mapIter_t   miterator;
+		cc_mapIter_t*  miter;
+		miter = cc_map_head(self->page_map, &miterator);
+		while(miter)
+		{
+			iter = (cc_listIter_t*)
+			       cc_map_remove(self->page_map, &miter);
+			page = (osmdb_page_t*)
+			       cc_list_remove(self->page_list, &iter);
+			osmdb_table_put(self->page_table, &page);
+
+			if(osm_parser_logProgress(self))
+			{
+				double dt = self->t1 - self->t0;
+				LOGI("dt=%0.0lf, pages=%i",
+				     dt, cc_list_size(self->page_list));
+			}
+		}
+
+		cc_map_delete(&self->page_map);
+		cc_list_delete(&self->page_list);
+		osmdb_table_close(&self->page_table);
 		iconv_close(self->cd);
 
 		osm_parser_discardClass(self);
@@ -2606,7 +2687,7 @@ void osm_parser_delete(osm_parser_t** _self)
 		}
 		FREE(self->histogram);
 
-		cc_listIter_t* iter = cc_list_head(self->rel_members);
+		iter = cc_list_head(self->rel_members);
 		while(iter)
 		{
 			osm_relationMember_t* m;
@@ -2615,16 +2696,8 @@ void osm_parser_delete(osm_parser_t** _self)
 			FREE(m);
 		}
 
-		iter = cc_list_head(self->way_nds);
-		while(iter)
-		{
-			double* ref = (double*)
-			              cc_list_remove(self->way_nds, &iter);
-			FREE(ref);
-		}
-
 		cc_list_delete(&self->rel_members);
-		cc_list_delete(&self->way_nds);
+		FREE(self->ways_nds_array);
 
 		osmdb_style_delete(&self->style);
 
@@ -2636,18 +2709,12 @@ void osm_parser_delete(osm_parser_t** _self)
 		sqlite3_finalize(self->stmt_insert_nodes_range);
 		sqlite3_finalize(self->stmt_insert_ways_members);
 		sqlite3_finalize(self->stmt_insert_nodes_members);
-		sqlite3_finalize(self->stmt_insert_ways_nds);
 		sqlite3_finalize(self->stmt_insert_rels);
 		sqlite3_finalize(self->stmt_insert_ways);
 		sqlite3_finalize(self->stmt_insert_nodes_info);
-		sqlite3_finalize(self->stmt_insert_nodes_coords);
 		sqlite3_finalize(self->stmt_insert_class_rank);
 		sqlite3_finalize(self->stmt_select_rels_range);
-		sqlite3_finalize(self->stmt_select_ways_range);
-		sqlite3_finalize(self->stmt_select_nodes_range);
 		sqlite3_finalize(self->stmt_select_rels);
-		sqlite3_finalize(self->stmt_select_ways);
-		sqlite3_finalize(self->stmt_select_nodes);
 		sqlite3_finalize(self->stmt_rollback);
 		sqlite3_finalize(self->stmt_end);
 		sqlite3_finalize(self->stmt_begin);
@@ -2757,15 +2824,9 @@ int osm_parser_createTables(osm_parser_t* self)
 		"	class INTEGER PRIMARY KEY NOT NULL,"
 		"	rank  INTEGER"
 		");",
-		"CREATE TABLE tbl_nodes_coords"
-		"("
-		"	nid      INTEGER PRIMARY KEY NOT NULL,"
-		"	lat      FLOAT,"
-		"	lon      FLOAT"
-		");",
 		"CREATE TABLE tbl_nodes_info"
 		"("
-		"	nid      INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_nodes_coords,"
+		"	nid      INTEGER PRIMARY KEY NOT NULL,"
 		"	class    INTEGER REFERENCES tbl_class_rank,"
 		"	name     TEXT,"
 		"	abrev    TEXT,"
@@ -2787,7 +2848,8 @@ int osm_parser_createTables(osm_parser_t* self)
 		"	center   INTEGER,"
 		"	polygon  INTEGER,"
 		"	selected INTEGER,"
-		"	min_zoom INTEGER"
+		"	min_zoom INTEGER,"
+		"	nds      BLOB"
 		");",
 		"CREATE TABLE tbl_rels"
 		"("
@@ -2799,16 +2861,10 @@ int osm_parser_createTables(osm_parser_t* self)
 		"	polygon  INTEGER,"
 		"	min_zoom INTEGER"
 		");",
-		"CREATE TABLE tbl_ways_nds"
-		"("
-		"	idx INTEGER,"
-		"	wid INTEGER REFERENCES tbl_ways,"
-		"	nid INTEGER REFERENCES tbl_nodes_coords"
-		");",
 		"CREATE TABLE tbl_nodes_members"
 		"("
 		"	rid  INTEGER REFERENCES tbl_rels,"
-		"	nid  INTEGER REFERENCES tbl_nodes_coords,"
+		"	nid  INTEGER,"
 		"	role INTEGER"
 		");",
 		"CREATE TABLE tbl_ways_members"
@@ -2875,7 +2931,6 @@ int osm_parser_createIndices(osm_parser_t* self)
 	const char* sql[] =
 	{
 		"CREATE INDEX idx_ways_members ON tbl_ways_members (rid);",
-		"CREATE INDEX idx_ways_nds ON tbl_ways_nds (wid);",
 		NULL
 	};
 
@@ -2892,165 +2947,6 @@ int osm_parser_createIndices(osm_parser_t* self)
 	}
 
 	return 1;
-}
-
-int osm_parser_initRangeNodes(osm_parser_t* self)
-{
-	ASSERT(self);
-
-	double s = 0.0;
-	double n = self->stats_nodes;
-
-	int idx_nid = self->idx_select_nodes_range_nid;
-
-	sqlite3_stmt* stmt1 = self->stmt_select_nodes;
-	sqlite3_stmt* stmt2 = self->stmt_select_nodes_range;
-	while(sqlite3_step(stmt1) == SQLITE_ROW)
-	{
-		double nid = sqlite3_column_double(stmt1, 0);
-
-		if(osm_parser_beginTransaction(self) == 0)
-		{
-			goto fail_transaction;
-		}
-
-		if(sqlite3_bind_double(stmt2, idx_nid, nid) != SQLITE_OK)
-		{
-			goto fail_bind;
-		}
-
-		while(sqlite3_step(stmt2) == SQLITE_ROW)
-		{
-			double lat = sqlite3_column_double(stmt2, 0);
-			double lon = sqlite3_column_double(stmt2, 1);
-			if(osm_parser_insertNodesRange(self, nid,
-			                               lat, lon) == 0)
-			{
-				goto fail_insert;
-			}
-		}
-
-		if(sqlite3_reset(stmt2) != SQLITE_OK)
-		{
-			LOGW("sqlite3_reset failed");
-		}
-
-		s = s + 1.0;
-
-		if(osm_parser_logProgress(self))
-		{
-			double dt = self->t1 - self->t0;
-			LOGI("dt=%0.0lf, progress=%i", dt, (int) (100*s/n));
-		}
-	}
-
-	if(sqlite3_reset(stmt1) != SQLITE_OK)
-	{
-		LOGW("sqlite3_reset failed");
-	}
-
-	// success
-	return 1;
-
-	// failure
-	fail_insert:
-	{
-		if(sqlite3_reset(stmt2) != SQLITE_OK)
-		{
-			LOGW("sqlite3_reset failed");
-		}
-	}
-	fail_bind:
-	fail_transaction:
-	{
-		osm_parser_endTransaction(self);
-		if(sqlite3_reset(stmt1) != SQLITE_OK)
-		{
-			LOGW("sqlite3_reset failed");
-		}
-	}
-	return 0;
-}
-
-int osm_parser_initRangeWays(osm_parser_t* self)
-{
-	ASSERT(self);
-
-	double s = 0.0;
-	double n = self->stats_ways;
-
-	int idx_wid = self->idx_select_ways_range_wid;
-
-	sqlite3_stmt* stmt1 = self->stmt_select_ways;
-	sqlite3_stmt* stmt2 = self->stmt_select_ways_range;
-	while(sqlite3_step(stmt1) == SQLITE_ROW)
-	{
-		double wid = sqlite3_column_double(stmt1, 0);
-
-		if(osm_parser_beginTransaction(self) == 0)
-		{
-			goto fail_transaction;
-		}
-
-		if(sqlite3_bind_double(stmt2, idx_wid, wid) != SQLITE_OK)
-		{
-			goto fail_bind;
-		}
-
-		while(sqlite3_step(stmt2) == SQLITE_ROW)
-		{
-			double lonL = sqlite3_column_double(stmt2, 0);
-			double lonR = sqlite3_column_double(stmt2, 1);
-			double latB = sqlite3_column_double(stmt2, 2);
-			double latT = sqlite3_column_double(stmt2, 3);
-			if(osm_parser_insertWaysRange(self, wid,
-			                              lonL, lonR,
-			                              latB, latT) == 0)
-			{
-				goto fail_insert;
-			}
-		}
-
-		if(sqlite3_reset(stmt2) != SQLITE_OK)
-		{
-			LOGW("sqlite3_reset failed");
-		}
-
-		s = s + 1.0;
-
-		if(osm_parser_logProgress(self))
-		{
-			double dt = self->t1 - self->t0;
-			LOGI("dt=%0.0lf, progress=%i", dt, (int) (100*s/n));
-		}
-	}
-
-	if(sqlite3_reset(stmt1) != SQLITE_OK)
-	{
-		LOGW("sqlite3_reset failed");
-	}
-
-	// success
-	return 1;
-
-	// failure
-	fail_insert:
-	{
-		if(sqlite3_reset(stmt2) != SQLITE_OK)
-		{
-			LOGW("sqlite3_reset failed");
-		}
-	}
-	fail_bind:
-	fail_transaction:
-	{
-		osm_parser_endTransaction(self);
-		if(sqlite3_reset(stmt1) != SQLITE_OK)
-		{
-			LOGW("sqlite3_reset failed");
-		}
-	}
-	return 0;
 }
 
 int osm_parser_initRangeRels(osm_parser_t* self)
@@ -3102,7 +2998,7 @@ int osm_parser_initRangeRels(osm_parser_t* self)
 		if(osm_parser_logProgress(self))
 		{
 			double dt = self->t1 - self->t0;
-			LOGI("dt=%0.0lf, progress=%i", dt, (int) (100*s/n));
+			LOGI("dt=%0.0lf, progress=%0.2lf", dt, 100.0*s/n);
 		}
 	}
 
@@ -3187,9 +3083,7 @@ int osm_parser_initRange(osm_parser_t* self)
 {
 	ASSERT(self);
 
-	if((osm_parser_initRangeNodes(self) == 0) ||
-	   (osm_parser_initRangeWays(self) == 0)  ||
-	   (osm_parser_initRangeRels(self) == 0))
+	if(osm_parser_initRangeRels(self) == 0)
 	{
 		osm_parser_rollbackTransaction(self);
 		return 0;

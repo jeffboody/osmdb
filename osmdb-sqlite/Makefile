@@ -1,7 +1,7 @@
 export CC_USE_MATH = 1
 
 TARGET   = osmdb-sqlite
-CLASSES  = osm_parser ../osmdb_filter ../osmdb_util ../osmdb_style
+CLASSES  = osm_parser ../osmdb_filter ../osmdb_util ../osmdb_style ../osmdb_table ../osmdb_page
 SOURCE   = $(TARGET).c $(CLASSES:%=%.c)
 OBJECTS  = $(TARGET).o $(CLASSES:%=%.o)
 HFILES   = $(CLASSES:%=%.h)

@@ -30,6 +30,7 @@
 #include "libcc/cc_map.h"
 #include "libsqlite3/sqlite3.h"
 #include "../osmdb_style.h"
+#include "../osmdb_table.h"
 
 typedef struct
 {
@@ -59,18 +60,12 @@ typedef struct
 	sqlite3_stmt* stmt_begin;
 	sqlite3_stmt* stmt_end;
 	sqlite3_stmt* stmt_rollback;
-	sqlite3_stmt* stmt_select_nodes;
-	sqlite3_stmt* stmt_select_ways;
 	sqlite3_stmt* stmt_select_rels;
-	sqlite3_stmt* stmt_select_nodes_range;
-	sqlite3_stmt* stmt_select_ways_range;
 	sqlite3_stmt* stmt_select_rels_range;
 	sqlite3_stmt* stmt_insert_class_rank;
-	sqlite3_stmt* stmt_insert_nodes_coords;
 	sqlite3_stmt* stmt_insert_nodes_info;
 	sqlite3_stmt* stmt_insert_ways;
 	sqlite3_stmt* stmt_insert_rels;
-	sqlite3_stmt* stmt_insert_ways_nds;
 	sqlite3_stmt* stmt_insert_nodes_members;
 	sqlite3_stmt* stmt_insert_ways_members;
 	sqlite3_stmt* stmt_insert_nodes_range;
@@ -81,14 +76,9 @@ typedef struct
 	sqlite3_stmt* stmt_insert_rels_text;
 
 	// indices
-	int idx_select_nodes_range_nid;
-	int idx_select_ways_range_wid;
 	int idx_select_rels_range_rid;
 	int idx_insert_class_rank_class;
 	int idx_insert_class_rank_rank;
-	int idx_insert_nodes_coords_nid;
-	int idx_insert_nodes_coords_lat;
-	int idx_insert_nodes_coords_lon;
 	int idx_insert_nodes_info_nid;
 	int idx_insert_nodes_info_class;
 	int idx_insert_nodes_info_name;
@@ -109,6 +99,7 @@ typedef struct
 	int idx_insert_ways_polygon;
 	int idx_insert_ways_selected;
 	int idx_insert_ways_min_zoom;
+	int idx_insert_ways_nds;
 	int idx_insert_rels_rid;
 	int idx_insert_rels_class;
 	int idx_insert_rels_name;
@@ -116,9 +107,6 @@ typedef struct
 	int idx_insert_rels_center;
 	int idx_insert_rels_polygon;
 	int idx_insert_rels_min_zoom;
-	int idx_insert_ways_nds_idx;
-	int idx_insert_ways_nds_wid;
-	int idx_insert_ways_nds_nid;
 	int idx_insert_nodes_members_rid;
 	int idx_insert_nodes_members_nid;
 	int idx_insert_nodes_members_role;
@@ -175,7 +163,9 @@ typedef struct
 	int rel_type;
 
 	// way nds
-	cc_list_t* way_nds;
+	int     ways_nds_idx;
+	int     ways_nds_count;
+	double* ways_nds_array;
 
 	// rel members
 	cc_list_t* rel_members;
@@ -200,10 +190,16 @@ typedef struct
 
 	// UTF-8 to ASCII conversion
 	iconv_t cd;
+
+	// page table/cache for node coords
+	osmdb_table_t* page_table;
+	cc_list_t*     page_list;
+	cc_map_t*      page_map;
 } osm_parser_t;
 
 osm_parser_t* osm_parser_new(const char* style,
-                             const char* db_name);
+                             const char* db_name,
+                             const char* tbl_name);
 void          osm_parser_delete(osm_parser_t** _self);
 int           osm_parser_beginTransaction(osm_parser_t* self);
 int           osm_parser_endTransaction(osm_parser_t* self);
