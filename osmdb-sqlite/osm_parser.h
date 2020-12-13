@@ -63,6 +63,7 @@ typedef struct
 	sqlite3_stmt* stmt_select_rels;
 	sqlite3_stmt* stmt_select_rels_range;
 	sqlite3_stmt* stmt_insert_class_rank;
+	sqlite3_stmt* stmt_insert_nodes_coords;
 	sqlite3_stmt* stmt_insert_nodes_info;
 	sqlite3_stmt* stmt_insert_ways;
 	sqlite3_stmt* stmt_insert_rels;
@@ -79,6 +80,9 @@ typedef struct
 	int idx_select_rels_range_rid;
 	int idx_insert_class_rank_class;
 	int idx_insert_class_rank_rank;
+	int idx_insert_nodes_coords_nid;
+	int idx_insert_nodes_coords_lat;
+	int idx_insert_nodes_coords_lon;
 	int idx_insert_nodes_info_nid;
 	int idx_insert_nodes_info_class;
 	int idx_insert_nodes_info_name;
@@ -115,20 +119,20 @@ typedef struct
 	int idx_insert_ways_members_wid;
 	int idx_insert_ways_members_role;
 	int idx_insert_nodes_range_nid;
-	int idx_insert_nodes_range_lonL;
-	int idx_insert_nodes_range_lonR;
-	int idx_insert_nodes_range_latB;
-	int idx_insert_nodes_range_latT;
+	int idx_insert_nodes_range_l;
+	int idx_insert_nodes_range_r;
+	int idx_insert_nodes_range_b;
+	int idx_insert_nodes_range_t;
 	int idx_insert_ways_range_wid;
-	int idx_insert_ways_range_lonL;
-	int idx_insert_ways_range_lonR;
-	int idx_insert_ways_range_latB;
-	int idx_insert_ways_range_latT;
+	int idx_insert_ways_range_l;
+	int idx_insert_ways_range_r;
+	int idx_insert_ways_range_b;
+	int idx_insert_ways_range_t;
 	int idx_insert_rels_range_rid;
-	int idx_insert_rels_range_lonL;
-	int idx_insert_rels_range_lonR;
-	int idx_insert_rels_range_latB;
-	int idx_insert_rels_range_latT;
+	int idx_insert_rels_range_l;
+	int idx_insert_rels_range_r;
+	int idx_insert_rels_range_b;
+	int idx_insert_rels_range_t;
 	int idx_insert_nodes_text_nid;
 	int idx_insert_nodes_text_txt;
 	int idx_insert_ways_text_wid;
@@ -191,7 +195,7 @@ typedef struct
 	// UTF-8 to ASCII conversion
 	iconv_t cd;
 
-	// page table/cache for node coords
+	// page table/cache for node tiles
 	osmdb_table_t* page_table;
 	cc_list_t*     page_list;
 	cc_map_t*      page_map;

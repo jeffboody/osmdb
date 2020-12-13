@@ -40,7 +40,7 @@
 
 #define OFF_T_ERR ((off_t) -1)
 
-const double OSMDB_BLANK_COORDS[512] = { 0 };
+const unsigned short OSMDB_BLANK_COORDS[2048] = { 0 };
 
 static int
 osmdb_table_write(osmdb_table_t* self, osmdb_page_t* page)
@@ -95,7 +95,7 @@ osmdb_table_write(osmdb_table_t* self, osmdb_page_t* page)
 	// write page
 	left   = OSMDB_PAGE_SIZE;
 	offset = 0;
-	buf    = (char*) page->coords;
+	buf    = (char*) page->tiles;
 	while(left)
 	{
 		bytes = write(self->fd,
@@ -224,7 +224,7 @@ osmdb_table_get(osmdb_table_t* self, off_t base)
 	size_t bytes;
 	size_t left   = OSMDB_PAGE_SIZE;
 	size_t offset = 0;
-	char*  buf    = (char*) page->coords;
+	char*  buf    = (char*) page->tiles;
 	while(left)
 	{
 		bytes = read(self->fd, (void*) &(buf[offset]), left);

@@ -698,8 +698,8 @@ osm_parser_findPage(osm_parser_t* self, double id)
 {
 	ASSERT(self);
 
-	// 16 bytes per coord
-	off_t offset = 16*((off_t) id);
+	// 4 bytes per tile
+	off_t offset = 4*((off_t) id);
 	off_t base   = OSMDB_PAGE_SIZE*(offset/OSMDB_PAGE_SIZE);
 
 	// check for last page used
@@ -787,11 +787,11 @@ osm_parser_findPage(osm_parser_t* self, double id)
 }
 
 static int
-osm_parser_getCoord(osm_parser_t* self,
-                    double id, double* coord)
+osm_parser_getTile(osm_parser_t* self,
+                   double id, unsigned short* tile)
 {
 	ASSERT(self);
-	ASSERT(coord);
+	ASSERT(tile);
 
 	osmdb_page_t* page;
 	page = osm_parser_findPage(self, id);
@@ -800,17 +800,17 @@ osm_parser_getCoord(osm_parser_t* self,
 		return 0;
 	}
 
-	osmdb_page_get(page, id, coord);
+	osmdb_page_get(page, id, tile);
 
 	return 1;
 }
 
 static int
-osm_parser_setCoord(osm_parser_t* self,
-                    double id, double* coord)
+osm_parser_setTile(osm_parser_t* self,
+                   double id, unsigned short* tile)
 {
 	ASSERT(self);
-	ASSERT(coord);
+	ASSERT(tile);
 
 	osmdb_page_t* page;
 	page = osm_parser_findPage(self, id);
@@ -819,7 +819,7 @@ osm_parser_setCoord(osm_parser_t* self,
 		return 0;
 	}
 
-	osmdb_page_set(page, id, coord);
+	osmdb_page_set(page, id, tile);
 
 	return 1;
 }
@@ -1016,7 +1016,7 @@ osm_parser_insertNodesText(osm_parser_t* self)
 }
 
 static int
-osm_parser_insertNodesRange(osm_parser_t* self)
+osm_parser_insertNodesCoords(osm_parser_t* self)
 {
 	ASSERT(self);
 
@@ -1025,23 +1025,67 @@ osm_parser_insertNodesRange(osm_parser_t* self)
 		return 0;
 	}
 
-	int idx_nid  = self->idx_insert_nodes_range_nid;
-	int idx_lonL = self->idx_insert_nodes_range_lonL;
-	int idx_lonR = self->idx_insert_nodes_range_lonR;
-	int idx_latB = self->idx_insert_nodes_range_latB;
-	int idx_latT = self->idx_insert_nodes_range_latT;
+	int idx_nid = self->idx_insert_nodes_coords_nid;
+	int idx_lat = self->idx_insert_nodes_coords_lat;
+	int idx_lon = self->idx_insert_nodes_coords_lon;
 
+	sqlite3_stmt* stmt = self->stmt_insert_nodes_coords;
+	if((sqlite3_bind_double(stmt, idx_nid,
+	                        self->attr_id) != SQLITE_OK)  ||
+	   (sqlite3_bind_double(stmt, idx_lat,
+	                        self->attr_lat) != SQLITE_OK) ||
+	   (sqlite3_bind_double(stmt, idx_lon,
+	                        self->attr_lon) != SQLITE_OK))
+	{
+		LOGE("sqlite3_bind failed");
+		return 0;
+	}
+
+	int ret = 1;
+	if(sqlite3_step(stmt) != SQLITE_DONE)
+	{
+		LOGE("sqlite3_step failed");
+		ret = 0;
+	}
+
+	if(sqlite3_reset(stmt) != SQLITE_OK)
+	{
+		LOGW("sqlite3_reset failed");
+	}
+
+	return ret;
+}
+
+static int
+osm_parser_insertNodesRange(osm_parser_t* self,
+                            unsigned short* tile)
+{
+	ASSERT(self);
+
+	if(osm_parser_beginTransaction(self) == 0)
+	{
+		return 0;
+	}
+
+	int idx_nid = self->idx_insert_nodes_range_nid;
+	int idx_l   = self->idx_insert_nodes_range_l;
+	int idx_r   = self->idx_insert_nodes_range_r;
+	int idx_b   = self->idx_insert_nodes_range_b;
+	int idx_t   = self->idx_insert_nodes_range_t;
+
+	// adjust tile position to center since sqlite tweaks the
+	// values outward slightly due to floating point precision
+	double l = floor((double) tile[0]) + 0.5;
+	double r = l;
+	double b = floor((double) tile[1]) + 0.5;
+	double t = b;
 	sqlite3_stmt* stmt = self->stmt_insert_nodes_range;
 	if((sqlite3_bind_double(stmt, idx_nid,
-	                        self->attr_id) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_lonL,
-	                        self->attr_lon) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_lonR,
-	                        self->attr_lon) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_latB,
-	                        self->attr_lat) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_latT,
-	                        self->attr_lat) != SQLITE_OK))
+	                        self->attr_id) != SQLITE_OK)  ||
+	   (sqlite3_bind_double(stmt, idx_l, l) != SQLITE_OK) ||
+	   (sqlite3_bind_double(stmt, idx_r, r) != SQLITE_OK) ||
+	   (sqlite3_bind_double(stmt, idx_b, b) != SQLITE_OK) ||
+	   (sqlite3_bind_double(stmt, idx_t, t) != SQLITE_OK))
 	{
 		LOGE("sqlite3_bind failed");
 		return 0;
@@ -1071,6 +1115,17 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 
 	self->state = OSM_STATE_OSM;
 
+	float x;
+	float y;
+	terrain_coord2tile(self->attr_lat, self->attr_lon,
+	                   16, &x, &y);
+
+	unsigned short tile[2] =
+	{
+		(unsigned short) x,
+		(unsigned short) y
+	};
+
 	// select nodes when a point and name exists
 	osmdb_styleClass_t* sc;
 	sc = osmdb_style_class(self->style,
@@ -1080,16 +1135,20 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 		int min_zoom = sc->point->min_zoom;
 
 		if((osm_parser_insertNodesText(self) == 0)  ||
-		   (osm_parser_insertNodesRange(self) == 0) ||
+		   (osm_parser_insertNodesRange(self, tile) == 0) ||
 		   (osm_parser_insertNodesInfo(self, min_zoom) == 0))
 		{
 			return 0;
 		}
 	}
 
-	// node coords may be transitively selected
-	double coord[2] = { self->attr_lat, self->attr_lon };
-	if(osm_parser_setCoord(self, self->attr_id, coord) == 0)
+	// node tiles may be transitively selected
+	if(osm_parser_setTile(self, self->attr_id, tile) == 0)
+	{
+		return 0;
+	}
+
+	if(osm_parser_insertNodesCoords(self) == 0)
 	{
 		return 0;
 	}
@@ -1361,51 +1420,51 @@ osm_parser_insertWaysRange(osm_parser_t* self)
 {
 	ASSERT(self);
 
-	double wid  = self->attr_id;
-	double lonL = 0.0;
-	double lonR = 0.0;
-	double latB = 0.0;
-	double latT = 0.0;
+	double wid = self->attr_id;
 
-	double coord[2];
+	unsigned short l = 0;
+	unsigned short r = 0;
+	unsigned short b = 0;
+	unsigned short t = 0;
+	unsigned short tile[2];
 
 	// compute range
 	int i;
 	for(i = 0; i < self->ways_nds_idx; ++i)
 	{
 		double nid = self->ways_nds_array[i];
-		if(osm_parser_getCoord(self, nid, coord) == 0)
+		if(osm_parser_getTile(self, nid, tile) == 0)
 		{
 			return 0;
 		}
 
 		if(i == 0)
 		{
-			lonL = coord[1];
-			lonR = coord[1];
-			latB = coord[0];
-			latT = coord[0];
+			l = tile[0];
+			r = tile[0];
+			b = tile[1];
+			t = tile[1];
 			continue;
 		}
 
-		if(coord[1] < lonL)
+		if(tile[0] < l)
 		{
-			lonL = coord[1];
+			l = tile[0];
 		}
 
-		if(coord[1] > lonR)
+		if(tile[0] > r)
 		{
-			lonR = coord[1];
+			r = tile[0];
 		}
 
-		if(coord[0] < latB)
+		if(tile[1] < b)
 		{
-			latB = coord[0];
+			b = tile[1];
 		}
 
-		if(coord[0] > latT)
+		if(tile[1] > t)
 		{
-			latT = coord[0];
+			t = tile[1];
 		}
 	}
 
@@ -1414,23 +1473,25 @@ osm_parser_insertWaysRange(osm_parser_t* self)
 		return 0;
 	}
 
-	int idx_wid  = self->idx_insert_ways_range_wid;
-	int idx_lonL = self->idx_insert_ways_range_lonL;
-	int idx_lonR = self->idx_insert_ways_range_lonR;
-	int idx_latB = self->idx_insert_ways_range_latB;
-	int idx_latT = self->idx_insert_ways_range_latT;
+	int idx_wid = self->idx_insert_ways_range_wid;
+	int idx_l   = self->idx_insert_ways_range_l;
+	int idx_r   = self->idx_insert_ways_range_r;
+	int idx_b   = self->idx_insert_ways_range_b;
+	int idx_t   = self->idx_insert_ways_range_t;
 
+	// adjust tile position to center since sqlite tweaks the
+	// values outward slightly due to floating point precision
+	double dl = ((double) l) + 0.5;
+	double dr = ((double) r) + 0.5;
+	double db = ((double) b) + 0.5;
+	double dt = ((double) t) + 0.5;
 	sqlite3_stmt* stmt = self->stmt_insert_ways_range;
 	if((sqlite3_bind_double(stmt, idx_wid,
-	                        wid) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_lonL,
-	                        lonL) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_lonR,
-	                        lonR) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_latB,
-	                        latB) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_latT,
-	                        latT) != SQLITE_OK))
+	                        wid) != SQLITE_OK)             ||
+	   (sqlite3_bind_double(stmt, idx_l, dl) != SQLITE_OK) ||
+	   (sqlite3_bind_double(stmt, idx_r, dr) != SQLITE_OK) ||
+	   (sqlite3_bind_double(stmt, idx_b, db) != SQLITE_OK) ||
+	   (sqlite3_bind_double(stmt, idx_t, dt) != SQLITE_OK))
 	{
 		LOGE("sqlite3_bind failed");
 		return 0;
@@ -1894,8 +1955,10 @@ osm_parser_insertMembers(osm_parser_t* self,
 static int
 osm_parser_insertRelsRange(osm_parser_t* self,
                            double rid,
-                           double lonL, double lonR,
-                           double latB, double latT)
+                           unsigned short l,
+                           unsigned short r,
+                           unsigned short b,
+                           unsigned short t)
 {
 	ASSERT(self);
 
@@ -1904,23 +1967,26 @@ osm_parser_insertRelsRange(osm_parser_t* self,
 		return 0;
 	}
 
-	int idx_rid  = self->idx_insert_rels_range_rid;
-	int idx_lonL = self->idx_insert_rels_range_lonL;
-	int idx_lonR = self->idx_insert_rels_range_lonR;
-	int idx_latB = self->idx_insert_rels_range_latB;
-	int idx_latT = self->idx_insert_rels_range_latT;
+	int idx_rid = self->idx_insert_rels_range_rid;
+	int idx_l   = self->idx_insert_rels_range_l;
+	int idx_r   = self->idx_insert_rels_range_r;
+	int idx_b   = self->idx_insert_rels_range_b;
+	int idx_t   = self->idx_insert_rels_range_t;
+
+	// adjust tile position to center since sqlite tweaks the
+	// values outward slightly due to floating point precision
+	double dl = ((double) l) + 0.5;
+	double dr = ((double) r) + 0.5;
+	double db = ((double) b) + 0.5;
+	double dt = ((double) t) + 0.5;
 
 	sqlite3_stmt* stmt = self->stmt_insert_rels_range;
 	if((sqlite3_bind_double(stmt, idx_rid,
-	                        rid) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_lonL,
-	                        lonL) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_lonR,
-	                        lonR) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_latB,
-	                        latB) != SQLITE_OK) ||
-	   (sqlite3_bind_double(stmt, idx_latT,
-	                        latT) != SQLITE_OK))
+	                        rid) != SQLITE_OK)             ||
+	   (sqlite3_bind_double(stmt, idx_l, dl) != SQLITE_OK) ||
+	   (sqlite3_bind_double(stmt, idx_r, dr) != SQLITE_OK) ||
+	   (sqlite3_bind_double(stmt, idx_b, db) != SQLITE_OK) ||
+	   (sqlite3_bind_double(stmt, idx_t, dt) != SQLITE_OK))
 	{
 		LOGE("sqlite3_bind failed");
 		return 0;
@@ -2268,7 +2334,7 @@ osm_parser_new(const char* style,
 	}
 
 	const char* sql_select_rels_range =
-		"SELECT min(lonL), max(lonR), min(latB), max(latT)"
+		"SELECT min(l), max(r), min(b), max(t)"
 		"	FROM tbl_ways_members"
 		"	JOIN tbl_ways_range USING (wid)"
 		"	WHERE rid=@arg_rid;";
@@ -2289,6 +2355,17 @@ osm_parser_new(const char* style,
 	{
 		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
 		goto fail_prepare_insert_class_rank;
+	}
+
+	const char* sql_insert_nodes_coords =
+		"INSERT INTO tbl_nodes_coords (nid, lat, lon)"
+		"	VALUES (@arg_nid, @arg_lat, @arg_lon);";
+	if(sqlite3_prepare_v2(self->db, sql_insert_nodes_coords, -1,
+	                      &self->stmt_insert_nodes_coords,
+	                      NULL) != SQLITE_OK)
+	{
+		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
+		goto fail_prepare_insert_nodes_coords;
 	}
 
 	const char* sql_insert_nodes_info =
@@ -2347,8 +2424,8 @@ osm_parser_new(const char* style,
 	}
 
 	const char* sql_insert_nodes_range =
-		"INSERT INTO tbl_nodes_range (nid, lonL, lonR, latB, latT)"
-		"	VALUES (@arg_nid, @arg_lonL, @arg_lonR, @arg_latB, @arg_latT);";
+		"INSERT INTO tbl_nodes_range (nid, l, r, b, t)"
+		"	VALUES (@arg_nid, @arg_l, @arg_r, @arg_b, @arg_t);";
 	if(sqlite3_prepare_v2(self->db, sql_insert_nodes_range, -1,
 	                      &self->stmt_insert_nodes_range,
 	                      NULL) != SQLITE_OK)
@@ -2358,8 +2435,8 @@ osm_parser_new(const char* style,
 	}
 
 	const char* sql_insert_ways_range =
-		"INSERT INTO tbl_ways_range (wid, lonL, lonR, latB, latT)"
-		"	VALUES (@arg_wid, @arg_lonL, @arg_lonR, @arg_latB, @arg_latT);";
+		"INSERT INTO tbl_ways_range (wid, l, r, b, t)"
+		"	VALUES (@arg_wid, @arg_l, @arg_r, @arg_b, @arg_t);";
 	if(sqlite3_prepare_v2(self->db, sql_insert_ways_range, -1,
 	                      &self->stmt_insert_ways_range,
 	                      NULL) != SQLITE_OK)
@@ -2369,8 +2446,8 @@ osm_parser_new(const char* style,
 	}
 
 	const char* sql_insert_rels_range =
-		"INSERT INTO tbl_rels_range (rid, lonL, lonR, latB, latT)"
-		"	VALUES (@arg_rid, @arg_lonL, @arg_lonR, @arg_latB, @arg_latT);";
+		"INSERT INTO tbl_rels_range (rid, l, r, b, t)"
+		"	VALUES (@arg_rid, @arg_l, @arg_r, @arg_b, @arg_t);";
 	if(sqlite3_prepare_v2(self->db, sql_insert_rels_range, -1,
 	                      &self->stmt_insert_rels_range,
 	                      NULL) != SQLITE_OK)
@@ -2415,6 +2492,9 @@ osm_parser_new(const char* style,
 	self->idx_select_rels_range_rid      = sqlite3_bind_parameter_index(self->stmt_select_rels_range, "@arg_rid");
 	self->idx_insert_class_rank_class    = sqlite3_bind_parameter_index(self->stmt_insert_class_rank, "@arg_class");
 	self->idx_insert_class_rank_rank     = sqlite3_bind_parameter_index(self->stmt_insert_class_rank, "@arg_rank");
+	self->idx_insert_nodes_coords_nid    = sqlite3_bind_parameter_index(self->stmt_insert_nodes_coords, "@arg_nid");
+	self->idx_insert_nodes_coords_lat    = sqlite3_bind_parameter_index(self->stmt_insert_nodes_coords, "@arg_lat");
+	self->idx_insert_nodes_coords_lon    = sqlite3_bind_parameter_index(self->stmt_insert_nodes_coords, "@arg_lon");
 	self->idx_insert_nodes_info_nid      = sqlite3_bind_parameter_index(self->stmt_insert_nodes_info, "@arg_nid");
 	self->idx_insert_nodes_info_class    = sqlite3_bind_parameter_index(self->stmt_insert_nodes_info, "@arg_class");
 	self->idx_insert_nodes_info_name     = sqlite3_bind_parameter_index(self->stmt_insert_nodes_info, "@arg_name");
@@ -2451,20 +2531,20 @@ osm_parser_new(const char* style,
 	self->idx_insert_ways_members_wid    = sqlite3_bind_parameter_index(self->stmt_insert_ways_members, "@arg_wid");
 	self->idx_insert_ways_members_role   = sqlite3_bind_parameter_index(self->stmt_insert_ways_members, "@arg_role");
 	self->idx_insert_nodes_range_nid     = sqlite3_bind_parameter_index(self->stmt_insert_nodes_range, "@arg_nid");
-	self->idx_insert_nodes_range_lonL    = sqlite3_bind_parameter_index(self->stmt_insert_nodes_range, "@arg_lonL");
-	self->idx_insert_nodes_range_lonR    = sqlite3_bind_parameter_index(self->stmt_insert_nodes_range, "@arg_lonR");
-	self->idx_insert_nodes_range_latB    = sqlite3_bind_parameter_index(self->stmt_insert_nodes_range, "@arg_latB");
-	self->idx_insert_nodes_range_latT    = sqlite3_bind_parameter_index(self->stmt_insert_nodes_range, "@arg_latT");
+	self->idx_insert_nodes_range_l       = sqlite3_bind_parameter_index(self->stmt_insert_nodes_range, "@arg_l");
+	self->idx_insert_nodes_range_r       = sqlite3_bind_parameter_index(self->stmt_insert_nodes_range, "@arg_r");
+	self->idx_insert_nodes_range_b       = sqlite3_bind_parameter_index(self->stmt_insert_nodes_range, "@arg_b");
+	self->idx_insert_nodes_range_t       = sqlite3_bind_parameter_index(self->stmt_insert_nodes_range, "@arg_t");
 	self->idx_insert_ways_range_wid      = sqlite3_bind_parameter_index(self->stmt_insert_ways_range, "@arg_wid");
-	self->idx_insert_ways_range_lonL     = sqlite3_bind_parameter_index(self->stmt_insert_ways_range, "@arg_lonL");
-	self->idx_insert_ways_range_lonR     = sqlite3_bind_parameter_index(self->stmt_insert_ways_range, "@arg_lonR");
-	self->idx_insert_ways_range_latB     = sqlite3_bind_parameter_index(self->stmt_insert_ways_range, "@arg_latB");
-	self->idx_insert_ways_range_latT     = sqlite3_bind_parameter_index(self->stmt_insert_ways_range, "@arg_latT");
+	self->idx_insert_ways_range_l        = sqlite3_bind_parameter_index(self->stmt_insert_ways_range, "@arg_l");
+	self->idx_insert_ways_range_r        = sqlite3_bind_parameter_index(self->stmt_insert_ways_range, "@arg_r");
+	self->idx_insert_ways_range_b        = sqlite3_bind_parameter_index(self->stmt_insert_ways_range, "@arg_b");
+	self->idx_insert_ways_range_t        = sqlite3_bind_parameter_index(self->stmt_insert_ways_range, "@arg_t");
 	self->idx_insert_rels_range_rid      = sqlite3_bind_parameter_index(self->stmt_insert_rels_range, "@arg_rid");
-	self->idx_insert_rels_range_lonL     = sqlite3_bind_parameter_index(self->stmt_insert_rels_range, "@arg_lonL");
-	self->idx_insert_rels_range_lonR     = sqlite3_bind_parameter_index(self->stmt_insert_rels_range, "@arg_lonR");
-	self->idx_insert_rels_range_latB     = sqlite3_bind_parameter_index(self->stmt_insert_rels_range, "@arg_latB");
-	self->idx_insert_rels_range_latT     = sqlite3_bind_parameter_index(self->stmt_insert_rels_range, "@arg_latT");
+	self->idx_insert_rels_range_l        = sqlite3_bind_parameter_index(self->stmt_insert_rels_range, "@arg_l");
+	self->idx_insert_rels_range_r        = sqlite3_bind_parameter_index(self->stmt_insert_rels_range, "@arg_r");
+	self->idx_insert_rels_range_b        = sqlite3_bind_parameter_index(self->stmt_insert_rels_range, "@arg_b");
+	self->idx_insert_rels_range_t        = sqlite3_bind_parameter_index(self->stmt_insert_rels_range, "@arg_t");
 	self->idx_insert_nodes_text_nid      = sqlite3_bind_parameter_index(self->stmt_insert_nodes_text, "@arg_nid");
 	self->idx_insert_nodes_text_txt      = sqlite3_bind_parameter_index(self->stmt_insert_nodes_text, "@arg_txt");
 	self->idx_insert_ways_text_wid       = sqlite3_bind_parameter_index(self->stmt_insert_ways_text, "@arg_wid");
@@ -2597,6 +2677,8 @@ osm_parser_new(const char* style,
 	fail_prepare_insert_ways:
 		sqlite3_finalize(self->stmt_insert_nodes_info);
 	fail_prepare_insert_nodes_info:
+		sqlite3_finalize(self->stmt_insert_nodes_coords);
+	fail_prepare_insert_nodes_coords:
 		sqlite3_finalize(self->stmt_insert_class_rank);
 	fail_prepare_insert_class_rank:
 		sqlite3_finalize(self->stmt_select_rels_range);
@@ -2712,6 +2794,7 @@ void osm_parser_delete(osm_parser_t** _self)
 		sqlite3_finalize(self->stmt_insert_rels);
 		sqlite3_finalize(self->stmt_insert_ways);
 		sqlite3_finalize(self->stmt_insert_nodes_info);
+		sqlite3_finalize(self->stmt_insert_nodes_coords);
 		sqlite3_finalize(self->stmt_insert_class_rank);
 		sqlite3_finalize(self->stmt_select_rels_range);
 		sqlite3_finalize(self->stmt_select_rels);
@@ -2824,9 +2907,15 @@ int osm_parser_createTables(osm_parser_t* self)
 		"	class INTEGER PRIMARY KEY NOT NULL,"
 		"	rank  INTEGER"
 		");",
-		"CREATE TABLE tbl_nodes_info"
+		"CREATE TABLE tbl_nodes_coords"
 		"("
 		"	nid      INTEGER PRIMARY KEY NOT NULL,"
+		"	lat      FLOAT,"
+		"	lon      FLOAT"
+		");",
+		"CREATE TABLE tbl_nodes_info"
+		"("
+		"	nid      INTEGER PRIMARY KEY NOT NULL REFERENCES tbl_nodes_coords,"
 		"	class    INTEGER REFERENCES tbl_class_rank,"
 		"	name     TEXT,"
 		"	abrev    TEXT,"
@@ -2864,7 +2953,7 @@ int osm_parser_createTables(osm_parser_t* self)
 		"CREATE TABLE tbl_nodes_members"
 		"("
 		"	rid  INTEGER REFERENCES tbl_rels,"
-		"	nid  INTEGER,"
+		"	nid  INTEGER REFERENCES tbl_nodes_coords,"
 		"	role INTEGER"
 		");",
 		"CREATE TABLE tbl_ways_members"
@@ -2877,26 +2966,26 @@ int osm_parser_createTables(osm_parser_t* self)
 		"CREATE VIRTUAL TABLE tbl_nodes_range USING rtree"
 		"("
 		"	nid,"
-		"	lonL,"
-		"	lonR,"
-		"	latB,"
-		"	latT"
+		"	l,"
+		"	r,"
+		"	b,"
+		"	t"
 		");",
 		"CREATE VIRTUAL TABLE tbl_ways_range USING rtree"
 		"("
 		"	wid,"
-		"	lonL,"
-		"	lonR,"
-		"	latB,"
-		"	latT"
+		"	l,"
+		"	r,"
+		"	b,"
+		"	t"
 		");",
 		"CREATE VIRTUAL TABLE tbl_rels_range USING rtree"
 		"("
 		"	rid,"
-		"	lonL,"
-		"	lonR,"
-		"	latB,"
-		"	latT"
+		"	l,"
+		"	r,"
+		"	b,"
+		"	t"
 		");",
 		"CREATE VIRTUAL TABLE tbl_nodes_text USING fts4(nid, txt);",
 		"CREATE VIRTUAL TABLE tbl_nodes_aux  USING fts4aux(tbl_nodes_text);",
@@ -2974,15 +3063,18 @@ int osm_parser_initRangeRels(osm_parser_t* self)
 			goto fail_bind;
 		}
 
+		unsigned short l;
+		unsigned short r;
+		unsigned short b;
+		unsigned short t;
 		while(sqlite3_step(stmt2) == SQLITE_ROW)
 		{
-			double lonL = sqlite3_column_double(stmt2, 0);
-			double lonR = sqlite3_column_double(stmt2, 1);
-			double latB = sqlite3_column_double(stmt2, 2);
-			double latT = sqlite3_column_double(stmt2, 3);
+			l = (unsigned short) sqlite3_column_int(stmt2, 0);
+			r = (unsigned short) sqlite3_column_int(stmt2, 1);
+			b = (unsigned short) sqlite3_column_int(stmt2, 2);
+			t = (unsigned short) sqlite3_column_int(stmt2, 3);
 			if(osm_parser_insertRelsRange(self, rid,
-			                              lonL, lonR,
-			                              latB, latT) == 0)
+			                              l, r, b, t) == 0)
 			{
 				goto fail_insert;
 			}

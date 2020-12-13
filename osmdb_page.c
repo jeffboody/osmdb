@@ -66,32 +66,32 @@ void osmdb_page_delete(osmdb_page_t** _self)
 }
 
 void osmdb_page_get(osmdb_page_t* self, double id,
-                    double* coord)
+                    unsigned short* tile)
 {
 	ASSERT(self);
-	ASSERT(coord);
+	ASSERT(tile);
 
-	// 16 bytes per coord
-	off_t offset = 16*((off_t) id);
-	int   idx0   = (int) (offset - self->base)/8;
+	// 4 bytes per tile
+	off_t offset = 4*((off_t) id);
+	int   idx0   = (int) (offset - self->base)/2;
 	int   idx1   = idx0 + 1;
 
-	coord[0] = self->coords[idx0];
-	coord[1] = self->coords[idx1];
+	tile[0] = self->tiles[idx0];
+	tile[1] = self->tiles[idx1];
 }
 
 void osmdb_page_set(osmdb_page_t* self, double id,
-                    double* coord)
+                    unsigned short* tile)
 {
 	ASSERT(self);
-	ASSERT(coord);
+	ASSERT(tile);
 
-	// 16 bytes per coord
-	off_t offset = 16*((off_t) id);
-	int   idx0   = (int) (offset - self->base)/8;
+	// 4 bytes per tile
+	off_t offset = 4*((off_t) id);
+	int   idx0   = (int) (offset - self->base)/2;
 	int   idx1   = idx0 + 1;
 
-	self->dirty        = 1;
-	self->coords[idx0] = coord[0];
-	self->coords[idx1] = coord[1];
+	self->dirty       = 1;
+	self->tiles[idx0] = tile[0];
+	self->tiles[idx1] = tile[1];
 }
