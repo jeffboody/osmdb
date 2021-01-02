@@ -31,9 +31,9 @@
 
 typedef struct
 {
-	int   dirty;
-	off_t base;
-	unsigned short tiles[2048];
+	int    dirty;
+	off_t  base;
+	double coords[512];
 } osmdb_page_t;
 
 // table functions
@@ -43,9 +43,9 @@ void          osmdb_page_delete(osmdb_page_t** _self);
 // user functions
 void osmdb_page_get(osmdb_page_t* self,
                     double id,
-                    unsigned short* tile);
+                    double* coord);
 void osmdb_page_set(osmdb_page_t* self,
                     double id,
-                    unsigned short* tile);
+                    double* coord);
 
 #endif

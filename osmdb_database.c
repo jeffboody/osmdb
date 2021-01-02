@@ -2315,6 +2315,7 @@ osmdb_database_t* osmdb_database_new(const char* fname,
 		goto fail_prepare_spellfix;
 	}
 
+	// TODO - remove tbl_nodes_coords
 	const char sql_search_nodes[256] =
 		"SELECT class, name, abrev, ele, st, lat, lon FROM tbl_nodes_text"
 		"	JOIN tbl_nodes_info USING (nid)"
@@ -2377,6 +2378,7 @@ osmdb_database_t* osmdb_database_new(const char* fname,
 		goto fail_prepare_select_nodes_range;
 	}
 
+	// TODO - remove tbl_nodes_coords
 	const char sql_select_node[256] =
 		"SELECT lat, lon, name, abrev, ele, st, class FROM tbl_nodes_coords"
 		"	LEFT OUTER JOIN tbl_nodes_info USING (nid)"
