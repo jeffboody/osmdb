@@ -38,14 +38,14 @@ int main(int argc, char** argv)
 {
 	double t0 = cc_timestamp();
 
-	if(argc != 5)
+	if(argc != 4)
 	{
-		LOGE("%s style.xml input.osm output.sqlite3 output.tbl", argv[0]);
+		LOGE("%s style.xml input.osm output.sqlite3", argv[0]);
 		return EXIT_FAILURE;
 	}
 
 	osm_parser_t* parser;
-	parser = osm_parser_new(argv[1], argv[3], argv[4]);
+	parser = osm_parser_new(argv[1], argv[3]);
 	if(parser == NULL)
 	{
 		return EXIT_FAILURE;
