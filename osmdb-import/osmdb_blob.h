@@ -26,7 +26,7 @@
 
 #include <stdint.h>
 
-#define OSMDB_BLOB_SIZE 1000
+#define OSMDB_BLOB_SIZE 100
 
 #define OSMDB_BLOB_TYPE_NODE_COORD  0
 #define OSMDB_BLOB_TYPE_NODE_INFO   1
