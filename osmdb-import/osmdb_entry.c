@@ -34,27 +34,52 @@
 * private                                                  *
 ***********************************************************/
 
+static void
+osmdb_entry_unmap(osmdb_entry_t* self)
+{
+	ASSERT(self);
+
+	if(self->map)
+	{
+		cc_mapIter_t  miterator;
+		cc_mapIter_t* miter;
+		miter = cc_map_head(self->map, &miterator);
+		while(miter)
+		{
+			osmdb_blob_t* blob;
+			blob = (osmdb_blob_t*)
+			       cc_map_remove(self->map, &miter);
+			FREE(blob);
+		}
+
+		cc_map_delete(&self->map);
+	}
+}
+
 static int
-osmdb_entry_map(osmdb_entry_t* self)
+osmdb_entry_map(osmdb_entry_t* self, size_t offset)
 {
 	ASSERT(self);
 
 	// check if map is needed
-	if(self->map)
+	if(self->map && (offset == 0))
 	{
 		return 1;
 	}
-
-	self->map = cc_map_new();
-	if(self->map == NULL)
+	else if(self->map == NULL)
 	{
-		return 0;
+		self->map = cc_map_new();
+		if(self->map == NULL)
+		{
+			return 0;
+		}
+
+		offset = 0;
 	}
 
 	// add blobs to map
 	int64_t       minor_id = 0;
 	size_t        bsize    = 0;
-	size_t        offset   = 0;
 	osmdb_blob_t* blob     = NULL;
 	while(offset < self->size)
 	{
@@ -131,6 +156,7 @@ osmdb_entry_map(osmdb_entry_t* self)
 		if(cc_map_addf(self->map, (const void*) blob,
 		               "%" PRId64, minor_id) == 0)
 		{
+			LOGE("invalid minor_id=%" PRId64);
 			goto fail_map;
 		}
 
@@ -183,22 +209,7 @@ void osmdb_entry_delete(osmdb_entry_t** _self)
 			LOGE("invalid refcount=%i", self->refcount);
 		}
 
-		if(self->map)
-		{
-			cc_mapIter_t  miterator;
-			cc_mapIter_t* miter;
-			miter = cc_map_head(self->map, &miterator);
-			while(miter)
-			{
-				osmdb_blob_t* blob;
-				blob = (osmdb_blob_t*)
-				       cc_map_remove(self->map, &miter);
-				FREE(blob);
-			}
-
-			cc_map_delete(&self->map);
-		}
-
+		osmdb_entry_unmap(self);
 		FREE(self->data);
 		FREE(self);
 		*_self = NULL;
@@ -214,7 +225,7 @@ osmdb_entry_get(osmdb_entry_t* self, int64_t minor_id,
 
 	cc_mapIter_t miterator;
 
-	if(osmdb_entry_map(self) == 0)
+	if(osmdb_entry_map(self, 0) == 0)
 	{
 		return 0;
 	}
@@ -250,12 +261,6 @@ int osmdb_entry_add(osmdb_entry_t* self, int loaded,
 	ASSERT(self);
 	ASSERT(data);
 
-	// add may not be used if the data has been mapped
-	// or if references exist because REALLOC will change
-	// pointer addresses
-	ASSERT(self->map == NULL);
-	ASSERT(self->refcount == 0);
-
 	// resize data buffer
 	size_t offset = self->size;
 	size_t size2  = self->size + size;
@@ -265,6 +270,14 @@ int osmdb_entry_add(osmdb_entry_t* self, int loaded,
 	}
 	else
 	{
+		// unmap because REALLOC will change pointer addresses
+		if(self->refcount)
+		{
+			LOGE("invalid refcount=%i", self->refcount);
+			return 0;
+		}
+		osmdb_entry_unmap(self);
+
 		// compute the new size
 		size_t max_size2 = self->max_size;
 		if(max_size2 == 0)
@@ -296,6 +309,15 @@ int osmdb_entry_add(osmdb_entry_t* self, int loaded,
 	if(loaded == 0)
 	{
 		self->dirty = 1;
+	}
+
+	// check if data must be mapped
+	if(self->map)
+	{
+		if(osmdb_entry_map(self, offset) == 0)
+		{
+			return 0;
+		}
 	}
 
 	return 1;
