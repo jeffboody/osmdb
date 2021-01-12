@@ -624,7 +624,7 @@ osmdb_index_new(const char* fname)
 	}
 
 	const char* sql_insert_nodeCoord =
-		"INSERT INTO tbl_nodeCoord (id, blob)"
+		"REPLACE INTO tbl_nodeCoord (id, blob)"
 		"	VALUES (@arg_id, @arg_blob);";
 	if(sqlite3_prepare_v2(self->db, sql_insert_nodeCoord, -1,
 	                      &self->stmt_insert_nodeCoord,
@@ -635,7 +635,7 @@ osmdb_index_new(const char* fname)
 	}
 
 	const char* sql_insert_nodeInfo =
-		"INSERT INTO tbl_nodeInfo (id, blob)"
+		"REPLACE INTO tbl_nodeInfo (id, blob)"
 		"	VALUES (@arg_id, @arg_blob);";
 	if(sqlite3_prepare_v2(self->db, sql_insert_nodeInfo, -1,
 	                      &self->stmt_insert_nodeInfo,
@@ -646,7 +646,7 @@ osmdb_index_new(const char* fname)
 	}
 
 	const char* sql_insert_wayInfo =
-		"INSERT INTO tbl_wayInfo (id, blob)"
+		"REPLACE INTO tbl_wayInfo (id, blob)"
 		"	VALUES (@arg_id, @arg_blob);";
 	if(sqlite3_prepare_v2(self->db, sql_insert_wayInfo, -1,
 	                      &self->stmt_insert_wayInfo,
@@ -657,7 +657,7 @@ osmdb_index_new(const char* fname)
 	}
 
 	const char* sql_insert_wayRange =
-		"INSERT INTO tbl_wayRange (id, blob)"
+		"REPLACE INTO tbl_wayRange (id, blob)"
 		"	VALUES (@arg_id, @arg_blob);";
 	if(sqlite3_prepare_v2(self->db, sql_insert_wayRange, -1,
 	                      &self->stmt_insert_wayRange,
@@ -668,7 +668,7 @@ osmdb_index_new(const char* fname)
 	}
 
 	const char* sql_insert_wayNds =
-		"INSERT INTO tbl_wayNds (id, blob)"
+		"REPLACE INTO tbl_wayNds (id, blob)"
 		"	VALUES (@arg_id, @arg_blob);";
 	if(sqlite3_prepare_v2(self->db, sql_insert_wayNds, -1,
 	                      &self->stmt_insert_wayNds,
@@ -679,7 +679,7 @@ osmdb_index_new(const char* fname)
 	}
 
 	const char* sql_insert_relInfo =
-		"INSERT INTO tbl_relInfo (id, blob)"
+		"REPLACE INTO tbl_relInfo (id, blob)"
 		"	VALUES (@arg_id, @arg_blob);";
 	if(sqlite3_prepare_v2(self->db, sql_insert_relInfo, -1,
 	                      &self->stmt_insert_relInfo,
@@ -690,7 +690,7 @@ osmdb_index_new(const char* fname)
 	}
 
 	const char* sql_insert_relMembers =
-		"INSERT INTO tbl_relMembers (id, blob)"
+		"REPLACE INTO tbl_relMembers (id, blob)"
 		"	VALUES (@arg_id, @arg_blob);";
 	if(sqlite3_prepare_v2(self->db, sql_insert_relMembers, -1,
 	                      &self->stmt_insert_relMembers,
@@ -701,7 +701,7 @@ osmdb_index_new(const char* fname)
 	}
 
 	const char* sql_insert_relRange =
-		"INSERT INTO tbl_relRange (id, blob)"
+		"REPLACE INTO tbl_relRange (id, blob)"
 		"	VALUES (@arg_id, @arg_blob);";
 	if(sqlite3_prepare_v2(self->db, sql_insert_relRange, -1,
 	                      &self->stmt_insert_relRange,
