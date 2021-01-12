@@ -96,9 +96,10 @@ typedef struct
 	// char name[];
 } osmdb_blobRelInfo_t;
 
-#define OSMDB_RELDATA_TYPE_NODE     0
-#define OSMDB_RELDATA_TYPE_WAY      1
-#define OSMDB_RELDATA_TYPE_RELATION 2
+#define OSMDB_RELDATA_TYPE_NONE     0
+#define OSMDB_RELDATA_TYPE_NODE     1
+#define OSMDB_RELDATA_TYPE_WAY      2
+#define OSMDB_RELDATA_TYPE_RELATION 3
 
 typedef struct
 {
