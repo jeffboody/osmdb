@@ -969,13 +969,15 @@ osm_parser_beginOsmWay(osm_parser_t* self, int line,
 }
 
 static int
-osm_parser_computeWayRange(osm_parser_t* self)
+osm_parser_computeWayRange(osm_parser_t* self,
+                           osmdb_blobWayNds_t*   way_nds,
+                           osmdb_blobWayRange_t* way_range)
 {
 	ASSERT(self);
+	ASSERT(way_nds);
+	ASSERT(way_range);
 
-	osmdb_blob_t*         blob;
-	osmdb_blobWayNds_t*   way_nds   = self->way_nds;
-	osmdb_blobWayRange_t* way_range = self->way_range;
+	osmdb_blob_t* blob;
 
 	// ignore
 	if(way_nds->count == 0)
@@ -1054,18 +1056,24 @@ osm_parser_insertWay(osm_parser_t* self,
 		return 0;
 	}
 
-	if(osm_parser_computeWayRange(self) == 0)
+	// only compute the range if way was selected
+	// or recursively selected by osm_parser_computeRelRange
+	if(selected)
 	{
-		return 0;
-	}
+		if(osm_parser_computeWayRange(self, self->way_nds,
+		                              self->way_range) == 0)
+		{
+			return 0;
+		}
 
-	size = osmdb_blobWayRange_sizeof(self->way_range);
-	if(osmdb_index_add(self->index,
-	                   OSMDB_BLOB_TYPE_WAY_RANGE,
-	                   self->way_range->wid,
-	                   size, (void*) self->way_range) == 0)
-	{
-		return 0;
+		size = osmdb_blobWayRange_sizeof(self->way_range);
+		if(osmdb_index_add(self->index,
+		                   OSMDB_BLOB_TYPE_WAY_RANGE,
+		                   self->way_range->wid,
+		                   size, (void*) self->way_range) == 0)
+		{
+			return 0;
+		}
 	}
 
 	size = osmdb_blobWayNds_sizeof(self->way_nds);
@@ -1365,6 +1373,9 @@ osm_parser_computeRelRange(osm_parser_t* self)
 	osmdb_blob_t*           blob;
 	osmdb_blobRelMembers_t* rel_members = self->rel_members;
 	osmdb_blobRelRange_t*   rel_range   = self->rel_range;
+	osmdb_blobWayRange_t*   way_range;
+	osmdb_blobWayRange_t    tmp_way_range;
+	osmdb_blob_t*           blob_way_nds;
 
 	// ignore
 	if(rel_members->count == 0)
@@ -1391,42 +1402,88 @@ osm_parser_computeRelRange(osm_parser_t* self)
 			return 0;
 		}
 
-		// some ways may not exist due to osmosis
-		if(blob == NULL)
+		// some way ranges may not exist due to osmosis or must
+		// be computed since they were not selected by
+		// osm_parser_insertWay
+		if(blob)
 		{
-			continue;
+			way_range = blob->way_range;
+		}
+		else
+		{
+			way_range = &tmp_way_range;
+			way_range->wid  = data[i].ref;
+			way_range->latT = 0.0;
+			way_range->lonL = 0.0;
+			way_range->latB = 0.0;
+			way_range->lonR = 0.0;
+
+			if(osmdb_index_get(self->index,
+			                   OSMDB_BLOB_TYPE_WAY_NDS,
+			                   data[i].ref, &blob_way_nds) == 0)
+			{
+				return 0;
+			}
+
+			// some ways may not exist due to osmosis
+			if(blob_way_nds == NULL)
+			{
+				continue;
+			}
+
+			if(osm_parser_computeWayRange(self,
+			                              blob_way_nds->way_nds,
+			                              way_range) == 0)
+			{
+				osmdb_index_put(self->index, &blob_way_nds);
+				return 0;
+			}
+
+			size_t size;
+			size = osmdb_blobWayRange_sizeof(way_range);
+			if(osmdb_index_add(self->index,
+			                   OSMDB_BLOB_TYPE_WAY_RANGE,
+			                   way_range->wid,
+			                   size, (void*) way_range) == 0)
+			{
+				osmdb_index_put(self->index, &blob_way_nds);
+				return 0;
+			}
+
+			osmdb_index_put(self->index, &blob_way_nds);
 		}
 
 		if(i)
 		{
-			if(blob->way_range->latT > rel_range->latT)
+			if(way_range->latT > rel_range->latT)
 			{
-				rel_range->latT = blob->way_range->latT;
+				rel_range->latT = way_range->latT;
 			}
 
-			if(blob->way_range->lonL < rel_range->lonL)
+			if(way_range->lonL < rel_range->lonL)
 			{
-				rel_range->lonL = blob->way_range->lonL;
+				rel_range->lonL = way_range->lonL;
 			}
 
-			if(blob->way_range->latB < rel_range->latB)
+			if(way_range->latB < rel_range->latB)
 			{
-				rel_range->latB = blob->way_range->latB;
+				rel_range->latB = way_range->latB;
 			}
 
-			if(blob->way_range->lonR > rel_range->lonR)
+			if(way_range->lonR > rel_range->lonR)
 			{
-				rel_range->lonR = blob->way_range->lonR;
+				rel_range->lonR = way_range->lonR;
 			}
 		}
 		else
 		{
-			rel_range->latT = blob->way_range->latT;
-			rel_range->lonL = blob->way_range->lonL;
-			rel_range->latB = blob->way_range->latB;
-			rel_range->lonR = blob->way_range->lonR;
+			rel_range->latT = way_range->latT;
+			rel_range->lonL = way_range->lonL;
+			rel_range->latB = way_range->latB;
+			rel_range->lonR = way_range->lonR;
 		}
 
+		// blob may be NULL
 		osmdb_index_put(self->index, &blob);
 	}
 
