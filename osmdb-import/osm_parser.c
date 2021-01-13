@@ -1568,7 +1568,9 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 	}
 
 	// discard relations when not selected
-	if(selected == 0)
+	// or if the type is not supported
+	if((selected == 0) ||
+	   (self->rel_info->type == OSMDB_RELINFO_TYPE_NONE))
 	{
 		return 1;
 	}
@@ -1657,6 +1659,10 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 				self->name_en = 1;
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
+			}
+			else if((strcmp(atts[j], "type") == 0))
+			{
+				self->rel_info->type = osmdb_relationTagTypeToCode(val);
 			}
 		}
 

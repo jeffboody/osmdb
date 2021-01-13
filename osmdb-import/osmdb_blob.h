@@ -87,9 +87,14 @@ typedef struct
 	// int64_t nds[];
 } osmdb_blobWayNds_t;
 
+#define OSMDB_RELINFO_TYPE_NONE         0
+#define OSMDB_RELINFO_TYPE_BOUNDARY     1
+#define OSMDB_RELINFO_TYPE_MULTIPOLYGON 2
+
 typedef struct
 {
 	int64_t rid;
+	int     type;
 	int     class;
 	int     size_name;
 	// size_name must be multiple of 4 bytes
