@@ -247,3 +247,26 @@ osmdb_blobRelRange_sizeof(osmdb_blobRelRange_t* self)
 
 	return sizeof(osmdb_blobRelRange_t);
 }
+
+int64_t* osmdb_blobTile_refs(osmdb_blobTile_t* self)
+{
+	ASSERT(self);
+
+	#ifndef OSMDB_IMPORTER
+		if(self->count == 0)
+		{
+			return NULL;
+		}
+	#endif
+
+	return (int64_t*)
+	       (((void*) self) + sizeof(osmdb_blobTile_t));
+}
+
+size_t osmdb_blobTile_sizeof(osmdb_blobTile_t* self)
+{
+	ASSERT(self);
+
+	return sizeof(osmdb_blobTile_t) +
+	       self->count*sizeof(int64_t);
+}

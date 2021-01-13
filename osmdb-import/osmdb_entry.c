@@ -83,6 +83,13 @@ osmdb_entry_map(osmdb_entry_t* self, size_t offset)
 	osmdb_blob_t* blob     = NULL;
 	while(offset < self->size)
 	{
+		// tiles only contain a single mapping at 0
+		if((offset > 0) &&
+		   (self->type < OSMDB_BLOB_TYPE_TILE_COUNT))
+		{
+			break;
+		}
+
 		blob = CALLOC(1, sizeof(osmdb_blob_t));
 		if(blob == NULL)
 		{

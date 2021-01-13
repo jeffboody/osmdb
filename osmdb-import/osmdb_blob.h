@@ -28,14 +28,22 @@
 
 #define OSMDB_BLOB_SIZE 100
 
-#define OSMDB_BLOB_TYPE_NODE_COORD  0
-#define OSMDB_BLOB_TYPE_NODE_INFO   1
-#define OSMDB_BLOB_TYPE_WAY_INFO    2
-#define OSMDB_BLOB_TYPE_WAY_RANGE   3
-#define OSMDB_BLOB_TYPE_WAY_NDS     4
-#define OSMDB_BLOB_TYPE_REL_INFO    5
-#define OSMDB_BLOB_TYPE_REL_MEMBERS 6
-#define OSMDB_BLOB_TYPE_REL_RANGE   7
+#define OSMDB_BLOB_TYPE_NODE_TILE11  0
+#define OSMDB_BLOB_TYPE_NODE_TILE14  1
+#define OSMDB_BLOB_TYPE_WAY_TILE11   2
+#define OSMDB_BLOB_TYPE_WAY_TILE14   3
+#define OSMDB_BLOB_TYPE_REL_TILE11   4
+#define OSMDB_BLOB_TYPE_REL_TILE14   5
+#define OSMDB_BLOB_TYPE_TILE_COUNT   6 // COUNT
+#define OSMDB_BLOB_TYPE_NODE_COORD   6
+#define OSMDB_BLOB_TYPE_NODE_INFO    7
+#define OSMDB_BLOB_TYPE_WAY_INFO     8
+#define OSMDB_BLOB_TYPE_WAY_RANGE    9
+#define OSMDB_BLOB_TYPE_WAY_NDS     10
+#define OSMDB_BLOB_TYPE_REL_INFO    11
+#define OSMDB_BLOB_TYPE_REL_MEMBERS 12
+#define OSMDB_BLOB_TYPE_REL_RANGE   13
+#define OSMDB_BLOB_TYPE_COUNT       14 // COUNT
 
 typedef struct
 {
@@ -131,6 +139,13 @@ typedef struct
 
 typedef struct
 {
+	int64_t id;
+	int     count;
+	// int64_t refs[];
+} osmdb_blobTile_t;
+
+typedef struct
+{
 	void* priv;
 
 	union
@@ -143,6 +158,7 @@ typedef struct
 		osmdb_blobRelInfo_t*    rel_info;
 		osmdb_blobRelMembers_t* rel_members;
 		osmdb_blobRelRange_t*   rel_range;
+		osmdb_blobTile_t*       tile;
 	};
 } osmdb_blob_t;
 
@@ -159,5 +175,7 @@ size_t               osmdb_blobRelInfo_sizeof(osmdb_blobRelInfo_t* self);
 osmdb_blobRelData_t* osmdb_blobRelMembers_data(osmdb_blobRelMembers_t* self);
 size_t               osmdb_blobRelMembers_sizeof(osmdb_blobRelMembers_t* self);
 size_t               osmdb_blobRelRange_sizeof(osmdb_blobRelRange_t* self);
+int64_t*             osmdb_blobTile_refs(osmdb_blobTile_t* self);
+size_t               osmdb_blobTile_sizeof(osmdb_blobTile_t* self);
 
 #endif

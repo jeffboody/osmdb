@@ -41,6 +41,9 @@
 int osmdb_index_add(osmdb_index_t* self,
                     int type, int64_t id,
                     size_t size, void* data);
+int osmdb_index_addTile(osmdb_index_t* self,
+                        int type, int64_t major_id,
+                        int64_t ref);
 void osmdb_blobNodeInfo_addName(osmdb_blobNodeInfo_t* self,
                                 const char* name);
 void osmdb_blobWayInfo_addName(osmdb_blobWayInfo_t* self,
@@ -769,6 +772,49 @@ osm_parser_beginOsmNode(osm_parser_t* self, int line,
 }
 
 static int
+osm_parser_addTileCoord(osm_parser_t* self,
+                        int64_t ref,
+                        double lat, double lon,
+                        int min_zoom)
+{
+	ASSERT(self);
+
+	float   x;
+	float   y;
+	int64_t id;
+
+	int ix;
+	int iy;
+	int i       = 0;
+	int zoom[]  = { 14, 11, -1 };
+	int pow2n[] = { 16384, 2048 };
+
+	int type_array[]  =
+	{
+		OSMDB_BLOB_TYPE_NODE_TILE14,
+		OSMDB_BLOB_TYPE_NODE_TILE11,
+	};
+
+	while(min_zoom <= zoom[i])
+	{
+		terrain_coord2tile(lat, lon,
+		                   zoom[i], &x, &y);
+		ix = (int) x;
+		iy = (int) y;
+		id = (int64_t) pow2n[i]*iy + ix;
+		if(osmdb_index_addTile(self->index, type_array[i],
+		                       id, ref) == 0)
+		{
+			return 0;
+		}
+
+		++i;
+	}
+
+	return 1;
+}
+
+static int
 osm_parser_insertNodeInfo(osm_parser_t* self, int min_zoom)
 {
 	ASSERT(self);
@@ -783,7 +829,14 @@ osm_parser_insertNodeInfo(osm_parser_t* self, int min_zoom)
 		return 0;
 	}
 
-	// TODO - add to tiles
+	if(osm_parser_addTileCoord(self,
+	                           self->node_coord->nid,
+	                           self->node_coord->lat,
+	                           self->node_coord->lon,
+	                           min_zoom) == 0)
+	{
+		return 0;
+	}
 
 	return 1;
 }
@@ -988,6 +1041,7 @@ osm_parser_computeWayRange(osm_parser_t* self,
 	int64_t* nds = osmdb_blobWayNds_nds(way_nds);
 
 	int i;
+	int first = 1;
 	for(i = 0; i < way_nds->count; ++i)
 	{
 		if(osmdb_index_get(self->index,
@@ -1003,7 +1057,16 @@ osm_parser_computeWayRange(osm_parser_t* self,
 			continue;
 		}
 
-		if(i)
+		if(first)
+		{
+			way_range->latT = blob->node_coord->lat;
+			way_range->lonL = blob->node_coord->lon;
+			way_range->latB = blob->node_coord->lat;
+			way_range->lonR = blob->node_coord->lon;
+
+			first = 0;
+		}
+		else
 		{
 			if(blob->node_coord->lat > way_range->latT)
 			{
@@ -1025,15 +1088,120 @@ osm_parser_computeWayRange(osm_parser_t* self,
 				way_range->lonR = blob->node_coord->lon;
 			}
 		}
-		else
-		{
-			way_range->latT = blob->node_coord->lat;
-			way_range->lonL = blob->node_coord->lon;
-			way_range->latB = blob->node_coord->lat;
-			way_range->lonR = blob->node_coord->lon;
-		}
 
 		osmdb_index_put(self->index, &blob);
+	}
+
+	return 1;
+}
+
+static int clamp(int val, int a, int b)
+{
+	if(val < a)
+	{
+		val = a;
+	}
+	else if(val > b)
+	{
+		val = b;
+	}
+
+	return val;
+}
+
+static int
+osm_parser_addTileRange(osm_parser_t* self,
+                        int type, int64_t ref,
+                        double latT, double lonL,
+                        double latB, double lonR,
+                        int center, int polygon,
+                        int min_zoom)
+{
+	ASSERT(self);
+
+	// elements are defined with zero width but in
+	// practice are drawn with non-zero width
+	// points/lines so a border is needed to ensure they
+	// are not clipped between neighboring tiles
+	float border = 1.0f/16.0f;
+
+	// center the range
+	if(center)
+	{
+		latT = latB + (latT - latB)/2.0;
+		lonR = lonL + (lonR - lonL)/2.0;
+		latB = latT;
+		lonL = lonR;
+
+		border = 0.0f;
+	}
+
+	// determine the tile type
+	int type_way[]  =
+	{
+		OSMDB_BLOB_TYPE_WAY_TILE14,
+		OSMDB_BLOB_TYPE_WAY_TILE11,
+	};
+	int type_rel[]  =
+	{
+		OSMDB_BLOB_TYPE_REL_TILE14,
+		OSMDB_BLOB_TYPE_REL_TILE11,
+	};
+	int* type_array;
+	if(type == OSMDB_BLOB_TYPE_WAY_RANGE)
+	{
+		type_array = type_way;
+	}
+	else if(type == OSMDB_BLOB_TYPE_REL_RANGE)
+	{
+		type_array = type_rel;
+	}
+	else
+	{
+		LOGE("invalid type=%i", type);
+		return 0;
+	}
+
+	// add to tiles
+	float x0;
+	float y0;
+	float x1;
+	float y1;
+	int   ix0;
+	int   iy0;
+	int   ix1;
+	int   iy1;
+	int   id;
+	int   i       = 0;
+	int   zoom[]  = { 14, 11, -1 };
+	int   pow2n[] = { 16384, 2048 };
+	while(min_zoom <= zoom[i])
+	{
+		terrain_coord2tile(latT, lonL,
+		                   zoom[i], &x0, &y0);
+		terrain_coord2tile(latB, lonR,
+		                   zoom[i], &x1, &y1);
+		ix0 = clamp((int) (x0 - border), 0, pow2n[i] - 1);
+		iy0 = clamp((int) (y0 - border), 0, pow2n[i] - 1);
+		ix1 = clamp((int) (x1 + border), 0, pow2n[i] - 1);
+		iy1 = clamp((int) (y1 + border), 0, pow2n[i] - 1);
+
+		int r;
+		int c;
+		for(r = iy0; r <= iy1; ++r)
+		{
+			for(c = ix0; c <= ix1; ++c)
+			{
+				id = (int64_t) pow2n[i]*r + c;
+				if(osmdb_index_addTile(self->index, type_array[i],
+				                       id, self->way_info->wid) == 0)
+				{
+					return 0;
+				}
+			}
+		}
+
+		++i;
 	}
 
 	return 1;
@@ -1074,6 +1242,19 @@ osm_parser_insertWay(osm_parser_t* self,
 		{
 			return 0;
 		}
+
+		if(osm_parser_addTileRange(self,
+		                           OSMDB_BLOB_TYPE_WAY_RANGE,
+		                           self->way_range->wid,
+		                           self->way_range->latT,
+		                           self->way_range->lonL,
+		                           self->way_range->latB,
+		                           self->way_range->lonR,
+		                           center, polygon,
+		                           min_zoom) == 0)
+		{
+			return 0;
+		}
 	}
 
 	size = osmdb_blobWayNds_sizeof(self->way_nds);
@@ -1084,8 +1265,6 @@ osm_parser_insertWay(osm_parser_t* self,
 	{
 		return 0;
 	}
-
-	// TODO - add to tiles if selected
 
 	return 1;
 }
@@ -1387,6 +1566,7 @@ osm_parser_computeRelRange(osm_parser_t* self)
 	data = osmdb_blobRelMembers_data(rel_members);
 
 	int i;
+	int first = 1;
 	for(i = 0; i < rel_members->count; ++i)
 	{
 		// only use ways to compute range
@@ -1453,7 +1633,16 @@ osm_parser_computeRelRange(osm_parser_t* self)
 			osmdb_index_put(self->index, &blob_way_nds);
 		}
 
-		if(i)
+		if(first)
+		{
+			rel_range->latT = way_range->latT;
+			rel_range->lonL = way_range->lonL;
+			rel_range->latB = way_range->latB;
+			rel_range->lonR = way_range->lonR;
+
+			first = 0;
+		}
+		else
 		{
 			if(way_range->latT > rel_range->latT)
 			{
@@ -1474,13 +1663,6 @@ osm_parser_computeRelRange(osm_parser_t* self)
 			{
 				rel_range->lonR = way_range->lonR;
 			}
-		}
-		else
-		{
-			rel_range->latT = way_range->latT;
-			rel_range->lonL = way_range->lonL;
-			rel_range->latB = way_range->latB;
-			rel_range->lonR = way_range->lonR;
 		}
 
 		// blob may be NULL
@@ -1529,7 +1711,18 @@ osm_parser_insertRel(osm_parser_t* self,
 		return 0;
 	}
 
-	// TODO - add to tiles
+	if(osm_parser_addTileRange(self,
+	                           OSMDB_BLOB_TYPE_REL_RANGE,
+	                           self->rel_range->rid,
+	                           self->rel_range->latT,
+	                           self->rel_range->lonL,
+	                           self->rel_range->latB,
+	                           self->rel_range->lonR,
+	                           center, polygon,
+	                           min_zoom) == 0)
+	{
+		return 0;
+	}
 
 	return 1;
 }

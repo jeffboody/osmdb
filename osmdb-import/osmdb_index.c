@@ -22,6 +22,7 @@
  */
 
 #include <inttypes.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #define LOG_TAG "osmdb"
@@ -31,9 +32,28 @@
 #include "osmdb_entry.h"
 #include "osmdb_index.h"
 
-#define OSMDB_INDEX_MAXSIZE 4000000000
+#define OSMDB_INDEX_CACHE_SIZE 4000000000
 
 #define OSMDB_INDEX_BATCH_SIZE 10000
+
+const char* OSMDB_INDEX_TBL[] =
+{
+	"tbl_nodeTile11",
+	"tbl_nodeTile14",
+	"tbl_wayTile11",
+	"tbl_wayTile14",
+	"tbl_relTile11",
+	"tbl_relTile14",
+	"tbl_nodeCoord",
+	"tbl_nodeInfo",
+	"tbl_wayInfo",
+	"tbl_wayRange",
+	"tbl_wayNds",
+	"tbl_relInfo",
+	"tbl_relMembers",
+	"tbl_relRange",
+	NULL
+};
 
 /***********************************************************
 * private                                                  *
@@ -63,65 +83,44 @@ int osmdb_index_createTables(osmdb_index_t* self)
 {
 	ASSERT(self);
 
-	const char* sql[] =
+	const char* sql_pragma[] =
 	{
 		"PRAGMA journal_mode = OFF;",
 		"PRAGMA locking_mode = EXCLUSIVE;",
 		"PRAGMA temp_store_directory = '.';",
-		"CREATE TABLE tbl_nodeCoord"
-		"("
-		"	id   INTEGER PRIMARY KEY NOT NULL,"
-		"	blob BLOB"
-		");",
-		"CREATE TABLE tbl_nodeInfo"
-		"("
-		"	id   INTEGER PRIMARY KEY NOT NULL,"
-		"	blob BLOB"
-		");",
-		"CREATE TABLE tbl_wayInfo"
-		"("
-		"	id   INTEGER PRIMARY KEY NOT NULL,"
-		"	blob BLOB"
-		");",
-		"CREATE TABLE tbl_wayRange"
-		"("
-		"	id   INTEGER PRIMARY KEY NOT NULL,"
-		"	blob BLOB"
-		");",
-		"CREATE TABLE tbl_wayNds"
-		"("
-		"	id   INTEGER PRIMARY KEY NOT NULL,"
-		"	blob BLOB"
-		");",
-		"CREATE TABLE tbl_relInfo"
-		"("
-		"	id   INTEGER PRIMARY KEY NOT NULL,"
-		"	blob BLOB"
-		");",
-		"CREATE TABLE tbl_relMembers"
-		"("
-		"	id   INTEGER PRIMARY KEY NOT NULL,"
-		"	blob BLOB"
-		");",
-		"CREATE TABLE tbl_relRange"
-		"("
-		"	id   INTEGER PRIMARY KEY NOT NULL,"
-		"	blob BLOB"
-		");",
 		NULL
 	};
 
-	int idx = 0;
-	while(sql[idx])
+	int i = 0;
+	while(sql_pragma[i])
 	{
-		if(sqlite3_exec(self->db, sql[idx], NULL, NULL,
+		if(sqlite3_exec(self->db, sql_pragma[i], NULL, NULL,
 		                NULL) != SQLITE_OK)
 		{
 			LOGE("sqlite3_exec(%i): %s",
-			     idx, sqlite3_errmsg(self->db));
+			     i, sqlite3_errmsg(self->db));
 			return 0;
 		}
-		++idx;
+		++i;
+	}
+
+	for(i = 0; i < OSMDB_BLOB_TYPE_COUNT; ++i)
+	{
+		char sql_tbl[256];
+		snprintf(sql_tbl, 256,
+		         "CREATE TABLE %s"
+		         "("
+		         "	id   INTEGER PRIMARY KEY NOT NULL,"
+		         "	blob BLOB"
+		         ");", OSMDB_INDEX_TBL[i]);
+
+		if(sqlite3_exec(self->db, sql_tbl, NULL, NULL,
+		                NULL) != SQLITE_OK)
+		{
+			LOGE("sqlite3_exec(%i): %s",
+			     i, sqlite3_errmsg(self->db));
+			return 0;
+		}
 	}
 
 	return 1;
@@ -209,54 +208,11 @@ osmdb_index_load(osmdb_index_t* self,
 	ASSERT(self);
 	ASSERT(entry);
 
-	sqlite3_stmt* stmt   = NULL;
-	int           idx_id = 0;
-	if(entry->type == OSMDB_BLOB_TYPE_NODE_COORD)
-	{
-		stmt   = self->stmt_select_nodeCoord;
-		idx_id = self->idx_select_nodeCoordId;
-	}
-	else if(entry->type == OSMDB_BLOB_TYPE_NODE_INFO)
-	{
-		stmt   = self->stmt_select_nodeInfo;
-		idx_id = self->idx_select_nodeInfoId;
-	}
-	else if(entry->type == OSMDB_BLOB_TYPE_WAY_INFO)
-	{
-		stmt   = self->stmt_select_wayInfo;
-		idx_id = self->idx_select_wayInfoId;
-	}
-	else if(entry->type == OSMDB_BLOB_TYPE_WAY_RANGE)
-	{
-		stmt   = self->stmt_select_wayRange;
-		idx_id = self->idx_select_wayRangeId;
-	}
-	else if(entry->type == OSMDB_BLOB_TYPE_WAY_NDS)
-	{
-		stmt   = self->stmt_select_wayNds;
-		idx_id = self->idx_select_wayNdsId;
-	}
-	else if(entry->type == OSMDB_BLOB_TYPE_REL_INFO)
-	{
-		stmt   = self->stmt_select_relInfo;
-		idx_id = self->idx_select_relInfoId;
-	}
-	else if(entry->type == OSMDB_BLOB_TYPE_REL_MEMBERS)
-	{
-		stmt   = self->stmt_select_relMembers;
-		idx_id = self->idx_select_relMembersId;
-	}
-	else if(entry->type == OSMDB_BLOB_TYPE_REL_RANGE)
-	{
-		stmt   = self->stmt_select_relRange;
-		idx_id = self->idx_select_relRangeId;
-	}
-	else
-	{
-		LOGE("invalid type=%i, major_id=%" PRId64,
-		     entry->type, entry->major_id);
-		return 0;
-	}
+	int idx_id;
+	sqlite3_stmt* stmt;
+
+	stmt   = self->stmt_select[entry->type];
+	idx_id = self->idx_select_id[entry->type];
 
 	if(sqlite3_bind_int64(stmt, idx_id,
 	                      entry->major_id) != SQLITE_OK)
@@ -307,63 +263,13 @@ osmdb_index_save(osmdb_index_t* self,
 	ASSERT(self);
 	ASSERT(entry);
 
-	sqlite3_stmt* stmt     = NULL;
-	int           idx_id   = 0;
-	int           idx_blob = 0;
-	if(entry->type == OSMDB_BLOB_TYPE_NODE_COORD)
-	{
-		stmt     = self->stmt_insert_nodeCoord;
-		idx_id   = self->idx_insert_nodeCoordId;
-		idx_blob = self->idx_insert_nodeCoordBlob;
-	}
-	else if(entry->type == OSMDB_BLOB_TYPE_NODE_INFO)
-	{
-		stmt     = self->stmt_insert_nodeInfo;
-		idx_id   = self->idx_insert_nodeInfoId;
-		idx_blob = self->idx_insert_nodeInfoBlob;
-	}
-	else if(entry->type == OSMDB_BLOB_TYPE_WAY_INFO)
-	{
-		stmt     = self->stmt_insert_wayInfo;
-		idx_id   = self->idx_insert_wayInfoId;
-		idx_blob = self->idx_insert_wayInfoBlob;
-	}
-	else if(entry->type == OSMDB_BLOB_TYPE_WAY_RANGE)
-	{
-		stmt     = self->stmt_insert_wayRange;
-		idx_id   = self->idx_insert_wayRangeId;
-		idx_blob = self->idx_insert_wayRangeBlob;
-	}
-	else if(entry->type == OSMDB_BLOB_TYPE_WAY_NDS)
-	{
-		stmt     = self->stmt_insert_wayNds;
-		idx_id   = self->idx_insert_wayNdsId;
-		idx_blob = self->idx_insert_wayNdsBlob;
-	}
-	else if(entry->type == OSMDB_BLOB_TYPE_REL_INFO)
-	{
-		stmt     = self->stmt_insert_relInfo;
-		idx_id   = self->idx_insert_relInfoId;
-		idx_blob = self->idx_insert_relInfoBlob;
-	}
-	else if(entry->type == OSMDB_BLOB_TYPE_REL_MEMBERS)
-	{
-		stmt     = self->stmt_insert_relMembers;
-		idx_id   = self->idx_insert_relMembersId;
-		idx_blob = self->idx_insert_relMembersBlob;
-	}
-	else if(entry->type == OSMDB_BLOB_TYPE_REL_RANGE)
-	{
-		stmt     = self->stmt_insert_relRange;
-		idx_id   = self->idx_insert_relRangeId;
-		idx_blob = self->idx_insert_relRangeBlob;
-	}
-	else
-	{
-		LOGE("invalid type=%i, major_id=%" PRId64,
-		     entry->type, entry->major_id);
-		return 0;
-	}
+	int idx_id;
+	int idx_blob;
+	sqlite3_stmt* stmt;
+
+	stmt     = self->stmt_insert[entry->type];
+	idx_id   = self->idx_insert_id[entry->type];
+	idx_blob = self->idx_insert_blob[entry->type];
 
 	if((sqlite3_bind_int64(stmt, idx_id,
 	                       entry->major_id) != SQLITE_OK) ||
@@ -441,14 +347,14 @@ osmdb_index_trim(osmdb_index_t* self)
 		size_t size = MEMSIZE();
 		if(first)
 		{
-			if(size <= OSMDB_INDEX_MAXSIZE)
+			if(size <= OSMDB_INDEX_CACHE_SIZE)
 			{
 				break;
 			}
 
 			first = 0;
 		}
-		if(size <= (size_t) (0.95f*OSMDB_INDEX_MAXSIZE))
+		if(size <= (size_t) (0.95f*OSMDB_INDEX_CACHE_SIZE))
 		{
 			break;
 		}
@@ -486,6 +392,115 @@ osmdb_index_trim(osmdb_index_t* self)
 	return ret;
 }
 
+static void
+osmdb_index_finalizeInsert(osmdb_index_t* self)
+{
+	ASSERT(self);
+
+	int i;
+	for(i = 0; i < OSMDB_BLOB_TYPE_COUNT; ++i)
+	{
+		sqlite3_finalize(self->stmt_insert[i]);
+		self->stmt_insert[i] = NULL;
+	}
+}
+
+static void
+osmdb_index_finalizeSelect(osmdb_index_t* self)
+{
+	ASSERT(self);
+
+	int i;
+	for(i = 0; i < OSMDB_BLOB_TYPE_COUNT; ++i)
+	{
+		sqlite3_finalize(self->stmt_select[i]);
+		self->stmt_select[i] = NULL;
+	}
+}
+
+static int
+osmdb_index_prepareInsert(osmdb_index_t* self)
+{
+	ASSERT(self);
+
+	int i;
+	for(i = 0; i < OSMDB_BLOB_TYPE_COUNT; ++i)
+	{
+		char sql_insert[256];
+		snprintf(sql_insert, 256,
+		         "REPLACE INTO %s (id, blob)"
+		         "	VALUES (@arg_id, @arg_blob);",
+		         OSMDB_INDEX_TBL[i]);
+
+		if(sqlite3_prepare_v2(self->db, sql_insert, -1,
+		                      &self->stmt_insert[i],
+		                      NULL) != SQLITE_OK)
+		{
+			LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
+			goto fail_prepare;
+		}
+		self->idx_insert_id[i]   = sqlite3_bind_parameter_index(self->stmt_insert[i],
+		                                                        "@arg_id");
+		self->idx_insert_blob[i] = sqlite3_bind_parameter_index(self->stmt_insert[i],
+		                                                        "@arg_blob");
+	}
+
+	// success
+	return 1;
+
+	// finalize
+	fail_prepare:
+	{
+		int j;
+		for(j = 0; j < i; ++j)
+		{
+			sqlite3_finalize(self->stmt_insert[j]);
+			self->stmt_insert[j] = NULL;
+		}
+	}
+	return 0;
+}
+
+static int
+osmdb_index_prepareSelect(osmdb_index_t* self)
+{
+	ASSERT(self);
+
+	int i;
+	for(i = 0; i < OSMDB_BLOB_TYPE_COUNT; ++i)
+	{
+		char sql_select[256];
+		snprintf(sql_select, 256,
+		         "SELECT blob FROM %s WHERE id=@arg_id;",
+		         OSMDB_INDEX_TBL[i]);
+
+		if(sqlite3_prepare_v2(self->db, sql_select, -1,
+		                      &self->stmt_select[i],
+		                      NULL) != SQLITE_OK)
+		{
+			LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
+			goto fail_prepare;
+		}
+		self->idx_select_id[i] = sqlite3_bind_parameter_index(self->stmt_select[i],
+		                                                      "@arg_id");
+	}
+
+	// success
+	return 1;
+
+	// finalize
+	fail_prepare:
+	{
+		int j;
+		for(j = 0; j < i; ++j)
+		{
+			sqlite3_finalize(self->stmt_select[j]);
+			self->stmt_select[j] = NULL;
+		}
+	}
+	return 0;
+}
+
 /***********************************************************
 * protected                                                *
 ***********************************************************/
@@ -501,6 +516,10 @@ int osmdb_index_add(osmdb_index_t* self,
 	osmdb_entry_t* entry;
 
 	int64_t major_id = id/OSMDB_BLOB_SIZE;
+	if(type < OSMDB_BLOB_TYPE_TILE_COUNT)
+	{
+		major_id = id;
+	}
 
 	// check if entry is in cache
 	cc_mapIter_t   miterator;
@@ -547,6 +566,75 @@ int osmdb_index_add(osmdb_index_t* self,
 	}
 
 	int added = osmdb_entry_add(entry, 0, size, data);
+	osmdb_index_trim(self);
+
+	// success
+	return added;
+
+	// failure
+	fail_add:
+		cc_list_remove(self->cache_list, &iter);
+	fail_append:
+	fail_load:
+		osmdb_entry_delete(&entry);
+	return 0;
+}
+
+int osmdb_index_addTile(osmdb_index_t* self, int type,
+                        int64_t major_id, int64_t ref)
+{
+	ASSERT(self);
+	ASSERT(type < OSMDB_BLOB_TYPE_TILE_COUNT);
+
+	osmdb_entry_t* entry;
+
+	// check if entry is in cache
+	cc_mapIter_t   miterator;
+	cc_listIter_t* iter;
+	iter = (cc_listIter_t*)
+	       cc_map_findf(self->cache_map, &miterator,
+	                    "%i/%" PRId64, type, major_id);
+	if(iter)
+	{
+		entry = (osmdb_entry_t*) cc_list_peekIter(iter);
+
+		int added = osmdb_entry_add(entry, 0, sizeof(int64_t),
+		                            (void*) &ref);
+
+		// update LRU cache
+		cc_list_moven(self->cache_list, iter, NULL);
+
+		osmdb_index_trim(self);
+		return added;
+	}
+
+	// otherwise create a new entry
+	entry = osmdb_entry_new(type, major_id);
+	if(entry == NULL)
+	{
+		return 0;
+	}
+
+	if(osmdb_index_load(self, entry) == 0)
+	{
+		goto fail_load;
+	}
+
+	iter = cc_list_append(self->cache_list, NULL,
+	                      (const void*) entry);
+	if(iter == NULL)
+	{
+		goto fail_append;
+	}
+
+	if(cc_map_addf(self->cache_map, (const void*) iter,
+	               "%i/%" PRId64, type, major_id) == 0)
+	{
+		goto fail_add;
+	}
+
+	int added = osmdb_entry_add(entry, 0, sizeof(int64_t),
+	                            (void*) &ref);
 	osmdb_index_trim(self);
 
 	// success
@@ -623,198 +711,15 @@ osmdb_index_new(const char* fname)
 		goto fail_prepare_end;
 	}
 
-	const char* sql_insert_nodeCoord =
-		"REPLACE INTO tbl_nodeCoord (id, blob)"
-		"	VALUES (@arg_id, @arg_blob);";
-	if(sqlite3_prepare_v2(self->db, sql_insert_nodeCoord, -1,
-	                      &self->stmt_insert_nodeCoord,
-	                      NULL) != SQLITE_OK)
+	if(osmdb_index_prepareInsert(self) == 0)
 	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_insert_nodeCoord;
+		goto fail_prepare_insert;
 	}
 
-	const char* sql_insert_nodeInfo =
-		"REPLACE INTO tbl_nodeInfo (id, blob)"
-		"	VALUES (@arg_id, @arg_blob);";
-	if(sqlite3_prepare_v2(self->db, sql_insert_nodeInfo, -1,
-	                      &self->stmt_insert_nodeInfo,
-	                      NULL) != SQLITE_OK)
+	if(osmdb_index_prepareSelect(self) == 0)
 	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_insert_nodeInfo;
+		goto fail_prepare_select;
 	}
-
-	const char* sql_insert_wayInfo =
-		"REPLACE INTO tbl_wayInfo (id, blob)"
-		"	VALUES (@arg_id, @arg_blob);";
-	if(sqlite3_prepare_v2(self->db, sql_insert_wayInfo, -1,
-	                      &self->stmt_insert_wayInfo,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_insert_wayInfo;
-	}
-
-	const char* sql_insert_wayRange =
-		"REPLACE INTO tbl_wayRange (id, blob)"
-		"	VALUES (@arg_id, @arg_blob);";
-	if(sqlite3_prepare_v2(self->db, sql_insert_wayRange, -1,
-	                      &self->stmt_insert_wayRange,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_insert_wayRange;
-	}
-
-	const char* sql_insert_wayNds =
-		"REPLACE INTO tbl_wayNds (id, blob)"
-		"	VALUES (@arg_id, @arg_blob);";
-	if(sqlite3_prepare_v2(self->db, sql_insert_wayNds, -1,
-	                      &self->stmt_insert_wayNds,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_insert_wayNds;
-	}
-
-	const char* sql_insert_relInfo =
-		"REPLACE INTO tbl_relInfo (id, blob)"
-		"	VALUES (@arg_id, @arg_blob);";
-	if(sqlite3_prepare_v2(self->db, sql_insert_relInfo, -1,
-	                      &self->stmt_insert_relInfo,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_insert_relInfo;
-	}
-
-	const char* sql_insert_relMembers =
-		"REPLACE INTO tbl_relMembers (id, blob)"
-		"	VALUES (@arg_id, @arg_blob);";
-	if(sqlite3_prepare_v2(self->db, sql_insert_relMembers, -1,
-	                      &self->stmt_insert_relMembers,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_insert_relMembers;
-	}
-
-	const char* sql_insert_relRange =
-		"REPLACE INTO tbl_relRange (id, blob)"
-		"	VALUES (@arg_id, @arg_blob);";
-	if(sqlite3_prepare_v2(self->db, sql_insert_relRange, -1,
-	                      &self->stmt_insert_relRange,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_insert_relRange;
-	}
-
-	const char* sql_select_nodeCoord =
-		"SELECT blob FROM tbl_nodeCoord WHERE id=@arg_id;";
-	if(sqlite3_prepare_v2(self->db, sql_select_nodeCoord, -1,
-	                      &self->stmt_select_nodeCoord,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_select_nodeCoord;
-	}
-
-	const char* sql_select_nodeInfo =
-		"SELECT blob FROM tbl_nodeInfo WHERE id=@arg_id;";
-	if(sqlite3_prepare_v2(self->db, sql_select_nodeInfo, -1,
-	                      &self->stmt_select_nodeInfo,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_select_nodeInfo;
-	}
-
-	const char* sql_select_wayInfo =
-		"SELECT blob FROM tbl_wayInfo WHERE id=@arg_id;";
-	if(sqlite3_prepare_v2(self->db, sql_select_wayInfo, -1,
-	                      &self->stmt_select_wayInfo,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_select_wayInfo;
-	}
-
-	const char* sql_select_wayRange =
-		"SELECT blob FROM tbl_wayRange WHERE id=@arg_id;";
-	if(sqlite3_prepare_v2(self->db, sql_select_wayRange, -1,
-	                      &self->stmt_select_wayRange,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_select_wayRange;
-	}
-
-	const char* sql_select_wayNds =
-		"SELECT blob FROM tbl_wayNds WHERE id=@arg_id;";
-	if(sqlite3_prepare_v2(self->db, sql_select_wayNds, -1,
-	                      &self->stmt_select_wayNds,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_select_wayNds;
-	}
-
-	const char* sql_select_relInfo =
-		"SELECT blob FROM tbl_relInfo WHERE id=@arg_id;";
-	if(sqlite3_prepare_v2(self->db, sql_select_relInfo, -1,
-	                      &self->stmt_select_relInfo,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_select_relInfo;
-	}
-
-	const char* sql_select_relMembers =
-		"SELECT blob FROM tbl_relMembers WHERE id=@arg_id;";
-	if(sqlite3_prepare_v2(self->db, sql_select_relMembers, -1,
-	                      &self->stmt_select_relMembers,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_select_relMembers;
-	}
-
-	const char* sql_select_relRange =
-		"SELECT blob FROM tbl_relRange WHERE id=@arg_id;";
-	if(sqlite3_prepare_v2(self->db, sql_select_relRange, -1,
-	                      &self->stmt_select_relRange,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
-		goto fail_prepare_select_relRange;
-	}
-
-	self->idx_insert_nodeCoordId    = sqlite3_bind_parameter_index(self->stmt_insert_nodeCoord,  "@arg_id");
-	self->idx_insert_nodeCoordBlob  = sqlite3_bind_parameter_index(self->stmt_insert_nodeCoord,  "@arg_blob");
-	self->idx_insert_nodeInfoId     = sqlite3_bind_parameter_index(self->stmt_insert_nodeInfo,   "@arg_id");
-	self->idx_insert_nodeInfoBlob   = sqlite3_bind_parameter_index(self->stmt_insert_nodeInfo,   "@arg_blob");
-	self->idx_insert_wayInfoId      = sqlite3_bind_parameter_index(self->stmt_insert_wayInfo,    "@arg_id");
-	self->idx_insert_wayInfoBlob    = sqlite3_bind_parameter_index(self->stmt_insert_wayInfo,    "@arg_blob");
-	self->idx_insert_wayRangeId     = sqlite3_bind_parameter_index(self->stmt_insert_wayRange,   "@arg_id");
-	self->idx_insert_wayRangeBlob   = sqlite3_bind_parameter_index(self->stmt_insert_wayRange,   "@arg_blob");
-	self->idx_insert_wayNdsId       = sqlite3_bind_parameter_index(self->stmt_insert_wayNds,     "@arg_id");
-	self->idx_insert_wayNdsBlob     = sqlite3_bind_parameter_index(self->stmt_insert_wayNds,     "@arg_blob");
-	self->idx_insert_relInfoId      = sqlite3_bind_parameter_index(self->stmt_insert_relInfo,    "@arg_id");
-	self->idx_insert_relInfoBlob    = sqlite3_bind_parameter_index(self->stmt_insert_relInfo,    "@arg_blob");
-	self->idx_insert_relMembersId   = sqlite3_bind_parameter_index(self->stmt_insert_relMembers, "@arg_id");
-	self->idx_insert_relMembersBlob = sqlite3_bind_parameter_index(self->stmt_insert_relMembers, "@arg_blob");
-	self->idx_insert_relRangeId     = sqlite3_bind_parameter_index(self->stmt_insert_relRange,   "@arg_id");
-	self->idx_insert_relRangeBlob   = sqlite3_bind_parameter_index(self->stmt_insert_relRange,   "@arg_blob");
-	self->idx_select_nodeCoordId    = sqlite3_bind_parameter_index(self->stmt_select_nodeCoord,  "@arg_id");
-	self->idx_select_nodeInfoId     = sqlite3_bind_parameter_index(self->stmt_select_nodeInfo,   "@arg_id");
-	self->idx_select_wayInfoId      = sqlite3_bind_parameter_index(self->stmt_select_wayInfo,    "@arg_id");
-	self->idx_select_wayRangeId     = sqlite3_bind_parameter_index(self->stmt_select_wayRange,   "@arg_id");
-	self->idx_select_wayNdsId       = sqlite3_bind_parameter_index(self->stmt_select_wayNds,     "@arg_id");
-	self->idx_select_relInfoId      = sqlite3_bind_parameter_index(self->stmt_select_relInfo,    "@arg_id");
-	self->idx_select_relMembersId   = sqlite3_bind_parameter_index(self->stmt_select_relMembers, "@arg_id");
-	self->idx_select_relRangeId     = sqlite3_bind_parameter_index(self->stmt_select_relRange,   "@arg_id");
 
 	if(pthread_mutex_init(&self->cache_mutex, NULL) != 0)
 	{
@@ -843,38 +748,10 @@ osmdb_index_new(const char* fname)
 	fail_cache_map:
 		pthread_mutex_destroy(&self->cache_mutex);
 	fail_cache_mutex:
-		sqlite3_finalize(self->stmt_select_relRange);
-	fail_prepare_select_relRange:
-		sqlite3_finalize(self->stmt_select_relMembers);
-	fail_prepare_select_relMembers:
-		sqlite3_finalize(self->stmt_select_relInfo);
-	fail_prepare_select_relInfo:
-		sqlite3_finalize(self->stmt_select_wayNds);
-	fail_prepare_select_wayNds:
-		sqlite3_finalize(self->stmt_select_wayRange);
-	fail_prepare_select_wayRange:
-		sqlite3_finalize(self->stmt_select_wayInfo);
-	fail_prepare_select_wayInfo:
-		sqlite3_finalize(self->stmt_select_nodeInfo);
-	fail_prepare_select_nodeInfo:
-		sqlite3_finalize(self->stmt_select_nodeCoord);
-	fail_prepare_select_nodeCoord:
-		sqlite3_finalize(self->stmt_insert_relRange);
-	fail_prepare_insert_relRange:
-		sqlite3_finalize(self->stmt_insert_relMembers);
-	fail_prepare_insert_relMembers:
-		sqlite3_finalize(self->stmt_insert_relInfo);
-	fail_prepare_insert_relInfo:
-		sqlite3_finalize(self->stmt_insert_wayNds);
-	fail_prepare_insert_wayNds:
-		sqlite3_finalize(self->stmt_insert_wayRange);
-	fail_prepare_insert_wayRange:
-		sqlite3_finalize(self->stmt_insert_wayInfo);
-	fail_prepare_insert_wayInfo:
-		sqlite3_finalize(self->stmt_insert_nodeInfo);
-	fail_prepare_insert_nodeInfo:
-		sqlite3_finalize(self->stmt_insert_nodeCoord);
-	fail_prepare_insert_nodeCoord:
+		osmdb_index_finalizeSelect(self);
+	fail_prepare_select:
+		osmdb_index_finalizeInsert(self);
+	fail_prepare_insert:
 		sqlite3_finalize(self->stmt_end);
 	fail_prepare_end:
 		sqlite3_finalize(self->stmt_begin);
@@ -940,22 +817,8 @@ void osmdb_index_delete(osmdb_index_t** _self)
 		cc_list_delete(&self->cache_list);
 		cc_map_delete(&self->cache_map);
 		pthread_mutex_destroy(&self->cache_mutex);
-		sqlite3_finalize(self->stmt_select_relRange);
-		sqlite3_finalize(self->stmt_select_relMembers);
-		sqlite3_finalize(self->stmt_select_relInfo);
-		sqlite3_finalize(self->stmt_select_wayNds);
-		sqlite3_finalize(self->stmt_select_wayRange);
-		sqlite3_finalize(self->stmt_select_wayInfo);
-		sqlite3_finalize(self->stmt_select_nodeInfo);
-		sqlite3_finalize(self->stmt_select_nodeCoord);
-		sqlite3_finalize(self->stmt_insert_relRange);
-		sqlite3_finalize(self->stmt_insert_relMembers);
-		sqlite3_finalize(self->stmt_insert_relInfo);
-		sqlite3_finalize(self->stmt_insert_wayNds);
-		sqlite3_finalize(self->stmt_insert_wayRange);
-		sqlite3_finalize(self->stmt_insert_wayInfo);
-		sqlite3_finalize(self->stmt_insert_nodeInfo);
-		sqlite3_finalize(self->stmt_insert_nodeCoord);
+		osmdb_index_finalizeSelect(self);
+		osmdb_index_finalizeInsert(self);
 		sqlite3_finalize(self->stmt_end);
 		sqlite3_finalize(self->stmt_begin);
 
@@ -984,6 +847,11 @@ int osmdb_index_get(osmdb_index_t* self,
 
 	int64_t major_id = id/OSMDB_BLOB_SIZE;
 	int64_t minor_id = id%OSMDB_BLOB_SIZE;
+	if(type < OSMDB_BLOB_TYPE_TILE_COUNT)
+	{
+		major_id = id;
+		minor_id = 0;
+	}
 
 	osmdb_index_lock(self);
 
