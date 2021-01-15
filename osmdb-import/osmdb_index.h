@@ -41,6 +41,7 @@ typedef struct
 	// sqlite3 statements
 	sqlite3_stmt* stmt_begin;
 	sqlite3_stmt* stmt_end;
+	sqlite3_stmt* stmt_changeset;
 	sqlite3_stmt* stmt_insert[OSMDB_BLOB_TYPE_COUNT];
 	sqlite3_stmt* stmt_select[OSMDB_BLOB_TYPE_COUNT];
 
@@ -57,6 +58,7 @@ typedef struct
 
 osmdb_index_t* osmdb_index_new(const char* fname);
 void           osmdb_index_delete(osmdb_index_t** _self);
+int64_t        osmdb_index_changeset(osmdb_index_t* self);
 int            osmdb_index_get(osmdb_index_t* self,
                                int type,
                                int64_t id,

@@ -83,18 +83,23 @@ int osmdb_index_createTables(osmdb_index_t* self)
 {
 	ASSERT(self);
 
-	const char* sql_pragma[] =
+	const char* sql_init[] =
 	{
 		"PRAGMA journal_mode = OFF;",
 		"PRAGMA locking_mode = EXCLUSIVE;",
 		"PRAGMA temp_store_directory = '.';",
+		"CREATE TABLE tbl_attr"
+		"("
+		"	key TEXT UNIQUE,"
+		"	val TEXT"
+		");",
 		NULL
 	};
 
 	int i = 0;
-	while(sql_pragma[i])
+	while(sql_init[i])
 	{
-		if(sqlite3_exec(self->db, sql_pragma[i], NULL, NULL,
+		if(sqlite3_exec(self->db, sql_init[i], NULL, NULL,
 		                NULL) != SQLITE_OK)
 		{
 			LOGE("sqlite3_exec(%i): %s",
@@ -506,6 +511,28 @@ osmdb_index_prepareSelect(osmdb_index_t* self)
 ***********************************************************/
 
 #ifdef OSMDB_IMPORTER
+int osmdb_index_updateChangeset(osmdb_index_t* self,
+                                int64_t changeset)
+{
+	ASSERT(self);
+
+	char sql[256];
+	snprintf(sql, 256,
+	         "REPLACE INTO tbl_attr (key, val)"
+	         "	VALUES ('changeset', '%" PRId64 "');",
+	         changeset);
+
+	int ret = 1;
+	if(sqlite3_exec(self->db, sql, NULL, NULL,
+	                NULL) != SQLITE_OK)
+	{
+		LOGE("sqlite3_exec: %s", sqlite3_errmsg(self->db));
+		ret = 0;
+	}
+
+	return ret;
+}
+
 int osmdb_index_add(osmdb_index_t* self,
                     int type, int64_t id,
                     size_t size,
@@ -711,6 +738,17 @@ osmdb_index_new(const char* fname)
 		goto fail_prepare_end;
 	}
 
+	const char* sql_changeset;
+	sql_changeset = "SELECT val FROM tbl_attr WHERE "
+	                "key='changeset';";
+	if(sqlite3_prepare_v2(self->db, sql_changeset, -1,
+	                      &self->stmt_changeset,
+	                      NULL) != SQLITE_OK)
+	{
+		LOGE("sqlite3_prepare_v2: %s", sqlite3_errmsg(self->db));
+		goto fail_prepare_changeset;
+	}
+
 	if(osmdb_index_prepareInsert(self) == 0)
 	{
 		goto fail_prepare_insert;
@@ -752,6 +790,8 @@ osmdb_index_new(const char* fname)
 	fail_prepare_select:
 		osmdb_index_finalizeInsert(self);
 	fail_prepare_insert:
+		sqlite3_finalize(self->stmt_changeset);
+	fail_prepare_changeset:
 		sqlite3_finalize(self->stmt_end);
 	fail_prepare_end:
 		sqlite3_finalize(self->stmt_begin);
@@ -819,6 +859,7 @@ void osmdb_index_delete(osmdb_index_t** _self)
 		pthread_mutex_destroy(&self->cache_mutex);
 		osmdb_index_finalizeSelect(self);
 		osmdb_index_finalizeInsert(self);
+		sqlite3_finalize(self->stmt_changeset);
 		sqlite3_finalize(self->stmt_end);
 		sqlite3_finalize(self->stmt_begin);
 
@@ -836,6 +877,35 @@ void osmdb_index_delete(osmdb_index_t** _self)
 		FREE(self);
 		*_self = NULL;
 	}
+}
+
+int64_t osmdb_index_changeset(osmdb_index_t* self)
+{
+	ASSERT(self);
+
+	int64_t changeset = 0;
+
+	sqlite3_stmt* stmt = self->stmt_changeset;
+
+	if(sqlite3_step(stmt) == SQLITE_ROW)
+	{
+		const unsigned char* val;
+		val = sqlite3_column_text(stmt, 0);
+		changeset = (int64_t)
+		            strtoll((const char*) val, NULL, 0);
+	}
+	else
+	{
+		LOGE("sqlite3_step: %s",
+		     sqlite3_errmsg(self->db));
+	}
+
+	if(sqlite3_reset(stmt) != SQLITE_OK)
+	{
+		LOGW("sqlite3_reset failed");
+	}
+
+	return changeset;
 }
 
 int osmdb_index_get(osmdb_index_t* self,

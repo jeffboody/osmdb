@@ -38,6 +38,8 @@
 #include "../osmdb_util.h"
 
 // protected functions
+int osmdb_index_updateChangeset(osmdb_index_t* self,
+                                int64_t changeset);
 int osmdb_index_add(osmdb_index_t* self,
                     int type, int64_t id,
                     size_t size, void* data);
@@ -708,7 +710,8 @@ osm_parser_endOsm(osm_parser_t* self, int line,
 
 	self->state = OSM_STATE_DONE;
 
-	return 1;
+	return osmdb_index_updateChangeset(self->index,
+	                                   self->tag_changeset);
 }
 
 static int
@@ -754,6 +757,15 @@ osm_parser_beginOsmNode(osm_parser_t* self, int line,
 			self->node_coord->nid = (int64_t)
 			                        strtoll(atts[j], NULL, 0);
 			self->node_info->nid  = self->node_coord->nid;
+		}
+		else if(strcmp(atts[i], "changeset") == 0)
+		{
+			int64_t changeset = (int64_t)
+			                    strtoll(atts[j], NULL, 0);
+			if(changeset > self->tag_changeset)
+			{
+				self->tag_changeset = changeset;
+			}
 		}
 		else if(strcmp(atts[i], "lat") == 0)
 		{
@@ -1012,6 +1024,15 @@ osm_parser_beginOsmWay(osm_parser_t* self, int line,
 			                       strtoll(atts[j], NULL, 0);
 			self->way_range->wid = self->way_info->wid;
 			self->way_nds->wid   = self->way_info->wid;
+		}
+		else if(strcmp(atts[i], "changeset") == 0)
+		{
+			int64_t changeset = (int64_t)
+			                    strtoll(atts[j], NULL, 0);
+			if(changeset > self->tag_changeset)
+			{
+				self->tag_changeset = changeset;
+			}
 		}
 
 		i += 2;
@@ -1535,6 +1556,15 @@ osm_parser_beginOsmRel(osm_parser_t* self, int line,
 			                         strtoll(atts[j], NULL, 0);
 			self->rel_members->rid = self->rel_info->rid;
 			self->rel_range->rid   = self->rel_info->rid;
+		}
+		else if(strcmp(atts[i], "changeset") == 0)
+		{
+			int64_t changeset = (int64_t)
+			                    strtoll(atts[j], NULL, 0);
+			if(changeset > self->tag_changeset)
+			{
+				self->tag_changeset = changeset;
+			}
 		}
 
 		i += 2;
