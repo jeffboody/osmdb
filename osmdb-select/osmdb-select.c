@@ -29,22 +29,19 @@
 #include "libcc/cc_log.h"
 #include "libsqlite3/sqlite3.h"
 #include "terrain/terrain_util.h"
-#include "../osmdb_database.h"
+#include "../osmdb-import/osmdb_index.h"
 
 /***********************************************************
 * private                                                  *
 ***********************************************************/
 
-#define OSMDB_REQUEST_TYPE_OSMDB  0
-#define OSMDB_REQUEST_TYPE_SEARCH 1
-
-static int osmdb_parseY(char* s, int* type, int* y)
+static int osmdb_parseY(char* s, int* y)
 {
 	*y = (int) strtol(s, NULL, 0);
 	return 1;
 }
 
-static int osmdb_parseX(char* s, int* type, int* x, int* y)
+static int osmdb_parseX(char* s, int* x, int* y)
 {
 	// find the pattern
 	char* p = strchr(s, '/');
@@ -58,10 +55,10 @@ static int osmdb_parseX(char* s, int* type, int* x, int* y)
 	// parse x
 	*x = (int) strtol(s, NULL, 0);
 
-	return osmdb_parseY(p, type, y);
+	return osmdb_parseY(p, y);
 }
 
-static int osmdb_parseZoom(char* s, int* type,
+static int osmdb_parseZoom(char* s,
                            int* zoom, int* x, int* y)
 {
 	// find the pattern
@@ -76,51 +73,17 @@ static int osmdb_parseZoom(char* s, int* type,
 	// parse the zoom
 	*zoom = (int) strtol(s, NULL, 0);
 
-	return osmdb_parseX(p, type, x, y);
+	return osmdb_parseX(p, x, y);
 }
 
 static int
-osmdb_parseSearch(char* s, char* search)
-{
-	// initialize search string
-	snprintf(search, 256, "%s", s);
-
-	if(search[0] == '\0')
-	{
-		return 0;
-	}
-
-	int idx = 0;
-	while(search[idx] != '\0')
-	{
-		if(((search[idx] >= 'a') && (search[idx] <= 'z')) ||
-		   ((search[idx] >= 'A') && (search[idx] <= 'Z')) ||
-		   ((search[idx] >= '0') && (search[idx] <= '9')))
-		{
-			// accept characters
-		}
-		else
-		{
-			// ignore unaccepted characters
-			search[idx] = ' ';
-		}
-
-		++idx;
-	}
-
-	return 1;
-}
-static int
-osmdb_parseRequest(const char* s, int* type,
-                   int* zoom, int* x, int* y,
-                   char* search)
+osmdb_parseRequest(const char* s,
+                   int* zoom, int* x, int* y)
 {
 	ASSERT(s);
-	ASSERT(type);
 	ASSERT(zoom);
 	ASSERT(x);
 	ASSERT(y);
-	ASSERT(search);
 
 	// copy request
 	char tmp[256];
@@ -131,18 +94,8 @@ osmdb_parseRequest(const char* s, int* type,
 	char* p;
 	if((p = strstr(tmp, "/osmdbv4/")) && (p == tmp))
 	{
-		*type  = OSMDB_REQUEST_TYPE_OSMDB;
 		p = &(p[9]);
-		if(osmdb_parseZoom(p, type, zoom, x, y) == 0)
-		{
-			goto failure;
-		}
-	}
-	else if((p = strstr(tmp, "/search/")) && (p == tmp))
-	{
-		*type  = OSMDB_REQUEST_TYPE_SEARCH;
-		p = &(p[8]);
-		if(osmdb_parseSearch(p, search) == 0)
+		if(osmdb_parseZoom(p, zoom, x, y) == 0)
 		{
 			goto failure;
 		}
@@ -169,8 +122,7 @@ int main(int argc, const char** argv)
 {
 	if(argc != 3)
 	{
-		LOGE("usage: %s file.sqlite3 [SEARCH|TILE]", argv[0]);
-		LOGE("SEARCH: /search/foo+bar");
+		LOGE("usage: %s file.sqlite3 [TILE]", argv[0]);
 		LOGE("TILE: /osmdbv4/zoom/x/y");
 		return EXIT_FAILURE;
 	}
@@ -178,19 +130,16 @@ int main(int argc, const char** argv)
 	const char* fname   = argv[1];
 	const char* request = argv[2];
 
-	int  type;
 	int  zoom;
 	int  x;
 	int  y;
-	char search[256];
-	if(osmdb_parseRequest(request, &type, &zoom, &x, &y,
-	                      search) == 0)
+	if(osmdb_parseRequest(request, &zoom, &x, &y) == 0)
 	{
 		return EXIT_FAILURE;
 	}
 
-	osmdb_database_t* db = osmdb_database_new(fname, 1);
-	if(db == NULL)
+	osmdb_index_t* index = osmdb_index_new(fname);
+	if(index == NULL)
 	{
 		return EXIT_FAILURE;
 	}
@@ -201,25 +150,16 @@ int main(int argc, const char** argv)
 		goto fail_os;
 	}
 
-	if(type == OSMDB_REQUEST_TYPE_SEARCH)
-	{
-		char spellfix[256];
-		osmdb_database_spellfix(db, 0, search, spellfix);
-		osmdb_database_search(db, 0, spellfix, os);
-	}
-	else if(type == OSMDB_REQUEST_TYPE_OSMDB)
-	{
-		osmdb_database_tile(db, 0, zoom, x, y, os);
-	}
+	osmdb_index_tile(index, zoom, x, y, os);
 
 	xml_ostream_delete(&os);
-	osmdb_database_delete(&db);
+	osmdb_index_delete(&index);
 
 	// success
 	return EXIT_SUCCESS;
 
 	// failure
 	fail_os:
-		osmdb_database_delete(&db);
+		osmdb_index_delete(&index);
 	return EXIT_FAILURE;
 }

@@ -154,16 +154,26 @@ osmdb_entry_map(osmdb_entry_t* self, size_t offset)
 			bsize    = osmdb_blobRelRange_sizeof(blob->rel_range);
 			minor_id = blob->rel_range->rid%OSMDB_BLOB_SIZE;
 		}
+		else if((self->type < OSMDB_BLOB_TYPE_TILE_COUNT) &&
+		        (offset == 0))
+		{
+			blob->tile = (osmdb_blobTile_t*)
+			             (self->data + offset);
+			bsize    = osmdb_blobTile_sizeof(blob->tile);
+			minor_id = 0;
+		}
 		else
 		{
-			LOGE("invalid type=%i", self->type);
+			LOGE("invalid type=%i, major_id=%" PRId64 ", offset=%" PRId64,
+			     self->type, self->major_id, (int64_t) offset);
 			goto fail_type;
 		}
 
 		if(cc_map_addf(self->map, (const void*) blob,
 		               "%" PRId64, minor_id) == 0)
 		{
-			LOGE("invalid minor_id=%" PRId64);
+			LOGE("invalid type=%i, major_id=%" PRId64 ", minor_id=%" PRId64,
+			     self->type, self->major_id, minor_id);
 			goto fail_map;
 		}
 

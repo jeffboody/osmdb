@@ -62,6 +62,7 @@ typedef struct
 	// char name[];
 } osmdb_blobNodeInfo_t;
 
+// note: check joinWay if adding flags
 #define OSMDB_BLOBWAYINFO_FLAG_FORWARD 0x01
 #define OSMDB_BLOBWAYINFO_FLAG_REVERSE 0x02
 #define OSMDB_BLOBWAYINFO_FLAG_BRIDGE  0x04
@@ -109,10 +110,10 @@ typedef struct
 	// char name[];
 } osmdb_blobRelInfo_t;
 
-#define OSMDB_RELDATA_TYPE_NONE     0
-#define OSMDB_RELDATA_TYPE_NODE     1
-#define OSMDB_RELDATA_TYPE_WAY      2
-#define OSMDB_RELDATA_TYPE_RELATION 3
+#define OSMDB_RELDATA_TYPE_NONE 0
+#define OSMDB_RELDATA_TYPE_NODE 1
+#define OSMDB_RELDATA_TYPE_WAY  2
+#define OSMDB_RELDATA_TYPE_REL  3
 
 typedef struct
 {

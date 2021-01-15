@@ -30,6 +30,7 @@
 #include "libcc/cc_list.h"
 #include "libcc/cc_map.h"
 #include "libsqlite3/sqlite3.h"
+#include "libxmlstream/xml_ostream.h"
 #include "osmdb_blob.h"
 
 typedef struct
@@ -65,5 +66,8 @@ int            osmdb_index_get(osmdb_index_t* self,
                                osmdb_blob_t** _blob);
 void           osmdb_index_put(osmdb_index_t* self,
                                osmdb_blob_t** _blob);
+int            osmdb_index_tile(osmdb_index_t* self,
+                                int zoom, int x, int y,
+                                xml_ostream_t* os);
 
 #endif
