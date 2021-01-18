@@ -1732,22 +1732,38 @@ osm_parser_insertRel(osm_parser_t* self,
 		return 0;
 	}
 
-	size = osmdb_blobRelMembers_sizeof(self->rel_members);
-	if(osmdb_index_add(self->index,
-	                   OSMDB_BLOB_TYPE_REL_MEMBERS,
-	                   self->rel_members->rid,
-	                   size, (void*) self->rel_members) == 0)
+	// discard relation members which are centered
+	// discard large polygon relation members
+	// large areas are defined to be 50% of the area covered
+	// by a "typical" zoom 14 tile. e.g.
+	// 14/3403/6198:
+	// latT=40.078071, lonL=-105.227051,
+	// latB=40.061257, lonR=-105.205078,
+	// area=0.000369
+	double latT = self->rel_range->latT;
+	double lonL = self->rel_range->lonL;
+	double latB = self->rel_range->latB;
+	double lonR = self->rel_range->lonR;
+	float  area = (float) ((latT-latB)*(lonR-lonL));
+	if((center == 0) &&
+	   ((polygon == 0) ||
+	    (polygon && (0.5f*area < 0.000369f))))
 	{
-		return 0;
+		size = osmdb_blobRelMembers_sizeof(self->rel_members);
+		if(osmdb_index_add(self->index,
+		                   OSMDB_BLOB_TYPE_REL_MEMBERS,
+		                   self->rel_members->rid,
+		                   size, (void*) self->rel_members) == 0)
+		{
+			return 0;
+		}
 	}
 
 	if(osm_parser_addTileRange(self,
 	                           OSMDB_BLOB_TYPE_REL_RANGE,
 	                           self->rel_range->rid,
-	                           self->rel_range->latT,
-	                           self->rel_range->lonL,
-	                           self->rel_range->latB,
-	                           self->rel_range->lonR,
+	                           latT, lonL,
+	                           latB, lonR,
 	                           center, polygon,
 	                           min_zoom) == 0)
 	{
