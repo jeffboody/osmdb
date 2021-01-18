@@ -4,3 +4,4 @@ ln -s ../../libexpat
 ln -s ../../libxmlstream
 ln -s ../../libpak
 ln -s ../../libsqlite3
+ln -s ../../osmdb

@@ -33,9 +33,9 @@
 #include "libcc/cc_memory.h"
 #include "libcc/cc_timestamp.h"
 #include "libxmlstream/xml_istream.h"
+#include "osmdb/osmdb_util.h"
 #include "terrain/terrain_util.h"
 #include "osm_parser.h"
-#include "../osmdb_util.h"
 
 // protected functions
 int osmdb_index_updateChangeset(osmdb_index_t* self,

@@ -28,8 +28,8 @@
 #define LOG_TAG "osmdb"
 #include "libcc/cc_log.h"
 #include "libsqlite3/sqlite3.h"
+#include "osmdb/index/osmdb_index.h"
 #include "terrain/terrain_util.h"
-#include "../osmdb-import/osmdb_index.h"
 
 /***********************************************************
 * private                                                  *

@@ -29,8 +29,8 @@
 #include "libcc/cc_list.h"
 #include "libcc/cc_map.h"
 #include "libsqlite3/sqlite3.h"
-#include "../osmdb_style.h"
-#include "osmdb_index.h"
+#include "osmdb/index/osmdb_index.h"
+#include "osmdb/osmdb_style.h"
 
 typedef struct
 {
