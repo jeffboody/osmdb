@@ -1215,7 +1215,7 @@ osm_parser_addTileRange(osm_parser_t* self,
 			{
 				id = (int64_t) pow2n[i]*r + c;
 				if(osmdb_index_addTile(self->index, type_array[i],
-				                       id, self->way_info->wid) == 0)
+				                       id, ref) == 0)
 				{
 					return 0;
 				}
