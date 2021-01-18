@@ -746,11 +746,14 @@ osmdb_index_gatherNode(osmdb_index_t* self,
 
 	// coord is required
 	osmdb_blob_t* bc;
-	if((osmdb_index_get(self, OSMDB_BLOB_TYPE_NODE_COORD,
-	                    nid, &bc) == 0) ||
-	   (bc == NULL))
+	if(osmdb_index_get(self, OSMDB_BLOB_TYPE_NODE_COORD,
+	                   nid, &bc) == 0)
 	{
 		goto fail_coord;
+	}
+	else if(bc == NULL)
+	{
+		return 1;
 	}
 
 	if(osmdb_index_exportNode(self,
