@@ -2023,7 +2023,8 @@ osm_parser_new(const char* style,
 
 	self->t0 = cc_timestamp();
 
-	self->index = osmdb_index_new(db_name);
+	self->index = osmdb_index_new(db_name,
+	                              OSMDB_INDEX_MODE_CREATE);
 	if(self->index == NULL)
 	{
 		goto fail_index;

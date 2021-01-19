@@ -74,7 +74,6 @@ const int OSMDB_ONE = 1;
 * private - sqlite                                         *
 ***********************************************************/
 
-#ifdef OSMDB_IMPORTER
 static int
 osmdb_index_createTables(osmdb_index_t* self)
 {
@@ -127,7 +126,6 @@ osmdb_index_createTables(osmdb_index_t* self)
 
 	return 1;
 }
-#endif
 
 static int osmdb_index_endTransaction(osmdb_index_t* self)
 {
@@ -135,29 +133,28 @@ static int osmdb_index_endTransaction(osmdb_index_t* self)
 
 	int ret = 1;
 
-	#ifdef OSMDB_IMPORTER
-		if(self->batch_size == 0)
-		{
-			return 1;
-		}
+	if((self->batch_size == 0) ||
+	   (self->mode == OSMDB_INDEX_MODE_READONLY))
+	{
+		return 1;
+	}
 
-		sqlite3_stmt* stmt = self->stmt_end;
-		if(sqlite3_step(stmt) == SQLITE_DONE)
-		{
-			self->batch_size = 0;
-		}
-		else
-		{
-			LOGE("sqlite3_step: %s",
-			     sqlite3_errmsg(self->db));
-			ret = 0;
-		}
+	sqlite3_stmt* stmt = self->stmt_end;
+	if(sqlite3_step(stmt) == SQLITE_DONE)
+	{
+		self->batch_size = 0;
+	}
+	else
+	{
+		LOGE("sqlite3_step: %s",
+		     sqlite3_errmsg(self->db));
+		ret = 0;
+	}
 
-		if(sqlite3_reset(stmt) != SQLITE_OK)
-		{
-			LOGW("sqlite3_reset failed");
-		}
-	#endif
+	if(sqlite3_reset(stmt) != SQLITE_OK)
+	{
+		LOGW("sqlite3_reset failed");
+	}
 
 	return ret;
 }
@@ -169,37 +166,39 @@ osmdb_index_beginTransaction(osmdb_index_t* self)
 
 	int ret = 1;
 
-	#ifdef OSMDB_IMPORTER
-		if(self->batch_size >= OSMDB_INDEX_BATCH_SIZE)
+	if(self->mode == OSMDB_INDEX_MODE_READONLY)
+	{
+		return 1;
+	}
+	else if(self->batch_size >= OSMDB_INDEX_BATCH_SIZE)
+	{
+		if(osmdb_index_endTransaction(self) == 0)
 		{
-			if(osmdb_index_endTransaction(self) == 0)
-			{
-				return 0;
-			}
+			return 0;
 		}
-		else if(self->batch_size > 0)
-		{
-			++self->batch_size;
-			return 1;
-		}
+	}
+	else if(self->batch_size > 0)
+	{
+		++self->batch_size;
+		return 1;
+	}
 
-		sqlite3_stmt* stmt = self->stmt_begin;
-		if(sqlite3_step(stmt) == SQLITE_DONE)
-		{
-			++self->batch_size;
-		}
-		else
-		{
-			LOGE("sqlite3_step: %s",
-			     sqlite3_errmsg(self->db));
-			ret = 0;
-		}
+	sqlite3_stmt* stmt = self->stmt_begin;
+	if(sqlite3_step(stmt) == SQLITE_DONE)
+	{
+		++self->batch_size;
+	}
+	else
+	{
+		LOGE("sqlite3_step: %s",
+		     sqlite3_errmsg(self->db));
+		ret = 0;
+	}
 
-		if(sqlite3_reset(stmt) != SQLITE_OK)
-		{
-			LOGW("sqlite3_reset failed");
-		}
-	#endif
+	if(sqlite3_reset(stmt) != SQLITE_OK)
+	{
+		LOGW("sqlite3_reset failed");
+	}
 
 	return ret;
 }
@@ -418,9 +417,10 @@ osmdb_index_lock(osmdb_index_t* self)
 {
 	ASSERT(self);
 
-	#ifndef OSMDB_IMPORTER
-	pthread_mutex_lock(&self->cache_mutex);
-	#endif
+	if(self->mode == OSMDB_INDEX_MODE_READONLY)
+	{
+		pthread_mutex_lock(&self->cache_mutex);
+	}
 }
 
 static void
@@ -428,9 +428,10 @@ osmdb_index_unlock(osmdb_index_t* self)
 {
 	ASSERT(self);
 
-	#ifndef OSMDB_IMPORTER
-	pthread_mutex_unlock(&self->cache_mutex);
-	#endif
+	if(self->mode == OSMDB_INDEX_MODE_READONLY)
+	{
+		pthread_mutex_unlock(&self->cache_mutex);
+	}
 }
 
 /***********************************************************
@@ -2256,7 +2257,6 @@ osmdb_index_gatherWays(osmdb_index_t* self,
 * protected - importer                                     *
 ***********************************************************/
 
-#ifdef OSMDB_IMPORTER
 int osmdb_index_updateChangeset(osmdb_index_t* self,
                                 int64_t changeset)
 {
@@ -2463,14 +2463,13 @@ int osmdb_index_addTile(osmdb_index_t* self, int type,
 		osmdb_entry_delete(&entry);
 	return 0;
 }
-#endif
 
 /***********************************************************
 * public                                                   *
 ***********************************************************/
 
 osmdb_index_t*
-osmdb_index_new(const char* fname)
+osmdb_index_new(const char* fname, int mode)
 {
 	ASSERT(fname);
 
@@ -2483,17 +2482,24 @@ osmdb_index_new(const char* fname)
 		return NULL;
 	}
 
+	self->mode = mode;
+
 	if(sqlite3_initialize() != SQLITE_OK)
 	{
 		LOGE("sqlite3_initialize failed");
 		goto fail_init;
 	}
 
-	#ifdef OSMDB_IMPORTER
-		int flags = SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE;
-	#else
-		int flags = SQLITE_OPEN_READONLY;
-	#endif
+	int flags = SQLITE_OPEN_READONLY;
+	if(mode == OSMDB_INDEX_MODE_CREATE)
+	{
+		flags = SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE;
+	}
+	else if(mode == OSMDB_INDEX_MODE_APPEND)
+	{
+		flags = SQLITE_OPEN_READWRITE;
+	}
+
 	if(sqlite3_open_v2(fname, &self->db,
 	                   flags, NULL) != SQLITE_OK)
 	{
@@ -2501,12 +2507,13 @@ osmdb_index_new(const char* fname)
 		goto fail_open;
 	}
 
-	#ifdef OSMDB_IMPORTER
+	if(mode == OSMDB_INDEX_MODE_CREATE)
+	{
 		if(osmdb_index_createTables(self) == 0)
 		{
 			goto fail_create;
 		}
-	#endif
+	}
 
 	const char* sql_begin = "BEGIN;";
 	if(sqlite3_prepare_v2(self->db, sql_begin, -1,
@@ -2584,9 +2591,7 @@ osmdb_index_new(const char* fname)
 	fail_prepare_end:
 		sqlite3_finalize(self->stmt_begin);
 	fail_prepare_begin:
-	#ifdef OSMDB_IMPORTER
 		fail_create:
-	#endif
 	fail_open:
 	{
 		// close db even when open fails

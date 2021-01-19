@@ -33,7 +33,6 @@
 * protected                                                *
 ***********************************************************/
 
-#ifdef OSMDB_IMPORTER
 void osmdb_blobNodeInfo_addName(osmdb_blobNodeInfo_t* self,
                                 const char* name)
 {
@@ -102,7 +101,6 @@ void osmdb_blobRelInfo_addName(osmdb_blobRelInfo_t* self,
 	char* s = osmdb_blobRelInfo_name(self);
 	snprintf(s, 256, "%s", name);
 }
-#endif
 
 /***********************************************************
 * public                                                   *
@@ -173,13 +171,6 @@ osmdb_blobWayNds_nds(osmdb_blobWayNds_t* self)
 {
 	ASSERT(self);
 
-	#ifndef OSMDB_IMPORTER
-		if(self->count == 0)
-		{
-			return NULL;
-		}
-	#endif
-
 	return (int64_t*)
 	       (((void*) self) + sizeof(osmdb_blobWayNds_t));
 }
@@ -220,13 +211,6 @@ osmdb_blobRelMembers_data(osmdb_blobRelMembers_t* self)
 {
 	ASSERT(self);
 
-	#ifndef OSMDB_IMPORTER
-		if(self->count == 0)
-		{
-			return NULL;
-		}
-	#endif
-
 	return (osmdb_blobRelData_t*)
 	       (((void*) self) + sizeof(osmdb_blobRelMembers_t));
 }
@@ -251,13 +235,6 @@ osmdb_blobRelRange_sizeof(osmdb_blobRelRange_t* self)
 int64_t* osmdb_blobTile_refs(osmdb_blobTile_t* self)
 {
 	ASSERT(self);
-
-	#ifndef OSMDB_IMPORTER
-		if(self->count == 0)
-		{
-			return NULL;
-		}
-	#endif
 
 	return (int64_t*)
 	       (((void*) self) + sizeof(osmdb_blobTile_t));

@@ -6,7 +6,7 @@ SOURCE   = $(TARGET).c $(CLASSES:%=%.c)
 OBJECTS  = $(TARGET).o $(CLASSES:%=%.o)
 HFILES   = $(CLASSES:%=%.h)
 OPT      = -O2 -Wall -Wno-format-truncation
-CFLAGS   = $(OPT) -I. -DOSMDB_IMPORTER
+CFLAGS   = $(OPT) -I.
 LDFLAGS  = -Llibsqlite3 -lsqlite3 -Llibcc -lcc -Lterrain -lterrain -Llibpak -lpak -Llibxmlstream -lxmlstream -Llibexpat/expat/lib -lexpat -ldl -lpthread -lm -lz
 CCC      = gcc
 

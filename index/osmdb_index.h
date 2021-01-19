@@ -33,8 +33,13 @@
 #include "libxmlstream/xml_ostream.h"
 #include "osmdb_blob.h"
 
+#define OSMDB_INDEX_MODE_READONLY 0
+#define OSMDB_INDEX_MODE_CREATE   1
+#define OSMDB_INDEX_MODE_APPEND   2
+
 typedef struct
 {
+	int mode;
 	int batch_size;
 
 	sqlite3* db;
@@ -57,7 +62,7 @@ typedef struct
 	cc_list_t*      cache_list;
 } osmdb_index_t;
 
-osmdb_index_t* osmdb_index_new(const char* fname);
+osmdb_index_t* osmdb_index_new(const char* fname, int mode);
 void           osmdb_index_delete(osmdb_index_t** _self);
 int64_t        osmdb_index_changeset(osmdb_index_t* self);
 int            osmdb_index_get(osmdb_index_t* self,

@@ -138,7 +138,8 @@ int main(int argc, const char** argv)
 		return EXIT_FAILURE;
 	}
 
-	osmdb_index_t* index = osmdb_index_new(fname);
+	osmdb_index_t* index;
+	index = osmdb_index_new(fname, OSMDB_INDEX_MODE_READONLY);
 	if(index == NULL)
 	{
 		return EXIT_FAILURE;
