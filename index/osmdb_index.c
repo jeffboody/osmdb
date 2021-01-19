@@ -1104,9 +1104,9 @@ osmdb_index_exportRel(osmdb_index_t* self,
                       osmdb_blobRelRange_t* rel_range,
                       xml_ostream_t* os)
 {
+	// rel_members may be NULL
 	ASSERT(self);
 	ASSERT(rel_info);
-	ASSERT(rel_members);
 	ASSERT(rel_range);
 	ASSERT(os);
 
@@ -1137,23 +1137,26 @@ osmdb_index_exportRel(osmdb_index_t* self,
 		ret &= xml_ostream_attrf(os, "lonR", "%lf", rel_range->lonR);
 	}
 
-	osmdb_blobRelData_t* data;
-	data = osmdb_blobRelMembers_data(rel_members);
-
-	int i;
-	int count = rel_members->count;
-	for(i = 0; i < count; ++i)
+	if(rel_members)
 	{
-		ret &= xml_ostream_begin(os, "member");
-		ret &= xml_ostream_attr(os, "type",
-		                        osmdb_relationMemberCodeToType(data[i].type));
-		ret &= xml_ostream_attrf(os, "ref", "%0.0lf", data[i].ref);
-		if(data[i].role)
+		osmdb_blobRelData_t* data;
+		data = osmdb_blobRelMembers_data(rel_members);
+
+		int i;
+		int count = rel_members->count;
+		for(i = 0; i < count; ++i)
 		{
-			ret &= xml_ostream_attr(os, "role",
-			                        osmdb_relationMemberCodeToRole(data[i].role));
+			ret &= xml_ostream_begin(os, "member");
+			ret &= xml_ostream_attr(os, "type",
+			                        osmdb_relationMemberCodeToType(data[i].type));
+			ret &= xml_ostream_attrf(os, "ref", "%0.0lf", data[i].ref);
+			if(data[i].role)
+			{
+				ret &= xml_ostream_attr(os, "role",
+				                        osmdb_relationMemberCodeToRole(data[i].role));
+			}
+			ret &= xml_ostream_end(os);
 		}
-		ret &= xml_ostream_end(os);
 	}
 
 	ret &= xml_ostream_end(os);
@@ -1191,16 +1194,11 @@ osmdb_index_gatherRel(osmdb_index_t* self,
 		return 1;
 	}
 
-	// members are required
+	// members are optional
 	osmdb_blob_t* bm;
 	if(osmdb_index_get(self, OSMDB_BLOB_TYPE_REL_MEMBERS,
 	                   rid, &bm) == 0)
 	{
-		goto fail_members;
-	}
-	else if(bm == NULL)
-	{
-		LOGE("invalid members");
 		goto fail_members;
 	}
 
@@ -1217,34 +1215,37 @@ osmdb_index_gatherRel(osmdb_index_t* self,
 		goto fail_range;
 	}
 
-	int i;
-	int count;
-	osmdb_blobRelData_t* data;
-	data  = osmdb_blobRelMembers_data(bm->rel_members);
-	count = bm->rel_members->count;
-	for(i = 0; i < count; ++i)
+	if(bm)
 	{
-		if(data[i].type == OSMDB_RELDATA_TYPE_NODE)
+		int i;
+		int count;
+		osmdb_blobRelData_t* data;
+		data  = osmdb_blobRelMembers_data(bm->rel_members);
+		count = bm->rel_members->count;
+		for(i = 0; i < count; ++i)
 		{
-			if(osmdb_index_gatherNode(self, data[i].ref,
-			                          map_export, os) == 0)
+			if(data[i].type == OSMDB_RELDATA_TYPE_NODE)
 			{
-				goto fail_member;
+				if(osmdb_index_gatherNode(self, data[i].ref,
+				                          map_export, os) == 0)
+				{
+					goto fail_member;
+				}
 			}
-		}
-		else if(data[i].type == OSMDB_RELDATA_TYPE_WAY)
-		{
-			if(osmdb_index_gatherMemberWay(self, data[i].ref, zoom,
-			                               min_dist, map_export,
-			                               os) == 0)
+			else if(data[i].type == OSMDB_RELDATA_TYPE_WAY)
 			{
-				goto fail_member;
+				if(osmdb_index_gatherMemberWay(self, data[i].ref, zoom,
+				                               min_dist, map_export,
+				                               os) == 0)
+				{
+					goto fail_member;
+				}
 			}
 		}
 	}
 
 	if(osmdb_index_exportRel(self, bi->rel_info,
-	                         bm->rel_members,
+	                         bm ? bm->rel_members : NULL,
 	                         br->rel_range, os) == 0)
 	{
 		goto fail_export;
