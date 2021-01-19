@@ -43,6 +43,7 @@
 	<color name="core:recreation" val="3CF3DBBF" />
 	<color name="core:special"    val="ECEA33BF" />
 	<color name="core:mineral"    val="DE1B1BBF" />
+	<color name="core:historic"   val="E988D0BF" />
 
 	<point name="peak14"    min_zoom="14" text_color1="peak:text"    text_color2="black" marker_color1="peak:point"    marker_color2="black" flags="marker:show,ele:show" />
 	<point name="saddle14"  min_zoom="14" text_color1="peak:text"    text_color2="black" marker_color1="peak:point"    marker_color2="black" flags="marker:show" />
@@ -84,6 +85,7 @@
 	<line name="core:recreation11" min_zoom="11" color1="core:recreation" color2="core:recreation" width="2.5" />
 	<line name="core:special11"    min_zoom="11" color1="core:special"    color2="core:special"    width="2.5" />
 	<line name="core:mineral11"    min_zoom="11" color1="core:mineral"    color2="core:mineral"    width="2.5" />
+	<line name="core:historic11"   min_zoom="11" color1="core:historic"   color2="core:historic"   width="2.5" />
 
 	<poly name="rest_area14"    min_zoom="14" color="white:halo" />
 	<poly name="bridge14"       min_zoom="14" color="white:halo" />
@@ -158,6 +160,7 @@
 	<class name="core:recreation"          layer="core"        line="core:recreation11" point="core11" />
 	<class name="core:special"             layer="core"        line="core:special11"    point="core11" />
 	<class name="core:mineral"             layer="core"        line="core:mineral11"    point="core11" />
+	<class name="core:historic"            layer="core"        line="core:historic11"   point="core11" />
 	<class name="default:waypoint"         point="default17" />
 	<class name="natural:peak"             point="peak14" />
 	<class name="natural:volcano"          point="peak14" />

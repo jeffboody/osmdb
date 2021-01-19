@@ -1,25 +1,27 @@
+export CC_USE_MATH = 1
+
 TARGET   = kml2data
-CLASSES  = kml_parser
+CLASSES  = kml_parser osmdb/index/osmdb_index osmdb/index/osmdb_blob osmdb/index/osmdb_entry osmdb/osmdb_filter osmdb/osmdb_util
 SOURCE   = $(TARGET).c $(CLASSES:%=%.c)
 OBJECTS  = $(TARGET).o $(CLASSES:%=%.o)
 HFILES   = $(CLASSES:%=%.h)
-OPT      = -O2 -Wall
-CFLAGS   = $(OPT) -I.
-LDFLAGS  = -Llibcc -lcc -Losmdb -losmdb -Llibxmlstream -lxmlstream -Llibexpat/expat/lib -lexpat -lm -lz
+OPT      = -O2 -Wall -Wno-format-truncation
+CFLAGS   = $(OPT) -I. -DOSMDB_IMPORTER
+LDFLAGS  = -Llibsqlite3 -lsqlite3 -Llibcc -lcc -Lterrain -lterrain -Llibxmlstream -lxmlstream -Llibexpat/expat/lib -lexpat -ldl -lpthread -lm -lz
 CCC      = gcc
 
 all: $(TARGET)
 
-$(TARGET): $(OBJECTS) libcc osmdb xmlstream libexpat
+$(TARGET): $(OBJECTS) libsqlite3 libcc terrain xmlstream libexpat
 	$(CCC) $(OPT) $(OBJECTS) -o $@ $(LDFLAGS)
 
-.PHONY: libcc osmdb xmlstream libexpat
+.PHONY: libsqlite3 libcc terrain xmlstream libexpat
 
 libcc:
 	$(MAKE) -C libcc -f Makefile
 
-osmdb:
-	$(MAKE) -C osmdb
+terrain:
+	$(MAKE) -C terrain
 
 xmlstream:
 	$(MAKE) -C libxmlstream
@@ -27,12 +29,16 @@ xmlstream:
 libexpat:
 	$(MAKE) -C libexpat/expat/lib
 
+libsqlite3:
+	$(MAKE) -C libsqlite3
+
 clean:
 	rm -f $(OBJECTS) *~ \#*\# $(TARGET)
 	$(MAKE) -C libcc -f Makefile clean
-	$(MAKE) -C osmdb clean
+	$(MAKE) -C terrain
 	$(MAKE) -C libxmlstream clean
 	$(MAKE) -C libexpat/expat/lib clean
-	rm libcc osmdb libxmlstream libexpat
+	$(MAKE) -C libsqlite3 clean
+	rm libsqlite3 libcc terrain osmdb libxmlstream libexpat
 
 $(OBJECTS): $(HFILES)

@@ -32,6 +32,7 @@
 #include "libcc/cc_log.h"
 #include "libcc/cc_memory.h"
 #include "osmdb/osmdb_util.h"
+#include "terrain/terrain_util.h"
 
 #define KML_STATE_INIT             0
 #define KML_STATE_KML              1
@@ -54,12 +55,26 @@
 
 #define KML_PARSER_WAY_NDS 64
 
+// protected functions
+int osmdb_index_add(osmdb_index_t* self,
+                    int type, int64_t id,
+                    size_t size, void* data);
+int osmdb_index_addTile(osmdb_index_t* self,
+                        int type, int64_t major_id,
+                        int64_t ref);
+void osmdb_blobNodeInfo_addName(osmdb_blobNodeInfo_t* self,
+                                const char* name);
+void osmdb_blobWayInfo_addName(osmdb_blobWayInfo_t* self,
+                               const char* name);
+void osmdb_blobRelInfo_addName(osmdb_blobRelInfo_t* self,
+                               const char* name);
+
 /***********************************************************
 * private - kml_node_t                                     *
 ***********************************************************/
 
 static kml_node_t*
-kml_node_new(double id, double lat, double lon)
+kml_node_new(int64_t id, double lat, double lon)
 {
 	kml_node_t* self;
 	self = (kml_node_t*)
@@ -154,26 +169,176 @@ static int kml_parser_statePop(kml_parser_t* self)
 	return KML_STATE_INIT;
 }
 
-static void
+static int clamp(int val, int a, int b)
+{
+	if(val < a)
+	{
+		val = a;
+	}
+	else if(val > b)
+	{
+		val = b;
+	}
+
+	return val;
+}
+
+static int
+kml_parser_addTileRange(kml_parser_t* self,
+                        int type, int64_t ref,
+                        double latT, double lonL,
+                        double latB, double lonR,
+                        int min_zoom)
+{
+	ASSERT(self);
+
+	// elements are defined with zero width but in
+	// practice are drawn with non-zero width
+	// points/lines so a border is needed to ensure they
+	// are not clipped between neighboring tiles
+	float border = 1.0f/16.0f;
+
+	// determine the tile type
+	int type_way[]  =
+	{
+		OSMDB_BLOB_TYPE_WAY_TILE14,
+		OSMDB_BLOB_TYPE_WAY_TILE11,
+	};
+	int type_rel[]  =
+	{
+		OSMDB_BLOB_TYPE_REL_TILE14,
+		OSMDB_BLOB_TYPE_REL_TILE11,
+	};
+	int* type_array;
+	if(type == OSMDB_BLOB_TYPE_WAY_RANGE)
+	{
+		type_array = type_way;
+	}
+	else if(type == OSMDB_BLOB_TYPE_REL_RANGE)
+	{
+		type_array = type_rel;
+	}
+	else
+	{
+		LOGE("invalid type=%i", type);
+		return 0;
+	}
+
+	// add to tiles
+	float x0;
+	float y0;
+	float x1;
+	float y1;
+	int   ix0;
+	int   iy0;
+	int   ix1;
+	int   iy1;
+	int   id;
+	int   i       = 0;
+	int   zoom[]  = { 14, 11, -1 };
+	int   pow2n[] = { 16384, 2048 };
+	while(min_zoom <= zoom[i])
+	{
+		terrain_coord2tile(latT, lonL,
+		                   zoom[i], &x0, &y0);
+		terrain_coord2tile(latB, lonR,
+		                   zoom[i], &x1, &y1);
+		ix0 = clamp((int) (x0 - border), 0, pow2n[i] - 1);
+		iy0 = clamp((int) (y0 - border), 0, pow2n[i] - 1);
+		ix1 = clamp((int) (x1 + border), 0, pow2n[i] - 1);
+		iy1 = clamp((int) (y1 + border), 0, pow2n[i] - 1);
+
+		int r;
+		int c;
+		for(r = iy0; r <= iy1; ++r)
+		{
+			for(c = ix0; c <= ix1; ++c)
+			{
+				id = (int64_t) pow2n[i]*r + c;
+				if(osmdb_index_addTile(self->index, type_array[i],
+				                       id, ref) == 0)
+				{
+					return 0;
+				}
+			}
+		}
+
+		++i;
+	}
+
+	return 1;
+}
+
+static int
 kml_parser_wayAddSeg(kml_parser_t* self)
 {
 	ASSERT(self);
 
 	// see init.sql for table definition
-	if(self->seg_nds)
+	if(self->seg_nds->count)
 	{
-		fprintf(self->tbl_ways, "%0.0lf|%i|0|||0|0|0|0|0|0|1|11\n",
-		        self->wid, self->class);
-		fprintf(self->tbl_ways_range, "%0.0lf|%lf|%lf|%lf|%lf\n",
-		        self->wid, self->seg_lonL, self->seg_lonR,
-		        self->seg_latB, self->seg_latT);
+		osmdb_blobWayInfo_t way_info =
+		{
+			.wid   = self->wid,
+			.class = self->class
+		};
+
+		size_t size = osmdb_blobWayInfo_sizeof(&way_info);
+		if(osmdb_index_add(self->index,
+		                   OSMDB_BLOB_TYPE_WAY_INFO,
+		                   self->wid, size,
+		                   (void*) &way_info) == 0)
+		{
+			return 0;
+		}
+
+		osmdb_blobWayRange_t way_range =
+		{
+			.wid  = self->wid,
+			.latT = self->seg_latT,
+			.lonL = self->seg_lonL,
+			.latB = self->seg_latB,
+			.lonR = self->seg_lonR
+		};
+
+		size = osmdb_blobWayRange_sizeof(&way_range);
+		if(osmdb_index_add(self->index,
+		                   OSMDB_BLOB_TYPE_WAY_RANGE,
+		                   self->wid, size,
+		                   (void*) &way_range) == 0)
+		{
+			return 0;
+		}
+
+		self->seg_nds->wid = self->wid;
+		size = osmdb_blobWayNds_sizeof(self->seg_nds);
+		if(osmdb_index_add(self->index,
+		                   OSMDB_BLOB_TYPE_WAY_NDS,
+		                   self->wid,
+		                   size, (void*) self->seg_nds) == 0)
+		{
+			return 0;
+		}
+
+		if(kml_parser_addTileRange(self,
+		                           OSMDB_BLOB_TYPE_WAY_RANGE,
+		                           way_range.wid,
+		                           way_range.latT, way_range.lonL,
+		                           way_range.latB, way_range.lonR,
+		                           11) == 0)
+		{
+			return 0;
+		}
 	}
-	self->wid     -= 1.0;
-	self->seg_nds  = 0;
-	self->seg_latT = 0.0;
-	self->seg_lonL = 0.0;
-	self->seg_latB = 0.0;
-	self->seg_lonR = 0.0;
+
+	self->wid            -= 1;
+	self->seg_nds->count  = 0;
+	self->seg_latT        = 0.0;
+	self->seg_lonL        = 0.0;
+	self->seg_latB        = 0.0;
+	self->seg_lonR        = 0.0;
+
+	return 1;
 }
 
 static void
@@ -209,7 +374,7 @@ kml_parser_wayAddNd(kml_parser_t* self, kml_node_t* node)
 		self->way_lonR = node->lon;
 	}
 
-	if(self->seg_nds)
+	if(self->seg_nds->count)
 	{
 		if(node->lat > self->seg_latT)
 		{
@@ -236,11 +401,11 @@ kml_parser_wayAddNd(kml_parser_t* self, kml_node_t* node)
 		self->seg_lonR = node->lon;
 	}
 
-	// see init.sql for table definition
-	fprintf(self->tbl_ways_nds, "%i|%0.0lf|%0.0lf\n",
-	        self->seg_nds, self->wid, node->id);
+	// append to seg_nds
+	int64_t* nds = osmdb_blobWayNds_nds(self->seg_nds);
+	nds[self->seg_nds->count] = node->id;
 	++self->way_nds;
-	++self->seg_nds;
+	++self->seg_nds->count;
 }
 
 static int
@@ -311,15 +476,19 @@ kml_parser_parseNode(kml_parser_t* self, char* s)
 		}
 
 		// advance the next node id
-		self->nid -= 1.0;
+		self->nid -= 1;
 	}
 
 	kml_parser_wayAddNd(self, node);
 
 	// split way to avoid very large ways
-	if(self->seg_nds >= KML_PARSER_WAY_NDS)
+	if(self->seg_nds->count >= KML_PARSER_WAY_NDS)
 	{
-		kml_parser_wayAddSeg(self);
+		if(kml_parser_wayAddSeg(self) == 0)
+		{
+			return 0;
+		}
+
 		kml_parser_wayAddNd(self, node);
 	}
 
@@ -436,6 +605,49 @@ kml_parser_beginPlacemark(kml_parser_t* self, int line,
 }
 
 static int
+kml_parser_addTileCoord(kml_parser_t* self,
+                        int64_t ref,
+                        double lat, double lon,
+                        int min_zoom)
+{
+	ASSERT(self);
+
+	float   x;
+	float   y;
+	int64_t id;
+
+	int ix;
+	int iy;
+	int i       = 0;
+	int zoom[]  = { 14, 11, -1 };
+	int pow2n[] = { 16384, 2048 };
+
+	int type_array[]  =
+	{
+		OSMDB_BLOB_TYPE_NODE_TILE14,
+		OSMDB_BLOB_TYPE_NODE_TILE11,
+	};
+
+	while(min_zoom <= zoom[i])
+	{
+		terrain_coord2tile(lat, lon,
+		                   zoom[i], &x, &y);
+		ix = (int) x;
+		iy = (int) y;
+		id = (int64_t) pow2n[i]*iy + ix;
+		if(osmdb_index_addTile(self->index, type_array[i],
+		                       id, ref) == 0)
+		{
+			return 0;
+		}
+
+		++i;
+	}
+
+	return 1;
+}
+
+static int
 kml_parser_endPlacemark(kml_parser_t* self, int line,
                         const char* content)
 {
@@ -444,19 +656,46 @@ kml_parser_endPlacemark(kml_parser_t* self, int line,
 
 	if(self->way_nds && self->class && (self->name[0] != '\0'))
 	{
-		// see init.sql for table definition
-		double lat = self->way_latB +
-		             (self->way_latT - self->way_latB)/2.0;
-		double lon = self->way_lonL +
-		             (self->way_lonR - self->way_lonL)/2.0;
+		osmdb_blobNodeCoord_t node_coord =
+		{
+			.nid = self->nid,
+			.lat = self->way_latB +
+			       (self->way_latT - self->way_latB)/2.0,
+			.lon = self->way_lonL +
+			       (self->way_lonR - self->way_lonL)/2.0
+		};
 
-		fprintf(self->tbl_nodes_coords, "%0.0lf|%lf|%lf\n",
-		        self->nid, lat, lon);
-		fprintf(self->tbl_nodes_info, "%0.0lf|%i|%s||0|0|11\n",
-		        self->nid, self->class, self->name);
+		size_t size = osmdb_blobNodeCoord_sizeof(&node_coord);
+		if(osmdb_index_add(self->index,
+		                   OSMDB_BLOB_TYPE_NODE_COORD,
+		                   self->nid, size,
+		                   (void*) &node_coord) == 0)
+		{
+			return 0;
+		}
+
+		self->node_info->nid   = self->nid;
+		self->node_info->class = self->class;
+		osmdb_blobNodeInfo_addName(self->node_info, self->name);
+
+		size = osmdb_blobNodeInfo_sizeof(self->node_info);
+		if(osmdb_index_add(self->index,
+		                   OSMDB_BLOB_TYPE_NODE_INFO,
+		                   self->nid, size,
+		                   (void*) self->node_info) == 0)
+		{
+			return 0;
+		}
+
+		if(kml_parser_addTileCoord(self, node_coord.nid,
+		                           node_coord.lat, node_coord.lon,
+		                           11) == 0)
+		{
+			return 0;
+		}
 
 		// advance the next node id
-		self->nid -= 1.0;
+		self->nid -= 1;
 	}
 
 	snprintf(self->name, 256, "%s", "");
@@ -599,7 +838,10 @@ kml_parser_endLinearRing(kml_parser_t* self, int line,
 	// content may be NULL
 	ASSERT(self);
 
-	kml_parser_wayAddSeg(self);
+	if(kml_parser_wayAddSeg(self) == 0)
+	{
+		return 0;
+	}
 
 	return kml_parser_statePop(self);
 }
@@ -980,7 +1222,7 @@ static int kml_parser_end(void* priv,
 * public                                                   *
 ***********************************************************/
 
-kml_parser_t* kml_parser_new(void)
+kml_parser_t* kml_parser_new(const char* db_name)
 {
 	kml_parser_t* self = (kml_parser_t*)
 	                     CALLOC(1, sizeof(kml_parser_t));
@@ -990,9 +1232,9 @@ kml_parser_t* kml_parser_new(void)
 		return NULL;
 	}
 
-	// -1.0 is reserved for an invalid ID
-	self->nid   = -2.0;
-	self->wid   = -2.0;
+	// -1 is reserved for an invalid ID
+	self->nid   = -2;
+	self->wid   = -2;
 	self->class = osmdb_classNameToCode("class:none");
 
 	snprintf(self->name, 256, "%s", "");
@@ -1009,54 +1251,38 @@ kml_parser_t* kml_parser_new(void)
 		goto fail_map_nodes;
 	}
 
-	self->tbl_nodes_coords = fopen("tbl_nodes_coords.data", "w");
-	if(self->tbl_nodes_coords == NULL)
+	self->node_info = (osmdb_blobNodeInfo_t*)
+	                  CALLOC(1, sizeof(osmdb_blobNodeInfo_t) +
+	                         256*sizeof(char));
+	if(self->node_info == NULL)
 	{
-		LOGE("fopen failed");
-		goto fail_tbl_nodes_coords;
+		goto fail_node_info;
 	}
 
-	self->tbl_nodes_info = fopen("tbl_nodes_info.data", "w");
-	if(self->tbl_nodes_info == NULL)
+	self->seg_nds = (osmdb_blobWayNds_t*)
+	                CALLOC(1, sizeof(osmdb_blobWayNds_t) +
+	                       KML_PARSER_WAY_NDS*sizeof(int64_t));
+	if(self->seg_nds == NULL)
 	{
-		LOGE("fopen failed");
-		goto fail_tbl_nodes_info;
+		goto fail_seg_nds;
 	}
 
-	self->tbl_ways = fopen("tbl_ways.data", "w");
-	if(self->tbl_ways == NULL)
+	self->index = osmdb_index_new(db_name,
+	                              OSMDB_INDEX_MODE_APPEND);
+	if(self->index == NULL)
 	{
-		LOGE("fopen failed");
-		goto fail_tbl_ways;
-	}
-
-	self->tbl_ways_range = fopen("tbl_ways_range.data", "w");
-	if(self->tbl_ways_range == NULL)
-	{
-		LOGE("fopen failed");
-		goto fail_tbl_ways_range;
-	}
-
-	self->tbl_ways_nds = fopen("tbl_ways_nds.data", "w");
-	if(self->tbl_ways_nds == NULL)
-	{
-		LOGE("fopen failed");
-		goto fail_tbl_ways_nds;
+		goto fail_index;
 	}
 
 	// success
 	return self;
 
 	// failure
-	fail_tbl_ways_nds:
-		fclose(self->tbl_ways_range);
-	fail_tbl_ways_range:
-		fclose(self->tbl_ways);
-	fail_tbl_ways:
-		fclose(self->tbl_nodes_info);
-	fail_tbl_nodes_info:
-		fclose(self->tbl_nodes_coords);
-	fail_tbl_nodes_coords:
+	fail_index:
+		FREE(self->seg_nds);
+	fail_seg_nds:
+		FREE(self->node_info);
+	fail_node_info:
 		cc_map_delete(&self->map_nodes);
 	fail_map_nodes:
 		cc_list_delete(&self->list_state);
@@ -1072,12 +1298,6 @@ void kml_parser_delete(kml_parser_t** _self)
 	kml_parser_t* self = *_self;
 	if(self)
 	{
-		fclose(self->tbl_ways_nds);
-		fclose(self->tbl_ways_range);
-		fclose(self->tbl_ways);
-		fclose(self->tbl_nodes_info);
-		fclose(self->tbl_nodes_coords);
-
 		cc_mapIter_t  miterator;
 		cc_mapIter_t* miter;
 		miter = cc_map_head(self->map_nodes, &miterator);
@@ -1096,6 +1316,10 @@ void kml_parser_delete(kml_parser_t** _self)
 			              cc_list_remove(self->list_state, &iter);
 			FREE(_state);
 		}
+
+		osmdb_index_delete(&self->index);
+		FREE(self->seg_nds);
+		FREE(self->node_info);
 		cc_map_delete(&self->map_nodes);
 		cc_list_delete(&self->list_state);
 		FREE(self);
@@ -1119,7 +1343,7 @@ int kml_parser_parse(kml_parser_t* self,
 	return 1;
 }
 
-void kml_parser_finish(kml_parser_t* self)
+int kml_parser_finish(kml_parser_t* self)
 {
 	ASSERT(self);
 
@@ -1131,9 +1355,31 @@ void kml_parser_finish(kml_parser_t* self)
 	{
 		kml_node_t* node = (kml_node_t*) cc_map_val(miter);
 
-		// see init.sql for table definition
-		fprintf(self->tbl_nodes_coords, "%0.0lf|%lf|%lf\n",
-		        node->id, node->lat, node->lon);
+		osmdb_blobNodeCoord_t node_coord =
+		{
+			.nid = node->id,
+			.lat = node->lat,
+			.lon = node->lon
+		};
+
+		size_t size = osmdb_blobNodeCoord_sizeof(&node_coord);
+		if(osmdb_index_add(self->index,
+		                   OSMDB_BLOB_TYPE_NODE_COORD,
+		                   node->id, size,
+		                   (void*) &node_coord) == 0)
+		{
+			return 0;
+		}
+
+		if(kml_parser_addTileCoord(self, node_coord.nid,
+		                           node_coord.lat, node_coord.lon,
+		                           11) == 0)
+		{
+			return 0;
+		}
+
 		miter = cc_map_next(miter);
 	}
+
+	return 1;
 }

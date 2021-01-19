@@ -28,26 +28,26 @@
 
 #include "libcc/cc_list.h"
 #include "libcc/cc_map.h"
+#include "osmdb/index/osmdb_index.h"
 
 typedef struct
 {
-	double id;
-	double lat;
-	double lon;
+	int64_t id;
+	double  lat;
+	double  lon;
 } kml_node_t;
 
 typedef struct
 {
 	// parse state
-	double     nid;
-	double     wid;
+	int64_t    nid;
+	int64_t    wid;
 	char       name[256];
 	int        class;
 	int        simpledata;
 	int        discard;
 	cc_list_t* list_state;
 	int        way_nds;
-	int        seg_nds;
 
 	// bounding box
 	double way_latT;
@@ -62,18 +62,17 @@ typedef struct
 	// node data
 	cc_map_t* map_nodes;
 
-	// output streams
-	FILE* tbl_nodes_coords;
-	FILE* tbl_nodes_info;
-	FILE* tbl_ways;
-	FILE* tbl_ways_range;
-	FILE* tbl_ways_nds;
+	// blobs
+	osmdb_blobNodeInfo_t* node_info;
+	osmdb_blobWayNds_t*   seg_nds;
+
+	osmdb_index_t* index;
 } kml_parser_t;
 
-kml_parser_t* kml_parser_new(void);
+kml_parser_t* kml_parser_new(const char* db_name);
 void          kml_parser_delete(kml_parser_t** _self);
 int           kml_parser_parse(kml_parser_t* self,
                                const char* fname_kml);
-void          kml_parser_finish(kml_parser_t* self);
+int           kml_parser_finish(kml_parser_t* self);
 
 #endif
