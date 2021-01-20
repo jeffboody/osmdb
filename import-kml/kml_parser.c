@@ -28,7 +28,7 @@
 #include "libxmlstream/xml_istream.h"
 #include "kml_parser.h"
 
-#define LOG_TAG "kml2data"
+#define LOG_TAG "osmdb"
 #include "libcc/cc_log.h"
 #include "libcc/cc_memory.h"
 #include "osmdb/osmdb_util.h"

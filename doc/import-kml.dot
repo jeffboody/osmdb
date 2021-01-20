@@ -1,0 +1,41 @@
+// sudo apt-get install graphviz
+// sudo apt-get install xdot
+// xdot import-kml.dot
+digraph IMPORTKML
+{
+	label="import-kml";
+	fontsize=20;
+	size="3,2";
+	ratio=fill;
+
+	SIMPLEDATA    [label="SIMPLEDATA\nif(name is Designato or PROPOSAL)\nclass=osmdb_classNameToCode"];
+	PLACEMARK     [color=magenta, label="PLACEMARK\nnode_coord\nnode_info(id, class, name)"];
+	PLACEMARKNAME [label="PLACEMARKNAME\nname=content"];
+	parseNode     [label="parseNode\nadd coords to map_nodes\n{ lat, lon, ... }"];
+	wayAddSeg     [color=magenta, label="wayAddSeg\nway_info(id, class), way_range"];
+	wayAddNd      [color=magenta, label="wayAddNd\nway_nds"];
+	FINISH        [color=magenta, label="FINISH\nnode_coords"];
+
+	// begin
+	MAIN            -> KML             [label="kml"];
+	MAIN            -> FINISH;
+	KML             -> DOCUMENT        [label="Document"];
+	DOCUMENT        -> FOLDER          [label="Folder"];
+	FOLDER          -> PLACEMARK       [label="Placemark"];
+	PLACEMARK       -> PLACEMARKNAME   [label="name"];
+	PLACEMARK       -> POLYGON         [label="Polygon"];
+	PLACEMARK       -> MULTIGEOMETRY   [label="Multigeometry"];
+	PLACEMARK       -> EXTENDEDDATA    [label="ExtendedData"];
+	MULTIGEOMETRY   -> POLYGON         [label="Polygon"];
+	POLYGON         -> OUTERBOUNDARYIS [label="OuterBoundaryIs"];
+	POLYGON         -> INNERBOUNDARYIS [label="InnerBoundaryIs"];
+	OUTERBOUNDARYIS -> LINEARRING      [label="LinearRing"];
+	INNERBOUNDARYIS -> LINEARRING      [label="LinearRing"];
+	LINEARRING      -> COORDINATES     [label="coordinates"];
+	EXTENDEDDATA    -> SCHEMADATA      [label="SchemaData"];
+	SCHEMADATA      -> SIMPLEDATA      [label="SimpleData"];
+	COORDINATES     -> parseContent;
+	parseContent    -> parseNode;
+	parseNode       -> wayAddSeg;
+	parseNode       -> wayAddNd;
+}

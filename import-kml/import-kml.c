@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Jeff Boody
+ * Copyright (c) 2020 Jeff Boody
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -22,80 +22,63 @@
  */
 
 #include <stdlib.h>
+#include <assert.h>
+#include <string.h>
+#include <unistd.h>
+#include "libcc/cc_timestamp.h"
+#include "libxmlstream/xml_istream.h"
+#include "kml_parser.h"
 
 #define LOG_TAG "osmdb"
-#include "../libcc/cc_log.h"
-#include "osmdb_index.h"
-#include "osmdb_range.h"
+#include "libcc/cc_log.h"
+#include "osmdb/osmdb_util.h"
 
 /***********************************************************
 * public                                                   *
 ***********************************************************/
 
-void osmdb_range_init(osmdb_range_t* self)
+int main(int argc, char** argv)
 {
-	ASSERT(self);
+	double t0 = cc_timestamp();
 
-	self->pts  = 0;
-	self->latT = 0.0;
-	self->lonL = 0.0;
-	self->latB = 0.0;
-	self->lonR = 0.0;
-}
-
-void osmdb_range_addPt(osmdb_range_t* self,
-                       double lat, double lon)
-{
-	ASSERT(self);
-
-	if(self->pts)
+	if(argc < 3)
 	{
-		if(lat > self->latT)
-		{
-			self->latT = lat;
-		}
-		else if(lat < self->latB)
-		{
-			self->latB = lat;
-		}
-
-		if(lon < self->lonL)
-		{
-			self->lonL = lon;
-		}
-		else if(lon > self->lonR)
-		{
-			self->lonR = lon;
-		}
-	}
-	else
-	{
-		self->latT = lat;
-		self->lonL = lon;
-		self->latB = lat;
-		self->lonR = lon;
-	}
-	++self->pts;
-}
-
-int osmdb_range_clip(osmdb_range_t* self,
-                     double latT, double lonL,
-                     double latB, double lonR)
-{
-	ASSERT(self);
-
-	if(self->pts == 0)
-	{
-		return 1;
+		LOGE("%s db.sqlite3 input.kml [...]", argv[0]);
+		return EXIT_FAILURE;
 	}
 
-	if((self->latT < latB) ||
-	   (self->latB > latT) ||
-	   (self->lonL > lonR) ||
-	   (self->lonR < lonL))
+	kml_parser_t* parser = kml_parser_new(argv[1]);
+	if(parser == NULL)
 	{
-		return 1;
+		goto fail_parser;
 	}
 
-	return 0;
+	// read all input files
+	int i;
+	for(i = 2; i < argc; ++i)
+	{
+		if(kml_parser_parse(parser, argv[i]) == 0)
+		{
+			goto fail_parse;
+		}
+	}
+
+	if(kml_parser_finish(parser) == 0)
+	{
+		goto fail_finish;
+	}
+
+	kml_parser_delete(&parser);
+
+	// success
+	LOGI("SUCCESS dt=%lf", cc_timestamp() - t0);
+	return EXIT_SUCCESS;
+
+	// failure
+	fail_finish:
+	fail_parse:
+		kml_parser_delete(&parser);
+	fail_parser:
+	LOGI("FAILURE dt=%lf", cc_timestamp() - t0);
+	return EXIT_FAILURE;
 }

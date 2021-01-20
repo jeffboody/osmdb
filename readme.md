@@ -7,13 +7,17 @@ the OpenStreetMap database.
 OSM Data
 ========
 
-download planet
+Download Planet / Changeset
 
-	wget https://ftp.osuosl.org/pub/openstreetmap/pbf/planet-latest.osm.pbf
+	https://planet.openstreetmap.org/
 
-download osmosis
+	wget https://planet.openstreetmap.org/pbf/planet-latest.osm.pbf
+	wget https://planet.openstreetmap.org/planet/changesets-latest.osm.bz2
 
-	# http://wiki.openstreetmap.org/wiki/Osmosis#Latest_stable_version
+Download Osmosis
+
+	http://wiki.openstreetmap.org/wiki/Osmosis#Latest_stable_version
+
 	croot
 	mkdir osmosis
 	cd osmosis
@@ -22,41 +26,22 @@ download osmosis
 
 	sudo apt-get install openjdk-8-jdk
 
-refer to this site to determine lat/lon bounding box
+Optionally crop the Planet (e.g.)
 
-	http://pos-map.appspot.com/en/coordinates10.html
+	osmosis/bin/osmosis --read-pbf planet-latest.osm.pbf --bounding-box top=72.0 left=-170.0 bottom=18.0 right=-66.0 --write-xml US.osm
+	osmosis/bin/osmosis --read-pbf planet-latest.osm.pbf --bounding-box top=51.0 left=-126.0 bottom=23.0 right=-64.0 --write-xml US48.osm
+	osmosis/bin/osmosis --read-xml US48.osm --bounding-box top=43.0 left=-110.0 bottom=34.0 right=-100.0 --write-xml CO.osm
+	osmosis/bin/osmosis --read-xml CO.osm --bounding-box top=40.1 left=-105.4 bottom=39.9 right=-105.1 --write-xml Boulder.osm
 
-crop planet (e.g.)
+Import OSM
+==========
 
-	./osmosis/bin/osmosis --read-pbf planet-latest.osm.pbf --bounding-box top=72.0 left=-170.0 bottom=18.0 right=-66.0 --write-xml US-base.osm
-	./osmosis/bin/osmosis --read-pbf planet-latest.osm.pbf --bounding-box top=51.0 left=-126.0 bottom=23.0 right=-64.0 --write-xml US48-base.osm
-	./osmosis/bin/osmosis --read-xml US48-base.osm --bounding-box top=43.0 left=-110.0 bottom=34.0 right=-100.0 --write-xml CO-base.osm
-	./osmosis/bin/osmosis --read-xml CO-base.osm --bounding-box top=40.1 left=-105.4 bottom=39.9 right=-105.1 --write-xml Boulder-base.osm
+To import planet.osm to sqlite3.
 
-reformat osm data (e.g.)
+	import-osm style/default.xml planet.osm planet.sqlite3 | tee log.txt
 
-	croot
-
-	unaccent UTF-8 < US48-base.osm > US48-unaccent.osm
-	./bin/clean-symbols.sh US48-unaccent.osm US48.osm
-	osmdb-build US48 | tee build.log
-	osmdb-indexer filter/default.xml US48 | tee indexer.log
-	osmdb-tiler . US48 | tee tiler.log
-
-	unaccent UTF-8 < CO-base.osm > CO-unaccent.osm
-	./bin/clean-symbols.sh CO-unaccent.osm CO.osm
-	osmdb-build CO | tee build.log
-	osmdb-indexer filter/default.xml CO | tee indexer.log
-	osmdb-tiler . CO | tee tiler.log
-
-	unaccent UTF-8 < Boulder-base.osm > Boulder-unaccent.osm
-	./bin/clean-symbols.sh Boulder-unaccent.osm Boulder.osm
-	osmdb-build Boulder | tee build.log
-	osmdb-indexer filter/default.xml Boulder | tee indexer.log
-	osmdb-tiler . Boulder | tee tiler.log
-
-KML Data
-========
+Import KML
+==========
 
 Convert shapefiles to KML files (https://www.igismap.com/shp-to-kml/).
 
@@ -64,18 +49,6 @@ Convert shapefiles to KML files (https://www.igismap.com/shp-to-kml/).
 	ogr2ogr -f KML CORE_Act.kml CORE_Act.shp
 	ogr2ogr -f KML REC_Act.kml REC_Act.shp
 
-Convert KML files to tables.
+To import The CORE/REC Act kml files.
 
-	kml2data/kml2data CORE_Act.kml REC_Act.kml
-
-SQLite
-======
-
-Import planet.
-
-	osmosis/bin/osmosis --read-pbf planet-latest.osm.pbf --write-xml planet.osm
-	osmdb-sqlite style/default.xml planet.osm planet.sqlite3 | tee log.txt
-
-Import KML.
-
-	libsqlite3/shell --init sql/init-kml.sql planet.sqlite3
+	import-kml planet.sqlite3 CORE_Act.kml REC_Act.kml

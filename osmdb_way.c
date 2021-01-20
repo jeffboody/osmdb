@@ -560,18 +560,6 @@ int osmdb_way_size(osmdb_way_t* self)
 	return size;
 }
 
-void osmdb_way_updateRange(osmdb_way_t* self,
-                           osmdb_range_t* range)
-{
-	ASSERT(self);
-	ASSERT(range);
-
-	self->latT = range->latT;
-	self->lonL = range->lonL;
-	self->latB = range->latB;
-	self->lonR = range->lonR;
-}
-
 void osmdb_way_discardNds(osmdb_way_t* self)
 {
 	ASSERT(self);

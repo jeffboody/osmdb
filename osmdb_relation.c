@@ -527,18 +527,6 @@ int osmdb_relation_size(osmdb_relation_t* self)
 	return size;
 }
 
-void osmdb_relation_updateRange(osmdb_relation_t* self,
-                                osmdb_range_t* range)
-{
-	ASSERT(self);
-	ASSERT(range);
-
-	self->latT = range->latT;
-	self->lonL = range->lonL;
-	self->latB = range->latB;
-	self->lonR = range->lonR;
-}
-
 void osmdb_relation_discardMembers(osmdb_relation_t* self)
 {
 	ASSERT(self);

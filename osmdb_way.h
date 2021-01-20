@@ -27,7 +27,6 @@
 #include "../libcc/cc_list.h"
 #include "../libxmlstream/xml_ostream.h"
 #include "osmdb_object.h"
-#include "osmdb_range.h"
 
 typedef struct
 {
@@ -78,8 +77,6 @@ int          osmdb_way_decref(osmdb_way_t* self);
 int          osmdb_way_export(osmdb_way_t* self,
                               xml_ostream_t* os);
 int          osmdb_way_size(osmdb_way_t* self);
-void         osmdb_way_updateRange(osmdb_way_t* self,
-                                   osmdb_range_t* range);
 void         osmdb_way_discardNds(osmdb_way_t* self);
 
 #endif

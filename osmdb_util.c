@@ -32,7 +32,6 @@
 
 #define LOG_TAG "osmdb"
 #include "../libcc/cc_log.h"
-#include "osmdb_chunk.h"
 #include "osmdb_util.h"
 
 /***********************************************************
@@ -1432,16 +1431,4 @@ int osmdb_mkdir(const char* path)
 	}
 
 	return 1;
-}
-
-void osmdb_splitId(double id,
-                   double* idu, double* idl)
-{
-	ASSERT(idu);
-	ASSERT(idl);
-
-	// splits id to upper and lower digets
-	double s = (double) OSMDB_CHUNK_COUNT;
-	id = id/s;
-	*idl = s*modf(id, idu);
 }

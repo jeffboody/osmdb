@@ -27,7 +27,6 @@
 #include "../libcc/cc_list.h"
 #include "../libxmlstream/xml_ostream.h"
 #include "osmdb_object.h"
-#include "osmdb_range.h"
 
 typedef struct
 {
@@ -78,8 +77,6 @@ int               osmdb_relation_decref(osmdb_relation_t* self);
 int               osmdb_relation_export(osmdb_relation_t* self,
                                         xml_ostream_t* os);
 int               osmdb_relation_size(osmdb_relation_t* self);
-void              osmdb_relation_updateRange(osmdb_relation_t* self,
-                                             osmdb_range_t* range);
 void              osmdb_relation_discardMembers(osmdb_relation_t* self);
 
 #endif
