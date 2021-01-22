@@ -27,14 +27,14 @@
 
 #define LOG_TAG "osmdb"
 #include "libcc/cc_log.h"
-#include "osmdb_blob.h"
+#include "osmdb_type.h"
 
 /***********************************************************
 * protected                                                *
 ***********************************************************/
 
-void osmdb_blobNodeInfo_addName(osmdb_blobNodeInfo_t* self,
-                                const char* name)
+void osmdb_nodeInfo_addName(osmdb_nodeInfo_t* self,
+                            const char* name)
 {
 	ASSERT(self);
 	ASSERT(name);
@@ -52,12 +52,20 @@ void osmdb_blobNodeInfo_addName(osmdb_blobNodeInfo_t* self,
 	}
 	self->size_name = size_name;
 
-	char* s = osmdb_blobNodeInfo_name(self);
-	snprintf(s, 256, "%s", name);
+	char* s = osmdb_nodeInfo_name(self);
+
+	// ensure the pad is cleared
+	int i;
+	for(i = (size_name - 4); i < size_name; ++i)
+	{
+		s[i] = '\0';
+	}
+
+	snprintf(s, size_name, "%s", name);
 }
 
-void osmdb_blobWayInfo_addName(osmdb_blobWayInfo_t* self,
-                               const char* name)
+void osmdb_wayInfo_addName(osmdb_wayInfo_t* self,
+                           const char* name)
 {
 	ASSERT(self);
 	ASSERT(name);
@@ -75,12 +83,20 @@ void osmdb_blobWayInfo_addName(osmdb_blobWayInfo_t* self,
 	}
 	self->size_name = size_name;
 
-	char* s = osmdb_blobWayInfo_name(self);
-	snprintf(s, 256, "%s", name);
+	char* s = osmdb_wayInfo_name(self);
+
+	// ensure the pad is cleared
+	int i;
+	for(i = (size_name - 4); i < size_name; ++i)
+	{
+		s[i] = '\0';
+	}
+
+	snprintf(s, size_name, "%s", name);
 }
 
-void osmdb_blobRelInfo_addName(osmdb_blobRelInfo_t* self,
-                               const char* name)
+void osmdb_relInfo_addName(osmdb_relInfo_t* self,
+                           const char* name)
 {
 	ASSERT(self);
 	ASSERT(name);
@@ -98,8 +114,16 @@ void osmdb_blobRelInfo_addName(osmdb_blobRelInfo_t* self,
 	}
 	self->size_name = size_name;
 
-	char* s = osmdb_blobRelInfo_name(self);
-	snprintf(s, 256, "%s", name);
+	char* s = osmdb_relInfo_name(self);
+
+	// ensure the pad is cleared
+	int i;
+	for(i = (size_name - 4); i < size_name; ++i)
+	{
+		s[i] = '\0';
+	}
+
+	snprintf(s, size_name, "%s", name);
 }
 
 /***********************************************************
@@ -107,15 +131,15 @@ void osmdb_blobRelInfo_addName(osmdb_blobRelInfo_t* self,
 ***********************************************************/
 
 size_t
-osmdb_blobNodeCoord_sizeof(osmdb_blobNodeCoord_t* self)
+osmdb_nodeCoord_sizeof(osmdb_nodeCoord_t* self)
 {
 	ASSERT(self);
 
-	return sizeof(osmdb_blobNodeCoord_t);
+	return sizeof(osmdb_nodeCoord_t);
 }
 
 char*
-osmdb_blobNodeInfo_name(osmdb_blobNodeInfo_t* self)
+osmdb_nodeInfo_name(osmdb_nodeInfo_t* self)
 {
 	ASSERT(self);
 
@@ -125,19 +149,19 @@ osmdb_blobNodeInfo_name(osmdb_blobNodeInfo_t* self)
 	}
 
 	return (char*)
-	       (((void*) self) + sizeof(osmdb_blobNodeInfo_t));
+	       (((void*) self) + sizeof(osmdb_nodeInfo_t));
 }
 
 size_t
-osmdb_blobNodeInfo_sizeof(osmdb_blobNodeInfo_t* self)
+osmdb_nodeInfo_sizeof(osmdb_nodeInfo_t* self)
 {
 	ASSERT(self);
 
-	return sizeof(osmdb_blobNodeInfo_t) + self->size_name;
+	return sizeof(osmdb_nodeInfo_t) + self->size_name;
 }
 
 char*
-osmdb_blobWayInfo_name(osmdb_blobWayInfo_t* self)
+osmdb_wayInfo_name(osmdb_wayInfo_t* self)
 {
 	ASSERT(self);
 
@@ -147,45 +171,45 @@ osmdb_blobWayInfo_name(osmdb_blobWayInfo_t* self)
 	}
 
 	return (char*)
-	       (((void*) self) + sizeof(osmdb_blobWayInfo_t));
+	       (((void*) self) + sizeof(osmdb_wayInfo_t));
 }
 
 size_t
-osmdb_blobWayInfo_sizeof(osmdb_blobWayInfo_t* self)
+osmdb_wayInfo_sizeof(osmdb_wayInfo_t* self)
 {
 	ASSERT(self);
 
-	return sizeof(osmdb_blobWayInfo_t) + self->size_name;
+	return sizeof(osmdb_wayInfo_t) + self->size_name;
 }
 
 size_t
-osmdb_blobWayRange_sizeof(osmdb_blobWayRange_t* self)
+osmdb_wayRange_sizeof(osmdb_wayRange_t* self)
 {
 	ASSERT(self);
 
-	return sizeof(osmdb_blobWayRange_t);
+	return sizeof(osmdb_wayRange_t);
 }
 
 int64_t*
-osmdb_blobWayNds_nds(osmdb_blobWayNds_t* self)
+osmdb_wayNds_nds(osmdb_wayNds_t* self)
 {
 	ASSERT(self);
 
 	return (int64_t*)
-	       (((void*) self) + sizeof(osmdb_blobWayNds_t));
+	       (((void*) self) + sizeof(osmdb_wayNds_t));
 }
 
 size_t
-osmdb_blobWayNds_sizeof(osmdb_blobWayNds_t* self)
+osmdb_wayNds_sizeof(osmdb_wayNds_t* self)
 {
 	ASSERT(self);
 
-	return sizeof(osmdb_blobWayNds_t) +
+	return sizeof(osmdb_wayNds_t) +
 	       self->count*sizeof(int64_t);
 }
 
 char*
-osmdb_blobRelInfo_name(osmdb_blobRelInfo_t* self)
+osmdb_relInfo_name(osmdb_relInfo_t* self)
 {
 	ASSERT(self);
 
@@ -195,55 +219,55 @@ osmdb_blobRelInfo_name(osmdb_blobRelInfo_t* self)
 	}
 
 	return (char*)
-	       (((void*) self) + sizeof(osmdb_blobRelInfo_t));
+	       (((void*) self) + sizeof(osmdb_relInfo_t));
 }
 
 size_t
-osmdb_blobRelInfo_sizeof(osmdb_blobRelInfo_t* self)
+osmdb_relInfo_sizeof(osmdb_relInfo_t* self)
 {
 	ASSERT(self);
 
-	return sizeof(osmdb_blobRelInfo_t) + self->size_name;
+	return sizeof(osmdb_relInfo_t) + self->size_name;
 }
 
-osmdb_blobRelData_t*
-osmdb_blobRelMembers_data(osmdb_blobRelMembers_t* self)
+osmdb_relData_t*
+osmdb_relMembers_data(osmdb_relMembers_t* self)
 {
 	ASSERT(self);
 
-	return (osmdb_blobRelData_t*)
-	       (((void*) self) + sizeof(osmdb_blobRelMembers_t));
-}
-
-size_t
-osmdb_blobRelMembers_sizeof(osmdb_blobRelMembers_t* self)
-{
-	ASSERT(self);
-
-	return sizeof(osmdb_blobRelMembers_t) +
-	       self->count*sizeof(osmdb_blobRelData_t);
+	return (osmdb_relData_t*)
+	       (((void*) self) + sizeof(osmdb_relMembers_t));
 }
 
 size_t
-osmdb_blobRelRange_sizeof(osmdb_blobRelRange_t* self)
+osmdb_relMembers_sizeof(osmdb_relMembers_t* self)
 {
 	ASSERT(self);
 
-	return sizeof(osmdb_blobRelRange_t);
+	return sizeof(osmdb_relMembers_t) +
+	       self->count*sizeof(osmdb_relData_t);
 }
 
-int64_t* osmdb_blobTile_refs(osmdb_blobTile_t* self)
+size_t
+osmdb_relRange_sizeof(osmdb_relRange_t* self)
+{
+	ASSERT(self);
+
+	return sizeof(osmdb_relRange_t);
+}
+
+int64_t* osmdb_tileRefs_refs(osmdb_tileRefs_t* self)
 {
 	ASSERT(self);
 
 	return (int64_t*)
-	       (((void*) self) + sizeof(osmdb_blobTile_t));
+	       (((void*) self) + sizeof(osmdb_tileRefs_t));
 }
 
-size_t osmdb_blobTile_sizeof(osmdb_blobTile_t* self)
+size_t osmdb_tileRefs_sizeof(osmdb_tileRefs_t* self)
 {
 	ASSERT(self);
 
-	return sizeof(osmdb_blobTile_t) +
+	return sizeof(osmdb_tileRefs_t) +
 	       self->count*sizeof(int64_t);
 }

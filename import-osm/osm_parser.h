@@ -47,17 +47,17 @@ typedef struct
 
 	osmdb_style_t* style;
 
-	// blobs
+	// parsing data
 	int way_nds_maxCount;
 	int rel_members_maxCount;
-	osmdb_blobNodeCoord_t*  node_coord;
-	osmdb_blobNodeInfo_t*   node_info;
-	osmdb_blobWayInfo_t*    way_info;
-	osmdb_blobWayRange_t*   way_range;
-	osmdb_blobWayNds_t*     way_nds;
-	osmdb_blobRelInfo_t*    rel_info;
-	osmdb_blobRelRange_t*   rel_range;
-	osmdb_blobRelMembers_t* rel_members;
+	osmdb_nodeCoord_t*  node_coord;
+	osmdb_nodeInfo_t*   node_info;
+	osmdb_wayInfo_t*    way_info;
+	osmdb_wayRange_t*   way_range;
+	osmdb_wayNds_t*     way_nds;
+	osmdb_relInfo_t*    rel_info;
+	osmdb_relRange_t*   rel_range;
+	osmdb_relMembers_t* rel_members;
 
 	// english flag
 	int name_en;

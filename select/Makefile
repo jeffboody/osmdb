@@ -1,7 +1,7 @@
 export CC_USE_MATH = 1
 
 TARGET   = osmdb-select
-CLASSES  = osmdb/index/osmdb_index osmdb/index/osmdb_blob osmdb/index/osmdb_entry osmdb/osmdb_util
+CLASSES  = osmdb/index/osmdb_index osmdb/index/osmdb_type osmdb/index/osmdb_entry osmdb/osmdb_util
 SOURCE   = $(TARGET).c $(CLASSES:%=%.c)
 OBJECTS  = $(TARGET).o $(CLASSES:%=%.o)
 HFILES   = $(CLASSES:%=%.h)

@@ -32,13 +32,6 @@
 
 typedef struct
 {
-	int64_t id;
-	double  lat;
-	double  lon;
-} kml_node_t;
-
-typedef struct
-{
 	// parse state
 	int64_t    nid;
 	int64_t    wid;
@@ -60,11 +53,11 @@ typedef struct
 	double seg_lonR;
 
 	// node data
-	cc_map_t* map_nodes;
+	cc_map_t* map_node_coords;
 
-	// blobs
-	osmdb_blobNodeInfo_t* node_info;
-	osmdb_blobWayNds_t*   seg_nds;
+	// parsing data
+	osmdb_nodeInfo_t* node_info;
+	osmdb_wayNds_t*   seg_nds;
 
 	osmdb_index_t* index;
 } kml_parser_t;

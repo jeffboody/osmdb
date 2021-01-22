@@ -27,11 +27,13 @@
 #include <stdint.h>
 
 #include "libcc/cc_map.h"
-#include "osmdb_blob.h"
+#include "osmdb_type.h"
 
-typedef struct
+#define OSMDB_ENTRY_SIZE 100
+
+typedef struct osmdb_entry_s
 {
-	// blob state
+	// state
 	int     refcount;
 	int     dirty;
 	int     type;
@@ -42,7 +44,7 @@ typedef struct
 	size_t size;
 	void*  data;
 
-	// blobs
+	// handles
 	cc_map_t* map;
 } osmdb_entry_t;
 
@@ -51,9 +53,9 @@ osmdb_entry_t* osmdb_entry_new(int type,
 void           osmdb_entry_delete(osmdb_entry_t** _self);
 int            osmdb_entry_get(osmdb_entry_t* self,
                                int64_t minor_id,
-                               osmdb_blob_t** _blob);
+                               osmdb_handle_t** _hnd);
 void           osmdb_entry_put(osmdb_entry_t* self,
-                               osmdb_blob_t** _blob);
+                               osmdb_handle_t** _hnd);
 int            osmdb_entry_add(osmdb_entry_t* self,
                                int loaded,
                                size_t size,

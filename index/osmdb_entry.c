@@ -46,10 +46,10 @@ osmdb_entry_unmap(osmdb_entry_t* self)
 		miter = cc_map_head(self->map, &miterator);
 		while(miter)
 		{
-			osmdb_blob_t* blob;
-			blob = (osmdb_blob_t*)
-			       cc_map_remove(self->map, &miter);
-			FREE(blob);
+			osmdb_handle_t* hnd;
+			hnd = (osmdb_handle_t*)
+			      cc_map_remove(self->map, &miter);
+			FREE(hnd);
 		}
 
 		cc_map_delete(&self->map);
@@ -77,89 +77,89 @@ osmdb_entry_map(osmdb_entry_t* self, size_t offset)
 		offset = 0;
 	}
 
-	// add blobs to map
-	int64_t       minor_id = 0;
-	size_t        bsize    = 0;
-	osmdb_blob_t* blob     = NULL;
+	// add handles to map
+	int64_t         minor_id = 0;
+	size_t          bsize    = 0;
+	osmdb_handle_t* hnd      = NULL;
 	while(offset < self->size)
 	{
 		// tiles only contain a single mapping at 0
 		if((offset > 0) &&
-		   (self->type < OSMDB_BLOB_TYPE_TILE_COUNT))
+		   (self->type < OSMDB_TYPE_TILEREF_COUNT))
 		{
 			break;
 		}
 
-		blob = CALLOC(1, sizeof(osmdb_blob_t));
-		if(blob == NULL)
+		hnd = CALLOC(1, sizeof(osmdb_handle_t));
+		if(hnd == NULL)
 		{
 			LOGE("CALLOC failed");
 			return 0;
 		}
-		blob->priv = (void*) self;
+		hnd->entry = self;
 
-		if(self->type == OSMDB_BLOB_TYPE_NODE_COORD)
+		if(self->type == OSMDB_TYPE_NODECOORD)
 		{
-			blob->node_coord = (osmdb_blobNodeCoord_t*)
+			hnd->node_coord = (osmdb_nodeCoord_t*)
 			                   (self->data + offset);
-			bsize    = osmdb_blobNodeCoord_sizeof(blob->node_coord);
-			minor_id = blob->node_coord->nid%OSMDB_BLOB_SIZE;
+			bsize    = osmdb_nodeCoord_sizeof(hnd->node_coord);
+			minor_id = hnd->node_coord->nid%OSMDB_ENTRY_SIZE;
 		}
-		else if(self->type == OSMDB_BLOB_TYPE_NODE_INFO)
+		else if(self->type == OSMDB_TYPE_NODEINFO)
 		{
-			blob->node_info = (osmdb_blobNodeInfo_t*)
-			                  (self->data + offset);
-			bsize    = osmdb_blobNodeInfo_sizeof(blob->node_info);
-			minor_id = blob->node_info->nid%OSMDB_BLOB_SIZE;
-		}
-		else if(self->type == OSMDB_BLOB_TYPE_WAY_INFO)
-		{
-			blob->way_info = (osmdb_blobWayInfo_t*)
+			hnd->node_info = (osmdb_nodeInfo_t*)
 			                 (self->data + offset);
-			bsize    = osmdb_blobWayInfo_sizeof(blob->way_info);
-			minor_id = blob->way_info->wid%OSMDB_BLOB_SIZE;
+			bsize    = osmdb_nodeInfo_sizeof(hnd->node_info);
+			minor_id = hnd->node_info->nid%OSMDB_ENTRY_SIZE;
 		}
-		else if(self->type == OSMDB_BLOB_TYPE_WAY_RANGE)
+		else if(self->type == OSMDB_TYPE_WAYINFO)
 		{
-			blob->way_range = (osmdb_blobWayRange_t*)
+			hnd->way_info = (osmdb_wayInfo_t*)
+			                 (self->data + offset);
+			bsize    = osmdb_wayInfo_sizeof(hnd->way_info);
+			minor_id = hnd->way_info->wid%OSMDB_ENTRY_SIZE;
+		}
+		else if(self->type == OSMDB_TYPE_WAYRANGE)
+		{
+			hnd->way_range = (osmdb_wayRange_t*)
 			                  (self->data + offset);
-			bsize    = osmdb_blobWayRange_sizeof(blob->way_range);
-			minor_id = blob->way_range->wid%OSMDB_BLOB_SIZE;
+			bsize    = osmdb_wayRange_sizeof(hnd->way_range);
+			minor_id = hnd->way_range->wid%OSMDB_ENTRY_SIZE;
 		}
-		else if(self->type == OSMDB_BLOB_TYPE_WAY_NDS)
+		else if(self->type == OSMDB_TYPE_WAYNDS)
 		{
-			blob->way_nds = (osmdb_blobWayNds_t*)
+			hnd->way_nds = (osmdb_wayNds_t*)
 			                (self->data + offset);
-			bsize    = osmdb_blobWayNds_sizeof(blob->way_nds);
-			minor_id = blob->way_nds->wid%OSMDB_BLOB_SIZE;
+			bsize    = osmdb_wayNds_sizeof(hnd->way_nds);
+			minor_id = hnd->way_nds->wid%OSMDB_ENTRY_SIZE;
 		}
-		else if(self->type == OSMDB_BLOB_TYPE_REL_INFO)
+		else if(self->type == OSMDB_TYPE_RELINFO)
 		{
-			blob->rel_info = (osmdb_blobRelInfo_t*)
+			hnd->rel_info = (osmdb_relInfo_t*)
 			                 (self->data + offset);
-			bsize    = osmdb_blobRelInfo_sizeof(blob->rel_info);
-			minor_id = blob->rel_info->rid%OSMDB_BLOB_SIZE;
+			bsize    = osmdb_relInfo_sizeof(hnd->rel_info);
+			minor_id = hnd->rel_info->rid%OSMDB_ENTRY_SIZE;
 		}
-		else if(self->type == OSMDB_BLOB_TYPE_REL_MEMBERS)
+		else if(self->type == OSMDB_TYPE_RELMEMBERS)
 		{
-			blob->rel_members = (osmdb_blobRelMembers_t*)
+			hnd->rel_members = (osmdb_relMembers_t*)
 			                    (self->data + offset);
-			bsize    = osmdb_blobRelMembers_sizeof(blob->rel_members);
-			minor_id = blob->rel_members->rid%OSMDB_BLOB_SIZE;
+			bsize    = osmdb_relMembers_sizeof(hnd->rel_members);
+			minor_id = hnd->rel_members->rid%OSMDB_ENTRY_SIZE;
 		}
-		else if(self->type == OSMDB_BLOB_TYPE_REL_RANGE)
+		else if(self->type == OSMDB_TYPE_RELRANGE)
 		{
-			blob->rel_range = (osmdb_blobRelRange_t*)
+			hnd->rel_range = (osmdb_relRange_t*)
 			                  (self->data + offset);
-			bsize    = osmdb_blobRelRange_sizeof(blob->rel_range);
-			minor_id = blob->rel_range->rid%OSMDB_BLOB_SIZE;
+			bsize    = osmdb_relRange_sizeof(hnd->rel_range);
+			minor_id = hnd->rel_range->rid%OSMDB_ENTRY_SIZE;
 		}
-		else if((self->type < OSMDB_BLOB_TYPE_TILE_COUNT) &&
+		else if((self->type < OSMDB_TYPE_TILEREF_COUNT) &&
 		        (offset == 0))
 		{
-			blob->tile = (osmdb_blobTile_t*)
-			             (self->data + offset);
-			bsize    = osmdb_blobTile_sizeof(blob->tile);
+			hnd->tile_refs = (osmdb_tileRefs_t*)
+			                  (self->data + offset);
+			bsize    = osmdb_tileRefs_sizeof(hnd->tile_refs);
 			minor_id = 0;
 		}
 		else
@@ -169,7 +169,7 @@ osmdb_entry_map(osmdb_entry_t* self, size_t offset)
 			goto fail_type;
 		}
 
-		if(cc_map_addf(self->map, (const void*) blob,
+		if(cc_map_addf(self->map, (const void*) hnd,
 		               "%" PRId64, minor_id) == 0)
 		{
 			LOGE("invalid type=%i, major_id=%" PRId64 ", minor_id=%" PRId64,
@@ -186,7 +186,7 @@ osmdb_entry_map(osmdb_entry_t* self, size_t offset)
 	// failure
 	fail_map:
 	fail_type:
-		FREE(blob);
+		FREE(hnd);
 	return 0;
 }
 
@@ -235,10 +235,10 @@ void osmdb_entry_delete(osmdb_entry_t** _self)
 
 int
 osmdb_entry_get(osmdb_entry_t* self, int64_t minor_id,
-                osmdb_blob_t** _blob)
+                osmdb_handle_t** _hnd)
 {
 	ASSERT(self);
-	ASSERT(_blob);
+	ASSERT(_hnd);
 
 	cc_mapIter_t miterator;
 
@@ -247,11 +247,11 @@ osmdb_entry_get(osmdb_entry_t* self, int64_t minor_id,
 		return 0;
 	}
 
-	// note that it is not an error to return a NULL blob
-	*_blob = (osmdb_blob_t*)
+	// note that it is not an error to return a NULL hnd
+	*_hnd = (osmdb_handle_t*)
 	         cc_map_findf(self->map, &miterator,
 	                      "%" PRId64, minor_id);
-	if(*_blob)
+	if(*_hnd)
 	{
 		++self->refcount;
 	}
@@ -260,15 +260,15 @@ osmdb_entry_get(osmdb_entry_t* self, int64_t minor_id,
 }
 
 void osmdb_entry_put(osmdb_entry_t* self,
-                     osmdb_blob_t** _blob)
+                     osmdb_handle_t** _hnd)
 {
 	ASSERT(self);
 
-	osmdb_blob_t* blob = *_blob;
-	if(blob)
+	osmdb_handle_t* hnd = *_hnd;
+	if(hnd)
 	{
 		--self->refcount;
-		*_blob = NULL;
+		*_hnd = NULL;
 	}
 }
 

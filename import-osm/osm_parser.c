@@ -46,12 +46,12 @@ int osmdb_index_add(osmdb_index_t* self,
 int osmdb_index_addTile(osmdb_index_t* self,
                         int type, int64_t major_id,
                         int64_t ref);
-void osmdb_blobNodeInfo_addName(osmdb_blobNodeInfo_t* self,
-                                const char* name);
-void osmdb_blobWayInfo_addName(osmdb_blobWayInfo_t* self,
-                               const char* name);
-void osmdb_blobRelInfo_addName(osmdb_blobRelInfo_t* self,
-                               const char* name);
+void osmdb_nodeInfo_addName(osmdb_nodeInfo_t* self,
+                            const char* name);
+void osmdb_wayInfo_addName(osmdb_wayInfo_t* self,
+                           const char* name);
+void osmdb_relInfo_addName(osmdb_relInfo_t* self,
+                           const char* name);
 
 #define OSM_STATE_INIT            0
 #define OSM_STATE_OSM             1
@@ -648,9 +648,9 @@ static void osm_parser_initNode(osm_parser_t* self)
 	ASSERT(self);
 
 	memset((void*) self->node_coord, 0,
-	       sizeof(osmdb_blobNodeCoord_t));
+	       sizeof(osmdb_nodeCoord_t));
 	memset((void*) self->node_info, 0,
-	       sizeof(osmdb_blobNodeInfo_t));
+	       sizeof(osmdb_nodeInfo_t));
 
 	self->name_en      = 0;
 	self->tag_name[0]  = '\0';
@@ -662,11 +662,11 @@ static void osm_parser_initWay(osm_parser_t* self)
 	ASSERT(self);
 
 	memset((void*) self->way_info, 0,
-	       sizeof(osmdb_blobWayInfo_t));
+	       sizeof(osmdb_wayInfo_t));
 	memset((void*) self->way_range, 0,
-	       sizeof(osmdb_blobWayRange_t));
+	       sizeof(osmdb_wayRange_t));
 	memset((void*) self->way_nds, 0,
-	       sizeof(osmdb_blobWayNds_t));
+	       sizeof(osmdb_wayNds_t));
 
 	self->name_en      = 0;
 	self->tag_name[0]  = '\0';
@@ -678,11 +678,11 @@ static void osm_parser_initRel(osm_parser_t* self)
 	ASSERT(self);
 
 	memset((void*) self->rel_info, 0,
-	       sizeof(osmdb_blobRelInfo_t));
+	       sizeof(osmdb_relInfo_t));
 	memset((void*) self->rel_range, 0,
-	       sizeof(osmdb_blobRelRange_t));
+	       sizeof(osmdb_relRange_t));
 	memset((void*) self->rel_members, 0,
-	       sizeof(osmdb_blobRelMembers_t));
+	       sizeof(osmdb_relMembers_t));
 
 	self->name_en      = 0;
 	self->tag_name[0]  = '\0';
@@ -803,8 +803,8 @@ osm_parser_addTileCoord(osm_parser_t* self,
 
 	int type_array[]  =
 	{
-		OSMDB_BLOB_TYPE_NODE_TILE14,
-		OSMDB_BLOB_TYPE_NODE_TILE11,
+		OSMDB_TYPE_TILEREF_NODE14,
+		OSMDB_TYPE_TILEREF_NODE11,
 	};
 
 	while(min_zoom <= zoom[i])
@@ -832,9 +832,9 @@ osm_parser_insertNodeInfo(osm_parser_t* self, int min_zoom)
 	ASSERT(self);
 
 	size_t size;
-	size = osmdb_blobNodeInfo_sizeof(self->node_info);
+	size = osmdb_nodeInfo_sizeof(self->node_info);
 	if(osmdb_index_add(self->index,
-	                   OSMDB_BLOB_TYPE_NODE_INFO,
+	                   OSMDB_TYPE_NODEINFO,
 	                   self->node_info->nid,
 	                   size, (void*) self->node_info) == 0)
 	{
@@ -859,9 +859,9 @@ osm_parser_insertNodeCoords(osm_parser_t* self)
 	ASSERT(self);
 
 	size_t size;
-	size = osmdb_blobNodeCoord_sizeof(self->node_coord);
+	size = osmdb_nodeCoord_sizeof(self->node_coord);
 	return osmdb_index_add(self->index,
-	                       OSMDB_BLOB_TYPE_NODE_COORD,
+	                       OSMDB_TYPE_NODECOORD,
 	                       self->node_coord->nid,
 	                       size, (void*) self->node_coord);
 }
@@ -886,13 +886,13 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 		// fill the name
 		if(self->tag_abrev[0] == '\0')
 		{
-			osmdb_blobNodeInfo_addName(self->node_info,
-			                           self->tag_name);
+			osmdb_nodeInfo_addName(self->node_info,
+			                       self->tag_name);
 		}
 		else
 		{
-			osmdb_blobNodeInfo_addName(self->node_info,
-			                           self->tag_abrev);
+			osmdb_nodeInfo_addName(self->node_info,
+			                       self->tag_abrev);
 		}
 
 		if(osm_parser_insertNodeInfo(self, min_zoom) == 0)
@@ -1044,14 +1044,15 @@ osm_parser_beginOsmWay(osm_parser_t* self, int line,
 
 static int
 osm_parser_computeWayRange(osm_parser_t* self,
-                           osmdb_blobWayNds_t*   way_nds,
-                           osmdb_blobWayRange_t* way_range)
+                           osmdb_wayNds_t*   way_nds,
+                           osmdb_wayRange_t* way_range)
 {
 	ASSERT(self);
 	ASSERT(way_nds);
 	ASSERT(way_range);
 
-	osmdb_blob_t* blob;
+	osmdb_handle_t*    hnd_node_coord;
+	osmdb_nodeCoord_t* node_coord;
 
 	// ignore
 	if(way_nds->count == 0)
@@ -1059,58 +1060,59 @@ osm_parser_computeWayRange(osm_parser_t* self,
 		return 1;
 	}
 
-	int64_t* nds = osmdb_blobWayNds_nds(way_nds);
+	int64_t* nds = osmdb_wayNds_nds(way_nds);
 
 	int i;
 	int first = 1;
 	for(i = 0; i < way_nds->count; ++i)
 	{
 		if(osmdb_index_get(self->index,
-		                   OSMDB_BLOB_TYPE_NODE_COORD,
-		                   nds[i], &blob) == 0)
+		                   OSMDB_TYPE_NODECOORD,
+		                   nds[i], &hnd_node_coord) == 0)
 		{
 			return 0;
 		}
 
 		// some ways may not exist due to osmosis
-		if(blob == NULL)
+		if(hnd_node_coord == NULL)
 		{
 			continue;
 		}
+		node_coord = hnd_node_coord->node_coord;
 
 		if(first)
 		{
-			way_range->latT = blob->node_coord->lat;
-			way_range->lonL = blob->node_coord->lon;
-			way_range->latB = blob->node_coord->lat;
-			way_range->lonR = blob->node_coord->lon;
+			way_range->latT = node_coord->lat;
+			way_range->lonL = node_coord->lon;
+			way_range->latB = node_coord->lat;
+			way_range->lonR = node_coord->lon;
 
 			first = 0;
 		}
 		else
 		{
-			if(blob->node_coord->lat > way_range->latT)
+			if(node_coord->lat > way_range->latT)
 			{
-				way_range->latT = blob->node_coord->lat;
+				way_range->latT = node_coord->lat;
 			}
 
-			if(blob->node_coord->lon < way_range->lonL)
+			if(node_coord->lon < way_range->lonL)
 			{
-				way_range->lonL = blob->node_coord->lon;
+				way_range->lonL = node_coord->lon;
 			}
 
-			if(blob->node_coord->lat < way_range->latB)
+			if(node_coord->lat < way_range->latB)
 			{
-				way_range->latB = blob->node_coord->lat;
+				way_range->latB = node_coord->lat;
 			}
 
-			if(blob->node_coord->lon > way_range->lonR)
+			if(node_coord->lon > way_range->lonR)
 			{
-				way_range->lonR = blob->node_coord->lon;
+				way_range->lonR = node_coord->lon;
 			}
 		}
 
-		osmdb_index_put(self->index, &blob);
+		osmdb_index_put(self->index, &hnd_node_coord);
 	}
 
 	return 1;
@@ -1160,20 +1162,20 @@ osm_parser_addTileRange(osm_parser_t* self,
 	// determine the tile type
 	int type_way[]  =
 	{
-		OSMDB_BLOB_TYPE_WAY_TILE14,
-		OSMDB_BLOB_TYPE_WAY_TILE11,
+		OSMDB_TYPE_TILEREF_WAY14,
+		OSMDB_TYPE_TILEREF_WAY11,
 	};
 	int type_rel[]  =
 	{
-		OSMDB_BLOB_TYPE_REL_TILE14,
-		OSMDB_BLOB_TYPE_REL_TILE11,
+		OSMDB_TYPE_TILEREF_REL14,
+		OSMDB_TYPE_TILEREF_REL11,
 	};
 	int* type_array;
-	if(type == OSMDB_BLOB_TYPE_WAY_RANGE)
+	if(type == OSMDB_TYPE_WAYRANGE)
 	{
 		type_array = type_way;
 	}
-	else if(type == OSMDB_BLOB_TYPE_REL_RANGE)
+	else if(type == OSMDB_TYPE_RELRANGE)
 	{
 		type_array = type_rel;
 	}
@@ -1236,9 +1238,9 @@ osm_parser_insertWay(osm_parser_t* self,
 	ASSERT(self);
 
 	size_t size;
-	size = osmdb_blobWayInfo_sizeof(self->way_info);
+	size = osmdb_wayInfo_sizeof(self->way_info);
 	if(osmdb_index_add(self->index,
-	                   OSMDB_BLOB_TYPE_WAY_INFO,
+	                   OSMDB_TYPE_WAYINFO,
 	                   self->way_info->wid,
 	                   size, (void*) self->way_info) == 0)
 	{
@@ -1255,9 +1257,9 @@ osm_parser_insertWay(osm_parser_t* self,
 			return 0;
 		}
 
-		size = osmdb_blobWayRange_sizeof(self->way_range);
+		size = osmdb_wayRange_sizeof(self->way_range);
 		if(osmdb_index_add(self->index,
-		                   OSMDB_BLOB_TYPE_WAY_RANGE,
+		                   OSMDB_TYPE_WAYRANGE,
 		                   self->way_range->wid,
 		                   size, (void*) self->way_range) == 0)
 		{
@@ -1265,7 +1267,7 @@ osm_parser_insertWay(osm_parser_t* self,
 		}
 
 		if(osm_parser_addTileRange(self,
-		                           OSMDB_BLOB_TYPE_WAY_RANGE,
+		                           OSMDB_TYPE_WAYRANGE,
 		                           self->way_range->wid,
 		                           self->way_range->latT,
 		                           self->way_range->lonL,
@@ -1278,9 +1280,9 @@ osm_parser_insertWay(osm_parser_t* self,
 		}
 	}
 
-	size = osmdb_blobWayNds_sizeof(self->way_nds);
+	size = osmdb_wayNds_sizeof(self->way_nds);
 	if(osmdb_index_add(self->index,
-	                   OSMDB_BLOB_TYPE_WAY_NDS,
+	                   OSMDB_TYPE_WAYNDS,
 	                   self->way_nds->wid,
 	                   size, (void*) self->way_nds) == 0)
 	{
@@ -1326,13 +1328,13 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	// fill the name
 	if(self->tag_abrev[0] == '\0')
 	{
-		osmdb_blobWayInfo_addName(self->way_info,
-		                          self->tag_name);
+		osmdb_wayInfo_addName(self->way_info,
+		                      self->tag_name);
 	}
 	else
 	{
-		osmdb_blobWayInfo_addName(self->way_info,
-		                          self->tag_abrev);
+		osmdb_wayInfo_addName(self->way_info,
+		                      self->tag_abrev);
 	}
 
 	// always add ways since they may be transitively selected
@@ -1417,27 +1419,27 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 			{
 				if(strcmp(val, "yes") == 0)
 				{
-					self->way_info->flags |= OSMDB_BLOBWAYINFO_FLAG_FORWARD;
+					self->way_info->flags |= OSMDB_WAYINFO_FLAG_FORWARD;
 				}
 				else if(strcmp(val, "-1") == 0)
 				{
-					self->way_info->flags |= OSMDB_BLOBWAYINFO_FLAG_REVERSE;
+					self->way_info->flags |= OSMDB_WAYINFO_FLAG_REVERSE;
 				}
 			}
 			else if((strcmp(atts[j], "bridge") == 0) &&
 				    (strcmp(val, "no") != 0))
 			{
-				self->way_info->flags |= OSMDB_BLOBWAYINFO_FLAG_BRIDGE;
+				self->way_info->flags |= OSMDB_WAYINFO_FLAG_BRIDGE;
 			}
 			else if((strcmp(atts[j], "tunnel") == 0) &&
 				    (strcmp(val, "no") != 0))
 			{
-				self->way_info->flags |= OSMDB_BLOBWAYINFO_FLAG_TUNNEL;
+				self->way_info->flags |= OSMDB_WAYINFO_FLAG_TUNNEL;
 			}
 			else if((strcmp(atts[j], "cutting") == 0) &&
 				    (strcmp(val, "no") != 0))
 			{
-				self->way_info->flags |= OSMDB_BLOBWAYINFO_FLAG_CUTTING;
+				self->way_info->flags |= OSMDB_WAYINFO_FLAG_CUTTING;
 			}
 		}
 
@@ -1474,15 +1476,15 @@ osm_parser_beginOsmWayNd(osm_parser_t* self, int line,
 	// update nds size
 	if(self->way_nds_maxCount <= self->way_nds->count)
 	{
-		osmdb_blobWayNds_t tmp_size =
+		osmdb_wayNds_t tmp_size =
 		{
 			.count=2*self->way_nds_maxCount
 		};
 
-		size_t size = osmdb_blobWayNds_sizeof(&tmp_size);
+		size_t size = osmdb_wayNds_sizeof(&tmp_size);
 
-		osmdb_blobWayNds_t* tmp;
-		tmp = (osmdb_blobWayNds_t*)
+		osmdb_wayNds_t* tmp;
+		tmp = (osmdb_wayNds_t*)
 		      REALLOC((void*) self->way_nds, size);
 		if(tmp == NULL)
 		{
@@ -1517,7 +1519,7 @@ osm_parser_beginOsmWayNd(osm_parser_t* self, int line,
 		return 0;
 	}
 
-	int64_t* nds = osmdb_blobWayNds_nds(self->way_nds);
+	int64_t* nds = osmdb_wayNds_nds(self->way_nds);
 	nds[self->way_nds->count] = ref;
 	self->way_nds->count += 1;
 
@@ -1579,12 +1581,12 @@ osm_parser_computeRelRange(osm_parser_t* self)
 {
 	ASSERT(self);
 
-	osmdb_blob_t*           blob;
-	osmdb_blobRelMembers_t* rel_members = self->rel_members;
-	osmdb_blobRelRange_t*   rel_range   = self->rel_range;
-	osmdb_blobWayRange_t*   way_range;
-	osmdb_blobWayRange_t    tmp_way_range;
-	osmdb_blob_t*           blob_way_nds;
+	osmdb_handle_t*     hnd_way_range;
+	osmdb_handle_t*     hnd_way_nds;
+	osmdb_relMembers_t* rel_members = self->rel_members;
+	osmdb_relRange_t*   rel_range   = self->rel_range;
+	osmdb_wayRange_t*   way_range;
+	osmdb_wayRange_t    tmp_way_range;
 
 	// ignore
 	if(rel_members->count == 0)
@@ -1592,8 +1594,8 @@ osm_parser_computeRelRange(osm_parser_t* self)
 		return 1;
 	}
 
-	osmdb_blobRelData_t* data;
-	data = osmdb_blobRelMembers_data(rel_members);
+	osmdb_relData_t* data;
+	data = osmdb_relMembers_data(rel_members);
 
 	int i;
 	int first = 1;
@@ -1606,8 +1608,8 @@ osm_parser_computeRelRange(osm_parser_t* self)
 		}
 
 		if(osmdb_index_get(self->index,
-		                   OSMDB_BLOB_TYPE_WAY_RANGE,
-		                   data[i].ref, &blob) == 0)
+		                   OSMDB_TYPE_WAYRANGE,
+		                   data[i].ref, &hnd_way_range) == 0)
 		{
 			return 0;
 		}
@@ -1615,9 +1617,9 @@ osm_parser_computeRelRange(osm_parser_t* self)
 		// some way ranges may not exist due to osmosis or must
 		// be computed since they were not selected by
 		// osm_parser_insertWay
-		if(blob)
+		if(hnd_way_range)
 		{
-			way_range = blob->way_range;
+			way_range = hnd_way_range->way_range;
 		}
 		else
 		{
@@ -1629,38 +1631,38 @@ osm_parser_computeRelRange(osm_parser_t* self)
 			way_range->lonR = 0.0;
 
 			if(osmdb_index_get(self->index,
-			                   OSMDB_BLOB_TYPE_WAY_NDS,
-			                   data[i].ref, &blob_way_nds) == 0)
+			                   OSMDB_TYPE_WAYNDS,
+			                   data[i].ref, &hnd_way_nds) == 0)
 			{
 				return 0;
 			}
 
 			// some ways may not exist due to osmosis
-			if(blob_way_nds == NULL)
+			if(hnd_way_nds == NULL)
 			{
 				continue;
 			}
 
 			if(osm_parser_computeWayRange(self,
-			                              blob_way_nds->way_nds,
+			                              hnd_way_nds->way_nds,
 			                              way_range) == 0)
 			{
-				osmdb_index_put(self->index, &blob_way_nds);
+				osmdb_index_put(self->index, &hnd_way_nds);
 				return 0;
 			}
 
 			size_t size;
-			size = osmdb_blobWayRange_sizeof(way_range);
+			size = osmdb_wayRange_sizeof(way_range);
 			if(osmdb_index_add(self->index,
-			                   OSMDB_BLOB_TYPE_WAY_RANGE,
+			                   OSMDB_TYPE_WAYRANGE,
 			                   way_range->wid,
 			                   size, (void*) way_range) == 0)
 			{
-				osmdb_index_put(self->index, &blob_way_nds);
+				osmdb_index_put(self->index, &hnd_way_nds);
 				return 0;
 			}
 
-			osmdb_index_put(self->index, &blob_way_nds);
+			osmdb_index_put(self->index, &hnd_way_nds);
 		}
 
 		if(first)
@@ -1695,8 +1697,8 @@ osm_parser_computeRelRange(osm_parser_t* self)
 			}
 		}
 
-		// blob may be NULL
-		osmdb_index_put(self->index, &blob);
+		// hnd_way_range may be NULL
+		osmdb_index_put(self->index, &hnd_way_range);
 	}
 
 	return 1;
@@ -1709,9 +1711,9 @@ osm_parser_insertRel(osm_parser_t* self,
 	ASSERT(self);
 
 	size_t size;
-	size = osmdb_blobRelInfo_sizeof(self->rel_info);
+	size = osmdb_relInfo_sizeof(self->rel_info);
 	if(osmdb_index_add(self->index,
-	                   OSMDB_BLOB_TYPE_REL_INFO,
+	                   OSMDB_TYPE_RELINFO,
 	                   self->rel_info->rid,
 	                   size, (void*) self->rel_info) == 0)
 	{
@@ -1723,9 +1725,9 @@ osm_parser_insertRel(osm_parser_t* self,
 		return 0;
 	}
 
-	size = osmdb_blobRelRange_sizeof(self->rel_range);
+	size = osmdb_relRange_sizeof(self->rel_range);
 	if(osmdb_index_add(self->index,
-	                   OSMDB_BLOB_TYPE_REL_RANGE,
+	                   OSMDB_TYPE_RELRANGE,
 	                   self->rel_range->rid,
 	                   size, (void*) self->rel_range) == 0)
 	{
@@ -1749,9 +1751,9 @@ osm_parser_insertRel(osm_parser_t* self,
 	   ((polygon == 0) ||
 	    (polygon && (0.5f*area < 0.000369f))))
 	{
-		size = osmdb_blobRelMembers_sizeof(self->rel_members);
+		size = osmdb_relMembers_sizeof(self->rel_members);
 		if(osmdb_index_add(self->index,
-		                   OSMDB_BLOB_TYPE_REL_MEMBERS,
+		                   OSMDB_TYPE_RELMEMBERS,
 		                   self->rel_members->rid,
 		                   size, (void*) self->rel_members) == 0)
 		{
@@ -1760,7 +1762,7 @@ osm_parser_insertRel(osm_parser_t* self,
 	}
 
 	if(osm_parser_addTileRange(self,
-	                           OSMDB_BLOB_TYPE_REL_RANGE,
+	                           OSMDB_TYPE_RELRANGE,
 	                           self->rel_range->rid,
 	                           latT, lonL,
 	                           latB, lonR,
@@ -1817,13 +1819,13 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 	// fill the name
 	if(self->tag_abrev[0] == '\0')
 	{
-		osmdb_blobRelInfo_addName(self->rel_info,
-		                          self->tag_name);
+		osmdb_relInfo_addName(self->rel_info,
+		                      self->tag_name);
 	}
 	else
 	{
-		osmdb_blobRelInfo_addName(self->rel_info,
-		                          self->tag_abrev);
+		osmdb_relInfo_addName(self->rel_info,
+		                      self->tag_abrev);
 	}
 
 	int min_zoom = sc ? osmdb_styleClass_minZoom(sc) : 999;
@@ -1938,15 +1940,15 @@ osm_parser_beginOsmRelMember(osm_parser_t* self, int line,
 	// update members size
 	if(self->rel_members_maxCount <= self->rel_members->count)
 	{
-		osmdb_blobRelMembers_t tmp_size =
+		osmdb_relMembers_t tmp_size =
 		{
 			.count=2*self->rel_members_maxCount
 		};
 
-		size_t size = osmdb_blobRelMembers_sizeof(&tmp_size);
+		size_t size = osmdb_relMembers_sizeof(&tmp_size);
 
-		osmdb_blobRelMembers_t* tmp;
-		tmp = (osmdb_blobRelMembers_t*)
+		osmdb_relMembers_t* tmp;
+		tmp = (osmdb_relMembers_t*)
 		      REALLOC((void*) self->rel_members, size);
 		if(tmp == NULL)
 		{
@@ -1959,8 +1961,8 @@ osm_parser_beginOsmRelMember(osm_parser_t* self, int line,
 	}
 
 	// get the next member data
-	osmdb_blobRelData_t* data;
-	data = osmdb_blobRelMembers_data(self->rel_members);
+	osmdb_relData_t* data;
+	data = osmdb_relMembers_data(self->rel_members);
 	data = &(data[self->rel_members->count]);
 
 	// parse the member
@@ -2036,9 +2038,9 @@ osm_parser_new(const char* style,
 		goto fail_style;
 	}
 
-	osmdb_blobNodeCoord_t tmp_node_coord = { .nid=0 };
-	size_t size = osmdb_blobNodeCoord_sizeof(&tmp_node_coord);
-	self->node_coord = (osmdb_blobNodeCoord_t*)
+	osmdb_nodeCoord_t tmp_node_coord = { .nid=0 };
+	size_t size = osmdb_nodeCoord_sizeof(&tmp_node_coord);
+	self->node_coord = (osmdb_nodeCoord_t*)
 	                   CALLOC(1, size);
 	if(self->node_coord == NULL)
 	{
@@ -2046,9 +2048,9 @@ osm_parser_new(const char* style,
 		goto fail_node_coord;
 	}
 
-	osmdb_blobNodeInfo_t tmp_node_info = { .size_name=256 };
-	size = osmdb_blobNodeInfo_sizeof(&tmp_node_info);
-	self->node_info = (osmdb_blobNodeInfo_t*)
+	osmdb_nodeInfo_t tmp_node_info = { .size_name=256 };
+	size = osmdb_nodeInfo_sizeof(&tmp_node_info);
+	self->node_info = (osmdb_nodeInfo_t*)
 	                  CALLOC(1, size);
 	if(self->node_info == NULL)
 	{
@@ -2056,9 +2058,9 @@ osm_parser_new(const char* style,
 		goto fail_node_info;
 	}
 
-	osmdb_blobWayInfo_t tmp_way_info = { .size_name=256 };
-	size = osmdb_blobWayInfo_sizeof(&tmp_way_info);
-	self->way_info = (osmdb_blobWayInfo_t*)
+	osmdb_wayInfo_t tmp_way_info = { .size_name=256 };
+	size = osmdb_wayInfo_sizeof(&tmp_way_info);
+	self->way_info = (osmdb_wayInfo_t*)
 	                 CALLOC(1, size);
 	if(self->way_info == NULL)
 	{
@@ -2066,9 +2068,9 @@ osm_parser_new(const char* style,
 		goto fail_way_info;
 	}
 
-	osmdb_blobWayRange_t tmp_way_range = { .wid=0 };
-	size = osmdb_blobWayRange_sizeof(&tmp_way_range);
-	self->way_range = (osmdb_blobWayRange_t*)
+	osmdb_wayRange_t tmp_way_range = { .wid=0 };
+	size = osmdb_wayRange_sizeof(&tmp_way_range);
+	self->way_range = (osmdb_wayRange_t*)
 	                  CALLOC(1, size);
 	if(self->way_range == NULL)
 	{
@@ -2077,13 +2079,13 @@ osm_parser_new(const char* style,
 	}
 
 	self->way_nds_maxCount = 256;
-	osmdb_blobWayNds_t tmp_way_nds =
+	osmdb_wayNds_t tmp_way_nds =
 	{
 		.count=self->way_nds_maxCount
 	};
 
-	size = osmdb_blobWayNds_sizeof(&tmp_way_nds);
-	self->way_nds = (osmdb_blobWayNds_t*)
+	size = osmdb_wayNds_sizeof(&tmp_way_nds);
+	self->way_nds = (osmdb_wayNds_t*)
 	                CALLOC(1, size);
 	if(self->way_nds == NULL)
 	{
@@ -2091,9 +2093,9 @@ osm_parser_new(const char* style,
 		goto fail_way_nds;
 	}
 
-	osmdb_blobRelInfo_t tmp_rel_info = { .size_name=256 };
-	size = osmdb_blobRelInfo_sizeof(&tmp_rel_info);
-	self->rel_info = (osmdb_blobRelInfo_t*)
+	osmdb_relInfo_t tmp_rel_info = { .size_name=256 };
+	size = osmdb_relInfo_sizeof(&tmp_rel_info);
+	self->rel_info = (osmdb_relInfo_t*)
 	                 CALLOC(1, size);
 	if(self->rel_info == NULL)
 	{
@@ -2101,9 +2103,9 @@ osm_parser_new(const char* style,
 		goto fail_rel_info;
 	}
 
-	osmdb_blobRelRange_t tmp_rel_range = { .rid=0 };
-	size = osmdb_blobRelRange_sizeof(&tmp_rel_range);
-	self->rel_range = (osmdb_blobRelRange_t*)
+	osmdb_relRange_t tmp_rel_range = { .rid=0 };
+	size = osmdb_relRange_sizeof(&tmp_rel_range);
+	self->rel_range = (osmdb_relRange_t*)
 	                  CALLOC(1, size);
 	if(self->rel_range == NULL)
 	{
@@ -2112,13 +2114,13 @@ osm_parser_new(const char* style,
 	}
 
 	self->rel_members_maxCount = 256;
-	osmdb_blobRelMembers_t tmp_rel_members =
+	osmdb_relMembers_t tmp_rel_members =
 	{
 		.count=self->rel_members_maxCount
 	};
 
-	size = osmdb_blobRelMembers_sizeof(&tmp_rel_members);
-	self->rel_members = (osmdb_blobRelMembers_t*)
+	size = osmdb_relMembers_sizeof(&tmp_rel_members);
+	self->rel_members = (osmdb_relMembers_t*)
 	                    CALLOC(1, size);
 	if(self->rel_members == NULL)
 	{

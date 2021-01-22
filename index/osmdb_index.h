@@ -31,7 +31,7 @@
 #include "libcc/cc_map.h"
 #include "libsqlite3/sqlite3.h"
 #include "libxmlstream/xml_ostream.h"
-#include "osmdb_blob.h"
+#include "osmdb_type.h"
 
 #define OSMDB_INDEX_MODE_READONLY 0
 #define OSMDB_INDEX_MODE_CREATE   1
@@ -48,13 +48,13 @@ typedef struct
 	sqlite3_stmt* stmt_begin;
 	sqlite3_stmt* stmt_end;
 	sqlite3_stmt* stmt_changeset;
-	sqlite3_stmt* stmt_insert[OSMDB_BLOB_TYPE_COUNT];
-	sqlite3_stmt* stmt_select[OSMDB_BLOB_TYPE_COUNT];
+	sqlite3_stmt* stmt_insert[OSMDB_TYPE_COUNT];
+	sqlite3_stmt* stmt_select[OSMDB_TYPE_COUNT];
 
 	// sqlite3 indices
-	int idx_insert_id[OSMDB_BLOB_TYPE_COUNT];
-	int idx_insert_blob[OSMDB_BLOB_TYPE_COUNT];
-	int idx_select_id[OSMDB_BLOB_TYPE_COUNT];
+	int idx_insert_id[OSMDB_TYPE_COUNT];
+	int idx_insert_blob[OSMDB_TYPE_COUNT];
+	int idx_select_id[OSMDB_TYPE_COUNT];
 
 	// entry cache
 	pthread_mutex_t cache_mutex;
@@ -68,9 +68,9 @@ int64_t        osmdb_index_changeset(osmdb_index_t* self);
 int            osmdb_index_get(osmdb_index_t* self,
                                int type,
                                int64_t id,
-                               osmdb_blob_t** _blob);
+                               osmdb_handle_t** _hnd);
 void           osmdb_index_put(osmdb_index_t* self,
-                               osmdb_blob_t** _blob);
+                               osmdb_handle_t** _hnd);
 int            osmdb_index_tile(osmdb_index_t* self,
                                 int zoom, int x, int y,
                                 xml_ostream_t* os);

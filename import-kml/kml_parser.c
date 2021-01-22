@@ -62,48 +62,12 @@ int osmdb_index_add(osmdb_index_t* self,
 int osmdb_index_addTile(osmdb_index_t* self,
                         int type, int64_t major_id,
                         int64_t ref);
-void osmdb_blobNodeInfo_addName(osmdb_blobNodeInfo_t* self,
-                                const char* name);
-void osmdb_blobWayInfo_addName(osmdb_blobWayInfo_t* self,
-                               const char* name);
-void osmdb_blobRelInfo_addName(osmdb_blobRelInfo_t* self,
-                               const char* name);
-
-/***********************************************************
-* private - kml_node_t                                     *
-***********************************************************/
-
-static kml_node_t*
-kml_node_new(int64_t id, double lat, double lon)
-{
-	kml_node_t* self;
-	self = (kml_node_t*)
-	       MALLOC(sizeof(kml_node_t));
-	if(self == NULL)
-	{
-		LOGE("MALLOC failed");
-		return NULL;
-	}
-
-	self->id  = id;
-	self->lat = lat;
-	self->lon = lon;
-
-	return self;
-}
-
-static void
-kml_node_delete(kml_node_t** _self)
-{
-	ASSERT(_self);
-
-	kml_node_t* self = *_self;
-	if(self)
-	{
-		FREE(self);
-		*_self = NULL;
-	}
-}
+void osmdb_nodeInfo_addName(osmdb_nodeInfo_t* self,
+                            const char* name);
+void osmdb_wayInfo_addName(osmdb_wayInfo_t* self,
+                           const char* name);
+void osmdb_relInfo_addName(osmdb_relInfo_t* self,
+                           const char* name);
 
 /***********************************************************
 * private                                                  *
@@ -201,20 +165,20 @@ kml_parser_addTileRange(kml_parser_t* self,
 	// determine the tile type
 	int type_way[]  =
 	{
-		OSMDB_BLOB_TYPE_WAY_TILE14,
-		OSMDB_BLOB_TYPE_WAY_TILE11,
+		OSMDB_TYPE_TILEREF_WAY14,
+		OSMDB_TYPE_TILEREF_WAY11,
 	};
 	int type_rel[]  =
 	{
-		OSMDB_BLOB_TYPE_REL_TILE14,
-		OSMDB_BLOB_TYPE_REL_TILE11,
+		OSMDB_TYPE_TILEREF_REL14,
+		OSMDB_TYPE_TILEREF_REL11,
 	};
 	int* type_array;
-	if(type == OSMDB_BLOB_TYPE_WAY_RANGE)
+	if(type == OSMDB_TYPE_WAYRANGE)
 	{
 		type_array = type_way;
 	}
-	else if(type == OSMDB_BLOB_TYPE_REL_RANGE)
+	else if(type == OSMDB_TYPE_RELRANGE)
 	{
 		type_array = type_rel;
 	}
@@ -277,22 +241,22 @@ kml_parser_wayAddSeg(kml_parser_t* self)
 	// see init.sql for table definition
 	if(self->seg_nds->count)
 	{
-		osmdb_blobWayInfo_t way_info =
+		osmdb_wayInfo_t way_info =
 		{
 			.wid   = self->wid,
 			.class = self->class
 		};
 
-		size_t size = osmdb_blobWayInfo_sizeof(&way_info);
+		size_t size = osmdb_wayInfo_sizeof(&way_info);
 		if(osmdb_index_add(self->index,
-		                   OSMDB_BLOB_TYPE_WAY_INFO,
+		                   OSMDB_TYPE_WAYINFO,
 		                   self->wid, size,
 		                   (void*) &way_info) == 0)
 		{
 			return 0;
 		}
 
-		osmdb_blobWayRange_t way_range =
+		osmdb_wayRange_t way_range =
 		{
 			.wid  = self->wid,
 			.latT = self->seg_latT,
@@ -301,9 +265,9 @@ kml_parser_wayAddSeg(kml_parser_t* self)
 			.lonR = self->seg_lonR
 		};
 
-		size = osmdb_blobWayRange_sizeof(&way_range);
+		size = osmdb_wayRange_sizeof(&way_range);
 		if(osmdb_index_add(self->index,
-		                   OSMDB_BLOB_TYPE_WAY_RANGE,
+		                   OSMDB_TYPE_WAYRANGE,
 		                   self->wid, size,
 		                   (void*) &way_range) == 0)
 		{
@@ -311,9 +275,9 @@ kml_parser_wayAddSeg(kml_parser_t* self)
 		}
 
 		self->seg_nds->wid = self->wid;
-		size = osmdb_blobWayNds_sizeof(self->seg_nds);
+		size = osmdb_wayNds_sizeof(self->seg_nds);
 		if(osmdb_index_add(self->index,
-		                   OSMDB_BLOB_TYPE_WAY_NDS,
+		                   OSMDB_TYPE_WAYNDS,
 		                   self->wid,
 		                   size, (void*) self->seg_nds) == 0)
 		{
@@ -321,7 +285,7 @@ kml_parser_wayAddSeg(kml_parser_t* self)
 		}
 
 		if(kml_parser_addTileRange(self,
-		                           OSMDB_BLOB_TYPE_WAY_RANGE,
+		                           OSMDB_TYPE_WAYRANGE,
 		                           way_range.wid,
 		                           way_range.latT, way_range.lonL,
 		                           way_range.latB, way_range.lonR,
@@ -342,68 +306,68 @@ kml_parser_wayAddSeg(kml_parser_t* self)
 }
 
 static void
-kml_parser_wayAddNd(kml_parser_t* self, kml_node_t* node)
+kml_parser_wayAddNd(kml_parser_t* self, osmdb_nodeCoord_t* node_coord)
 {
 	ASSERT(self);
 
 	// update bounding boxes
 	if(self->way_nds)
 	{
-		if(node->lat > self->way_latT)
+		if(node_coord->lat > self->way_latT)
 		{
-			self->way_latT = node->lat;
+			self->way_latT = node_coord->lat;
 		}
-		if(node->lon < self->way_lonL)
+		if(node_coord->lon < self->way_lonL)
 		{
-			self->way_lonL = node->lon;
+			self->way_lonL = node_coord->lon;
 		}
-		if(node->lat < self->way_latB)
+		if(node_coord->lat < self->way_latB)
 		{
-			self->way_latB = node->lat;
+			self->way_latB = node_coord->lat;
 		}
-		if(node->lon > self->way_lonR)
+		if(node_coord->lon > self->way_lonR)
 		{
-			self->way_lonR = node->lon;
+			self->way_lonR = node_coord->lon;
 		}
 	}
 	else
 	{
-		self->way_latT = node->lat;
-		self->way_lonL = node->lon;
-		self->way_latB = node->lat;
-		self->way_lonR = node->lon;
+		self->way_latT = node_coord->lat;
+		self->way_lonL = node_coord->lon;
+		self->way_latB = node_coord->lat;
+		self->way_lonR = node_coord->lon;
 	}
 
 	if(self->seg_nds->count)
 	{
-		if(node->lat > self->seg_latT)
+		if(node_coord->lat > self->seg_latT)
 		{
-			self->seg_latT = node->lat;
+			self->seg_latT = node_coord->lat;
 		}
-		if(node->lon < self->seg_lonL)
+		if(node_coord->lon < self->seg_lonL)
 		{
-			self->seg_lonL = node->lon;
+			self->seg_lonL = node_coord->lon;
 		}
-		if(node->lat < self->seg_latB)
+		if(node_coord->lat < self->seg_latB)
 		{
-			self->seg_latB = node->lat;
+			self->seg_latB = node_coord->lat;
 		}
-		if(node->lon > self->seg_lonR)
+		if(node_coord->lon > self->seg_lonR)
 		{
-			self->seg_lonR = node->lon;
+			self->seg_lonR = node_coord->lon;
 		}
 	}
 	else
 	{
-		self->seg_latT = node->lat;
-		self->seg_lonL = node->lon;
-		self->seg_latB = node->lat;
-		self->seg_lonR = node->lon;
+		self->seg_latT = node_coord->lat;
+		self->seg_lonL = node_coord->lon;
+		self->seg_latB = node_coord->lat;
+		self->seg_lonR = node_coord->lon;
 	}
 
 	// append to seg_nds
-	int64_t* nds = osmdb_blobWayNds_nds(self->seg_nds);
-	nds[self->seg_nds->count] = node->id;
+	int64_t* nds = osmdb_wayNds_nds(self->seg_nds);
+	nds[self->seg_nds->count] = node_coord->nid;
 	++self->way_nds;
 	++self->seg_nds->count;
 }
@@ -455,31 +419,38 @@ kml_parser_parseNode(kml_parser_t* self, char* s)
 		return 0;
 	}
 
-	kml_node_t* node;
+	osmdb_nodeCoord_t* node_coord;
 	cc_mapIter_t miterator;
-	node = (kml_node_t*)
-	       cc_map_findf(self->map_nodes, &miterator,
-	                    "%lf,%lf", lat, lon);
-	if(node == NULL)
+	node_coord = (osmdb_nodeCoord_t*)
+	             cc_map_findf(self->map_node_coords,
+	                          &miterator,
+	                          "%lf,%lf", lat, lon);
+	if(node_coord == NULL)
 	{
-		node = kml_node_new(self->nid, lat, lon);
-		if(node == NULL)
+		node_coord = (osmdb_nodeCoord_t*)
+		             MALLOC(sizeof(osmdb_nodeCoord_t));
+		if(node_coord == NULL)
 		{
+			LOGE("MALLOC failed");
 			return 0;
 		}
+		node_coord->nid = self->nid;
+		node_coord->lat = lat;
+		node_coord->lon = lon;
 
-		if(cc_map_addf(self->map_nodes, (const void*) node,
+		if(cc_map_addf(self->map_node_coords,
+		               (const void*) node_coord,
 		               "%lf,%lf", lat, lon) == 0)
 		{
-			kml_node_delete(&node);
+			FREE(node_coord);
 			return 0;
 		}
 
-		// advance the next node id
+		// advance the next node_coord nid
 		self->nid -= 1;
 	}
 
-	kml_parser_wayAddNd(self, node);
+	kml_parser_wayAddNd(self, node_coord);
 
 	// split way to avoid very large ways
 	if(self->seg_nds->count >= KML_PARSER_WAY_NDS)
@@ -489,7 +460,7 @@ kml_parser_parseNode(kml_parser_t* self, char* s)
 			return 0;
 		}
 
-		kml_parser_wayAddNd(self, node);
+		kml_parser_wayAddNd(self, node_coord);
 	}
 
 	return 1;
@@ -624,8 +595,8 @@ kml_parser_addTileCoord(kml_parser_t* self,
 
 	int type_array[]  =
 	{
-		OSMDB_BLOB_TYPE_NODE_TILE14,
-		OSMDB_BLOB_TYPE_NODE_TILE11,
+		OSMDB_TYPE_TILEREF_NODE14,
+		OSMDB_TYPE_TILEREF_NODE11,
 	};
 
 	while(min_zoom <= zoom[i])
@@ -656,7 +627,7 @@ kml_parser_endPlacemark(kml_parser_t* self, int line,
 
 	if(self->way_nds && self->class && (self->name[0] != '\0'))
 	{
-		osmdb_blobNodeCoord_t node_coord =
+		osmdb_nodeCoord_t node_coord =
 		{
 			.nid = self->nid,
 			.lat = self->way_latB +
@@ -665,9 +636,9 @@ kml_parser_endPlacemark(kml_parser_t* self, int line,
 			       (self->way_lonR - self->way_lonL)/2.0
 		};
 
-		size_t size = osmdb_blobNodeCoord_sizeof(&node_coord);
+		size_t size = osmdb_nodeCoord_sizeof(&node_coord);
 		if(osmdb_index_add(self->index,
-		                   OSMDB_BLOB_TYPE_NODE_COORD,
+		                   OSMDB_TYPE_NODECOORD,
 		                   self->nid, size,
 		                   (void*) &node_coord) == 0)
 		{
@@ -676,11 +647,11 @@ kml_parser_endPlacemark(kml_parser_t* self, int line,
 
 		self->node_info->nid   = self->nid;
 		self->node_info->class = self->class;
-		osmdb_blobNodeInfo_addName(self->node_info, self->name);
+		osmdb_nodeInfo_addName(self->node_info, self->name);
 
-		size = osmdb_blobNodeInfo_sizeof(self->node_info);
+		size = osmdb_nodeInfo_sizeof(self->node_info);
 		if(osmdb_index_add(self->index,
-		                   OSMDB_BLOB_TYPE_NODE_INFO,
+		                   OSMDB_TYPE_NODEINFO,
 		                   self->nid, size,
 		                   (void*) self->node_info) == 0)
 		{
@@ -1245,22 +1216,22 @@ kml_parser_t* kml_parser_new(const char* db_name)
 		goto fail_list_state;
 	}
 
-	self->map_nodes = cc_map_new();
-	if(self->map_nodes == NULL)
+	self->map_node_coords = cc_map_new();
+	if(self->map_node_coords == NULL)
 	{
-		goto fail_map_nodes;
+		goto fail_map_node_coords;
 	}
 
-	self->node_info = (osmdb_blobNodeInfo_t*)
-	                  CALLOC(1, sizeof(osmdb_blobNodeInfo_t) +
+	self->node_info = (osmdb_nodeInfo_t*)
+	                  CALLOC(1, sizeof(osmdb_nodeInfo_t) +
 	                         256*sizeof(char));
 	if(self->node_info == NULL)
 	{
 		goto fail_node_info;
 	}
 
-	self->seg_nds = (osmdb_blobWayNds_t*)
-	                CALLOC(1, sizeof(osmdb_blobWayNds_t) +
+	self->seg_nds = (osmdb_wayNds_t*)
+	                CALLOC(1, sizeof(osmdb_wayNds_t) +
 	                       KML_PARSER_WAY_NDS*sizeof(int64_t));
 	if(self->seg_nds == NULL)
 	{
@@ -1283,8 +1254,8 @@ kml_parser_t* kml_parser_new(const char* db_name)
 	fail_seg_nds:
 		FREE(self->node_info);
 	fail_node_info:
-		cc_map_delete(&self->map_nodes);
-	fail_map_nodes:
+		cc_map_delete(&self->map_node_coords);
+	fail_map_node_coords:
 		cc_list_delete(&self->list_state);
 	fail_list_state:
 		FREE(self);
@@ -1300,13 +1271,14 @@ void kml_parser_delete(kml_parser_t** _self)
 	{
 		cc_mapIter_t  miterator;
 		cc_mapIter_t* miter;
-		miter = cc_map_head(self->map_nodes, &miterator);
+		miter = cc_map_head(self->map_node_coords, &miterator);
 		while(miter)
 		{
-			kml_node_t* node;
-			node = (kml_node_t*)
-			       cc_map_remove(self->map_nodes, &miter);
-			kml_node_delete(&node);
+			osmdb_nodeCoord_t* node_coord;
+			node_coord = (osmdb_nodeCoord_t*)
+			             cc_map_remove(self->map_node_coords,
+			                           &miter);
+			FREE(node_coord);
 		}
 
 		cc_listIter_t* iter = cc_list_head(self->list_state);
@@ -1320,7 +1292,7 @@ void kml_parser_delete(kml_parser_t** _self)
 		osmdb_index_delete(&self->index);
 		FREE(self->seg_nds);
 		FREE(self->node_info);
-		cc_map_delete(&self->map_nodes);
+		cc_map_delete(&self->map_node_coords);
 		cc_list_delete(&self->list_state);
 		FREE(self);
 		*_self = NULL;
@@ -1350,29 +1322,24 @@ int kml_parser_finish(kml_parser_t* self)
 	// add node coords
 	cc_mapIter_t  miterator;
 	cc_mapIter_t* miter;
-	miter = cc_map_head(self->map_nodes, &miterator);
+	miter = cc_map_head(self->map_node_coords, &miterator);
 	while(miter)
 	{
-		kml_node_t* node = (kml_node_t*) cc_map_val(miter);
+		osmdb_nodeCoord_t* node_coord;
+		node_coord = (osmdb_nodeCoord_t*) cc_map_val(miter);
 
-		osmdb_blobNodeCoord_t node_coord =
-		{
-			.nid = node->id,
-			.lat = node->lat,
-			.lon = node->lon
-		};
-
-		size_t size = osmdb_blobNodeCoord_sizeof(&node_coord);
+		size_t size = osmdb_nodeCoord_sizeof(node_coord);
 		if(osmdb_index_add(self->index,
-		                   OSMDB_BLOB_TYPE_NODE_COORD,
-		                   node->id, size,
-		                   (void*) &node_coord) == 0)
+		                   OSMDB_TYPE_NODECOORD,
+		                   node_coord->nid, size,
+		                   (void*) node_coord) == 0)
 		{
 			return 0;
 		}
 
-		if(kml_parser_addTileCoord(self, node_coord.nid,
-		                           node_coord.lat, node_coord.lon,
+		if(kml_parser_addTileCoord(self, node_coord->nid,
+		                           node_coord->lat,
+		                           node_coord->lon,
 		                           11) == 0)
 		{
 			return 0;

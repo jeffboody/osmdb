@@ -105,7 +105,7 @@ osmdb_index_createTables(osmdb_index_t* self)
 		++i;
 	}
 
-	for(i = 0; i < OSMDB_BLOB_TYPE_COUNT; ++i)
+	for(i = 0; i < OSMDB_TYPE_COUNT; ++i)
 	{
 		char sql_tbl[256];
 		snprintf(sql_tbl, 256,
@@ -305,7 +305,7 @@ osmdb_index_finalizeInsert(osmdb_index_t* self)
 	ASSERT(self);
 
 	int i;
-	for(i = 0; i < OSMDB_BLOB_TYPE_COUNT; ++i)
+	for(i = 0; i < OSMDB_TYPE_COUNT; ++i)
 	{
 		sqlite3_finalize(self->stmt_insert[i]);
 		self->stmt_insert[i] = NULL;
@@ -318,7 +318,7 @@ osmdb_index_finalizeSelect(osmdb_index_t* self)
 	ASSERT(self);
 
 	int i;
-	for(i = 0; i < OSMDB_BLOB_TYPE_COUNT; ++i)
+	for(i = 0; i < OSMDB_TYPE_COUNT; ++i)
 	{
 		sqlite3_finalize(self->stmt_select[i]);
 		self->stmt_select[i] = NULL;
@@ -331,7 +331,7 @@ osmdb_index_prepareInsert(osmdb_index_t* self)
 	ASSERT(self);
 
 	int i;
-	for(i = 0; i < OSMDB_BLOB_TYPE_COUNT; ++i)
+	for(i = 0; i < OSMDB_TYPE_COUNT; ++i)
 	{
 		char sql_insert[256];
 		snprintf(sql_insert, 256,
@@ -374,7 +374,7 @@ osmdb_index_prepareSelect(osmdb_index_t* self)
 	ASSERT(self);
 
 	int i;
-	for(i = 0; i < OSMDB_BLOB_TYPE_COUNT; ++i)
+	for(i = 0; i < OSMDB_TYPE_COUNT; ++i)
 	{
 		char sql_select[256];
 		snprintf(sql_select, 256,
@@ -539,9 +539,9 @@ osmdb_index_trim(osmdb_index_t* self)
 
 typedef struct
 {
-	osmdb_blob_t* blob_info;
+	osmdb_handle_t* hnd_info;
 
-	osmdb_blobWayRange_t way_range;
+	osmdb_wayRange_t way_range;
 
 	cc_list_t* list_nds;
 } osmdb_segment_t;
@@ -565,25 +565,25 @@ osmdb_index_newSegment(osmdb_index_t* self,
 		return 0;
 	}
 
-	if((osmdb_index_get(self, OSMDB_BLOB_TYPE_WAY_INFO,
-	                    wid, &seg->blob_info) == 0) ||
-	   (seg->blob_info == NULL))
+	if((osmdb_index_get(self, OSMDB_TYPE_WAYINFO,
+	                    wid, &seg->hnd_info) == 0) ||
+	   (seg->hnd_info == NULL))
 	{
 		LOGE("invalid wid=%" PRId64, wid);
-		goto fail_blob_info;
+		goto fail_hnd_info;
 	}
 
 	// copy range
-	osmdb_blob_t* blob_range = NULL;
-	if((osmdb_index_get(self, OSMDB_BLOB_TYPE_WAY_RANGE,
-	                    wid, &blob_range) == 0) ||
-	    (blob_range == NULL))
+	osmdb_handle_t* hnd_range = NULL;
+	if((osmdb_index_get(self, OSMDB_TYPE_WAYRANGE,
+	                    wid, &hnd_range) == 0) ||
+	    (hnd_range == NULL))
 	{
 		LOGE("invalid wid=%" PRId64, wid);
-		goto fail_blob_range;
+		goto fail_hnd_range;
 	}
-	memcpy(&seg->way_range, blob_range->way_range,
-	       sizeof(osmdb_blobWayRange_t));
+	memcpy(&seg->way_range, hnd_range->way_range,
+	       sizeof(osmdb_wayRange_t));
 
 	// copy nds
 	seg->list_nds = cc_list_new();
@@ -592,19 +592,19 @@ osmdb_index_newSegment(osmdb_index_t* self,
 		goto fail_list_nds;
 	}
 
-	osmdb_blob_t* blob_nds = NULL;
-	if((osmdb_index_get(self, OSMDB_BLOB_TYPE_WAY_NDS,
-	                    wid, &blob_nds) == 0) ||
-	    (blob_nds == NULL))
+	osmdb_handle_t* hnd_nds = NULL;
+	if((osmdb_index_get(self, OSMDB_TYPE_WAYNDS,
+	                    wid, &hnd_nds) == 0) ||
+	    (hnd_nds == NULL))
 	{
 		LOGE("invalid wid=%" PRId64, wid);
-		goto fail_blob_nds;
+		goto fail_hnd_nds;
 	}
 
 	int      i;
 	int64_t* ref;
-	osmdb_blobWayNds_t* way_nds = blob_nds->way_nds;
-	int64_t* refs = osmdb_blobWayNds_nds(way_nds);
+	osmdb_wayNds_t* way_nds = hnd_nds->way_nds;
+	int64_t* refs = osmdb_wayNds_nds(way_nds);
 	for(i = 0; i < way_nds->count; ++i)
 	{
 		ref = (int64_t*) CALLOC(1, sizeof(int64_t));
@@ -621,9 +621,9 @@ osmdb_index_newSegment(osmdb_index_t* self,
 		}
 	}
 
-	// put temporary blobs
-	osmdb_index_put(self, &blob_nds);
-	osmdb_index_put(self, &blob_range);
+	// put temporary hnds
+	osmdb_index_put(self, &hnd_nds);
+	osmdb_index_put(self, &hnd_range);
 
 	*_seg = seg;
 
@@ -634,8 +634,8 @@ osmdb_index_newSegment(osmdb_index_t* self,
 	fail_append:
 		FREE(ref);
 	fail_ref:
-		osmdb_index_put(self, &blob_nds);
-	fail_blob_nds:
+		osmdb_index_put(self, &hnd_nds);
+	fail_hnd_nds:
 	{
 		cc_listIter_t* iter;
 		iter = cc_list_head(seg->list_nds);
@@ -648,10 +648,10 @@ osmdb_index_newSegment(osmdb_index_t* self,
 		cc_list_delete(&seg->list_nds);
 	}
 	fail_list_nds:
-		osmdb_index_put(self, &blob_range);
-	fail_blob_range:
-		osmdb_index_put(self, &seg->blob_info);
-	fail_blob_info:
+		osmdb_index_put(self, &hnd_range);
+	fail_hnd_range:
+		osmdb_index_put(self, &seg->hnd_info);
+	fail_hnd_info:
 		FREE(seg);
 	return 0;
 }
@@ -674,7 +674,7 @@ osmdb_index_deleteSegment(osmdb_index_t* self,
 			FREE(ref);
 		}
 
-		osmdb_index_put(self, &seg->blob_info);
+		osmdb_index_put(self, &seg->hnd_info);
 
 		FREE(seg);
 		*_seg = NULL;
@@ -683,8 +683,8 @@ osmdb_index_deleteSegment(osmdb_index_t* self,
 
 static int
 osmdb_index_exportNode(osmdb_index_t* self,
-                       osmdb_blobNodeInfo_t* node_info,
-                       osmdb_blobNodeCoord_t* node_coord,
+                       osmdb_nodeInfo_t* node_info,
+                       osmdb_nodeCoord_t* node_coord,
                        xml_ostream_t* os)
 {
 	// node_info may be NULL
@@ -700,7 +700,7 @@ osmdb_index_exportNode(osmdb_index_t* self,
 	ret &= xml_ostream_attrf(os, "lon", "%lf", node_coord->lon);
 	if(node_info)
 	{
-		char* name = osmdb_blobNodeInfo_name(node_info);
+		char* name = osmdb_nodeInfo_name(node_info);
 		if(name)
 		{
 			ret &= xml_ostream_attr(os, "name", name);
@@ -738,16 +738,16 @@ osmdb_index_gatherNode(osmdb_index_t* self,
 	}
 
 	// info is optional
-	osmdb_blob_t* bi;
-	if(osmdb_index_get(self, OSMDB_BLOB_TYPE_NODE_INFO,
+	osmdb_handle_t* bi;
+	if(osmdb_index_get(self, OSMDB_TYPE_NODEINFO,
 	                   nid, &bi) == 0)
 	{
 		return 0;
 	}
 
 	// coord is required
-	osmdb_blob_t* bc;
-	if(osmdb_index_get(self, OSMDB_BLOB_TYPE_NODE_COORD,
+	osmdb_handle_t* bc;
+	if(osmdb_index_get(self, OSMDB_TYPE_NODECOORD,
 	                   nid, &bc) == 0)
 	{
 		goto fail_coord;
@@ -796,21 +796,21 @@ osmdb_index_sampleWay(osmdb_index_t* self,
 	ASSERT(self);
 	ASSERT(list_nds);
 
-	osmdb_blob_t*  blob  = NULL;
-	int            first = 1;
-	cc_vec3f_t     p0    = { .x=0.0f, .y=0.0f, .z=0.0f };
-	cc_listIter_t* iter  = cc_list_head(list_nds);
+	osmdb_handle_t* hnd   = NULL;
+	int             first = 1;
+	cc_vec3f_t      p0    = { .x=0.0f, .y=0.0f, .z=0.0f };
+	cc_listIter_t*  iter  = cc_list_head(list_nds);
 	while(iter)
 	{
 		int64_t* ref = (int64_t*) cc_list_peekIter(iter);
 
 		if(osmdb_index_get(self,
-		                   OSMDB_BLOB_TYPE_NODE_COORD,
-		                   *ref, &blob) == 0)
+		                   OSMDB_TYPE_NODECOORD,
+		                   *ref, &hnd) == 0)
 		{
 			return 0;
 		}
-		else if(blob == NULL)
+		else if(hnd == NULL)
 		{
 			iter = cc_list_next(iter);
 			continue;
@@ -820,13 +820,13 @@ osmdb_index_sampleWay(osmdb_index_t* self,
 		cc_listIter_t* next = cc_list_next(iter);
 		if(next == NULL)
 		{
-			osmdb_index_put(self, &blob);
+			osmdb_index_put(self, &hnd);
 			return 1;
 		}
 
 		// compute distance between points
-		double     lat   = blob->node_coord->lat;
-		double     lon   = blob->node_coord->lon;
+		double     lat   = hnd->node_coord->lat;
+		double     lon   = hnd->node_coord->lon;
 		float      onemi = cc_mi2m(5280.0f);
 		cc_vec3f_t p1;
 		terrain_geo2xyz(lat, lon, onemi,
@@ -850,14 +850,14 @@ osmdb_index_sampleWay(osmdb_index_t* self,
 		}
 
 		first = 0;
-		osmdb_index_put(self, &blob);
+		osmdb_index_put(self, &hnd);
 	}
 
 	return 1;
 }
 
 static cc_list_t*
-osmdb_index_ndsList(osmdb_blobWayNds_t* way_nds)
+osmdb_index_ndsList(osmdb_wayNds_t* way_nds)
 {
 	ASSERT(way_nds);
 
@@ -868,7 +868,7 @@ osmdb_index_ndsList(osmdb_blobWayNds_t* way_nds)
 	}
 
 	int i;
-	int64_t* nds = osmdb_blobWayNds_nds(way_nds);
+	int64_t* nds = osmdb_wayNds_nds(way_nds);
 	for(i = 0; i < way_nds->count; ++i)
 	{
 		if(cc_list_append(list_nds, NULL,
@@ -890,8 +890,8 @@ osmdb_index_ndsList(osmdb_blobWayNds_t* way_nds)
 
 static int
 osmdb_index_exportWay(osmdb_index_t* self,
-                      osmdb_blobWayInfo_t* way_info,
-                      osmdb_blobWayRange_t* way_range,
+                      osmdb_wayInfo_t* way_info,
+                      osmdb_wayRange_t* way_range,
                       cc_list_t* list_nds,
                       xml_ostream_t* os)
 {
@@ -905,7 +905,7 @@ osmdb_index_exportWay(osmdb_index_t* self,
 	ret &= xml_ostream_begin(os, "way");
 	ret &= xml_ostream_attrf(os, "id", "%" PRId64, way_info->wid);
 
-	char* name = osmdb_blobWayInfo_name(way_info);
+	char* name = osmdb_wayInfo_name(way_info);
 	if(name)
 	{
 		ret &= xml_ostream_attr(os, "name", name);
@@ -921,24 +921,24 @@ osmdb_index_exportWay(osmdb_index_t* self,
 		                         way_info->layer);
 	}
 
-	if(way_info->flags & OSMDB_BLOBWAYINFO_FLAG_FORWARD)
+	if(way_info->flags & OSMDB_WAYINFO_FLAG_FORWARD)
 	{
 		ret &= xml_ostream_attrf(os, "oneway", "1");
 	}
-	else if(way_info->flags & OSMDB_BLOBWAYINFO_FLAG_REVERSE)
+	else if(way_info->flags & OSMDB_WAYINFO_FLAG_REVERSE)
 	{
 		ret &= xml_ostream_attrf(os, "oneway", "-1");
 	}
 
-	if(way_info->flags & OSMDB_BLOBWAYINFO_FLAG_BRIDGE)
+	if(way_info->flags & OSMDB_WAYINFO_FLAG_BRIDGE)
 	{
 		ret &= xml_ostream_attrf(os, "bridge", "1");
 	}
-	if(way_info->flags & OSMDB_BLOBWAYINFO_FLAG_TUNNEL)
+	if(way_info->flags & OSMDB_WAYINFO_FLAG_TUNNEL)
 	{
 		ret &= xml_ostream_attrf(os, "tunnel", "1");
 	}
-	if(way_info->flags & OSMDB_BLOBWAYINFO_FLAG_CUTTING)
+	if(way_info->flags & OSMDB_WAYINFO_FLAG_CUTTING)
 	{
 		ret &= xml_ostream_attrf(os, "cutting", "1");
 	}
@@ -994,8 +994,8 @@ osmdb_index_gatherMemberWay(osmdb_index_t* self,
 	}
 
 	// info may not exist due to osmosis
-	osmdb_blob_t* bi;
-	if(osmdb_index_get(self, OSMDB_BLOB_TYPE_WAY_INFO,
+	osmdb_handle_t* bi;
+	if(osmdb_index_get(self, OSMDB_TYPE_WAYINFO,
 	                   wid, &bi) == 0)
 	{
 		return 0;
@@ -1006,8 +1006,8 @@ osmdb_index_gatherMemberWay(osmdb_index_t* self,
 	}
 
 	// nds are required
-	osmdb_blob_t* bn;
-	if(osmdb_index_get(self, OSMDB_BLOB_TYPE_WAY_NDS,
+	osmdb_handle_t* bn;
+	if(osmdb_index_get(self, OSMDB_TYPE_WAYNDS,
 	                   wid, &bn) == 0)
 	{
 		goto fail_nds;
@@ -1019,8 +1019,8 @@ osmdb_index_gatherMemberWay(osmdb_index_t* self,
 	}
 
 	// range is required
-	osmdb_blob_t* br;
-	if(osmdb_index_get(self, OSMDB_BLOB_TYPE_WAY_RANGE,
+	osmdb_handle_t* br;
+	if(osmdb_index_get(self, OSMDB_TYPE_WAYRANGE,
 	                   wid, &br) == 0)
 	{
 		goto fail_range;
@@ -1100,9 +1100,9 @@ osmdb_index_gatherMemberWay(osmdb_index_t* self,
 
 static int
 osmdb_index_exportRel(osmdb_index_t* self,
-                      osmdb_blobRelInfo_t* rel_info,
-                      osmdb_blobRelMembers_t* rel_members,
-                      osmdb_blobRelRange_t* rel_range,
+                      osmdb_relInfo_t* rel_info,
+                      osmdb_relMembers_t* rel_members,
+                      osmdb_relRange_t* rel_range,
                       xml_ostream_t* os)
 {
 	// rel_members may be NULL
@@ -1115,7 +1115,7 @@ osmdb_index_exportRel(osmdb_index_t* self,
 	ret &= xml_ostream_begin(os, "relation");
 	ret &= xml_ostream_attrf(os, "id", "%" PRId64, rel_info->rid);
 
-	char* name = osmdb_blobRelInfo_name(rel_info);
+	char* name = osmdb_relInfo_name(rel_info);
 	if(name)
 	{
 		ret &= xml_ostream_attr(os, "name", name);
@@ -1140,8 +1140,8 @@ osmdb_index_exportRel(osmdb_index_t* self,
 
 	if(rel_members)
 	{
-		osmdb_blobRelData_t* data;
-		data = osmdb_blobRelMembers_data(rel_members);
+		osmdb_relData_t* data;
+		data = osmdb_relMembers_data(rel_members);
 
 		int i;
 		int count = rel_members->count;
@@ -1184,8 +1184,8 @@ osmdb_index_gatherRel(osmdb_index_t* self,
 	}
 
 	// info may not exist due to osmosis
-	osmdb_blob_t* bi;
-	if(osmdb_index_get(self, OSMDB_BLOB_TYPE_REL_INFO,
+	osmdb_handle_t* bi;
+	if(osmdb_index_get(self, OSMDB_TYPE_RELINFO,
 	                   rid, &bi) == 0)
 	{
 		return 0;
@@ -1196,16 +1196,16 @@ osmdb_index_gatherRel(osmdb_index_t* self,
 	}
 
 	// members are optional
-	osmdb_blob_t* bm;
-	if(osmdb_index_get(self, OSMDB_BLOB_TYPE_REL_MEMBERS,
+	osmdb_handle_t* bm;
+	if(osmdb_index_get(self, OSMDB_TYPE_RELMEMBERS,
 	                   rid, &bm) == 0)
 	{
 		goto fail_members;
 	}
 
 	// range is required
-	osmdb_blob_t* br;
-	if(osmdb_index_get(self, OSMDB_BLOB_TYPE_REL_RANGE,
+	osmdb_handle_t* br;
+	if(osmdb_index_get(self, OSMDB_TYPE_RELRANGE,
 	                   rid, &br) == 0)
 	{
 		goto fail_range;
@@ -1220,8 +1220,8 @@ osmdb_index_gatherRel(osmdb_index_t* self,
 	{
 		int i;
 		int count;
-		osmdb_blobRelData_t* data;
-		data  = osmdb_blobRelMembers_data(bm->rel_members);
+		osmdb_relData_t* data;
+		data  = osmdb_relMembers_data(bm->rel_members);
 		count = bm->rel_members->count;
 		for(i = 0; i < count; ++i)
 		{
@@ -1292,12 +1292,12 @@ osmdb_index_gatherNodes(osmdb_index_t* self,
 	int64_t id;
 	if(zoom == 14)
 	{
-		type = OSMDB_BLOB_TYPE_NODE_TILE14;
+		type = OSMDB_TYPE_TILEREF_NODE14;
 		id   = 16384*y + x; // 2^14
 	}
 	else if(zoom == 11)
 	{
-		type = OSMDB_BLOB_TYPE_NODE_TILE11;
+		type = OSMDB_TYPE_TILEREF_NODE11;
 		id   = 2048*y + x; // 2^11
 	}
 	else
@@ -1306,22 +1306,22 @@ osmdb_index_gatherNodes(osmdb_index_t* self,
 		return 0;
 	}
 
-	osmdb_blob_t* blob;
-	if(osmdb_index_get(self, type, id, &blob) == 0)
+	osmdb_handle_t* hnd;
+	if(osmdb_index_get(self, type, id, &hnd) == 0)
 	{
 		return 0;
 	}
 
 	// check for empty tile
-	if(blob == NULL)
+	if(hnd == NULL)
 	{
 		return 1;
 	}
 
 	int      i;
 	int      ret   = 1;
-	int      count = blob->tile->count;
-	int64_t* refs  = osmdb_blobTile_refs(blob->tile);
+	int      count = hnd->tile_refs->count;
+	int64_t* refs  = osmdb_tileRefs_refs(hnd->tile_refs);
 	for(i = 0; i < count; ++i)
 	{
 		if(osmdb_index_gatherNode(self, refs[i],
@@ -1332,7 +1332,7 @@ osmdb_index_gatherNodes(osmdb_index_t* self,
 		}
 	}
 
-	osmdb_index_put(self, &blob);
+	osmdb_index_put(self, &hnd);
 
 	return ret;
 }
@@ -1352,12 +1352,12 @@ osmdb_index_gatherRels(osmdb_index_t* self,
 	int64_t id;
 	if(zoom == 14)
 	{
-		type = OSMDB_BLOB_TYPE_REL_TILE14;
+		type = OSMDB_TYPE_TILEREF_REL14;
 		id   = 16384*y + x; // 2^14
 	}
 	else if(zoom == 11)
 	{
-		type = OSMDB_BLOB_TYPE_REL_TILE11;
+		type = OSMDB_TYPE_TILEREF_REL11;
 		id   = 2048*y + x; // 2^11
 	}
 	else
@@ -1366,22 +1366,22 @@ osmdb_index_gatherRels(osmdb_index_t* self,
 		return 0;
 	}
 
-	osmdb_blob_t* blob;
-	if(osmdb_index_get(self, type, id, &blob) == 0)
+	osmdb_handle_t* hnd;
+	if(osmdb_index_get(self, type, id, &hnd) == 0)
 	{
 		return 0;
 	}
 
 	// check for empty tile
-	if(blob == NULL)
+	if(hnd == NULL)
 	{
 		return 1;
 	}
 
 	int      i;
 	int      ret   = 1;
-	int      count = blob->tile->count;
-	int64_t* refs  = osmdb_blobTile_refs(blob->tile);
+	int      count = hnd->tile_refs->count;
+	int64_t* refs  = osmdb_tileRefs_refs(hnd->tile_refs);
 	for(i = 0; i < count; ++i)
 	{
 		if(osmdb_index_gatherRel(self, refs[i], zoom,
@@ -1392,7 +1392,7 @@ osmdb_index_gatherRels(osmdb_index_t* self,
 		}
 	}
 
-	osmdb_index_put(self, &blob);
+	osmdb_index_put(self, &hnd);
 
 	return ret;
 }
@@ -1470,21 +1470,21 @@ osmdb_index_joinWay(osmdb_index_t* self,
 	}
 
 	// identify the nodes to be joined
-	osmdb_blob_t* blob_coord0 = NULL;
-	osmdb_blob_t* blob_coord1 = NULL;
-	osmdb_blob_t* blob_coord2 = NULL;
-	if((osmdb_index_get(self, OSMDB_BLOB_TYPE_NODE_COORD,
-	                    *refp, &blob_coord0) == 0) ||
-	   (osmdb_index_get(self, OSMDB_BLOB_TYPE_NODE_COORD,
-	                    ref1, &blob_coord1) == 0) ||
-	   (osmdb_index_get(self, OSMDB_BLOB_TYPE_NODE_COORD,
-	                    *refn, &blob_coord2) == 0) ||
-	   (blob_coord0 == NULL) || (blob_coord1 == NULL) ||
-	   (blob_coord2 == NULL))
+	osmdb_handle_t* hnd_coord0 = NULL;
+	osmdb_handle_t* hnd_coord1 = NULL;
+	osmdb_handle_t* hnd_coord2 = NULL;
+	if((osmdb_index_get(self, OSMDB_TYPE_NODECOORD,
+	                    *refp, &hnd_coord0) == 0) ||
+	   (osmdb_index_get(self, OSMDB_TYPE_NODECOORD,
+	                    ref1, &hnd_coord1) == 0) ||
+	   (osmdb_index_get(self, OSMDB_TYPE_NODECOORD,
+	                    *refn, &hnd_coord2) == 0) ||
+	   (hnd_coord0 == NULL) || (hnd_coord1 == NULL) ||
+	   (hnd_coord2 == NULL))
 	{
-		osmdb_index_put(self, &blob_coord0);
-		osmdb_index_put(self, &blob_coord1);
-		osmdb_index_put(self, &blob_coord2);
+		osmdb_index_put(self, &hnd_coord0);
+		osmdb_index_put(self, &hnd_coord1);
+		osmdb_index_put(self, &hnd_coord2);
 		return 0;
 	}
 
@@ -1496,9 +1496,9 @@ osmdb_index_joinWay(osmdb_index_t* self,
 	cc_vec3f_t p2;
 	cc_vec3f_t v01;
 	cc_vec3f_t v12;
-	osmdb_blobNodeCoord_t* nc0 = blob_coord0->node_coord;
-	osmdb_blobNodeCoord_t* nc1 = blob_coord1->node_coord;
-	osmdb_blobNodeCoord_t* nc2 = blob_coord2->node_coord;
+	osmdb_nodeCoord_t* nc0 = hnd_coord0->node_coord;
+	osmdb_nodeCoord_t* nc1 = hnd_coord1->node_coord;
+	osmdb_nodeCoord_t* nc2 = hnd_coord2->node_coord;
 	float onemi = cc_mi2m(5280.0f);
 	terrain_geo2xyz(nc0->lat, nc0->lon, onemi,
 	                &p0.x,  &p0.y, &p0.z);
@@ -1506,9 +1506,9 @@ osmdb_index_joinWay(osmdb_index_t* self,
 	                &p1.x,  &p1.y, &p1.z);
 	terrain_geo2xyz(nc2->lat, nc2->lon, onemi,
 	                &p2.x,  &p2.y, &p2.z);
-	osmdb_index_put(self, &blob_coord0);
-	osmdb_index_put(self, &blob_coord1);
-	osmdb_index_put(self, &blob_coord2);
+	osmdb_index_put(self, &hnd_coord0);
+	osmdb_index_put(self, &hnd_coord1);
+	osmdb_index_put(self, &hnd_coord2);
 	cc_vec3f_subv_copy(&p1, &p0, &v01);
 	cc_vec3f_subv_copy(&p2, &p1, &v12);
 	cc_vec3f_normalize(&v01);
@@ -1520,8 +1520,8 @@ osmdb_index_joinWay(osmdb_index_t* self,
 	}
 
 	// check way attributes
-	osmdb_blobWayInfo_t* ai = a->blob_info->way_info;
-	osmdb_blobWayInfo_t* bi = b->blob_info->way_info;
+	osmdb_wayInfo_t* ai = a->hnd_info->way_info;
+	osmdb_wayInfo_t* bi = b->hnd_info->way_info;
 	if((ai->class   != bi->class)  ||
 	   (ai->layer   != bi->layer)  ||
 	   (ai->flags   != bi->flags))
@@ -1530,8 +1530,8 @@ osmdb_index_joinWay(osmdb_index_t* self,
 	}
 
 	// check name
-	char* aname = osmdb_blobWayInfo_name(ai);
-	char* bname = osmdb_blobWayInfo_name(bi);
+	char* aname = osmdb_wayInfo_name(ai);
+	char* bname = osmdb_wayInfo_name(bi);
 	if(aname && bname)
 	{
 		if(strcmp(aname, bname) != 0)
@@ -1843,18 +1843,18 @@ osmdb_index_clipWay(osmdb_index_t* self,
 	osmdb_normalize(trc);
 
 	// clip way
-	int64_t*       ref;
-	osmdb_blob_t*  blob_coord = NULL;
-	cc_listIter_t* iter;
-	cc_listIter_t* prev = NULL;
+	int64_t*        ref;
+	osmdb_handle_t* hnd_coord = NULL;
+	cc_listIter_t*  iter;
+	cc_listIter_t*  prev = NULL;
 	iter = cc_list_head(seg->list_nds);
 	while(iter)
 	{
 		ref = (int64_t*) cc_list_peekIter(iter);
 
-		if((osmdb_index_get(self, OSMDB_BLOB_TYPE_NODE_COORD,
-		                    *ref, &blob_coord) == 0) ||
-		   (blob_coord == NULL))
+		if((osmdb_index_get(self, OSMDB_TYPE_NODECOORD,
+		                    *ref, &hnd_coord) == 0) ||
+		   (hnd_coord == NULL))
 		{
 			// ignore
 			iter = cc_list_next(iter);
@@ -1862,8 +1862,8 @@ osmdb_index_clipWay(osmdb_index_t* self,
 		}
 
 		// check if node is clipped
-		osmdb_blobNodeCoord_t* node_coord;
-		node_coord = blob_coord->node_coord;
+		osmdb_nodeCoord_t* node_coord;
+		node_coord = hnd_coord->node_coord;
 		if((node_coord->lat < latB) ||
 		   (node_coord->lat > latT) ||
 		   (node_coord->lon > lonR) ||
@@ -1878,7 +1878,7 @@ osmdb_index_clipWay(osmdb_index_t* self,
 			q1   = OSMDB_QUADRANT_NONE;
 			prev = NULL;
 			iter = cc_list_next(iter);
-			osmdb_index_put(self, &blob_coord);
+			osmdb_index_put(self, &hnd_coord);
 			continue;
 		}
 
@@ -1907,7 +1907,7 @@ osmdb_index_clipWay(osmdb_index_t* self,
 			}
 			prev = iter;
 			iter = cc_list_next(iter);
-			osmdb_index_put(self, &blob_coord);
+			osmdb_index_put(self, &hnd_coord);
 			continue;
 		}
 		else if(iter == cc_list_tail(seg->list_nds))
@@ -1936,7 +1936,7 @@ osmdb_index_clipWay(osmdb_index_t* self,
 		{
 			ref = (int64_t*) cc_list_remove(seg->list_nds, &iter);
 			FREE(ref);
-			osmdb_index_put(self, &blob_coord);
+			osmdb_index_put(self, &hnd_coord);
 			return;
 		}
 
@@ -1944,7 +1944,7 @@ osmdb_index_clipWay(osmdb_index_t* self,
 		q1   = q2;
 		prev = iter;
 		iter = cc_list_next(iter);
-		osmdb_index_put(self, &blob_coord);
+		osmdb_index_put(self, &hnd_coord);
 	}
 }
 
@@ -2017,9 +2017,9 @@ osmdb_index_exportWays(osmdb_index_t* self,
 			iter = cc_list_next(iter);
 		}
 
-		osmdb_blobWayInfo_t*  way_info;
-		osmdb_blobWayRange_t* way_range;
-		way_info  = seg->blob_info->way_info;
+		osmdb_wayInfo_t*  way_info;
+		osmdb_wayRange_t* way_range;
+		way_info  = seg->hnd_info->way_info;
 		way_range = &seg->way_range;
 		if(osmdb_index_exportWay(self, way_info, way_range,
 		                         seg->list_nds, os) == 0)
@@ -2137,12 +2137,12 @@ osmdb_index_gatherWays(osmdb_index_t* self,
 	int64_t id;
 	if(zoom == 14)
 	{
-		type = OSMDB_BLOB_TYPE_WAY_TILE14;
+		type = OSMDB_TYPE_TILEREF_WAY14;
 		id   = 16384*y + x; // 2^14
 	}
 	else if(zoom == 11)
 	{
-		type = OSMDB_BLOB_TYPE_WAY_TILE11;
+		type = OSMDB_TYPE_TILEREF_WAY11;
 		id   = 2048*y + x; // 2^11
 	}
 	else
@@ -2151,14 +2151,14 @@ osmdb_index_gatherWays(osmdb_index_t* self,
 		return 0;
 	}
 
-	osmdb_blob_t* blob;
-	if(osmdb_index_get(self, type, id, &blob) == 0)
+	osmdb_handle_t* hnd;
+	if(osmdb_index_get(self, type, id, &hnd) == 0)
 	{
 		return 0;
 	}
 
 	// check for empty tile
-	if(blob == NULL)
+	if(hnd == NULL)
 	{
 		return 1;
 	}
@@ -2176,8 +2176,8 @@ osmdb_index_gatherWays(osmdb_index_t* self,
 	}
 
 	int      i;
-	int      count = blob->tile->count;
-	int64_t* refs  = osmdb_blobTile_refs(blob->tile);
+	int      count = hnd->tile_refs->count;
+	int64_t* refs  = osmdb_tileRefs_refs(hnd->tile_refs);
 	for(i = 0; i < count; ++i)
 	{
 		if(osmdb_index_gatherWay(self, refs[i],
@@ -2249,7 +2249,7 @@ osmdb_index_gatherWays(osmdb_index_t* self,
 		cc_map_delete(&map_segs);
 	}
 	fail_map_segs:
-		osmdb_index_put(self, &blob);
+		osmdb_index_put(self, &hnd);
 	return ret;
 }
 
@@ -2288,8 +2288,8 @@ int osmdb_index_add(osmdb_index_t* self,
 
 	osmdb_entry_t* entry;
 
-	int64_t major_id = id/OSMDB_BLOB_SIZE;
-	if(type < OSMDB_BLOB_TYPE_TILE_COUNT)
+	int64_t major_id = id/OSMDB_ENTRY_SIZE;
+	if(type < OSMDB_TYPE_TILEREF_COUNT)
 	{
 		major_id = id;
 	}
@@ -2365,12 +2365,12 @@ int osmdb_index_addTile(osmdb_index_t* self, int type,
                         int64_t major_id, int64_t ref)
 {
 	ASSERT(self);
-	ASSERT(type < OSMDB_BLOB_TYPE_TILE_COUNT);
+	ASSERT(type < OSMDB_TYPE_TILEREF_COUNT);
 
 	osmdb_entry_t* entry;
 
 	// check if entry is in cache
-	osmdb_blobTile_t* tile;
+	osmdb_tileRefs_t* tile_refs;
 	cc_mapIter_t      miterator;
 	cc_listIter_t*    iter;
 	iter = (cc_listIter_t*)
@@ -2387,8 +2387,8 @@ int osmdb_index_addTile(osmdb_index_t* self, int type,
 		}
 
 		// update tile count
-		tile = (osmdb_blobTile_t*) entry->data;
-		++tile->count;
+		tile_refs = (osmdb_tileRefs_t*) entry->data;
+		++tile_refs->count;
 
 		// update LRU cache
 		cc_list_moven(self->cache_list, iter, NULL);
@@ -2425,13 +2425,13 @@ int osmdb_index_addTile(osmdb_index_t* self, int type,
 	// add tile header if not already loaded
 	if(entry->data == NULL)
 	{
-		osmdb_blobTile_t tmp =
+		osmdb_tileRefs_t tmp =
 		{
 			.id    = major_id,
 			.count = 0
 		};
 
-		if(osmdb_entry_add(entry, 0, sizeof(osmdb_blobTile_t),
+		if(osmdb_entry_add(entry, 0, sizeof(osmdb_tileRefs_t),
 		                   (void*) &tmp) == 0)
 		{
 			// fail w/o removing entry from cache
@@ -2447,8 +2447,8 @@ int osmdb_index_addTile(osmdb_index_t* self, int type,
 	}
 
 	// update tile count
-	tile = (osmdb_blobTile_t*) entry->data;
-	++tile->count;
+	tile_refs = (osmdb_tileRefs_t*) entry->data;
+	++tile_refs->count;
 
 	osmdb_index_trim(self);
 
@@ -2703,14 +2703,14 @@ int64_t osmdb_index_changeset(osmdb_index_t* self)
 
 int osmdb_index_get(osmdb_index_t* self,
                     int type, int64_t id,
-                    osmdb_blob_t** _blob)
+                    osmdb_handle_t** _hnd)
 {
 	ASSERT(self);
-	ASSERT(_blob);
+	ASSERT(_hnd);
 
-	int64_t major_id = id/OSMDB_BLOB_SIZE;
-	int64_t minor_id = id%OSMDB_BLOB_SIZE;
-	if(type < OSMDB_BLOB_TYPE_TILE_COUNT)
+	int64_t major_id = id/OSMDB_ENTRY_SIZE;
+	int64_t minor_id = id%OSMDB_ENTRY_SIZE;
+	if(type < OSMDB_TYPE_TILEREF_COUNT)
 	{
 		major_id = id;
 		minor_id = 0;
@@ -2719,7 +2719,7 @@ int osmdb_index_get(osmdb_index_t* self,
 	osmdb_index_lock(self);
 
 	// check if entry is in cache
-	// note that it is not an error to return a NULL blob
+	// note that it is not an error to return a NULL hnd
 	osmdb_entry_t* entry;
 	cc_mapIter_t   miterator;
 	cc_listIter_t* iter;
@@ -2730,15 +2730,17 @@ int osmdb_index_get(osmdb_index_t* self,
 	{
 		entry = (osmdb_entry_t*) cc_list_peekIter(iter);
 
-		// get blob if it exists
+		// get hnd if it exists
 		int ret = 1;
-		if(osmdb_entry_get(entry, minor_id, _blob) == 0)
+		if(osmdb_entry_get(entry, minor_id, _hnd) == 0)
 		{
 			ret = 0;
 		}
-
-		// update LRU cache
-		cc_list_moven(self->cache_list, iter, NULL);
+		else
+		{
+			// update LRU cache
+			cc_list_moven(self->cache_list, iter, NULL);
+		}
 
 		osmdb_index_unlock(self);
 		return ret;
@@ -2755,7 +2757,7 @@ int osmdb_index_get(osmdb_index_t* self,
 		goto fail_load;
 	}
 
-	if(osmdb_entry_get(entry, minor_id, _blob) == 0)
+	if(osmdb_entry_get(entry, minor_id, _hnd) == 0)
 	{
 		goto fail_get;
 	}
@@ -2788,7 +2790,7 @@ int osmdb_index_get(osmdb_index_t* self,
 		cc_list_remove(self->cache_list, &iter);
 	fail_append:
 	fail_trim:
-		osmdb_entry_put(entry, _blob);
+		osmdb_entry_put(entry, _hnd);
 	fail_get:
 	fail_load:
 		osmdb_entry_delete(&entry);
@@ -2798,18 +2800,18 @@ int osmdb_index_get(osmdb_index_t* self,
 }
 
 void osmdb_index_put(osmdb_index_t* self,
-                     osmdb_blob_t** _blob)
+                     osmdb_handle_t** _hnd)
 {
 	ASSERT(self);
-	ASSERT(_blob);
+	ASSERT(_hnd);
 
-	osmdb_blob_t* blob = *_blob;
-	if(blob)
+	osmdb_handle_t* hnd = *_hnd;
+	if(hnd)
 	{
 		osmdb_index_lock(self);
 
-		osmdb_entry_t* entry = (osmdb_entry_t*) blob->priv;
-		osmdb_entry_put(entry, _blob);
+		osmdb_entry_t* entry = hnd->entry;
+		osmdb_entry_put(entry, _hnd);
 
 		osmdb_index_unlock(self);
 	}
