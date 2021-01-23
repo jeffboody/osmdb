@@ -1066,7 +1066,7 @@ osm_parser_computeWayRange(osm_parser_t* self,
 	int first = 1;
 	for(i = 0; i < way_nds->count; ++i)
 	{
-		if(osmdb_index_get(self->index,
+		if(osmdb_index_get(self->index, 0,
 		                   OSMDB_TYPE_NODECOORD,
 		                   nds[i], &hnd_node_coord) == 0)
 		{
@@ -1607,7 +1607,7 @@ osm_parser_computeRelRange(osm_parser_t* self)
 			continue;
 		}
 
-		if(osmdb_index_get(self->index,
+		if(osmdb_index_get(self->index, 0,
 		                   OSMDB_TYPE_WAYRANGE,
 		                   data[i].ref, &hnd_way_range) == 0)
 		{
@@ -1630,7 +1630,7 @@ osm_parser_computeRelRange(osm_parser_t* self)
 			way_range->latB = 0.0;
 			way_range->lonR = 0.0;
 
-			if(osmdb_index_get(self->index,
+			if(osmdb_index_get(self->index, 0,
 			                   OSMDB_TYPE_WAYNDS,
 			                   data[i].ref, &hnd_way_nds) == 0)
 			{
@@ -2026,7 +2026,7 @@ osm_parser_new(const char* style,
 	self->t0 = cc_timestamp();
 
 	self->index = osmdb_index_new(db_name,
-	                              OSMDB_INDEX_MODE_CREATE);
+	                              OSMDB_INDEX_MODE_CREATE, 1);
 	if(self->index == NULL)
 	{
 		goto fail_index;

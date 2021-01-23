@@ -37,9 +37,12 @@
 #define OSMDB_INDEX_MODE_CREATE   1
 #define OSMDB_INDEX_MODE_APPEND   2
 
+typedef struct osmdb_entry_s osmdb_entry_t;
+
 typedef struct
 {
 	int mode;
+	int nth;
 	int batch_size;
 
 	sqlite3* db;
@@ -49,29 +52,42 @@ typedef struct
 	sqlite3_stmt* stmt_end;
 	sqlite3_stmt* stmt_changeset;
 	sqlite3_stmt* stmt_insert[OSMDB_TYPE_COUNT];
-	sqlite3_stmt* stmt_select[OSMDB_TYPE_COUNT];
+
+	// allow select across multiple threads
+	// rows: nth
+	// cols: OSMDB_TYPE_COUNT
+	sqlite3_stmt** stmt_select;
 
 	// sqlite3 indices
 	int idx_insert_id[OSMDB_TYPE_COUNT];
 	int idx_insert_blob[OSMDB_TYPE_COUNT];
-	int idx_select_id[OSMDB_TYPE_COUNT];
+
+	// allow select across multiple threads
+	// rows: nth
+	// cols: OSMDB_TYPE_COUNT
+	int* idx_select_id;
 
 	// entry cache
 	pthread_mutex_t cache_mutex;
+	pthread_cond_t  cache_cond;
 	cc_map_t*       cache_map;
 	cc_list_t*      cache_list;
+	osmdb_entry_t** cache_locked;
 } osmdb_index_t;
 
-osmdb_index_t* osmdb_index_new(const char* fname, int mode);
+osmdb_index_t* osmdb_index_new(const char* fname,
+                               int mode, int nth);
 void           osmdb_index_delete(osmdb_index_t** _self);
 int64_t        osmdb_index_changeset(osmdb_index_t* self);
 int            osmdb_index_get(osmdb_index_t* self,
+                               int tid,
                                int type,
                                int64_t id,
                                osmdb_handle_t** _hnd);
 void           osmdb_index_put(osmdb_index_t* self,
                                osmdb_handle_t** _hnd);
 int            osmdb_index_tile(osmdb_index_t* self,
+                                int tid,
                                 int zoom, int x, int y,
                                 xml_ostream_t* os);
 

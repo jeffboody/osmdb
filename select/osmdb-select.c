@@ -139,7 +139,8 @@ int main(int argc, const char** argv)
 	}
 
 	osmdb_index_t* index;
-	index = osmdb_index_new(fname, OSMDB_INDEX_MODE_READONLY);
+	index = osmdb_index_new(fname,
+	                        OSMDB_INDEX_MODE_READONLY, 1);
 	if(index == NULL)
 	{
 		return EXIT_FAILURE;
@@ -151,7 +152,7 @@ int main(int argc, const char** argv)
 		goto fail_os;
 	}
 
-	osmdb_index_tile(index, zoom, x, y, os);
+	osmdb_index_tile(index, 0, zoom, x, y, os);
 
 	xml_ostream_delete(&os);
 	osmdb_index_delete(&index);

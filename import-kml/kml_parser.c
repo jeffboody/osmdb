@@ -1239,7 +1239,7 @@ kml_parser_t* kml_parser_new(const char* db_name)
 	}
 
 	self->index = osmdb_index_new(db_name,
-	                              OSMDB_INDEX_MODE_APPEND);
+	                              OSMDB_INDEX_MODE_APPEND, 1);
 	if(self->index == NULL)
 	{
 		goto fail_index;
