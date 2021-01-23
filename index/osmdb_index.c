@@ -2862,19 +2862,18 @@ int osmdb_index_get(osmdb_index_t* self,
 		goto fail_create;
 	}
 
-	// lock the entry for loading
+	// lock and load entry
+	int load;
 	self->cache_locked[tid] = entry;
 	osmdb_index_unlock(self);
-
-	if(osmdb_index_load(self, tid, entry) == 0)
-	{
-		goto fail_load;
-	}
-
-	// signal entry for reading
+	load = osmdb_index_load(self, tid, entry);
 	osmdb_index_lock(self);
 	osmdb_index_signal(self);
 	self->cache_locked[tid] = NULL;
+	if(load == 0)
+	{
+		goto fail_load;
+	}
 
 	if(osmdb_entry_get(entry, minor_id, _hnd) == 0)
 	{
