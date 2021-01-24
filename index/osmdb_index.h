@@ -41,6 +41,12 @@ typedef struct osmdb_entry_s osmdb_entry_t;
 
 typedef struct
 {
+	int     type;
+	int64_t id;
+} osmdb_cacheLoading_t;
+
+typedef struct
+{
 	int mode;
 	int nth;
 	int batch_size;
@@ -68,11 +74,14 @@ typedef struct
 	int* idx_select_id;
 
 	// entry cache
-	pthread_mutex_t cache_mutex;
-	pthread_cond_t  cache_cond;
-	cc_map_t*       cache_map;
-	cc_list_t*      cache_list;
-	osmdb_entry_t** cache_locked;
+	pthread_mutex_t       cache_mutex;
+	pthread_cond_t        cache_cond;
+	cc_map_t*             cache_map;
+	cc_list_t*            cache_list;
+	int                   cache_readers;
+	int                   cache_editor;
+	int                   cache_loaders;
+	osmdb_cacheLoading_t* cache_loading; // array of nth
 } osmdb_index_t;
 
 osmdb_index_t* osmdb_index_new(const char* fname,
