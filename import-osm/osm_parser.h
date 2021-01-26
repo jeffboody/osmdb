@@ -76,6 +76,12 @@ typedef struct
 	int man_made_yes;
 	int tourism_yes;
 
+	// relation member constants
+	int rel_member_type_node;
+	int rel_member_type_way;
+	int rel_member_role_admin_centre;
+	int rel_member_role_label;
+
 	// class name/code map
 	cc_map_t* class_map;
 

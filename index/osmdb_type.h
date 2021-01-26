@@ -101,6 +101,7 @@ typedef struct
 typedef struct
 {
 	int64_t rid;
+	int64_t nid;
 	int     type;
 	int     class;
 	int     size_name;
@@ -108,15 +109,9 @@ typedef struct
 	// char name[];
 } osmdb_relInfo_t;
 
-#define OSMDB_RELDATA_TYPE_NONE 0
-#define OSMDB_RELDATA_TYPE_NODE 1
-#define OSMDB_RELDATA_TYPE_WAY  2
-#define OSMDB_RELDATA_TYPE_REL  3
-
 typedef struct
 {
 	int64_t ref;
-	int     type;
 	int     role;
 } osmdb_relData_t;
 

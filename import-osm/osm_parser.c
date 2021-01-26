@@ -652,6 +652,9 @@ static void osm_parser_initNode(osm_parser_t* self)
 	memset((void*) self->node_info, 0,
 	       sizeof(osmdb_nodeInfo_t));
 
+	self->node_coord->nid = -1;
+	self->node_info->nid  = -1;
+
 	self->name_en      = 0;
 	self->tag_name[0]  = '\0';
 	self->tag_abrev[0] = '\0';
@@ -668,6 +671,10 @@ static void osm_parser_initWay(osm_parser_t* self)
 	memset((void*) self->way_nds, 0,
 	       sizeof(osmdb_wayNds_t));
 
+	self->way_info->wid  = -1;
+	self->way_range->wid = -1;
+	self->way_nds->wid   = -1;
+
 	self->name_en      = 0;
 	self->tag_name[0]  = '\0';
 	self->tag_abrev[0] = '\0';
@@ -683,6 +690,11 @@ static void osm_parser_initRel(osm_parser_t* self)
 	       sizeof(osmdb_relRange_t));
 	memset((void*) self->rel_members, 0,
 	       sizeof(osmdb_relMembers_t));
+
+	self->rel_info->rid    = -1;
+	self->rel_info->nid    = -1;
+	self->rel_range->rid   = -1;
+	self->rel_members->rid = -1;
 
 	self->name_en      = 0;
 	self->tag_name[0]  = '\0';
@@ -1601,12 +1613,6 @@ osm_parser_computeRelRange(osm_parser_t* self)
 	int first = 1;
 	for(i = 0; i < rel_members->count; ++i)
 	{
-		// only use ways to compute range
-		if(data[i].type != OSMDB_RELDATA_TYPE_WAY)
-		{
-			continue;
-		}
-
 		if(osmdb_index_get(self->index, 0,
 		                   OSMDB_TYPE_WAYRANGE,
 		                   data[i].ref, &hnd_way_range) == 0)
@@ -1966,8 +1972,9 @@ osm_parser_beginOsmRelMember(osm_parser_t* self, int line,
 	data = &(data[self->rel_members->count]);
 
 	// parse the member
-	int i = 0;
-	int j = 1;
+	int     i    = 0;
+	int     j    = 1;
+	int     type = 0;
 	while(atts[i] && atts[j])
 	{
 		if(strcmp(atts[i], "ref")  == 0)
@@ -1976,7 +1983,7 @@ osm_parser_beginOsmRelMember(osm_parser_t* self, int line,
 		}
 		else if(strcmp(atts[i], "type")  == 0)
 		{
-			data->type = osmdb_relationMemberTypeToCode(atts[j]);
+			type = osmdb_relationMemberTypeToCode(atts[j]);
 		}
 		else if(strcmp(atts[i], "role")  == 0)
 		{
@@ -1987,7 +1994,18 @@ osm_parser_beginOsmRelMember(osm_parser_t* self, int line,
 		j += 2;
 	}
 
-	self->rel_members->count += 1;
+	// store the admin_centre or way member
+	// ignore unsupported member types
+	if((type == self->rel_member_type_node) &&
+	   ((data->role == self->rel_member_role_admin_centre) ||
+	    (data->role == self->rel_member_role_label)))
+	{
+		self->rel_info->nid = data->ref;
+	}
+	else if(type == self->rel_member_type_way)
+	{
+		self->rel_members->count += 1;
+	}
 
 	return 1;
 }
@@ -2156,6 +2174,11 @@ osm_parser_new(const char* style,
 	self->historic_yes = osmdb_classKVToCode("historic", "yes");
 	self->man_made_yes = osmdb_classKVToCode("man_made", "yes");
 	self->tourism_yes  = osmdb_classKVToCode("tourism",  "yes");
+
+	self->rel_member_type_node         = osmdb_relationMemberTypeToCode("node");
+	self->rel_member_type_way          = osmdb_relationMemberTypeToCode("way");
+	self->rel_member_role_admin_centre = osmdb_relationMemberRoleToCode("admin_centre");
+	self->rel_member_role_label        = osmdb_relationMemberRoleToCode("label");
 
 	// success
 	return self;

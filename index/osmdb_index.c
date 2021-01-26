@@ -1338,8 +1338,7 @@ osmdb_index_exportRel(osmdb_index_t* self,
 		for(i = 0; i < count; ++i)
 		{
 			ret &= xml_ostream_begin(os, "member");
-			ret &= xml_ostream_attr(os, "type",
-			                        osmdb_relationMemberCodeToType(data[i].type));
+			ret &= xml_ostream_attr(os, "type", "way");
 			ret &= xml_ostream_attrf(os, "ref", "%0.0lf", data[i].ref);
 			if(data[i].role)
 			{
@@ -1415,22 +1414,11 @@ osmdb_index_gatherRel(osmdb_index_t* self,
 		count = bm->rel_members->count;
 		for(i = 0; i < count; ++i)
 		{
-			if(data[i].type == OSMDB_RELDATA_TYPE_NODE)
+			if(osmdb_index_gatherMemberWay(self, tid, data[i].ref,
+			                               zoom, min_dist,
+			                               map_export, os) == 0)
 			{
-				if(osmdb_index_gatherNode(self, tid, data[i].ref,
-				                          map_export, os) == 0)
-				{
-					goto fail_member;
-				}
-			}
-			else if(data[i].type == OSMDB_RELDATA_TYPE_WAY)
-			{
-				if(osmdb_index_gatherMemberWay(self, tid, data[i].ref,
-				                               zoom, min_dist,
-				                               map_export, os) == 0)
-				{
-					goto fail_member;
-				}
+				goto fail_member;
 			}
 		}
 	}
