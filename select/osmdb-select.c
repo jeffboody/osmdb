@@ -21,14 +21,18 @@
  *
  */
 
+#include <inttypes.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
 #define LOG_TAG "osmdb"
 #include "libcc/cc_log.h"
+#include "libcc/cc_memory.h"
 #include "libsqlite3/sqlite3.h"
 #include "osmdb/index/osmdb_index.h"
+#include "osmdb/tiler/osmdb_tiler.h"
+#include "osmdb/osmdb_util.h"
 #include "terrain/terrain_util.h"
 
 /***********************************************************
@@ -114,6 +118,68 @@ osmdb_parseRequest(const char* s,
 	return 0;
 }
 
+int osmdb_relFn(void* priv, osmdb_rel_t* rel)
+{
+	ASSERT(rel);
+
+	char* name = osmdb_rel_name(rel);
+	LOGI("type=%i, class=%s, name=%s",
+	     rel->type, osmdb_classCodeToName(rel->class),
+	     name ? name : "NULL");
+	LOGI("center={%i,%i}, range={%i,%i,%i,%i}",
+	     (int) rel->center.x, (int) rel->center.y,
+	     (int) rel->range.t,  (int) rel->range.l,
+	     (int) rel->range.b,  (int) rel->range.r);
+
+	return 1;
+}
+
+int osmdb_memberFn(void* priv, osmdb_way_t* way)
+{
+	ASSERT(way);
+
+	char* name = osmdb_way_name(way);
+	LOGI("class=%s, layer=%i, flags=0x%X, count=%i, name=%s",
+	     osmdb_classCodeToName(way->class),
+	     way->layer, way->flags, way->count,
+	     name ? name : "NULL");
+	LOGI("center={%i,%i}, range={%i,%i,%i,%i}",
+	     (int) way->center.x, (int) way->center.y,
+	     (int) way->range.t,  (int) way->range.l,
+	     (int) way->range.b,  (int) way->range.r);
+
+	return 1;
+}
+
+int osmdb_wayFn(void* priv, osmdb_way_t* way)
+{
+	ASSERT(way);
+
+	char* name = osmdb_way_name(way);
+	LOGI("class=%s, layer=%i, flags=0x%X, count=%i, name=%s",
+	     osmdb_classCodeToName(way->class),
+	     way->layer, way->flags, way->count,
+	     name ? name : "NULL");
+	LOGI("center={%i,%i}, range={%i,%i,%i,%i}",
+	     (int) way->center.x, (int) way->center.y,
+	     (int) way->range.t,  (int) way->range.l,
+	     (int) way->range.b,  (int) way->range.r);
+
+	return 1;
+}
+
+int osmdb_nodeFn(void* priv, osmdb_node_t* node)
+{
+	ASSERT(node);
+
+	char* name = osmdb_node_name(node);
+	LOGI("class=%s, ele=%i, name=%s",
+	     osmdb_classCodeToName(node->class), node->ele,
+	     name ? name : "NULL");
+
+	return 1;
+}
+
 /***********************************************************
 * public                                                   *
 ***********************************************************/
@@ -146,22 +212,82 @@ int main(int argc, const char** argv)
 		return EXIT_FAILURE;
 	}
 
-	xml_ostream_t* os = xml_ostream_newGz("out.xml.gz");
-	if(os == NULL)
+	osmdb_tiler_t* tiler;
+	tiler = osmdb_tiler_new(index, 1);
+	if(tiler == NULL)
 	{
-		goto fail_os;
+		goto fail_tiler;
 	}
 
-	osmdb_index_tile(index, 0, zoom, x, y, os);
+	void*  data;
+	size_t size = 0;
+	data = (void*)
+	       osmdb_tiler_make(tiler, 0, zoom, x, y, &size);
+	if(data == NULL)
+	{
+		goto fail_data;
+	}
 
-	xml_ostream_delete(&os);
+	char oname[256];
+	snprintf(oname, 256, "tile-%i-%i-%i.osmdb", zoom, x, y);
+
+	FILE* f = fopen(oname, "w");
+	if(f == NULL)
+	{
+		LOGE("fopen failed");
+		goto fail_open;
+	}
+
+	if(fwrite((const void*) data, size, 1, f) != 1)
+	{
+		LOGE("fwrite failed");
+		goto fail_write;
+	}
+
+	fclose(f);
+
+	osmdb_tileParser_t parser =
+	{
+		.priv      = NULL,
+		.rel_fn    = osmdb_relFn,
+		.member_fn = osmdb_memberFn,
+		.way_fn    = osmdb_wayFn,
+		.node_fn   = osmdb_nodeFn,
+	};
+
+	// print header
+	osmdb_tile_t* tile = (osmdb_tile_t*) data;
+	LOGI("magic=0x%X", tile->magic);
+	LOGI("version=%i", tile->version);
+	LOGI("zoom=%i, x=%i, y=%i",
+	     tile->zoom, tile->x, tile->y);
+	LOGI("changeset=%" PRId64, tile->changeset);
+	LOGI("count_rels=%i", tile->count_rels);
+	LOGI("count_ways=%i", tile->count_ways);
+	LOGI("count_nodes=%i", tile->count_nodes);
+
+	// print contents
+	tile = osmdb_tile_new(size, data, &parser);
+	if(tile == NULL)
+	{
+		goto fail_tile;
+	}
+
+	osmdb_tile_delete(&tile);
+	osmdb_tiler_delete(&tiler);
 	osmdb_index_delete(&index);
 
 	// success
 	return EXIT_SUCCESS;
 
 	// failure
-	fail_os:
+	fail_tile:
+	fail_write:
+	fail_open:
+		FREE(data);
+	fail_data:
+		osmdb_tiler_delete(&tiler);
+	fail_tiler:
 		osmdb_index_delete(&index);
 	return EXIT_FAILURE;
 }

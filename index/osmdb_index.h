@@ -95,9 +95,5 @@ int            osmdb_index_get(osmdb_index_t* self,
                                osmdb_handle_t** _hnd);
 void           osmdb_index_put(osmdb_index_t* self,
                                osmdb_handle_t** _hnd);
-int            osmdb_index_tile(osmdb_index_t* self,
-                                int tid,
-                                int zoom, int x, int y,
-                                xml_ostream_t* os);
 
 #endif
