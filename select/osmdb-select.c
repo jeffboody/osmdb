@@ -123,13 +123,13 @@ int osmdb_relFn(void* priv, osmdb_rel_t* rel)
 	ASSERT(rel);
 
 	char* name = osmdb_rel_name(rel);
-	LOGI("type=%i, class=%s, name=%s",
-	     rel->type, osmdb_classCodeToName(rel->class),
-	     name ? name : "NULL");
-	LOGI("center={%i,%i}, range={%i,%i,%i,%i}",
-	     (int) rel->center.x, (int) rel->center.y,
-	     (int) rel->range.t,  (int) rel->range.l,
-	     (int) rel->range.b,  (int) rel->range.r);
+	printf("R: type=%i, class=%s, count=%i, name=%s, "
+	       "center={%i,%i}, range={%i,%i,%i,%i}\n",
+	       rel->type, osmdb_classCodeToName(rel->class),
+	       rel->count, name ? name : "NULL",
+	       (int) rel->center.x, (int) rel->center.y,
+	       (int) rel->range.t,  (int) rel->range.l,
+	       (int) rel->range.b,  (int) rel->range.r);
 
 	return 1;
 }
@@ -139,14 +139,32 @@ int osmdb_memberFn(void* priv, osmdb_way_t* way)
 	ASSERT(way);
 
 	char* name = osmdb_way_name(way);
-	LOGI("class=%s, layer=%i, flags=0x%X, count=%i, name=%s",
-	     osmdb_classCodeToName(way->class),
-	     way->layer, way->flags, way->count,
-	     name ? name : "NULL");
-	LOGI("center={%i,%i}, range={%i,%i,%i,%i}",
-	     (int) way->center.x, (int) way->center.y,
-	     (int) way->range.t,  (int) way->range.l,
-	     (int) way->range.b,  (int) way->range.r);
+	printf("   M: class=%s, layer=%i, flags=0x%X, count=%i, "
+	       "name=%s, center={%i,%i}, range={%i,%i,%i,%i}\n",
+	       osmdb_classCodeToName(way->class),
+	       way->layer, way->flags, way->count,
+	       name ? name : "NULL",
+	       (int) way->center.x, (int) way->center.y,
+	       (int) way->range.t,  (int) way->range.l,
+	       (int) way->range.b,  (int) way->range.r);
+
+	osmdb_point_t* pts = osmdb_way_pts(way);
+	if(pts)
+	{
+		int i = 0;
+		for(i = 0; i < way->count; ++i)
+		{
+			if(i == 0)
+			{
+				printf("      %i,%i", (int) pts[i].x, (int) pts[i].y);
+			}
+			else
+			{
+				printf(" | %i,%i", (int) pts[i].x, (int) pts[i].y);
+			}
+		}
+		printf("\n");
+	}
 
 	return 1;
 }
@@ -156,14 +174,32 @@ int osmdb_wayFn(void* priv, osmdb_way_t* way)
 	ASSERT(way);
 
 	char* name = osmdb_way_name(way);
-	LOGI("class=%s, layer=%i, flags=0x%X, count=%i, name=%s",
-	     osmdb_classCodeToName(way->class),
-	     way->layer, way->flags, way->count,
-	     name ? name : "NULL");
-	LOGI("center={%i,%i}, range={%i,%i,%i,%i}",
-	     (int) way->center.x, (int) way->center.y,
-	     (int) way->range.t,  (int) way->range.l,
-	     (int) way->range.b,  (int) way->range.r);
+	printf("W: class=%s, layer=%i, flags=0x%X, count=%i, "
+	       "name=%s, center={%i,%i}, range={%i,%i,%i,%i}\n",
+	       osmdb_classCodeToName(way->class),
+	       way->layer, way->flags, way->count,
+	       name ? name : "NULL",
+	       (int) way->center.x, (int) way->center.y,
+	       (int) way->range.t,  (int) way->range.l,
+	       (int) way->range.b,  (int) way->range.r);
+
+	osmdb_point_t* pts = osmdb_way_pts(way);
+	if(pts)
+	{
+		int i = 0;
+		for(i = 0; i < way->count; ++i)
+		{
+			if(i == 0)
+			{
+				printf("   %i,%i", (int) pts[i].x, (int) pts[i].y);
+			}
+			else
+			{
+				printf(" | %i,%i", (int) pts[i].x, (int) pts[i].y);
+			}
+		}
+		printf("\n");
+	}
 
 	return 1;
 }
@@ -173,9 +209,10 @@ int osmdb_nodeFn(void* priv, osmdb_node_t* node)
 	ASSERT(node);
 
 	char* name = osmdb_node_name(node);
-	LOGI("class=%s, ele=%i, name=%s",
-	     osmdb_classCodeToName(node->class), node->ele,
-	     name ? name : "NULL");
+	printf("N: class=%s, ele=%i, name=%s, pt=%i,%i\n",
+	       osmdb_classCodeToName(node->class), node->ele,
+	       name ? name : "NULL",
+	       (int) node->pt.x, (int) node->pt.y);
 
 	return 1;
 }
@@ -257,14 +294,14 @@ int main(int argc, const char** argv)
 
 	// print header
 	osmdb_tile_t* tile = (osmdb_tile_t*) data;
-	LOGI("magic=0x%X", tile->magic);
-	LOGI("version=%i", tile->version);
-	LOGI("zoom=%i, x=%i, y=%i",
-	     tile->zoom, tile->x, tile->y);
-	LOGI("changeset=%" PRId64, tile->changeset);
-	LOGI("count_rels=%i", tile->count_rels);
-	LOGI("count_ways=%i", tile->count_ways);
-	LOGI("count_nodes=%i", tile->count_nodes);
+	printf("magic=0x%X\n", tile->magic);
+	printf("version=%i\n", tile->version);
+	printf("zoom=%i, x=%i, y=%i\n",
+	       tile->zoom, tile->x, tile->y);
+	printf("changeset=%" PRId64 "\n", tile->changeset);
+	printf("count_rels=%i\n", tile->count_rels);
+	printf("count_ways=%i\n", tile->count_ways);
+	printf("count_nodes=%i\n", tile->count_nodes);
 
 	// print contents
 	tile = osmdb_tile_new(size, data, &parser);
@@ -276,6 +313,14 @@ int main(int argc, const char** argv)
 	osmdb_tile_delete(&tile);
 	osmdb_tiler_delete(&tiler);
 	osmdb_index_delete(&index);
+
+	size_t memsize = MEMSIZE();
+	if(memsize)
+	{
+		LOGE("memory leak detected");
+		MEMINFO();
+		return EXIT_FAILURE;
+	}
 
 	// success
 	return EXIT_SUCCESS;
