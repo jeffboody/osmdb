@@ -177,6 +177,7 @@ void osmdb_waySegment_delete(osmdb_index_t* index,
 			ref = (int64_t*) cc_list_remove(seg->list_nds, &iter);
 			FREE(ref);
 		}
+		cc_list_delete(&seg->list_nds);
 
 		osmdb_index_put(index, &seg->hwi);
 
