@@ -157,10 +157,10 @@ static int osmdb_relFn(void* priv, osmdb_rel_t* rel)
 	ASSERT(rel);
 
 	char* name = osmdb_rel_name(rel);
-	printf("R: type=%i, class=%s, count=%i, name=%s, "
-	       "center={%i,%i}, range={%i,%i,%i,%i}\n",
+	printf("R: type=%i, class=%s, count=%i, name=%s,\n",
 	       rel->type, osmdb_classCodeToName(rel->class),
-	       rel->count, name ? name : "NULL",
+	       rel->count, name ? name : "NULL");
+	printf("     center={%i,%i}, range={%i,%i,%i,%i}\n",
 	       (int) rel->center.x, (int) rel->center.y,
 	       (int) rel->range.t,  (int) rel->range.l,
 	       (int) rel->range.b,  (int) rel->range.r);
@@ -176,11 +176,12 @@ static int osmdb_memberFn(void* priv, osmdb_way_t* way)
 	texgz_tex_t* img = (texgz_tex_t*) priv;
 
 	char* name = osmdb_way_name(way);
-	printf("   M: class=%s, layer=%i, flags=0x%X, count=%i, "
-	       "name=%s, center={%i,%i}, range={%i,%i,%i,%i}\n",
+	printf("   M: class=%s, layer=%i, flags=0x%X, "
+	       "count=%i, name=%s\n",
 	       osmdb_classCodeToName(way->class),
 	       way->layer, way->flags, way->count,
-	       name ? name : "NULL",
+	       name ? name : "NULL");
+	printf("      center={%i,%i}, range={%i,%i,%i,%i}\n",
 	       (int) way->center.x, (int) way->center.y,
 	       (int) way->range.t,  (int) way->range.l,
 	       (int) way->range.b,  (int) way->range.r);
@@ -194,6 +195,10 @@ static int osmdb_memberFn(void* priv, osmdb_way_t* way)
 			if(i == 0)
 			{
 				printf("      %i,%i", (int) pts[i].x, (int) pts[i].y);
+			}
+			else if(i%5 == 0)
+			{
+				printf("\n      %i,%i", (int) pts[i].x, (int) pts[i].y);
 			}
 			else
 			{
@@ -216,11 +221,12 @@ static int osmdb_wayFn(void* priv, osmdb_way_t* way)
 	texgz_tex_t* img = (texgz_tex_t*) priv;
 
 	char* name = osmdb_way_name(way);
-	printf("W: class=%s, layer=%i, flags=0x%X, count=%i, "
-	       "name=%s, center={%i,%i}, range={%i,%i,%i,%i}\n",
+	printf("W: class=%s, layer=%i, flags=0x%X, "
+	       "count=%i, name=%s\n",
 	       osmdb_classCodeToName(way->class),
 	       way->layer, way->flags, way->count,
-	       name ? name : "NULL",
+	       name ? name : "NULL");
+	printf("   center={%i,%i}, range={%i,%i,%i,%i}\n",
 	       (int) way->center.x, (int) way->center.y,
 	       (int) way->range.t,  (int) way->range.l,
 	       (int) way->range.b,  (int) way->range.r);
@@ -234,6 +240,10 @@ static int osmdb_wayFn(void* priv, osmdb_way_t* way)
 			if(i == 0)
 			{
 				printf("   %i,%i", (int) pts[i].x, (int) pts[i].y);
+			}
+			else if(i%5 == 0)
+			{
+				printf("\n   %i,%i", (int) pts[i].x, (int) pts[i].y);
 			}
 			else
 			{
