@@ -215,6 +215,8 @@ int osmdb_ostream_beginTile(osmdb_ostream_t* self,
 	{
 		return 0;
 	}
+	memset((void*) tile, 0, sizeof(osmdb_tile_t));
+
 	tile->magic     = OSMDB_TILE_MAGIC;
 	tile->version   = OSMDB_TILE_VERSION;
 	tile->zoom      = zoom;
