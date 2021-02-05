@@ -432,7 +432,7 @@ osmdb_index_prepareSelect(osmdb_index_t* self)
 ***********************************************************/
 
 static void
-osmdb_index_lock(osmdb_index_t* self)
+osmdb_index_lockExclusive(osmdb_index_t* self)
 {
 	ASSERT(self);
 
@@ -443,7 +443,8 @@ osmdb_index_lock(osmdb_index_t* self)
 }
 
 static void
-osmdb_index_unlock(osmdb_index_t* self, int signal)
+osmdb_index_unlockExclusive(osmdb_index_t* self,
+                            int signal)
 {
 	ASSERT(self);
 
@@ -459,42 +460,6 @@ osmdb_index_unlock(osmdb_index_t* self, int signal)
 }
 
 static void
-osmdb_index_lockRead(osmdb_index_t* self)
-{
-	ASSERT(self);
-
-	if(self->mode == OSMDB_INDEX_MODE_READONLY)
-	{
-		pthread_mutex_lock(&self->cache_mutex);
-
-		// wait while the editor is needed
-		while(self->cache_editor)
-		{
-			pthread_cond_wait(&self->cache_cond,
-			                  &self->cache_mutex);
-		}
-
-		++self->cache_readers;
-
-		pthread_mutex_unlock(&self->cache_mutex);
-	}
-}
-
-static void
-osmdb_index_lockReadUpdate(osmdb_index_t* self)
-{
-	ASSERT(self);
-
-	if(self->mode == OSMDB_INDEX_MODE_READONLY)
-	{
-		// take exclusive lock
-		pthread_mutex_lock(&self->cache_mutex);
-
-		--self->cache_readers;
-	}
-}
-
-static void
 osmdb_index_lockLoad(osmdb_index_t* self,
                      int tid, int type, int id)
 {
@@ -505,7 +470,7 @@ osmdb_index_lockLoad(osmdb_index_t* self,
 		pthread_mutex_lock(&self->cache_mutex);
 
 		--self->cache_readers;
-		if(self->cache_editor && (self->cache_readers == 0))
+		if(self->cache_readers == 0)
 		{
 			pthread_cond_broadcast(&self->cache_cond);
 		}
@@ -554,6 +519,7 @@ osmdb_index_lockLoadUpdate(osmdb_index_t* self, int tid)
 		// take exclusive lock
 		pthread_mutex_lock(&self->cache_mutex);
 
+		++self->cache_readers;
 		--self->cache_loaders;
 		self->cache_loading[tid].type = -1;
 		self->cache_loading[tid].id   = -1;
@@ -569,6 +535,7 @@ osmdb_index_unlockLoadErr(osmdb_index_t* self, int tid)
 	{
 		pthread_mutex_lock(&self->cache_mutex);
 
+		++self->cache_readers;
 		--self->cache_loaders;
 		self->cache_loading[tid].type = -1;
 		self->cache_loading[tid].id   = -1;
@@ -599,6 +566,9 @@ osmdb_index_lockEdit(osmdb_index_t* self, int tid)
 			pthread_cond_wait(&self->cache_cond,
 			                  &self->cache_mutex);
 		}
+
+		// restore read lock
+		++self->cache_readers;
 
 		self->cache_editor            = 0;
 		self->cache_loading[tid].type = -1;
@@ -1172,7 +1142,7 @@ int64_t osmdb_index_changeset(osmdb_index_t* self)
 
 	sqlite3_stmt* stmt = self->stmt_changeset;
 
-	osmdb_index_lock(self);
+	osmdb_index_lockExclusive(self);
 
 	if(sqlite3_step(stmt) == SQLITE_ROW)
 	{
@@ -1192,9 +1162,43 @@ int64_t osmdb_index_changeset(osmdb_index_t* self)
 		LOGW("sqlite3_reset failed");
 	}
 
-	osmdb_index_unlock(self, 0);
+	osmdb_index_unlockExclusive(self, 0);
 
 	return changeset;
+}
+
+void osmdb_index_lock(osmdb_index_t* self)
+{
+	ASSERT(self);
+
+	if(self->mode == OSMDB_INDEX_MODE_READONLY)
+	{
+		pthread_mutex_lock(&self->cache_mutex);
+
+		// wait while the editor is needed
+		while(self->cache_editor)
+		{
+			pthread_cond_wait(&self->cache_cond,
+			                  &self->cache_mutex);
+		}
+
+		++self->cache_readers;
+
+		pthread_mutex_unlock(&self->cache_mutex);
+	}
+}
+
+void osmdb_index_unlock(osmdb_index_t* self)
+{
+	ASSERT(self);
+
+	if(self->mode == OSMDB_INDEX_MODE_READONLY)
+	{
+		pthread_mutex_lock(&self->cache_mutex);
+		--self->cache_readers;
+		pthread_cond_broadcast(&self->cache_cond);
+		pthread_mutex_unlock(&self->cache_mutex);
+	}
 }
 
 int osmdb_index_get(osmdb_index_t* self,
@@ -1212,8 +1216,6 @@ int osmdb_index_get(osmdb_index_t* self,
 		minor_id = 0;
 	}
 
-	osmdb_index_lockRead(self);
-
 	// find the entry in the cache
 	// note that it is not an error to return a NULL hnd
 	osmdb_entry_t* entry;
@@ -1226,7 +1228,7 @@ int osmdb_index_get(osmdb_index_t* self,
 	{
 		entry = (osmdb_entry_t*) cc_list_peekIter(iter);
 
-		osmdb_index_lockReadUpdate(self);
+		osmdb_index_lockExclusive(self);
 
 		// get hnd if it exists
 		int ret = 1;
@@ -1240,18 +1242,12 @@ int osmdb_index_get(osmdb_index_t* self,
 			cc_list_moven(self->cache_list, iter, NULL);
 		}
 
-		if(self->cache_editor && (self->cache_readers == 0))
-		{
-			osmdb_index_unlock(self, 1);
-		}
-		else
-		{
-			osmdb_index_unlock(self, 0);
-		}
+		osmdb_index_unlockExclusive(self, 0);
 
 		return ret;
 	}
 
+	// upgrade read lock
 	osmdb_index_lockLoad(self, tid, type, id);
 
 	// retry find after locking for load since the entry
@@ -1263,6 +1259,7 @@ int osmdb_index_get(osmdb_index_t* self,
 	{
 		entry = (osmdb_entry_t*) cc_list_peekIter(iter);
 
+		// upgrade load lock
 		osmdb_index_lockLoadUpdate(self, tid);
 
 		// get hnd if it exists
@@ -1277,7 +1274,7 @@ int osmdb_index_get(osmdb_index_t* self,
 			cc_list_moven(self->cache_list, iter, NULL);
 		}
 
-		osmdb_index_unlock(self, 1);
+		osmdb_index_unlockExclusive(self, 1);
 
 		return ret;
 	}
@@ -1298,6 +1295,7 @@ int osmdb_index_get(osmdb_index_t* self,
 		goto fail_get;
 	}
 
+	// upgrade load lock
 	osmdb_index_lockEdit(self, tid);
 
 	if(osmdb_index_trim(self) == 0)
@@ -1318,7 +1316,7 @@ int osmdb_index_get(osmdb_index_t* self,
 		goto fail_add;
 	}
 
-	osmdb_index_unlock(self, 1);
+	osmdb_index_unlockExclusive(self, 1);
 
 	// success
 	return 1;
@@ -1336,7 +1334,7 @@ int osmdb_index_get(osmdb_index_t* self,
 		cc_list_remove(self->cache_list, &iter);
 	fail_append:
 	fail_trim:
-		osmdb_index_unlock(self, 1);
+		osmdb_index_unlockExclusive(self, 1);
 		osmdb_entry_put(entry, _hnd);
 		osmdb_entry_delete(&entry);
 	return 0;
@@ -1351,11 +1349,11 @@ void osmdb_index_put(osmdb_index_t* self,
 	osmdb_handle_t* hnd = *_hnd;
 	if(hnd)
 	{
-		osmdb_index_lock(self);
+		osmdb_index_lockExclusive(self);
 
 		osmdb_entry_t* entry = hnd->entry;
 		osmdb_entry_put(entry, _hnd);
 
-		osmdb_index_unlock(self, 0);
+		osmdb_index_unlockExclusive(self, 0);
 	}
 }

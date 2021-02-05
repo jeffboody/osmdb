@@ -1555,16 +1555,18 @@ osmdb_tiler_make(osmdb_tiler_t* self,
 
 	osmdb_tilerState_t* state = self->state[tid];
 
+	osmdb_index_lock(self->index);
+
 	if(osmdb_tilerState_init(state, zoom, x, y) == 0)
 	{
-		return NULL;
+		goto fail_init;
 	}
 
 	if(osmdb_ostream_beginTile(state->os,
 	                           zoom, x, y,
 	                           self->changeset) == 0)
 	{
-		return NULL;
+		goto fail_begin;
 	}
 
 	if(osmdb_tiler_gatherRels(self, tid) == 0)
@@ -1590,6 +1592,7 @@ osmdb_tiler_make(osmdb_tiler_t* self,
 	}
 
 	osmdb_tilerState_reset(state, self->index);
+	osmdb_index_unlock(self->index);
 
 	// success
 	return tile;
@@ -1600,5 +1603,8 @@ osmdb_tiler_make(osmdb_tiler_t* self,
 	fail_gather_ways:
 	fail_gather_rels:
 		osmdb_tilerState_reset(state, self->index);
+	fail_begin:
+	fail_init:
+		osmdb_index_unlock(self->index);
 	return NULL;
 }

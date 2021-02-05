@@ -88,6 +88,8 @@ osmdb_index_t* osmdb_index_new(const char* fname,
                                int mode, int nth);
 void           osmdb_index_delete(osmdb_index_t** _self);
 int64_t        osmdb_index_changeset(osmdb_index_t* self);
+void           osmdb_index_lock(osmdb_index_t* self);
+void           osmdb_index_unlock(osmdb_index_t* self);
 int            osmdb_index_get(osmdb_index_t* self,
                                int tid,
                                int type,
