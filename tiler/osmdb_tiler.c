@@ -813,8 +813,8 @@ osmdb_tiler_clipWays(osmdb_tiler_t* self, int tid)
 	double dlat = (state->latT - state->latB)/16.0;
 	double dlon = (state->lonR - state->lonL)/16.0;
 	double latT = state->latT + dlat;
-	double lonL = state->latB - dlat;
-	double latB = state->lonL - dlon;
+	double lonL = state->lonL - dlon;
+	double latB = state->latB - dlat;
 	double lonR = state->lonR + dlon;
 
 	cc_mapIter_t  miterator;
