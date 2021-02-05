@@ -34,10 +34,44 @@
 #include "osmdb/tiler/osmdb_tiler.h"
 #include "osmdb/osmdb_util.h"
 #include "terrain/terrain_util.h"
+#include "texgz/texgz_tex.h"
+#include "texgz/texgz_png.h"
 
 /***********************************************************
 * private                                                  *
 ***********************************************************/
+
+static void osmdb_draw(texgz_tex_t* img, short x, short y)
+{
+	ASSERT(img);
+
+	// convert from tile coords to img coords
+	// tl: (0.0, 0.0) => (16383, -16384)
+	// br: (1.0, 1.0) => (-16384, 16383)
+	// short: -32768 => 32767
+	int ix   = ((int) x) + 32768;
+	int iy   = 32767 - ((int) y);
+	int top  = iy/16 - 2;
+	int left = ix/16 - 2;
+	texgz_tex_fill(img, top, left, 5, 5, 0xFF0000FF);
+}
+
+static texgz_tex_t* osmdb_mkimg(int zoom, int x, int y)
+{
+	texgz_tex_t* img;
+	img = texgz_tex_new(4096, 4096, 4096, 4096,
+	                    TEXGZ_UNSIGNED_BYTE, TEXGZ_RGBA,
+	                    NULL);
+	if(img == NULL)
+	{
+		return NULL;
+	}
+
+	texgz_tex_fill(img, 0, 0, 4095, 4095, 0x000000FF);
+	texgz_tex_fill(img, 1023, 1023, 2048, 2048, 0x4C4C4CFF);
+
+	return img;
+}
 
 static int osmdb_parseY(char* s, int* y)
 {
@@ -118,7 +152,7 @@ osmdb_parseRequest(const char* s,
 	return 0;
 }
 
-int osmdb_relFn(void* priv, osmdb_rel_t* rel)
+static int osmdb_relFn(void* priv, osmdb_rel_t* rel)
 {
 	ASSERT(rel);
 
@@ -134,9 +168,12 @@ int osmdb_relFn(void* priv, osmdb_rel_t* rel)
 	return 1;
 }
 
-int osmdb_memberFn(void* priv, osmdb_way_t* way)
+static int osmdb_memberFn(void* priv, osmdb_way_t* way)
 {
+	ASSERT(priv);
 	ASSERT(way);
+
+	texgz_tex_t* img = (texgz_tex_t*) priv;
 
 	char* name = osmdb_way_name(way);
 	printf("   M: class=%s, layer=%i, flags=0x%X, count=%i, "
@@ -162,6 +199,8 @@ int osmdb_memberFn(void* priv, osmdb_way_t* way)
 			{
 				printf(" | %i,%i", (int) pts[i].x, (int) pts[i].y);
 			}
+
+			osmdb_draw(img, pts[i].x, pts[i].y);
 		}
 		printf("\n");
 	}
@@ -169,9 +208,12 @@ int osmdb_memberFn(void* priv, osmdb_way_t* way)
 	return 1;
 }
 
-int osmdb_wayFn(void* priv, osmdb_way_t* way)
+static int osmdb_wayFn(void* priv, osmdb_way_t* way)
 {
+	ASSERT(priv);
 	ASSERT(way);
+
+	texgz_tex_t* img = (texgz_tex_t*) priv;
 
 	char* name = osmdb_way_name(way);
 	printf("W: class=%s, layer=%i, flags=0x%X, count=%i, "
@@ -197,6 +239,8 @@ int osmdb_wayFn(void* priv, osmdb_way_t* way)
 			{
 				printf(" | %i,%i", (int) pts[i].x, (int) pts[i].y);
 			}
+
+			osmdb_draw(img, pts[i].x, pts[i].y);
 		}
 		printf("\n");
 	}
@@ -204,15 +248,20 @@ int osmdb_wayFn(void* priv, osmdb_way_t* way)
 	return 1;
 }
 
-int osmdb_nodeFn(void* priv, osmdb_node_t* node)
+static int osmdb_nodeFn(void* priv, osmdb_node_t* node)
 {
+	ASSERT(priv);
 	ASSERT(node);
+
+	texgz_tex_t* img = (texgz_tex_t*) priv;
 
 	char* name = osmdb_node_name(node);
 	printf("N: class=%s, ele=%i, name=%s, pt=%i,%i\n",
 	       osmdb_classCodeToName(node->class), node->ele,
 	       name ? name : "NULL",
 	       (int) node->pt.x, (int) node->pt.y);
+
+	osmdb_draw(img, node->pt.x, node->pt.y);
 
 	return 1;
 }
@@ -241,12 +290,19 @@ int main(int argc, const char** argv)
 		return EXIT_FAILURE;
 	}
 
+	// create a base image
+	texgz_tex_t* img = osmdb_mkimg(zoom, x, y);
+	if(img == NULL)
+	{
+		return EXIT_FAILURE;
+	}
+
 	osmdb_index_t* index;
 	index = osmdb_index_new(fname,
 	                        OSMDB_INDEX_MODE_READONLY, 1);
 	if(index == NULL)
 	{
-		return EXIT_FAILURE;
+		goto fail_index;
 	}
 
 	osmdb_tiler_t* tiler;
@@ -285,7 +341,7 @@ int main(int argc, const char** argv)
 
 	osmdb_tileParser_t parser =
 	{
-		.priv      = NULL,
+		.priv      = (void*) img,
 		.rel_fn    = osmdb_relFn,
 		.member_fn = osmdb_memberFn,
 		.way_fn    = osmdb_wayFn,
@@ -310,9 +366,18 @@ int main(int argc, const char** argv)
 		goto fail_tile;
 	}
 
+	char iname[256];
+	snprintf(iname, 256, "img-%i-%i-%i.png",
+	         tile->zoom, tile->x, tile->y);
+	if(texgz_png_export(img, iname) == 0)
+	{
+		goto fail_img;
+	}
+
 	osmdb_tile_delete(&tile);
 	osmdb_tiler_delete(&tiler);
 	osmdb_index_delete(&index);
+	texgz_tex_delete(&img);
 
 	size_t memsize = MEMSIZE();
 	if(memsize)
@@ -326,6 +391,7 @@ int main(int argc, const char** argv)
 	return EXIT_SUCCESS;
 
 	// failure
+	fail_img:
 	fail_tile:
 	fail_write:
 	fail_open:
@@ -334,5 +400,7 @@ int main(int argc, const char** argv)
 		osmdb_tiler_delete(&tiler);
 	fail_tiler:
 		osmdb_index_delete(&index);
+	fail_index:
+		texgz_tex_delete(&img);
 	return EXIT_FAILURE;
 }
