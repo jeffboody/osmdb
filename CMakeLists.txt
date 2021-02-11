@@ -11,12 +11,9 @@ add_library(osmdb
             STATIC
 
             # Source
-            osmdb_parser.c
             osmdb_style.c
             osmdb_util.c
-            osmdb_node.c
-            osmdb_way.c
-            osmdb_relation.c)
+            tiler/osmdb_tile.c)
 
 # Linking
 target_link_libraries(osmdb

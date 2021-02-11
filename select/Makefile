@@ -45,6 +45,6 @@ clean:
 	$(MAKE) -C libxmlstream clean
 	$(MAKE) -C libexpat/expat/lib clean
 	$(MAKE) -C libsqlite3 clean
-	rm osmdb libcc terrain libexpat libxmlstream libsqlite3
+	rm osmdb libcc texgz terrain libexpat libxmlstream libsqlite3
 
 $(OBJECTS): $(HFILES)
