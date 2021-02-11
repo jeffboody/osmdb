@@ -1378,7 +1378,7 @@ osmdb_tiler_gatherRel(osmdb_tiler_t* self,
 	osmdb_ostream_endRel(state->os);
 
 	// mark node as found
-	if(hni->node_info)
+	if(hni && hni->node_info)
 	{
 		if(cc_map_addf(state->map_export,
 		               (const void*) &OSMDB_ONE, "n%" PRId64,
