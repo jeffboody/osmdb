@@ -367,7 +367,8 @@ void osmdb_ostream_endRel(osmdb_ostream_t* self)
 
 int osmdb_ostream_beginWay(osmdb_ostream_t* self,
                            osmdb_wayInfo_t* way_info,
-                           osmdb_wayRange_t* way_range)
+                           osmdb_wayRange_t* way_range,
+                           int flags)
 {
 	// node_info and node_coord may be NULL
 	ASSERT(self);
@@ -403,7 +404,7 @@ int osmdb_ostream_beginWay(osmdb_ostream_t* self,
 	}
 	way->class = way_info->class;
 	way->layer = way_info->layer;
-	way->flags = way_info->flags;
+	way->flags = way_info->flags | flags;
 	way->count = 0;
 
 	// initalize center

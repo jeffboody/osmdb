@@ -79,6 +79,7 @@ typedef struct
 	// relation member constants
 	int rel_member_type_node;
 	int rel_member_type_way;
+	int rel_member_role_inner;
 	int rel_member_role_admin_centre;
 	int rel_member_role_label;
 

@@ -931,7 +931,7 @@ osmdb_tiler_exportWay(osmdb_tiler_t* self, int tid,
 
 	if(osmdb_ostream_beginWay(state->os,
 	                          seg->hwi->way_info,
-	                          &seg->way_range) == 0)
+	                          &seg->way_range, 0) == 0)
 	{
 		return 0;
 	}
@@ -1162,11 +1162,12 @@ osmdb_tiler_gatherWayNds(osmdb_tiler_t* self, int tid)
 
 static int
 osmdb_tiler_gatherMemberWay(osmdb_tiler_t* self,
-                            int tid, int64_t wid,
+                            int tid, osmdb_relData_t* data,
                             int class, const char* name)
 {
 	// name may be NULL
 	ASSERT(self);
+	ASSERT(data);
 
 	osmdb_tilerState_t* state = self->state[tid];
 
@@ -1174,7 +1175,7 @@ osmdb_tiler_gatherMemberWay(osmdb_tiler_t* self,
 	osmdb_handle_t* hwi;
 	if(osmdb_index_get(self->index, tid,
 	                   OSMDB_TYPE_WAYINFO,
-	                   wid, &hwi) == 0)
+	                   data->wid, &hwi) == 0)
 	{
 		return 0;
 	}
@@ -1186,7 +1187,7 @@ osmdb_tiler_gatherMemberWay(osmdb_tiler_t* self,
 	osmdb_handle_t* hwn;
 	if(osmdb_index_get(self->index, tid,
 	                   OSMDB_TYPE_WAYNDS,
-	                   wid, &hwn) == 0)
+	                   data->wid, &hwn) == 0)
 	{
 		goto fail_nds;
 	}
@@ -1199,7 +1200,7 @@ osmdb_tiler_gatherMemberWay(osmdb_tiler_t* self,
 	osmdb_handle_t* hwr;
 	if(osmdb_index_get(self->index, tid,
 	                   OSMDB_TYPE_WAYRANGE,
-	                   wid, &hwr) == 0)
+	                   data->wid, &hwr) == 0)
 	{
 		goto fail_range;
 	}
@@ -1216,9 +1217,14 @@ osmdb_tiler_gatherMemberWay(osmdb_tiler_t* self,
 		goto fail_list_nds;
 	}
 
-	if(osmdb_ostream_beginWay(state->os,
-	                          hwi->way_info,
-	                          hwr->way_range) == 0)
+	int flags = 0;
+	if(data->inner)
+	{
+		flags = OSMDB_WAY_FLAG_INNER;
+	}
+
+	if(osmdb_ostream_beginWay(state->os, hwi->way_info,
+	                          hwr->way_range, flags) == 0)
 	{
 		goto fail_begin;
 	}
@@ -1244,7 +1250,7 @@ osmdb_tiler_gatherMemberWay(osmdb_tiler_t* self,
 	{
 		if(cc_map_addf(state->map_export,
 		               (const void*) &OSMDB_ONE,
-		               "w%" PRId64, wid) == 0)
+		               "w%" PRId64, data->wid) == 0)
 		{
 			goto fail_mark;
 		}
@@ -1360,7 +1366,7 @@ osmdb_tiler_gatherRel(osmdb_tiler_t* self,
 		count = hrm->rel_members->count;
 		for(i = 0; i < count; ++i)
 		{
-			if(osmdb_tiler_gatherMemberWay(self, tid, data[i].ref,
+			if(osmdb_tiler_gatherMemberWay(self, tid, &data[i],
 			                               hri->rel_info->class,
 			                               name) == 0)
 			{

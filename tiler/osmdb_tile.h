@@ -57,6 +57,17 @@ typedef struct
 
 char* osmdb_node_name(osmdb_node_t* self);
 
+// note: check type/joinWay if adding flags
+// INNER flag is the osmdb_relData_t role
+// OUTER is the default role
+// other roles are used to define center
+#define OSMDB_WAY_FLAG_FORWARD 0x0001
+#define OSMDB_WAY_FLAG_REVERSE 0x0002
+#define OSMDB_WAY_FLAG_BRIDGE  0x0004
+#define OSMDB_WAY_FLAG_TUNNEL  0x0008
+#define OSMDB_WAY_FLAG_CUTTING 0x0010
+#define OSMDB_WAY_FLAG_INNER   0x1000
+
 typedef struct
 {
 	int class;

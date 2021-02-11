@@ -60,12 +60,13 @@ typedef struct
 	// char name[];
 } osmdb_nodeInfo_t;
 
-// note: check joinWay if adding flags
-#define OSMDB_WAYINFO_FLAG_FORWARD 0x01
-#define OSMDB_WAYINFO_FLAG_REVERSE 0x02
-#define OSMDB_WAYINFO_FLAG_BRIDGE  0x04
-#define OSMDB_WAYINFO_FLAG_TUNNEL  0x08
-#define OSMDB_WAYINFO_FLAG_CUTTING 0x10
+// note: check tile/joinWay if adding flags
+#define OSMDB_WAYINFO_FLAG_FORWARD   0x0001
+#define OSMDB_WAYINFO_FLAG_REVERSE   0x0002
+#define OSMDB_WAYINFO_FLAG_BRIDGE    0x0004
+#define OSMDB_WAYINFO_FLAG_TUNNEL    0x0008
+#define OSMDB_WAYINFO_FLAG_CUTTING   0x0010
+#define OSMDB_WAYINFO_FLAG_RESERVED1 0x1000 // INNER
 
 typedef struct
 {
@@ -111,8 +112,8 @@ typedef struct
 
 typedef struct
 {
-	int64_t ref;
-	int     role;
+	int64_t wid;
+	int     inner;
 } osmdb_relData_t;
 
 typedef struct

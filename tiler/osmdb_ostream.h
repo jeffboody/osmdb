@@ -60,7 +60,8 @@ int              osmdb_ostream_beginRel(osmdb_ostream_t* self,
 void             osmdb_ostream_endRel(osmdb_ostream_t* self);
 int              osmdb_ostream_beginWay(osmdb_ostream_t* self,
                                         osmdb_wayInfo_t* way_info,
-                                        osmdb_wayRange_t* way_range);
+                                        osmdb_wayRange_t* way_range,
+                                        int flags);
 int              osmdb_ostream_addWayCoord(osmdb_ostream_t* self,
                                            osmdb_nodeCoord_t* node_coord);
 void             osmdb_ostream_endWay(osmdb_ostream_t* self);

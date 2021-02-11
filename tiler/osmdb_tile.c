@@ -25,8 +25,8 @@
 #include <stdlib.h>
 
 #define LOG_TAG "osmdb"
-#include "libcc/cc_log.h"
-#include "libcc/cc_memory.h"
+#include "../../libcc/cc_log.h"
+#include "../../libcc/cc_memory.h"
 #include "osmdb_tile.h"
 
 /***********************************************************

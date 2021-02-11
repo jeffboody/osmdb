@@ -1615,7 +1615,7 @@ osm_parser_computeRelRange(osm_parser_t* self)
 	{
 		if(osmdb_index_get(self->index, 0,
 		                   OSMDB_TYPE_WAYRANGE,
-		                   data[i].ref, &hnd_way_range) == 0)
+		                   data[i].wid, &hnd_way_range) == 0)
 		{
 			return 0;
 		}
@@ -1630,7 +1630,7 @@ osm_parser_computeRelRange(osm_parser_t* self)
 		else
 		{
 			way_range = &tmp_way_range;
-			way_range->wid  = data[i].ref;
+			way_range->wid  = data[i].wid;
 			way_range->latT = 0.0;
 			way_range->lonL = 0.0;
 			way_range->latB = 0.0;
@@ -1638,7 +1638,7 @@ osm_parser_computeRelRange(osm_parser_t* self)
 
 			if(osmdb_index_get(self->index, 0,
 			                   OSMDB_TYPE_WAYNDS,
-			                   data[i].ref, &hnd_way_nds) == 0)
+			                   data[i].wid, &hnd_way_nds) == 0)
 			{
 				return 0;
 			}
@@ -1971,15 +1971,20 @@ osm_parser_beginOsmRelMember(osm_parser_t* self, int line,
 	data = osmdb_relMembers_data(self->rel_members);
 	data = &(data[self->rel_members->count]);
 
+	// initialize data
+	memset((void*) data, 0, sizeof(osmdb_relData_t));
+
 	// parse the member
 	int     i    = 0;
 	int     j    = 1;
 	int     type = 0;
+	int     role = 0;
+	int64_t ref  = 0;
 	while(atts[i] && atts[j])
 	{
 		if(strcmp(atts[i], "ref")  == 0)
 		{
-			data->ref = (int64_t) strtoll(atts[j], NULL, 0);
+			ref = (int64_t) strtoll(atts[j], NULL, 0);
 		}
 		else if(strcmp(atts[i], "type")  == 0)
 		{
@@ -1987,7 +1992,7 @@ osm_parser_beginOsmRelMember(osm_parser_t* self, int line,
 		}
 		else if(strcmp(atts[i], "role")  == 0)
 		{
-			data->role = osmdb_relationMemberRoleToCode(atts[j]);
+			role = osmdb_relationMemberRoleToCode(atts[j]);
 		}
 
 		i += 2;
@@ -1997,13 +2002,18 @@ osm_parser_beginOsmRelMember(osm_parser_t* self, int line,
 	// store the admin_centre or way member
 	// ignore unsupported member types
 	if((type == self->rel_member_type_node) &&
-	   ((data->role == self->rel_member_role_admin_centre) ||
-	    (data->role == self->rel_member_role_label)))
+	   ((role == self->rel_member_role_admin_centre) ||
+	    (role == self->rel_member_role_label)))
 	{
-		self->rel_info->nid = data->ref;
+		self->rel_info->nid = ref;
 	}
 	else if(type == self->rel_member_type_way)
 	{
+		data->wid = ref;
+		if(role == self->rel_member_role_inner)
+		{
+			data->inner = 1;
+		}
 		self->rel_members->count += 1;
 	}
 
@@ -2177,6 +2187,7 @@ osm_parser_new(const char* style,
 
 	self->rel_member_type_node         = osmdb_relationMemberTypeToCode("node");
 	self->rel_member_type_way          = osmdb_relationMemberTypeToCode("way");
+	self->rel_member_role_inner        = osmdb_relationMemberRoleToCode("inner");
 	self->rel_member_role_admin_centre = osmdb_relationMemberRoleToCode("admin_centre");
 	self->rel_member_role_label        = osmdb_relationMemberRoleToCode("label");
 
