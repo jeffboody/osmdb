@@ -165,13 +165,15 @@ kml_parser_addTileRange(kml_parser_t* self,
 	// determine the tile type
 	int type_way[]  =
 	{
-		OSMDB_TYPE_TILEREF_WAY14,
-		OSMDB_TYPE_TILEREF_WAY11,
+		OSMDB_TYPE_TILEREF_WAY15,
+		OSMDB_TYPE_TILEREF_WAY12,
+		OSMDB_TYPE_TILEREF_WAY9,
 	};
 	int type_rel[]  =
 	{
-		OSMDB_TYPE_TILEREF_REL14,
-		OSMDB_TYPE_TILEREF_REL11,
+		OSMDB_TYPE_TILEREF_REL15,
+		OSMDB_TYPE_TILEREF_REL12,
+		OSMDB_TYPE_TILEREF_REL9,
 	};
 	int* type_array;
 	if(type == OSMDB_TYPE_WAYRANGE)
@@ -199,8 +201,8 @@ kml_parser_addTileRange(kml_parser_t* self,
 	int   iy1;
 	int   id;
 	int   i       = 0;
-	int   zoom[]  = { 14, 11, -1 };
-	int   pow2n[] = { 16384, 2048 };
+	int   zoom[]  = { 15, 12, 9, -1 };
+	int   pow2n[] = { 32768, 4096, 512 };
 	while(min_zoom <= zoom[i])
 	{
 		terrain_coord2tile(latT, lonL,
@@ -289,7 +291,7 @@ kml_parser_wayAddSeg(kml_parser_t* self)
 		                           way_range.wid,
 		                           way_range.latT, way_range.lonL,
 		                           way_range.latB, way_range.lonR,
-		                           11) == 0)
+		                           9) == 0)
 		{
 			return 0;
 		}
@@ -590,13 +592,14 @@ kml_parser_addTileCoord(kml_parser_t* self,
 	int ix;
 	int iy;
 	int i       = 0;
-	int zoom[]  = { 14, 11, -1 };
-	int pow2n[] = { 16384, 2048 };
+	int zoom[]  = { 15, 12, 9, -1 };
+	int pow2n[] = { 32768, 4096, 512 };
 
 	int type_array[]  =
 	{
-		OSMDB_TYPE_TILEREF_NODE14,
-		OSMDB_TYPE_TILEREF_NODE11,
+		OSMDB_TYPE_TILEREF_NODE15,
+		OSMDB_TYPE_TILEREF_NODE12,
+		OSMDB_TYPE_TILEREF_NODE9,
 	};
 
 	while(min_zoom <= zoom[i])
@@ -660,7 +663,7 @@ kml_parser_endPlacemark(kml_parser_t* self, int line,
 
 		if(kml_parser_addTileCoord(self, node_coord.nid,
 		                           node_coord.lat, node_coord.lon,
-		                           11) == 0)
+		                           9) == 0)
 		{
 			return 0;
 		}
@@ -1340,7 +1343,7 @@ int kml_parser_finish(kml_parser_t* self)
 		if(kml_parser_addTileCoord(self, node_coord->nid,
 		                           node_coord->lat,
 		                           node_coord->lon,
-		                           11) == 0)
+		                           9) == 0)
 		{
 			return 0;
 		}

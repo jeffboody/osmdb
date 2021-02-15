@@ -17,6 +17,7 @@
 	<layer name="runway" />
 	<layer name="air" />
 
+	<color name="magenta"         val="FF00FFFF" />
 	<color name="white"           val="FFFFFFFF" />
 	<color name="white:halo"      val="FFFFFF7F" />
 	<color name="black"           val="000000FF" />
@@ -45,127 +46,122 @@
 	<color name="core:mineral"    val="DE1B1BBF" />
 	<color name="core:historic"   val="E988D0BF" />
 
-	<point name="peak14"    min_zoom="14" text_color1="peak:text"    text_color2="black" marker_color1="peak:point"    marker_color2="black" flags="marker:show,ele:show" />
-	<point name="saddle14"  min_zoom="14" text_color1="peak:text"    text_color2="black" marker_color1="peak:point"    marker_color2="black" flags="marker:show" />
-	<point name="city11"    min_zoom="11" text_color1="city:text"    text_color2="black" marker_color1="city:point"    marker_color2="white" flags="marker:show" />
+	<point name="peak15"    min_zoom="15" text_color1="peak:text"    text_color2="black" marker_color1="peak:point"    marker_color2="black" flags="marker:show,ele:show" />
+	<point name="saddle15"  min_zoom="15" text_color1="peak:text"    text_color2="black" marker_color1="peak:point"    marker_color2="black" flags="marker:show" />
+	<point name="city9"     min_zoom="9"  text_color1="city:text"    text_color2="black" marker_color1="city:point"    marker_color2="white" flags="marker:show" />
 	<point name="town12"    min_zoom="12" text_color1="city:text"    text_color2="black" marker_color1="city:point"    marker_color2="white" flags="marker:show" />
 	<point name="village13" min_zoom="13" text_color1="city:text"    text_color2="black" marker_color1="city:point"    marker_color2="white" flags="marker:show" />
-	<point name="water14"   min_zoom="14" text_color1="lake:text"    text_color2="black" />
+	<point name="water15"   min_zoom="15" text_color1="lake:text"    text_color2="black" />
 	<point name="water17"   min_zoom="17" text_color1="lake:text"    text_color2="black" />
-	<point name="glacier14" min_zoom="14" text_color1="glacier:text" text_color2="black" />
+	<point name="glacier15" min_zoom="15" text_color1="glacier:text" text_color2="black" />
 	<point name="outdoor16" min_zoom="16" text_color1="peak:text"    text_color2="black" />
 	<point name="forest12"  min_zoom="12" text_color1="peak:text"    text_color2="black" />
 	<point name="trail17"   min_zoom="17" text_color1="trail:text"   text_color2="black" />
 	<point name="track17"   min_zoom="17" text_color1="track:text"   text_color2="black" />
-	<point name="core11"    min_zoom="11" text_color1="core:text"    text_color2="black" flags="marker:show,ele:show" />
+	<point name="core12"    min_zoom="12" text_color1="core:text"    text_color2="black" flags="marker:show,ele:show" />
 	<point name="default17" min_zoom="17" text_color1="white"        text_color2="black" />
 
-	<line name="aerialway14"       min_zoom="14" mode="dashed,striped" color1="ltgray" color2="white" />
-	<line name="motorway11"        min_zoom="11" mode="striped" color1="ltgray" color2="gray" width="3.5" />
-	<line name="trunk11"           min_zoom="11" mode="striped" color1="ltgray" color2="gray" width="3.5" />
-	<line name="primary11"         min_zoom="11" mode="striped" color1="ltgray" color2="gray" width="3.5" />
-	<line name="secondary11"       min_zoom="11" mode="striped" color1="ltgray" color2="gray" width="2.75" />
-	<line name="tertiary11"        min_zoom="11" mode="striped" color1="ltgray" color2="gray" width="2.75" />
-	<line name="motorway_link14"   min_zoom="14" mode="striped" color1="ltgray" color2="gray" width="2.5" />
-	<line name="trunk_link14"      min_zoom="14" mode="striped" color1="ltgray" color2="gray" width="2.5" />
-	<line name="primary_link14"    min_zoom="14" mode="striped" color1="ltgray" color2="gray" width="2.5" />
-	<line name="secondary_link14"  min_zoom="14" mode="striped" color1="ltgray" color2="gray" width="1.5" />
-	<line name="tertiary_link14"   min_zoom="14" mode="striped" color1="ltgray" color2="gray" width="1.5" />
-	<line name="road14"            min_zoom="14" mode="striped" color1="ltgray" color2="gray" width="1.9" />
-	<line name="pedestrian14"      min_zoom="14" mode="dashed,striped" color1="trail:line" color2="gray" width="1.4" />
-	<line name="runway14"          min_zoom="14" mode="dashed,striped" color1="white" color2="runway:line" width="4.0" />
-	<line name="taxiway14"         min_zoom="14" color1="runway:line" width="1.5" />
-	<line name="trail14"           min_zoom="14" mode="dashed,striped" color1="trail:line" color2="gray" width="1.7" />
-	<line name="track14"           min_zoom="14" mode="striped" color1="track:line" color2="gray" width="1.7" />
-	<line name="railway14"         min_zoom="14" mode="dashed,striped" color1="gray"  color2="ltgray" width="1.7" />
-	<line name="river11"           min_zoom="11" color1="river:line" width="3.0" />
-	<line name="stream14"          min_zoom="14" color1="river:line" width="1.7" />
-	<line name="footway14"         min_zoom="14" mode="dashed,striped" color1="trail:line" color2="gray" />
-	<line name="core:wilderness11" min_zoom="11" color1="core:wilderness" color2="core:wilderness" width="2.5" />
-	<line name="core:recreation11" min_zoom="11" color1="core:recreation" color2="core:recreation" width="2.5" />
-	<line name="core:special11"    min_zoom="11" color1="core:special"    color2="core:special"    width="2.5" />
-	<line name="core:mineral11"    min_zoom="11" color1="core:mineral"    color2="core:mineral"    width="2.5" />
-	<line name="core:historic11"   min_zoom="11" color1="core:historic"   color2="core:historic"   width="2.5" />
+	<line name="aerialway15"       min_zoom="15" mode="dashed,striped" color1="ltgray" color2="white" />
+	<line name="motorway9"         min_zoom="9"  mode="striped" color1="ltgray" color2="gray" width="3.5" />
+	<line name="trunk9"            min_zoom="9"  mode="striped" color1="ltgray" color2="gray" width="3.5" />
+	<line name="primary9"          min_zoom="9"  mode="striped" color1="ltgray" color2="gray" width="3.5" />
+	<line name="secondary12"       min_zoom="12" mode="striped" color1="ltgray" color2="gray" width="2.75" />
+	<line name="tertiary12"        min_zoom="12" mode="striped" color1="ltgray" color2="gray" width="2.75" />
+	<line name="motorway_link15"   min_zoom="15" mode="striped" color1="ltgray" color2="gray" width="2.5" />
+	<line name="trunk_link15"      min_zoom="15" mode="striped" color1="ltgray" color2="gray" width="2.5" />
+	<line name="primary_link15"    min_zoom="15" mode="striped" color1="ltgray" color2="gray" width="2.5" />
+	<line name="secondary_link15"  min_zoom="15" mode="striped" color1="ltgray" color2="gray" width="1.5" />
+	<line name="tertiary_link15"   min_zoom="15" mode="striped" color1="ltgray" color2="gray" width="1.5" />
+	<line name="road15"            min_zoom="15" mode="striped" color1="ltgray" color2="gray" width="1.9" />
+	<line name="pedestrian15"      min_zoom="15" mode="dashed,striped" color1="trail:line" color2="gray" width="1.4" />
+	<line name="runway15"          min_zoom="15" mode="dashed,striped" color1="white" color2="runway:line" width="4.0" />
+	<line name="taxiway15"         min_zoom="15" color1="runway:line" width="1.5" />
+	<line name="trail15"           min_zoom="15" mode="dashed,striped" color1="trail:line" color2="gray" width="1.7" />
+	<line name="track15"           min_zoom="15" mode="striped" color1="track:line" color2="gray" width="1.7" />
+	<line name="railway15"         min_zoom="15" mode="dashed,striped" color1="gray"  color2="ltgray" width="1.7" />
+	<line name="river12"           min_zoom="12" color1="river:line" width="3.0" />
+	<line name="stream15"          min_zoom="15" color1="river:line" width="1.7" />
+	<line name="footway15"         min_zoom="15" mode="dashed,striped" color1="trail:line" color2="gray" />
+	<line name="core:wilderness12" min_zoom="12" color1="core:wilderness" color2="core:wilderness" width="2.5" />
+	<line name="core:recreation12" min_zoom="12" color1="core:recreation" color2="core:recreation" width="2.5" />
+	<line name="core:special12"    min_zoom="12" color1="core:special"    color2="core:special"    width="2.5" />
+	<line name="core:mineral12"    min_zoom="12" color1="core:mineral"    color2="core:mineral"    width="2.5" />
+	<line name="core:historic12"   min_zoom="12" color1="core:historic"   color2="core:historic"   width="2.5" />
 
-	<poly name="rest_area14"    min_zoom="14" color="white:halo" />
-	<poly name="bridge14"       min_zoom="14" color="white:halo" />
-	<poly name="glacier14"      min_zoom="14" color="glacier:poly" />
-	<poly name="water11"        min_zoom="11" color="lake:poly" />
-	<poly name="water14"        min_zoom="14" color="lake:poly" />
-	<poly name="landing_site14" min_zoom="14" color="gray:halo" />
+	<poly name="glacier15" min_zoom="15" color="glacier:poly" />
+	<poly name="water9"    min_zoom="9"  color="lake:poly" />
+	<poly name="water12"   min_zoom="12" color="lake:poly" />
+	<poly name="water15"   min_zoom="15" color="lake:poly" />
 
-	<class name="aerialway:cable_car"      layer="ground"      line="aerialway14" />
-	<class name="aerialway:gondola"        layer="air"         line="aerialway14" />
-	<class name="aerialway:chair_lift"     layer="air"         line="aerialway14" />
-	<class name="aerialway:mixed_lift"     layer="ground"      line="aerialway14" />
-	<class name="aerialway:drag_lift"      layer="ground"      line="aerialway14" />
-	<class name="aerialway:t-bar"          layer="ground"      line="aerialway14" />
-	<class name="aerialway:j-bar"          layer="ground"      line="aerialway14" />
-	<class name="aerialway:platter"        layer="ground"      line="aerialway14" />
-	<class name="aerialway:rope_tow"       layer="ground"      line="aerialway14" />
-	<class name="aerialway:magic_carpet"   layer="ground"      line="aerialway14" />
-	<class name="aerialway:zip_line"       layer="air"         line="aerialway14" />
-	<class name="aerialway:canopy"         layer="air"         line="aerialway14" />
-	<class name="aeroway:runway"           layer="runway"      line="runway14" />
-	<class name="aeroway:taxilane"         layer="taxiway"     line="taxiway14" />
-	<class name="aeroway:taxiway"          layer="taxiway"     line="taxiway14" />
-	<class name="emergency:landing_site"   layer="ground"      poly="landing_site14" />
-	<class name="highway:motorway"         layer="motorway"    point="default17" line="motorway11" />
-	<class name="highway:trunk"            layer="trunk"       point="default17" line="trunk11" />
-	<class name="highway:primary"          layer="primary"     point="default17" line="primary11" />
-	<class name="highway:secondary"        layer="secondary"   point="default17" line="secondary11" />
-	<class name="highway:tertiary"         layer="tertiary"    point="default17" line="tertiary11" />
-	<class name="highway:unclassified"     layer="residential" point="default17" line="road14" />
-	<class name="highway:service"          layer="residential" point="default17" line="road14" />
-	<class name="highway:residential"      layer="residential" point="default17" line="road14" />
-	<class name="highway:motorway_link"    layer="link"        line="motorway_link14" />
-	<class name="highway:trunk_link"       layer="link"        line="trunk_link14" />
-	<class name="highway:primary_link"     layer="link"        line="primary_link14" />
-	<class name="highway:secondary_link"   layer="link"        line="secondary_link14" />
-	<class name="highway:tertiary_link"    layer="link"        line="tertiary_link14" />
-	<class name="highway:living_street"    layer="trail"       point="trail17"   line="pedestrian14" />
-	<class name="highway:pedestrian"       layer="trail"       point="trail17"   line="pedestrian14" />
-	<class name="highway:track"            layer="track"       point="track17"   line="track14" />
-	<class name="highway:escape"           layer="ground"      point="default17" line="road14" />
-	<class name="highway:raceway"          layer="ground"      point="default17" line="road14" />
-	<class name="highway:road"             layer="residential" point="default17" line="road14" />
-	<class name="highway:footway"          layer="trail"       point="trail17"   line="footway14" />
-	<class name="highway:bridleway"        layer="trail"       point="trail17"   line="trail14" />
-	<class name="highway:steps"            layer="trail"       point="trail17"   line="footway14" />
-	<class name="highway:path"             layer="trail"       point="trail17"   line="trail14" />
-	<class name="highway:cycleway"         layer="trail"       point="trail17"   line="trail14" />
-	<class name="highway:rest_area"        layer="ground"      poly="rest_area14" />
-	<class name="man_made:bridge"          layer="ground"      poly="bridge14"/>
-	<class name="natural:water"            layer="water"       point="water14" poly="water11" />
-	<class name="natural:bay"              layer="water"       point="water14" poly="water11" />
-	<class name="natural:glacier"          layer="water"       point="glacier14" poly="glacier14" />
-	<class name="landuse:reservoir"        layer="water"       point="water14" poly="water11" />
-	<class name="landuse:salt_pond"        layer="water"       point="water14" poly="water14" />
-	<class name="landuse:basin"            layer="water"       point="water14" poly="water11" />
-	<class name="waterway:river"           layer="water"       point="water17" line="river11" />
-	<class name="waterway:riverbank"       layer="water"       point="water17" poly="water11" />
-	<class name="waterway:stream"          layer="water"       point="water17" line="stream14" />
-	<class name="waterway:canal"           layer="water"       line="stream14" />
-	<class name="waterway:ditch"           layer="water"       line="stream14" />
-	<class name="waterway:drain"           layer="water"       line="stream14" />
-	<class name="railway:funicular"        layer="railway"     line="railway14" />
-	<class name="railway:light_rail"       layer="railway"     line="railway14" />
-	<class name="railway:monorail"         layer="railway"     line="railway14" />
-	<class name="railway:narrow_gauge"     layer="railway"     line="railway14" />
-	<class name="railway:preserved"        layer="railway"     line="railway14" />
-	<class name="railway:rail"             layer="railway"     line="railway14" />
-	<class name="railway:subway"           layer="railway"     line="railway14" />
-	<class name="railway:tram"             layer="railway"     line="railway14" />
-	<class name="core:wilderness"          layer="core"        line="core:wilderness11" point="core11" />
-	<class name="core:recreation"          layer="core"        line="core:recreation11" point="core11" />
-	<class name="core:special"             layer="core"        line="core:special11"    point="core11" />
-	<class name="core:mineral"             layer="core"        line="core:mineral11"    point="core11" />
-	<class name="core:historic"            layer="core"        line="core:historic11"   point="core11" />
+	<class name="aerialway:cable_car"      layer="ground"      line="aerialway15" />
+	<class name="aerialway:gondola"        layer="air"         line="aerialway15" />
+	<class name="aerialway:chair_lift"     layer="air"         line="aerialway15" />
+	<class name="aerialway:mixed_lift"     layer="ground"      line="aerialway15" />
+	<class name="aerialway:drag_lift"      layer="ground"      line="aerialway15" />
+	<class name="aerialway:t-bar"          layer="ground"      line="aerialway15" />
+	<class name="aerialway:j-bar"          layer="ground"      line="aerialway15" />
+	<class name="aerialway:platter"        layer="ground"      line="aerialway15" />
+	<class name="aerialway:rope_tow"       layer="ground"      line="aerialway15" />
+	<class name="aerialway:magic_carpet"   layer="ground"      line="aerialway15" />
+	<class name="aerialway:zip_line"       layer="air"         line="aerialway15" />
+	<class name="aerialway:canopy"         layer="air"         line="aerialway15" />
+	<class name="aeroway:runway"           layer="runway"      line="runway15" />
+	<class name="aeroway:taxilane"         layer="taxiway"     line="taxiway15" />
+	<class name="aeroway:taxiway"          layer="taxiway"     line="taxiway15" />
+	<class name="highway:motorway"         layer="motorway"    point="default17" line="motorway9" />
+	<class name="highway:trunk"            layer="trunk"       point="default17" line="trunk9" />
+	<class name="highway:primary"          layer="primary"     point="default17" line="primary9" />
+	<class name="highway:secondary"        layer="secondary"   point="default17" line="secondary12" />
+	<class name="highway:tertiary"         layer="tertiary"    point="default17" line="tertiary12" />
+	<class name="highway:unclassified"     layer="residential" point="default17" line="road15" />
+	<class name="highway:service"          layer="residential" point="default17" line="road15" />
+	<class name="highway:residential"      layer="residential" point="default17" line="road15" />
+	<class name="highway:motorway_link"    layer="link"        line="motorway_link15" />
+	<class name="highway:trunk_link"       layer="link"        line="trunk_link15" />
+	<class name="highway:primary_link"     layer="link"        line="primary_link15" />
+	<class name="highway:secondary_link"   layer="link"        line="secondary_link15" />
+	<class name="highway:tertiary_link"    layer="link"        line="tertiary_link15" />
+	<class name="highway:living_street"    layer="trail"       point="trail17"   line="pedestrian15" />
+	<class name="highway:pedestrian"       layer="trail"       point="trail17"   line="pedestrian15" />
+	<class name="highway:track"            layer="track"       point="track17"   line="track15" />
+	<class name="highway:escape"           layer="ground"      point="default17" line="road15" />
+	<class name="highway:raceway"          layer="ground"      point="default17" line="road15" />
+	<class name="highway:road"             layer="residential" point="default17" line="road15" />
+	<class name="highway:footway"          layer="trail"       point="trail17"   line="footway15" />
+	<class name="highway:bridleway"        layer="trail"       point="trail17"   line="trail15" />
+	<class name="highway:steps"            layer="trail"       point="trail17"   line="footway15" />
+	<class name="highway:path"             layer="trail"       point="trail17"   line="trail15" />
+	<class name="highway:cycleway"         layer="trail"       point="trail17"   line="trail15" />
+	<class name="natural:water"            layer="water"       point="water15"   poly="water9" />
+	<class name="natural:bay"              layer="water"       point="water15"   poly="water9" />
+	<class name="natural:glacier"          layer="water"       point="glacier15" poly="glacier15" />
+	<class name="landuse:reservoir"        layer="water"       point="water15"   poly="water9" />
+	<class name="landuse:salt_pond"        layer="water"       point="water15"   poly="water15" />
+	<class name="landuse:basin"            layer="water"       point="water15"   poly="water9" />
+	<class name="waterway:river"           layer="water"       point="water17"   line="river12" />
+	<class name="waterway:riverbank"       layer="water"       point="water17"   poly="water12" />
+	<class name="waterway:stream"          layer="water"       point="water17"   line="stream15" />
+	<class name="waterway:canal"           layer="water"       line="stream15" />
+	<class name="waterway:ditch"           layer="water"       line="stream15" />
+	<class name="waterway:drain"           layer="water"       line="stream15" />
+	<class name="railway:funicular"        layer="railway"     line="railway15" />
+	<class name="railway:light_rail"       layer="railway"     line="railway15" />
+	<class name="railway:monorail"         layer="railway"     line="railway15" />
+	<class name="railway:narrow_gauge"     layer="railway"     line="railway15" />
+	<class name="railway:preserved"        layer="railway"     line="railway15" />
+	<class name="railway:rail"             layer="railway"     line="railway15" />
+	<class name="railway:subway"           layer="railway"     line="railway15" />
+	<class name="railway:tram"             layer="railway"     line="railway15" />
+	<class name="core:wilderness"          layer="core"        line="core:wilderness12" point="core12" />
+	<class name="core:recreation"          layer="core"        line="core:recreation12" point="core12" />
+	<class name="core:special"             layer="core"        line="core:special12"    point="core12" />
+	<class name="core:mineral"             layer="core"        line="core:mineral12"    point="core12" />
+	<class name="core:historic"            layer="core"        line="core:historic12"   point="core12" />
 	<class name="default:waypoint"         point="default17" />
-	<class name="natural:peak"             point="peak14" />
-	<class name="natural:volcano"          point="peak14" />
-	<class name="natural:saddle"           point="saddle14" />
-	<class name="place:city"               point="city11" />
+	<class name="natural:peak"             point="peak15" />
+	<class name="natural:volcano"          point="peak15" />
+	<class name="natural:saddle"           point="saddle15" />
+	<class name="place:city"               point="city9" />
 	<class name="place:town"               point="town12" />
 	<class name="place:village"            point="village13" />
 	<class name="leisure:disc_golf_course" point="outdoor16" />

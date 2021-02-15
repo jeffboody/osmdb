@@ -120,15 +120,20 @@ osmdb_tiler_gatherNodes(osmdb_tiler_t* self, int tid)
 
 	int     type;
 	int64_t id;
-	if(state->zoom == 14)
+	if(state->zoom == 15)
 	{
-		type = OSMDB_TYPE_TILEREF_NODE14;
-		id   = 16384*state->y + state->x; // 2^14
+		type = OSMDB_TYPE_TILEREF_NODE15;
+		id   = 32768*state->y + state->x; // 2^15
 	}
-	else if(state->zoom == 11)
+	else if(state->zoom == 12)
 	{
-		type = OSMDB_TYPE_TILEREF_NODE11;
-		id   = 2048*state->y + state->x; // 2^11
+		type = OSMDB_TYPE_TILEREF_NODE12;
+		id   = 4096*state->y + state->x; // 2^12
+	}
+	else if(state->zoom == 9)
+	{
+		type = OSMDB_TYPE_TILEREF_NODE9;
+		id   = 512*state->y + state->x; // 2^9
 	}
 	else
 	{
@@ -1012,15 +1017,20 @@ osmdb_tiler_gatherWays(osmdb_tiler_t* self, int tid)
 
 	int     type;
 	int64_t id;
-	if(state->zoom == 14)
+	if(state->zoom == 15)
 	{
-		type = OSMDB_TYPE_TILEREF_WAY14;
-		id   = 16384*state->y + state->x; // 2^14
+		type = OSMDB_TYPE_TILEREF_WAY15;
+		id   = 32768*state->y + state->x; // 2^15
 	}
-	else if(state->zoom == 11)
+	else if(state->zoom == 12)
 	{
-		type = OSMDB_TYPE_TILEREF_WAY11;
-		id   = 2048*state->y + state->x; // 2^11
+		type = OSMDB_TYPE_TILEREF_WAY12;
+		id   = 4096*state->y + state->x; // 2^12
+	}
+	else if(state->zoom == 9)
+	{
+		type = OSMDB_TYPE_TILEREF_WAY9;
+		id   = 512*state->y + state->x; // 2^9
 	}
 	else
 	{
@@ -1422,15 +1432,20 @@ osmdb_tiler_gatherRels(osmdb_tiler_t* self, int tid)
 
 	int     type;
 	int64_t id;
-	if(state->zoom == 14)
+	if(state->zoom == 15)
 	{
-		type = OSMDB_TYPE_TILEREF_REL14;
-		id   = 16384*state->y + state->x; // 2^14
+		type = OSMDB_TYPE_TILEREF_REL15;
+		id   = 32768*state->y + state->x; // 2^15
 	}
-	else if(state->zoom == 11)
+	else if(state->zoom == 12)
 	{
-		type = OSMDB_TYPE_TILEREF_REL11;
-		id   = 2048*state->y + state->x; // 2^11
+		type = OSMDB_TYPE_TILEREF_REL12;
+		id   = 4096*state->y + state->x; // 2^12
+	}
+	else if(state->zoom == 9)
+	{
+		type = OSMDB_TYPE_TILEREF_REL9;
+		id   = 512*state->y + state->x; // 2^9
 	}
 	else
 	{
