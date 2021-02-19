@@ -1745,12 +1745,9 @@ osm_parser_insertRel(osm_parser_t* self,
 
 	// discard relation members which are centered
 	// discard large polygon relation members
-	// large areas are defined to be 50% of the area covered
-	// by a "typical" zoom 14 tile. e.g.
-	// 14/3403/6198:
-	// latT=40.078071, lonL=-105.227051,
-	// latB=40.061257, lonR=-105.205078,
-	// area=0.000369
+	// the size of large areas was determined experimentally
+	// 0.002 is roughly the size of 16 z15 tiles
+	// or the size of Antero Reservoir
 	double latT = self->rel_range->latT;
 	double lonL = self->rel_range->lonL;
 	double latB = self->rel_range->latB;
@@ -1758,7 +1755,7 @@ osm_parser_insertRel(osm_parser_t* self,
 	float  area = (float) ((latT-latB)*(lonR-lonL));
 	if((center == 0) &&
 	   ((polygon == 0) ||
-	    (polygon && (0.5f*area < 0.000369f))))
+	    (polygon && (area < 0.002f))))
 	{
 		size = osmdb_relMembers_sizeof(self->rel_members);
 		if(osmdb_index_add(self->index,
