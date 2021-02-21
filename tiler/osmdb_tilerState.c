@@ -74,18 +74,10 @@ osmdb_tilerState_t* osmdb_tilerState_new(void)
 		goto fail_mm_nds_join;
 	}
 
-	self->list_nds = cc_list_new();
-	if(self->list_nds == NULL)
-	{
-		goto fail_list_nds;
-	}
-
 	// success
 	return self;
 
 	// failure
-	fail_list_nds:
-		cc_multimap_delete(&self->mm_nds_join);
 	fail_mm_nds_join:
 		cc_map_delete(&self->map_segs);
 	fail_map_segs:
@@ -106,7 +98,6 @@ void osmdb_tilerState_delete(osmdb_tilerState_t** _self)
 	{
 		// tiler must reset the tilerState when making
 		// tiles to ensure that these objects are empty
-		cc_list_delete(&self->list_nds);
 		cc_multimap_delete(&self->mm_nds_join);
 		cc_map_delete(&self->map_segs);
 		cc_map_delete(&self->map_export);
@@ -150,9 +141,6 @@ void osmdb_tilerState_reset(osmdb_tilerState_t* self,
 {
 	ASSERT(self);
 	ASSERT(index);
-
-	// discard way_nd references
-	cc_list_discard(self->list_nds);
 
 	// map_export is a mapping from nid/wid to ONE
 	// so we can simply discard the map references

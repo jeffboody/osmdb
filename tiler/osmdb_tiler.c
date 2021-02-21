@@ -488,9 +488,10 @@ osmdb_tiler_joinWays(osmdb_tiler_t* self, int tid)
 
 static int
 osmdb_tiler_sampleWay(osmdb_tiler_t* self, int tid,
-                      int free_ref, cc_list_t* list_nds)
+                      osmdb_waySegment_t* seg)
 {
 	ASSERT(self);
+	ASSERT(seg);
 
 	osmdb_tilerState_t* state = self->state[tid];
 
@@ -499,7 +500,7 @@ osmdb_tiler_sampleWay(osmdb_tiler_t* self, int tid,
 	cc_vec3f_t p0 = { .x=0.0f, .y=0.0f, .z=0.0f };
 
 	cc_listIter_t* iter;
-	iter = cc_list_head(list_nds);
+	iter = cc_list_head(seg->list_nds);
 	while(iter)
 	{
 		int64_t* _ref = (int64_t*) cc_list_peekIter(iter);
@@ -543,11 +544,8 @@ osmdb_tiler_sampleWay(osmdb_tiler_t* self, int tid,
 		}
 		else
 		{
-			cc_list_remove(list_nds, &iter);
-			if(free_ref)
-			{
-				FREE(_ref);
-			}
+			cc_list_remove(seg->list_nds, &iter);
+			FREE(_ref);
 		}
 
 		first = 0;
@@ -571,8 +569,7 @@ osmdb_tiler_sampleWays(osmdb_tiler_t* self, int tid)
 	{
 		osmdb_waySegment_t* seg;
 		seg = (osmdb_waySegment_t*) cc_map_val(miter);
-		if(osmdb_tiler_sampleWay(self, tid, 1,
-		                         seg->list_nds) == 0)
+		if(osmdb_tiler_sampleWay(self, tid, seg) == 0)
 		{
 			return 0;
 		}
@@ -927,7 +924,7 @@ osmdb_tiler_gatherWay(osmdb_tiler_t* self,
 
 static int
 osmdb_tiler_exportWay(osmdb_tiler_t* self, int tid,
-                      osmdb_waySegment_t* seg)
+                      osmdb_waySegment_t* seg, int flags)
 {
 	ASSERT(self);
 	ASSERT(seg);
@@ -936,7 +933,7 @@ osmdb_tiler_exportWay(osmdb_tiler_t* self, int tid,
 
 	if(osmdb_ostream_beginWay(state->os,
 	                          seg->hwi->way_info,
-	                          &seg->way_range, 0) == 0)
+	                          &seg->way_range, flags) == 0)
 	{
 		return 0;
 	}
@@ -997,7 +994,7 @@ osmdb_tiler_exportWays(osmdb_tiler_t* self, int tid)
 	while(miter)
 	{
 		seg = (osmdb_waySegment_t*) cc_map_val(miter);
-		if(osmdb_tiler_exportWay(self, tid, seg) == 0)
+		if(osmdb_tiler_exportWay(self, tid, seg, 0) == 0)
 		{
 			return 0;
 		}
@@ -1096,81 +1093,6 @@ osmdb_tiler_gatherWays(osmdb_tiler_t* self, int tid)
 }
 
 static int
-osmdb_tiler_initListNds(osmdb_tiler_t* self, int tid,
-                        osmdb_wayNds_t* way_nds)
-{
-	ASSERT(way_nds);
-
-	osmdb_tilerState_t* state = self->state[tid];
-
-	// reset state
-	cc_list_discard(state->list_nds);
-
-	// update state
-	int i;
-	int64_t* nds = osmdb_wayNds_nds(way_nds);
-	for(i = 0; i < way_nds->count; ++i)
-	{
-		if(cc_list_append(state->list_nds, NULL,
-		                  (const void*) &(nds[i])) == NULL)
-		{
-			goto fail_append;
-		}
-	}
-
-	// success
-	return 1;
-
-	// failure
-	fail_append:
-		cc_list_discard(state->list_nds);
-	return 0;
-}
-
-static int
-osmdb_tiler_gatherWayNds(osmdb_tiler_t* self, int tid)
-{
-	ASSERT(self);
-
-	osmdb_tilerState_t* state = self->state[tid];
-
-	// gather nds
-	cc_listIter_t* iter;
-	iter = cc_list_head(state->list_nds);
-	while(iter)
-	{
-		int64_t* _ref = (int64_t*) cc_list_peekIter(iter);
-
-		// handles may not exist due to osmosis
-		osmdb_handle_t* hnc;
-		if(osmdb_index_get(self->index, tid,
-		                   OSMDB_TYPE_NODECOORD,
-		                   *_ref, &hnc) == 0)
-		{
-			return 0;
-		}
-		else if(hnc == NULL)
-		{
-			iter = cc_list_next(iter);
-			continue;
-		}
-
-		if(osmdb_ostream_addWayCoord(state->os,
-			                         hnc->node_coord) == 0)
-		{
-			osmdb_index_put(self->index, &hnc);
-			return 0;
-		}
-
-		osmdb_index_put(self->index, &hnc);
-
-		iter = cc_list_next(iter);
-	}
-
-	return 1;
-}
-
-static int
 osmdb_tiler_gatherMemberWay(osmdb_tiler_t* self,
                             int tid, osmdb_relData_t* data,
                             int class, const char* name)
@@ -1181,50 +1103,22 @@ osmdb_tiler_gatherMemberWay(osmdb_tiler_t* self,
 
 	osmdb_tilerState_t* state = self->state[tid];
 
-	// handles may not exist due to osmosis
-	osmdb_handle_t* hwi;
-	if(osmdb_index_get(self->index, tid,
-	                   OSMDB_TYPE_WAYINFO,
-	                   data->wid, &hwi) == 0)
+	// create segment
+	// segment may not exist due to osmosis
+	osmdb_waySegment_t* seg = NULL;
+	if(osmdb_waySegment_new(self->index, tid,
+	                        data->wid, &seg) == 0)
 	{
 		return 0;
 	}
-	else if(hwi == NULL)
+	else if(seg == NULL)
 	{
 		return 1;
 	}
 
-	osmdb_handle_t* hwn;
-	if(osmdb_index_get(self->index, tid,
-	                   OSMDB_TYPE_WAYNDS,
-	                   data->wid, &hwn) == 0)
+	if(osmdb_tiler_sampleWay(self, tid, seg) == 0)
 	{
-		goto fail_nds;
-	}
-	else if(hwn == NULL)
-	{
-		osmdb_index_put(self->index, &hwi);
-		return 1;
-	}
-
-	osmdb_handle_t* hwr;
-	if(osmdb_index_get(self->index, tid,
-	                   OSMDB_TYPE_WAYRANGE,
-	                   data->wid, &hwr) == 0)
-	{
-		goto fail_range;
-	}
-	else if(hwr == NULL)
-	{
-		osmdb_index_put(self->index, &hwn);
-		osmdb_index_put(self->index, &hwi);
-		return 1;
-	}
-
-	if(osmdb_tiler_initListNds(self, tid,
-	                           hwn->way_nds) == 0)
-	{
-		goto fail_list_nds;
+		goto fail_sample;
 	}
 
 	int flags = 0;
@@ -1233,28 +1127,15 @@ osmdb_tiler_gatherMemberWay(osmdb_tiler_t* self,
 		flags = OSMDB_WAY_FLAG_INNER;
 	}
 
-	if(osmdb_ostream_beginWay(state->os, hwi->way_info,
-	                          hwr->way_range, flags) == 0)
+	if(osmdb_tiler_exportWay(self, tid, seg, flags) == 0)
 	{
-		goto fail_begin;
+		goto fail_export;
 	}
-
-	if(osmdb_tiler_sampleWay(self, tid, 0,
-	                         state->list_nds) == 0)
-	{
-		goto fail_sample;
-	}
-
-	if(osmdb_tiler_gatherWayNds(self, tid) == 0)
-	{
-		goto fail_gather;
-	}
-
-	osmdb_ostream_endWay(state->os);
 
 	// mark way as found if class or name matches rel
-	int         way_class = hwi->way_info->class;
-	const char* way_name  = osmdb_wayInfo_name(hwi->way_info);
+	osmdb_handle_t* hwi       = seg->hwi;
+	int             way_class = hwi->way_info->class;
+	const char*     way_name  = osmdb_wayInfo_name(hwi->way_info);
 	if((class == way_class) ||
 	   (name && way_name && (strcmp(name, way_name) == 0)))
 	{
@@ -1266,24 +1147,16 @@ osmdb_tiler_gatherMemberWay(osmdb_tiler_t* self,
 		}
 	}
 
-	osmdb_index_put(self->index, &hwr);
-	osmdb_index_put(self->index, &hwn);
-	osmdb_index_put(self->index, &hwi);
+	osmdb_waySegment_delete(self->index, &seg);
 
 	// success
 	return 1;
 
 	// failure
 	fail_mark:
-	fail_gather:
+	fail_export:
 	fail_sample:
-	fail_begin:
-	fail_list_nds:
-		osmdb_index_put(self->index, &hwr);
-	fail_range:
-		osmdb_index_put(self->index, &hwn);
-	fail_nds:
-		osmdb_index_put(self->index, &hwi);
+		osmdb_waySegment_delete(self->index, &seg);
 	return 0;
 }
 

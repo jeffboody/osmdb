@@ -24,9 +24,6 @@
 #ifndef osmdb_tiler_H
 #define osmdb_tiler_H
 
-#include "libcc/cc_list.h"
-#include "libcc/cc_map.h"
-#include "libcc/cc_multimap.h"
 #include "../index/osmdb_index.h"
 #include "osmdb_tile.h"
 #include "osmdb_tilerState.h"

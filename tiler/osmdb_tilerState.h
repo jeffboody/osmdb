@@ -47,7 +47,6 @@ typedef struct
 	cc_map_t*        map_export;
 	cc_map_t*        map_segs;
 	cc_multimap_t*   mm_nds_join;
-	cc_list_t*       list_nds;
 } osmdb_tilerState_t;
 
 osmdb_tilerState_t* osmdb_tilerState_new(void);
