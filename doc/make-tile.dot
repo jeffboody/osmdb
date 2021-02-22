@@ -15,7 +15,7 @@ digraph TILER
 	osmdb_tiler_make            [fillcolor=gold,      style=filled, label="osmdb_tiler_make(tid, zoom, x, y)\n----------\na) init state\nb) beginTile\nc) gatherRels\nd) gatherWays\ne) gatherNodes\nf) endTile\ng) reset state"];
 	osmdb_tiler_gatherNodes     [fillcolor=gold,      style=filled, label="osmdb_tiler_gatherNodes(tid)\n----------\na) get tile_refs (node)\nb) foreach(ref) gatherNode\nd) put tile_refs (node)"];
 	osmdb_tiler_gatherNode      [fillcolor=gold,      style=filled, label="osmdb_tiler_gatherNode(tid, nid)\n----------\na) check map_export for nid\nb) get node_info/node_coord\nc) osmdb_ostream_addNode\nd) put node_coord/node_info"];
-	osmdb_tiler_gatherMemberWay [fillcolor=gold,      style=filled, label="osmdb_tiler_gatherMemberWay(tid, data, class, name)\n----------\na) create segment\nb) sample way\nc) get inner flag\nd) export way\ne) mark way in map_export (using class, name)\nf) delete segment"];
+	osmdb_tiler_gatherMemberWay [fillcolor=gold,      style=filled, label="osmdb_tiler_gatherMemberWay(tid, data, class, name)\n----------\na) create segment\nb) sample way\nc) clip way\nd) get inner flag\ne) export way\nf) mark way in map_export (using class, name)\ng) delete segment"];
 	osmdb_tiler_gatherWays      [fillcolor=gold,      style=filled, label="osmdb_tiler_gatherWays(tid)\n----------\na) get tile_refs (way)\nb) foreach(way) gatherWay\nc) joinWays\nd) sampleWays\ne) clipWays\nf) exportWays\nf) put tile_refs (way)"];
 	osmdb_tiler_gatherWay       [fillcolor=gold,      style=filled, label="osmdb_tiler_gatherWay(tid, wid)\n----------\na) check map_export for wid\nb) create segment\nc) add segment to map_segs\nd) check if segment is complete\ne) otherwise add mm_join_nds"];
 	osmdb_tiler_sampleWays      [fillcolor=gold,      style=filled, label="osmdb_tiler_sampleWays(tid)\n----------\na) foreach seg in map_segs\nb) sampleWay"];
@@ -23,7 +23,7 @@ digraph TILER
 	osmdb_tiler_clipWays        [fillcolor=gold,      style=filled, label="osmdb_tiler_clipWays(tid)\n----------\na) compute extended bounds\nb) foreach seg in map_segs\nc) clipWay"];
 	osmdb_tiler_exportWays      [fillcolor=gold,      style=filled, label="osmdb_tiler_exportWays(tid)\n----------\na) foreach(seg) in map_segs\n1) exportWay"];
 	osmdb_tiler_exportWay       [fillcolor=gold,      style=filled, label="osmdb_tiler_exportWay(tid, seg, flags)\n----------\na) beginWay\nb) foreach(ref) in seg->list_nds\n1) get node_coord\n2) addWayCoord\n3) put node_coord\nc) endWay"];
-	osmdb_tiler_clipWay         [fillcolor=gold,      style=filled, label="osmdb_tiler_clipWay\n(tid, seg, latT, lonL, latB, lonR)\n----------\na) foreach ref in seg->list_nds\n1) get node_coord\n2) check if node is clipped\n3) clip nodes (remove from seg->list_nds)\n4) put node_coord"];
+	osmdb_tiler_clipWay         [fillcolor=gold,      style=filled, label="osmdb_tiler_clipWay\n(tid, seg, member, latT, lonL, latB, lonR)\n----------\na) foreach ref in seg->list_nds\n1) get node_coord\n2) check if node is clipped\n3) clip nodes (remove from seg->list_nds)\n4) put node_coord"];
 	osmdb_tiler_joinWays        [fillcolor=gold,      style=filled, label="osmdb_tiler_joinWays(tid)\n----------\na) foreach(way, nd) in mm_nds_join\n1) check if segment should be joined\n2) joinWay\n3) mark seg as invalid in mm_nds_join\n4) remove seg from map_segs\n5) delete segment"];
 	osmdb_tiler_joinWay         [fillcolor=gold,      style=filled, label="osmdb_tiler_joinWay(tid, a, b, ref1, ref2)"];
 	osmdb_tiler_gatherRels      [fillcolor=gold,      style=filled, label="osmdb_tiler_gatherRels(tid)\n----------\na) get tile_refs (rel)\nb) foreach(ref) gatherRel\nc) put tile_refs (rel)"];
@@ -73,6 +73,7 @@ digraph TILER
 	osmdb_tiler_gatherRel       -> osmdb_ostream_endRel        [label="d"];
 	osmdb_tiler_gatherMemberWay -> osmdb_waySegment_new        [label="a"];
 	osmdb_tiler_gatherMemberWay -> osmdb_tiler_sampleWay       [label="b"];
-	osmdb_tiler_gatherMemberWay -> osmdb_tiler_exportWay       [label="d"];
-	osmdb_tiler_gatherMemberWay -> osmdb_waySegment_delete     [label="f"];
+	osmdb_tiler_gatherMemberWay -> osmdb_tiler_clipWay         [label="c"];
+	osmdb_tiler_gatherMemberWay -> osmdb_tiler_exportWay       [label="e"];
+	osmdb_tiler_gatherMemberWay -> osmdb_waySegment_delete     [label="g"];
 }

@@ -624,6 +624,7 @@ static void osmdb_normalize(double* p)
 static int
 osmdb_tiler_clipWay(osmdb_tiler_t* self, int tid,
                     osmdb_waySegment_t* seg,
+                    int member,
                     double latT, double lonL,
                     double latB, double lonR)
 {
@@ -746,7 +747,7 @@ osmdb_tiler_clipWay(osmdb_tiler_t* self, int tid,
 		int clip_last = 0;
 		if(iter == cc_list_head(seg->list_nds))
 		{
-			if(loop)
+			if(loop || member)
 			{
 				q0 = OSMDB_QUADRANT_NONE;
 				q1 = OSMDB_QUADRANT_NONE;
@@ -763,7 +764,7 @@ osmdb_tiler_clipWay(osmdb_tiler_t* self, int tid,
 		}
 		else if(iter == cc_list_tail(seg->list_nds))
 		{
-			if((loop == 0) && (q1 == q2))
+			if((loop == 0) && (member == 0) && (q1 == q2))
 			{
 				clip_last = 1;
 			}
@@ -827,7 +828,7 @@ osmdb_tiler_clipWays(osmdb_tiler_t* self, int tid)
 		osmdb_waySegment_t* seg;
 		seg = (osmdb_waySegment_t*) cc_map_val(miter);
 
-		if(osmdb_tiler_clipWay(self, tid, seg,
+		if(osmdb_tiler_clipWay(self, tid, seg, 0,
 		                       latT, lonL, latB, lonR) == 0)
 		{
 			return 0;
@@ -1121,6 +1122,23 @@ osmdb_tiler_gatherMemberWay(osmdb_tiler_t* self,
 		goto fail_sample;
 	}
 
+	// elements are defined with zero width but in
+	// practice are drawn with non-zero width
+	// points/lines so an offset is needed to ensure they
+	// are not clipped between neighboring tiles
+	double dlat = (state->latT - state->latB)/16.0;
+	double dlon = (state->lonR - state->lonL)/16.0;
+	double latT = state->latT + dlat;
+	double lonL = state->lonL - dlon;
+	double latB = state->latB - dlat;
+	double lonR = state->lonR + dlon;
+
+	if(osmdb_tiler_clipWay(self, tid, seg, 1,
+	                       latT, lonL, latB, lonR) == 0)
+	{
+		goto fail_clip;
+	}
+
 	int flags = 0;
 	if(data->inner)
 	{
@@ -1155,6 +1173,7 @@ osmdb_tiler_gatherMemberWay(osmdb_tiler_t* self,
 	// failure
 	fail_mark:
 	fail_export:
+	fail_clip:
 	fail_sample:
 		osmdb_waySegment_delete(self->index, &seg);
 	return 0;
