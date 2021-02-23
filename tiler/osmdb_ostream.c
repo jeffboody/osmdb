@@ -26,6 +26,7 @@
 #include <string.h>
 
 #define LOG_TAG "osmdb"
+#include "libcc/math/cc_vec2f.h"
 #include "libcc/cc_log.h"
 #include "libcc/cc_memory.h"
 #include "terrain/terrain_util.h"
@@ -108,12 +109,41 @@ osmdb_ostream_add(osmdb_ostream_t* self, size_t size,
 }
 
 static void
-osmdb_ostream_coord2pt(osmdb_ostream_t* self,
+osmdb_ostream_xy2pt(float x, float y, osmdb_point_t* pt)
+{
+	ASSERT(pt);
+
+	// clamp pt coordinates
+	// short: -32768 => 32767
+	pt->x = (short) x;
+	pt->y = (short) y;
+	if(x > 32767.0f)
+	{
+		pt->x = 32767;
+	}
+	else if(x < -32768.0f)
+	{
+		pt->x = -32768;
+	}
+
+	if(y > 32767.0f)
+	{
+		pt->y = 32767;
+	}
+	else if(y < -32768.0f)
+	{
+		pt->y = -32768;
+	}
+}
+
+static void
+osmdb_ostream_coord2xy(osmdb_ostream_t* self,
                        double lat, double lon,
-                       osmdb_point_t* pt)
+                       float* _x, float* _y)
 {
 	ASSERT(self);
-	ASSERT(pt);
+	ASSERT(_x);
+	ASSERT(_y);
 
 	osmdb_tile_t* tile;
 	tile = (osmdb_tile_t*) osmdb_ostream_data(self, 0);
@@ -141,29 +171,22 @@ osmdb_ostream_coord2pt(osmdb_ostream_t* self,
 	x = 32767.0f*x - 16384.0f;
 	y = 32767.0f*y - 16384.0f;
 
-	// clamp pt coordinates
-	// short: -32768 => 32767
-	if(x > 32767.0f)
-	{
-		x = 32767.0f;
-	}
-	else if(x < -32768.0f)
-	{
-		x = -32768.0f;
-	}
+	*_x = x;
+	*_y = y;
+}
 
-	if(y > 32767.0f)
-	{
-		y = 32767.0f;
-	}
-	else if(y < -32768.0f)
-	{
-		y = -32768.0f;
-	}
+static void
+osmdb_ostream_coord2pt(osmdb_ostream_t* self,
+                       double lat, double lon,
+                       osmdb_point_t* pt)
+{
+	ASSERT(self);
+	ASSERT(pt);
 
-	// convert to short
-	pt->x = (short) x;
-	pt->y = (short) y;
+	float x = 0.0f;
+	float y = 0.0f;
+	osmdb_ostream_coord2xy(self, lat, lon, &x, &y);
+	osmdb_ostream_xy2pt(x, y, pt);
 }
 
 /***********************************************************
@@ -445,12 +468,13 @@ int osmdb_ostream_beginWay(osmdb_ostream_t* self,
 	}
 	way->size_name   = size_name;
 	self->offset_way = offset_way;
+	self->way_pts    = 0;
 
 	return 1;
 }
 
-int osmdb_ostream_addWayCoord(osmdb_ostream_t* self,
-                              osmdb_nodeCoord_t* node_coord)
+int osmdb_ostream_addWayPt(osmdb_ostream_t* self,
+                           float x, float y)
 {
 	ASSERT(self);
 	ASSERT(node_coord);
@@ -470,9 +494,7 @@ int osmdb_ostream_addWayCoord(osmdb_ostream_t* self,
 		return 0;
 	}
 
-	double lat = node_coord->lat;
-	double lon = node_coord->lon;
-	osmdb_ostream_coord2pt(self, lat, lon, pt);
+	osmdb_ostream_xy2pt(x, y, pt);
 
 	// increment way pts count
 	osmdb_way_t* way;
@@ -485,6 +507,58 @@ int osmdb_ostream_addWayCoord(osmdb_ostream_t* self,
 	++way->count;
 
 	return 1;
+}
+
+int osmdb_ostream_addWayCoord(osmdb_ostream_t* self,
+                              osmdb_nodeCoord_t* node_coord)
+{
+	ASSERT(self);
+	ASSERT(node_coord);
+
+	float  x   = 0.0f;
+	float  y   = 0.0f;
+	double lat = node_coord->lat;
+	double lon = node_coord->lon;
+	osmdb_ostream_coord2xy(self, lat, lon, &x, &y);
+
+	int ret = 1;
+	if(self->way_pts)
+	{
+		// short: -32768 => 32767
+		cc_vec2f_t p0;
+		cc_vec2f_t p1;
+		cc_vec2f_t p;
+		cc_vec2f_t v;
+		cc_vec2f_load(&p0, self->way_x, self->way_y);
+		cc_vec2f_load(&p1, x, y);
+		cc_vec2f_subv_copy(&p1, &p0, &v);
+
+		float dist = cc_vec2f_mag(&v);
+		int   pts  = (int) (dist/8000.0f);
+
+		cc_vec2f_normalize(&v);
+
+		// split long way segments to avoid discontinunities
+		// when clamping coordinates to the range of shorts
+		// e.g. railway between Toland and Winter Park
+		int i;
+		for(i = 1; i < pts; ++i)
+		{
+			cc_vec2f_copy(&v, &p);
+			cc_vec2f_muls(&p, i*8000.0f);
+			cc_vec2f_addv(&p, &p0);
+			ret &= osmdb_ostream_addWayPt(self, p.x, p.y);
+		}
+	}
+
+	ret &= osmdb_ostream_addWayPt(self, x, y);
+
+	// update way segment state
+	++self->way_pts;
+	self->way_x = x;
+	self->way_y = y;
+
+	return ret;
 }
 
 void osmdb_ostream_endWay(osmdb_ostream_t* self)

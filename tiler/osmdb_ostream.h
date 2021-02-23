@@ -37,6 +37,11 @@ typedef struct
 	size_t offset_way;
 	void*  data;
 
+	// way segments
+	int   way_pts;
+	float way_x;
+	float way_y;
+
 	// bounding tile rect
 	float tileT;
 	float tileL;
