@@ -22,17 +22,13 @@
  */
 
 #include <inttypes.h>
-//#include <math.h>
-//#include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
-//#include <string.h>
 
 #define LOG_TAG "osmdb"
 #include "libcc/cc_log.h"
 #include "libcc/cc_memory.h"
 #include "libcc/cc_timestamp.h"
-//#include "libcc/cc_unit.h"
-//#include "../osmdb_util.h"
 #include "osmdb_entry.h"
 #include "osmdb_index.h"
 

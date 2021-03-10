@@ -30,7 +30,6 @@
 #include "libcc/cc_list.h"
 #include "libcc/cc_map.h"
 #include "libsqlite3/sqlite3.h"
-#include "libxmlstream/xml_ostream.h"
 #include "osmdb_type.h"
 
 #define OSMDB_INDEX_MODE_READONLY 0
