@@ -62,6 +62,41 @@ const char* OSMDB_INDEX_TBL[] =
 * private - sqlite                                         *
 ***********************************************************/
 
+static void* xMalloc(int size)
+{
+	return MALLOC((size_t) size);
+}
+
+static void xFree(void* ptr)
+{
+	FREE(ptr);
+}
+
+static void* xRealloc(void* ptr, int size)
+{
+	return REALLOC(ptr, (size_t) size);
+}
+
+static int xSize(void* ptr)
+{
+	return (int) MEMSIZEPTR(ptr);
+}
+
+static int xRoundup(int size)
+{
+	return size;
+}
+
+static int xInit(void* priv)
+{
+	return SQLITE_OK;
+}
+
+static void xShutdown(void* priv)
+{
+	return;
+}
+
 static int
 osmdb_index_createTables(osmdb_index_t* self)
 {
@@ -917,6 +952,19 @@ osmdb_index_new(const char* fname, int mode, int nth)
 
 	self->mode = mode;
 	self->nth  = nth;
+
+	struct sqlite3_mem_methods xmem =
+	{
+		.xMalloc   = xMalloc,
+		.xFree     = xFree,
+		.xRealloc  = xRealloc,
+		.xSize     = xSize,
+		.xRoundup  = xRoundup,
+		.xInit     = xInit,
+		.xShutdown = xShutdown,
+		.pAppData  = NULL
+	};
+	sqlite3_config(SQLITE_CONFIG_MALLOC, &xmem);
 
 	if(sqlite3_initialize() != SQLITE_OK)
 	{
