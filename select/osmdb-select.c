@@ -309,7 +309,8 @@ int main(int argc, const char** argv)
 
 	osmdb_index_t* index;
 	index = osmdb_index_new(fname,
-	                        OSMDB_INDEX_MODE_READONLY, 1);
+	                        OSMDB_INDEX_MODE_READONLY,
+	                        1, 1.0f);
 	if(index == NULL)
 	{
 		goto fail_index;

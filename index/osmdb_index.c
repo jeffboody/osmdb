@@ -32,7 +32,7 @@
 #include "osmdb_entry.h"
 #include "osmdb_index.h"
 
-#define OSMDB_INDEX_CACHE_SIZE 4000000000
+#define OSMDB_INDEX_CACHE_SIZE 1000000000
 
 #define OSMDB_INDEX_BATCH_SIZE 10000
 
@@ -653,11 +653,10 @@ osmdb_index_trim(osmdb_index_t* self)
 	// it will only be called when locked or when in single
 	// thread mode (e.g. CREATE or APPEND)
 
-	int ret = 1;
-
-	int first = 1;
-
-	cc_listIter_t* iter = cc_list_head(self->cache_list);
+	int            ret        = 1;
+	int            first      = 1;
+	size_t         cache_size = self->smem*OSMDB_INDEX_CACHE_SIZE;
+	cc_listIter_t* iter       = cc_list_head(self->cache_list);
 	while(iter)
 	{
 		// check if cache is full
@@ -668,14 +667,14 @@ osmdb_index_trim(osmdb_index_t* self)
 		size_t size = MEMSIZE();
 		if(first)
 		{
-			if(size <= OSMDB_INDEX_CACHE_SIZE)
+			if(size <= cache_size)
 			{
 				break;
 			}
 
 			first = 0;
 		}
-		if(size <= (size_t) (0.95f*OSMDB_INDEX_CACHE_SIZE))
+		if(size <= (size_t) (0.95f*cache_size))
 		{
 			break;
 		}
@@ -929,7 +928,8 @@ int osmdb_index_addTile(osmdb_index_t* self, int type,
 ***********************************************************/
 
 osmdb_index_t*
-osmdb_index_new(const char* fname, int mode, int nth)
+osmdb_index_new(const char* fname, int mode, int nth,
+                float smem)
 {
 	ASSERT(fname);
 
@@ -952,6 +952,7 @@ osmdb_index_new(const char* fname, int mode, int nth)
 
 	self->mode = mode;
 	self->nth  = nth;
+	self->smem = smem;
 
 	struct sqlite3_mem_methods xmem =
 	{

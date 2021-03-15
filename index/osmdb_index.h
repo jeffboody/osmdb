@@ -46,9 +46,10 @@ typedef struct
 
 typedef struct
 {
-	int mode;
-	int nth;
-	int batch_size;
+	int   mode;
+	int   nth;
+	int   batch_size;
+	float smem;
 
 	sqlite3* db;
 
@@ -84,7 +85,8 @@ typedef struct
 } osmdb_index_t;
 
 osmdb_index_t* osmdb_index_new(const char* fname,
-                               int mode, int nth);
+                               int mode, int nth,
+                               float smem);
 void           osmdb_index_delete(osmdb_index_t** _self);
 int64_t        osmdb_index_changeset(osmdb_index_t* self);
 void           osmdb_index_lock(osmdb_index_t* self);
