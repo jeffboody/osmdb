@@ -1381,7 +1381,8 @@ osmdb_tiler_gatherRels(osmdb_tiler_t* self, int tid)
 ***********************************************************/
 
 osmdb_tiler_t*
-osmdb_tiler_new(osmdb_index_t* index, int nth)
+osmdb_tiler_new(const char* fname_db,
+                int nth, float smem)
 {
 	ASSERT(index);
 
@@ -1394,10 +1395,17 @@ osmdb_tiler_new(osmdb_index_t* index, int nth)
 		return NULL;
 	}
 
-	self->index = index;
-	self->nth   = nth;
+	self->index = osmdb_index_new(fname_db,
+	                              OSMDB_INDEX_MODE_READONLY,
+	                              nth, smem);
+	if(self->index == NULL)
+	{
+		goto fail_index;
+	}
 
-	self->changeset = osmdb_index_changeset(index);
+	self->nth = nth;
+
+	self->changeset = osmdb_index_changeset(self->index);
 	if(self->changeset == 0)
 	{
 		goto fail_changeset;
@@ -1436,6 +1444,8 @@ osmdb_tiler_new(osmdb_index_t* index, int nth)
 	}
 	fail_state:
 	fail_changeset:
+		osmdb_index_delete(&self->index);
+	fail_index:
 		FREE(self);
 	return NULL;
 }
@@ -1453,6 +1463,7 @@ void osmdb_tiler_delete(osmdb_tiler_t** _self)
 			osmdb_tilerState_delete(&self->state[i]);
 		}
 		FREE(self->state);
+		osmdb_index_delete(&self->index);
 		FREE(self);
 		*_self = NULL;
 	}

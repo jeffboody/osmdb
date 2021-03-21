@@ -40,8 +40,8 @@ typedef struct
 	osmdb_tilerState_t** state;
 } osmdb_tiler_t;
 
-osmdb_tiler_t* osmdb_tiler_new(osmdb_index_t* index,
-                               int nth);
+osmdb_tiler_t* osmdb_tiler_new(const char* fname_db,
+                               int nth, float smem);
 void           osmdb_tiler_delete(osmdb_tiler_t** _self);
 osmdb_tile_t*  osmdb_tiler_make(osmdb_tiler_t* self,
                                 int tid,
