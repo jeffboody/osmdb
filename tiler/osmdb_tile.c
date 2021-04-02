@@ -25,6 +25,7 @@
 #include <stdlib.h>
 
 #define LOG_TAG "osmdb"
+#include "../../libcc/math/cc_pow2n.h"
 #include "../../libcc/cc_log.h"
 #include "../../libcc/cc_memory.h"
 #include "osmdb_tile.h"
@@ -252,17 +253,6 @@ osmdb_tile_validateRel(size_t* _offset,
 	return 1;
 }
 
-static int pow2n(int n)
-{
-	int x = 1;
-	while(n > 0)
-	{
-		x *= 2;
-		n -= 1;
-	}
-	return x;
-}
-
 /***********************************************************
 * public                                                   *
 ***********************************************************/
@@ -347,8 +337,8 @@ osmdb_tile_t* osmdb_tile_new(size_t size, void* data,
 
 	// check address
 	if((self->zoom < 0) || (self->zoom > 15) ||
-	   (self->x < 0) || (self->x >= pow2n(self->zoom)) ||
-	   (self->y < 0) || (self->y >= pow2n(self->zoom)))
+	   (self->x < 0) || (self->x >= cc_pow2n(self->zoom)) ||
+	   (self->y < 0) || (self->y >= cc_pow2n(self->zoom)))
 	{
 		LOGE("invalid %i/%i/%i",
 		     self->zoom, self->x, self->y);
