@@ -307,17 +307,8 @@ int main(int argc, const char** argv)
 		return EXIT_FAILURE;
 	}
 
-	osmdb_index_t* index;
-	index = osmdb_index_new(fname,
-	                        OSMDB_INDEX_MODE_READONLY,
-	                        1, 1.0f);
-	if(index == NULL)
-	{
-		goto fail_index;
-	}
-
 	osmdb_tiler_t* tiler;
-	tiler = osmdb_tiler_new(index, 1);
+	tiler = osmdb_tiler_new(fname, 1, 1.0f);
 	if(tiler == NULL)
 	{
 		goto fail_tiler;
@@ -387,7 +378,6 @@ int main(int argc, const char** argv)
 
 	osmdb_tile_delete(&tile);
 	osmdb_tiler_delete(&tiler);
-	osmdb_index_delete(&index);
 	texgz_tex_delete(&img);
 
 	size_t memsize = MEMSIZE();
@@ -410,8 +400,6 @@ int main(int argc, const char** argv)
 	fail_data:
 		osmdb_tiler_delete(&tiler);
 	fail_tiler:
-		osmdb_index_delete(&index);
-	fail_index:
 		texgz_tex_delete(&img);
 	return EXIT_FAILURE;
 }
