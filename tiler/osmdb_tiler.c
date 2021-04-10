@@ -43,6 +43,16 @@ const int OSMDB_ONE = 1;
 #define OSMDB_QUADRANT_BOTTOM 3
 #define OSMDB_QUADRANT_RIGHT  4
 
+#define OSMDB_EXPORT_TYPE_NODE     0
+#define OSMDB_EXPORT_TYPE_WAY      1
+#define OSMDB_EXPORT_TYPE_RELATION 2
+
+typedef struct
+{
+	int     type;
+	int64_t id;
+} osmdb_exportKey_t;
+
 /***********************************************************
 * private                                                  *
 ***********************************************************/
@@ -56,10 +66,16 @@ osmdb_tiler_gatherNode(osmdb_tiler_t* self,
 
 	osmdb_tilerState_t* state = self->state[tid];
 
+	osmdb_exportKey_t key =
+	{
+		.type = OSMDB_EXPORT_TYPE_NODE,
+		.id   = nid
+	};
+
 	// check if node is already included by a relation
 	cc_mapIter_t miterator;
-	if(cc_map_findf(state->map_export, &miterator,
-	                "n%" PRId64, nid))
+	if(cc_map_findp(state->map_export, &miterator,
+	                sizeof(osmdb_exportKey_t), &key))
 	{
 		return 1;
 	}
@@ -393,14 +409,17 @@ osmdb_tiler_joinWays(osmdb_tiler_t* self, int tid)
 	cc_list_t*          list2;
 	int64_t*            id1;
 	int64_t*            id2;
+	int64_t*            _ref1;
 	int64_t             ref1;
 	int64_t             ref2;
+	int                 len;
 	miter1 = cc_multimap_head(state->mm_nds_join,
 	                          &miterator1);
 	while(miter1)
 	{
-		ref1  = (int64_t)
-		        strtoll(cc_multimap_key(miter1), NULL, 0);
+		_ref1  = (int64_t*) cc_multimap_key(miter1, &len);
+		ref1   = *_ref1;
+
 		list1 = (cc_list_t*) cc_multimap_list(miter1);
 		iter1 = cc_list_head(list1);
 		while(iter1)
@@ -413,8 +432,8 @@ osmdb_tiler_joinWays(osmdb_tiler_t* self, int tid)
 			}
 
 			seg1 = (osmdb_waySegment_t*)
-			       cc_map_findf(state->map_segs, &hiter1,
-			                    "%" PRId64, *id1);
+			       cc_map_findp(state->map_segs, &hiter1,
+			                    sizeof(int64_t), id1);
 			if(seg1 == NULL)
 			{
 				iter1 = cc_list_next(iter1);
@@ -433,8 +452,8 @@ osmdb_tiler_joinWays(osmdb_tiler_t* self, int tid)
 				}
 
 				seg2 = (osmdb_waySegment_t*)
-				       cc_map_findf(state->map_segs, hiter2,
-				                    "%" PRId64, *id2);
+				       cc_map_findp(state->map_segs, hiter2,
+				                    sizeof(int64_t), id2);
 				if(seg2 == NULL)
 				{
 					iter2 = cc_list_next(iter2);
@@ -848,10 +867,16 @@ osmdb_tiler_gatherWay(osmdb_tiler_t* self,
 
 	osmdb_tilerState_t* state = self->state[tid];
 
+	osmdb_exportKey_t key =
+	{
+		.type = OSMDB_EXPORT_TYPE_WAY,
+		.id   = wid
+	};
+
 	// check if way is already included
 	cc_mapIter_t miterator;
-	if(cc_map_findf(state->map_export, &miterator,
-	                "w%" PRId64, wid))
+	if(cc_map_findp(state->map_export, &miterator,
+	                sizeof(osmdb_exportKey_t), &key))
 	{
 		return 1;
 	}
@@ -868,8 +893,8 @@ osmdb_tiler_gatherWay(osmdb_tiler_t* self,
 		return 1;
 	}
 
-	if(cc_map_addf(state->map_segs, (const void*) seg,
-	               "%" PRId64, wid) == 0)
+	if(cc_map_addp(state->map_segs, (const void*) seg,
+	               sizeof(int64_t), &wid) == 0)
 	{
 		osmdb_waySegment_delete(self->index, &seg);
 		return 0;
@@ -1157,9 +1182,15 @@ osmdb_tiler_gatherMemberWay(osmdb_tiler_t* self,
 	if((class == way_class) ||
 	   (name && way_name && (strcmp(name, way_name) == 0)))
 	{
-		if(cc_map_addf(state->map_export,
+		osmdb_exportKey_t key =
+		{
+			.type = OSMDB_EXPORT_TYPE_WAY,
+			.id   = data->wid
+		};
+
+		if(cc_map_addp(state->map_export,
 		               (const void*) &OSMDB_ONE,
-		               "w%" PRId64, data->wid) == 0)
+		               sizeof(osmdb_exportKey_t), &key) == 0)
 		{
 			goto fail_mark;
 		}
@@ -1282,9 +1313,15 @@ osmdb_tiler_gatherRel(osmdb_tiler_t* self,
 	// mark node as found
 	if(hni && hni->node_info)
 	{
-		if(cc_map_addf(state->map_export,
-		               (const void*) &OSMDB_ONE, "n%" PRId64,
-		               hni->node_info->nid) == 0)
+		osmdb_exportKey_t key =
+		{
+			.type = OSMDB_EXPORT_TYPE_NODE,
+			.id   = hni->node_info->nid
+		};
+
+		if(cc_map_addp(state->map_export,
+		               (const void*) &OSMDB_ONE,
+		               sizeof(osmdb_exportKey_t), &key) == 0)
 		{
 			goto fail_mark;
 		}

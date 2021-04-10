@@ -169,8 +169,8 @@ osmdb_entry_map(osmdb_entry_t* self, size_t offset)
 			goto fail_type;
 		}
 
-		if(cc_map_addf(self->map, (const void*) hnd,
-		               "%" PRId64, minor_id) == 0)
+		if(cc_map_addp(self->map, (const void*) hnd,
+		               sizeof(int64_t), &minor_id) == 0)
 		{
 			LOGE("invalid type=%i, major_id=%" PRId64 ", minor_id=%" PRId64,
 			     self->type, self->major_id, minor_id);
@@ -249,8 +249,8 @@ osmdb_entry_get(osmdb_entry_t* self, int64_t minor_id,
 
 	// note that it is not an error to return a NULL hnd
 	*_hnd = (osmdb_handle_t*)
-	         cc_map_findf(self->map, &miterator,
-	                      "%" PRId64, minor_id);
+	         cc_map_findp(self->map, &miterator,
+	                      sizeof(int64_t), &minor_id);
 	if(*_hnd)
 	{
 		++self->refcount;

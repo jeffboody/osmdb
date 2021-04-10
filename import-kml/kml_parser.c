@@ -69,6 +69,12 @@ void osmdb_wayInfo_addName(osmdb_wayInfo_t* self,
 void osmdb_relInfo_addName(osmdb_relInfo_t* self,
                            const char* name);
 
+typedef struct
+{
+	double lat;
+	double lon;
+} kml_coordKey_t;
+
 /***********************************************************
 * private                                                  *
 ***********************************************************/
@@ -421,12 +427,18 @@ kml_parser_parseNode(kml_parser_t* self, char* s)
 		return 0;
 	}
 
+	kml_coordKey_t key =
+	{
+		.lat = lat,
+		.lon = lon
+	};
+
 	osmdb_nodeCoord_t* node_coord;
 	cc_mapIter_t miterator;
 	node_coord = (osmdb_nodeCoord_t*)
-	             cc_map_findf(self->map_node_coords,
+	             cc_map_findp(self->map_node_coords,
 	                          &miterator,
-	                          "%lf,%lf", lat, lon);
+	                          sizeof(kml_coordKey_t), &key);
 	if(node_coord == NULL)
 	{
 		node_coord = (osmdb_nodeCoord_t*)
@@ -440,9 +452,9 @@ kml_parser_parseNode(kml_parser_t* self, char* s)
 		node_coord->lat = lat;
 		node_coord->lon = lon;
 
-		if(cc_map_addf(self->map_node_coords,
+		if(cc_map_addp(self->map_node_coords,
 		               (const void*) node_coord,
-		               "%lf,%lf", lat, lon) == 0)
+		               sizeof(kml_coordKey_t), &key) == 0)
 		{
 			FREE(node_coord);
 			return 0;
