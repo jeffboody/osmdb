@@ -477,7 +477,6 @@ int osmdb_ostream_addWayPt(osmdb_ostream_t* self,
                            float x, float y)
 {
 	ASSERT(self);
-	ASSERT(node_coord);
 
 	if(self->offset_way == 0)
 	{

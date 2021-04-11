@@ -1421,7 +1421,7 @@ osmdb_tiler_t*
 osmdb_tiler_new(const char* fname_db,
                 int nth, float smem)
 {
-	ASSERT(index);
+	ASSERT(fname_db);
 
 	osmdb_tiler_t* self;
 	self = (osmdb_tiler_t*)
