@@ -60,8 +60,9 @@ const char* OSMDB_INDEX_TBL[] =
 
 typedef struct
 {
-	int     type;
 	int64_t major_id;
+	int     type;
+	int     pad; // unused padding for 64-bit alignment
 } osmdb_cacheMapKey_t;
 
 /***********************************************************
@@ -696,8 +697,8 @@ osmdb_index_trim(osmdb_index_t* self)
 
 		osmdb_cacheMapKey_t key =
 		{
-			.type     = entry->type,
-			.major_id = entry->major_id
+			.major_id = entry->major_id,
+			.type     = entry->type
 		};
 
 		// remove the entry
@@ -765,8 +766,8 @@ int osmdb_index_add(osmdb_index_t* self,
 
 	osmdb_cacheMapKey_t key =
 	{
-		.type     = type,
-		.major_id = major_id
+		.major_id = major_id,
+		.type     = type
 	};
 
 	// check if entry is in cache
@@ -846,8 +847,8 @@ int osmdb_index_addTile(osmdb_index_t* self, int type,
 
 	osmdb_cacheMapKey_t key =
 	{
-		.type     = type,
-		.major_id = major_id
+		.major_id = major_id,
+		.type     = type
 	};
 
 	// check if entry is in cache
@@ -1288,8 +1289,8 @@ int osmdb_index_get(osmdb_index_t* self,
 
 	osmdb_cacheMapKey_t key =
 	{
-		.type     = type,
-		.major_id = major_id
+		.major_id = major_id,
+		.type     = type
 	};
 
 	// find the entry in the cache
