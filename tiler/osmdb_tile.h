@@ -27,7 +27,7 @@
 #include <stdint.h>
 
 #define OSMDB_TILE_MAGIC   0xB00D90DB
-#define OSMDB_TILE_VERSION 20210125
+#define OSMDB_TILE_VERSION 20210416
 
 typedef struct
 {
@@ -111,10 +111,10 @@ typedef struct
 {
 	int     magic;
 	int     version;
+	int64_t changeset;
 	int     zoom;
 	int     x;
 	int     y;
-	int64_t changeset;
 	int     count_rels;
 	int     count_ways;
 	int     count_nodes;
