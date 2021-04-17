@@ -350,11 +350,12 @@ osmdb_prefetch_tile(osmdb_prefetch_t* self,
 
 	if(osmdb_prefetch_make(self, zoom, x, y) == 0)
 	{
-		return 0;
+		// ignore failures
+		printf("[PF] %i/%i/%i failed\n", zoom, x, y);
 	}
 
 	// update prefetch state
-	if((self->count % 1000) == 0)
+	if((self->count % 10000) == 0)
 	{
 		double dt;
 		double progress;
