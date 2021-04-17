@@ -274,14 +274,13 @@ osmdb_prefetch_make(osmdb_prefetch_t* self,
 		return 0;
 	}
 
-	size_t size = 0;
-	void*  data;
-	data = (void*)
-	       osmdb_tiler_make(self->tiler, 0,
+	size_t        size = 0;
+	osmdb_tile_t* tile;
+	tile = osmdb_tiler_make(self->tiler, 0,
 	                        zoom, x, y, &size);
-	if((data == NULL) || (size > INT_MAX))
+	if((tile == NULL) || (size > INT_MAX))
 	{
-		FREE(data);
+		FREE(tile);
 		return 0;
 	}
 
@@ -291,11 +290,21 @@ osmdb_prefetch_make(osmdb_prefetch_t* self,
 
 	sqlite3_stmt* stmt = self->stmt_save[izoom];
 	if((sqlite3_bind_int64(stmt, idx_id, id) != SQLITE_OK) ||
-	   (sqlite3_bind_blob(stmt, idx_blob, data, (int) size,
+	   (sqlite3_bind_blob(stmt, idx_blob,
+	                      (void*) tile, (int) size,
 	                      SQLITE_TRANSIENT) != SQLITE_OK))
 	{
 		LOGE("sqlite3_bind failed");
 		goto fail_bind;
+	}
+
+	// skip empty tiles
+	if((tile->count_rels == 0) &&
+	   (tile->count_ways == 0) &&
+	   (tile->count_nodes == 0))
+	{
+		osmdb_tile_delete(&tile);
+		return 1;
 	}
 
 	if(sqlite3_step(stmt) != SQLITE_DONE)
@@ -310,7 +319,7 @@ osmdb_prefetch_make(osmdb_prefetch_t* self,
 		LOGW("sqlite3_reset failed");
 	}
 
-	FREE(data);
+	osmdb_tile_delete(&tile);
 
 	// success
 	return 1;
@@ -324,7 +333,7 @@ osmdb_prefetch_make(osmdb_prefetch_t* self,
 		}
 	}
 	fail_bind:
-		FREE(data);
+		osmdb_tile_delete(&tile);
 	return 0;
 }
 
