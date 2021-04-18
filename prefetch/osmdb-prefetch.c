@@ -83,7 +83,7 @@ typedef struct
 	int           batch_size;
 	sqlite3_stmt* stmt_begin;
 	sqlite3_stmt* stmt_end;
-	sqlite3_stmt* stmt_save[NZOOM];
+	sqlite3_stmt* stmt_save;
 
 	// sqlite3 indices
 	int idx_save_id;
@@ -107,6 +107,11 @@ osmdb_prefetch_createTables(osmdb_prefetch_t* self)
 		"	key TEXT UNIQUE,"
 		"	val TEXT"
 		");",
+		"CREATE TABLE tbl_tile"
+		"("
+		"	id   INTEGER PRIMARY KEY NOT NULL,"
+		"	blob BLOB"
+		");",
 		NULL
 	};
 
@@ -122,26 +127,6 @@ osmdb_prefetch_createTables(osmdb_prefetch_t* self)
 			return 0;
 		}
 		++i;
-	}
-
-	// create tbl_tile[i]
-	for(i = 0; i < NZOOM; ++i)
-	{
-		char sql_tbl[256];
-		snprintf(sql_tbl, 256,
-		         "CREATE TABLE tbl_tile%i"
-		         "("
-		         "	id   INTEGER PRIMARY KEY NOT NULL,"
-		         "	blob BLOB"
-		         ");", ZOOM_LEVEL[i]);
-
-		if(sqlite3_exec(self->db, sql_tbl, NULL, NULL,
-		                NULL) != SQLITE_OK)
-		{
-			LOGE("sqlite3_exec(%i): %s",
-			     i, sqlite3_errmsg(self->db));
-			return 0;
-		}
 	}
 
 	// insert changeset
@@ -284,11 +269,15 @@ osmdb_prefetch_make(osmdb_prefetch_t* self,
 		return 0;
 	}
 
+	int64_t pow220   = cc_pow2n(20);
 	int     idx_id   = self->idx_save_id;
 	int     idx_blob = self->idx_save_blob;
-	int64_t id       = cc_pow2n(zoom)*y + x;
+	int64_t zoom64   = (int64_t) zoom;
+	int64_t x64      = (int64_t) x;
+	int64_t y64      = (int64_t) y;
+	int64_t id       = zoom64 + 256*x64 + 256*pow220*y64;
 
-	sqlite3_stmt* stmt = self->stmt_save[izoom];
+	sqlite3_stmt* stmt = self->stmt_save;
 	if((sqlite3_bind_int64(stmt, idx_id, id) != SQLITE_OK) ||
 	   (sqlite3_bind_blob(stmt, idx_blob,
 	                      (void*) tile, (int) size,
@@ -565,27 +554,20 @@ int main(int argc, char** argv)
 		goto fail_prepare_end;
 	}
 
-	int  i;
-	char sql_save[256];
-	for(i = 0; i < NZOOM; ++i)
+	const char* sql_save = "INSERT INTO tbl_tile (id, blob)"
+	                       "	VALUES (@arg_id, @arg_blob);";
+	if(sqlite3_prepare_v2(self->db, sql_save, -1,
+	                      &self->stmt_save,
+	                      NULL) != SQLITE_OK)
 	{
-		snprintf(sql_save, 256,
-		         "INSERT INTO tbl_tile%i (id, blob)"
-		         "	VALUES (@arg_id, @arg_blob);",
-		         ZOOM_LEVEL[i]);
-		if(sqlite3_prepare_v2(self->db, sql_save, -1,
-		                      &self->stmt_save[i],
-		                      NULL) != SQLITE_OK)
-		{
-			LOGE("sqlite3_prepare_v2: %s",
-			     sqlite3_errmsg(self->db));
-			goto fail_prepare_save;
-		}
+		LOGE("sqlite3_prepare_v2: %s",
+		     sqlite3_errmsg(self->db));
+		goto fail_prepare_save;
 	}
 
-	self->idx_save_id   = sqlite3_bind_parameter_index(self->stmt_save[0],
+	self->idx_save_id   = sqlite3_bind_parameter_index(self->stmt_save,
 	                                                   "@arg_id");
-	self->idx_save_blob = sqlite3_bind_parameter_index(self->stmt_save[0],
+	self->idx_save_blob = sqlite3_bind_parameter_index(self->stmt_save,
 	                                                   "@arg_blob");
 
 	if(osmdb_prefetch_tiles(self, 0, 0, 0) == 0)
@@ -603,12 +585,7 @@ int main(int argc, char** argv)
 	fail_run:
 	{
 		osmdb_prefetch_endTransaction(self);
-
-		int k;
-		for(k = 0; k < i; ++k)
-		{
-			sqlite3_finalize(self->stmt_save[k]);
-		}
+		sqlite3_finalize(self->stmt_save);
 	}
 	fail_prepare_save:
 		sqlite3_finalize(self->stmt_end);
