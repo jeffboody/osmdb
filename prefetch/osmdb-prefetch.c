@@ -456,10 +456,10 @@ int main(int argc, char** argv)
 		else if(strcmp(argv[1], "-pf=US") == 0)
 		{
 			mode  = MODE_US;
-			latT  = CO_LATT;
-			lonL  = CO_LONL;
-			latB  = CO_LATB;
-			lonR  = CO_LONR;
+			latT  = US_LATT;
+			lonL  = US_LONL;
+			latB  = US_LATB;
+			lonR  = US_LONR;
 			usage = 0;
 		}
 		else if(strcmp(argv[1], "-pf=WW") == 0)
