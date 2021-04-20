@@ -34,6 +34,7 @@
 #include "libcc/cc_memory.h"
 #include "libcc/cc_timestamp.h"
 #include "libsqlite3/sqlite3.h"
+#include "osmdb/cache/osmdb_cache.h"
 #include "osmdb/tiler/osmdb_tiler.h"
 #include "osmdb/osmdb_util.h"
 #include "terrain/terrain_util.h"
@@ -41,8 +42,6 @@
 #define MODE_WW 0
 #define MODE_US 1
 #define MODE_CO 2
-
-#define BATCH_SIZE 10000
 
 #define NZOOM 3
 const int ZOOM_LEVEL[] =
@@ -76,215 +75,12 @@ typedef struct
 	uint64_t total;
 
 	osmdb_tiler_t* tiler;
-
-	sqlite3* db;
-
-	// sqlite3 statements
-	int           batch_size;
-	sqlite3_stmt* stmt_begin;
-	sqlite3_stmt* stmt_end;
-	sqlite3_stmt* stmt_save;
-
-	// sqlite3 indices
-	int idx_save_id;
-	int idx_save_blob;
+	osmdb_cache_t* cache;
 } osmdb_prefetch_t;
 
 /***********************************************************
 * private                                                  *
 ***********************************************************/
-
-static int
-osmdb_prefetch_createTables(osmdb_prefetch_t* self)
-{
-	ASSERT(self);
-
-	const char* sql_init[] =
-	{
-		"PRAGMA temp_store_directory = '.';",
-		"CREATE TABLE tbl_attr"
-		"("
-		"	key TEXT UNIQUE,"
-		"	val TEXT"
-		");",
-		"CREATE TABLE tbl_tile"
-		"("
-		"	id   INTEGER PRIMARY KEY NOT NULL,"
-		"	blob BLOB"
-		");",
-		NULL
-	};
-
-	// init sqlite3
-	int i = 0;
-	while(sql_init[i])
-	{
-		if(sqlite3_exec(self->db, sql_init[i], NULL, NULL,
-		                NULL) != SQLITE_OK)
-		{
-			LOGE("sqlite3_exec(%i): %s",
-			     i, sqlite3_errmsg(self->db));
-			return 0;
-		}
-		++i;
-	}
-
-	// insert changeset
-	int64_t changeset = self->tiler->changeset;
-	char    sql[256];
-	snprintf(sql, 256,
-	         "INSERT INTO tbl_attr (key, val)"
-	         "	VALUES ('changeset', '%" PRId64 "');",
-	         changeset);
-	if(sqlite3_exec(self->db, sql, NULL, NULL,
-	                NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_exec(%i): %s",
-		     i, sqlite3_errmsg(self->db));
-		return 0;
-	}
-
-	// insert bounds
-	snprintf(sql, 256,
-	         "INSERT INTO tbl_attr (key, val)"
-	         "	VALUES ('latT', '%lf');",
-	         self->latT);
-	if(sqlite3_exec(self->db, sql, NULL, NULL,
-	                NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_exec(%i): %s",
-		     i, sqlite3_errmsg(self->db));
-		return 0;
-	}
-
-	snprintf(sql, 256,
-	         "INSERT INTO tbl_attr (key, val)"
-	         "	VALUES ('lonL', '%lf');",
-	         self->lonL);
-	if(sqlite3_exec(self->db, sql, NULL, NULL,
-	                NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_exec(%i): %s",
-		     i, sqlite3_errmsg(self->db));
-		return 0;
-	}
-
-	snprintf(sql, 256,
-	         "INSERT INTO tbl_attr (key, val)"
-	         "	VALUES ('latB', '%lf');",
-	         self->latB);
-	if(sqlite3_exec(self->db, sql, NULL, NULL,
-	                NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_exec(%i): %s",
-		     i, sqlite3_errmsg(self->db));
-		return 0;
-	}
-
-	snprintf(sql, 256,
-	         "INSERT INTO tbl_attr (key, val)"
-	         "	VALUES ('lonR', '%lf');",
-	         self->lonR);
-	if(sqlite3_exec(self->db, sql, NULL, NULL,
-	                NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_exec(%i): %s",
-		     i, sqlite3_errmsg(self->db));
-		return 0;
-	}
-
-	return 1;
-}
-
-static int
-osmdb_prefetch_endTransaction(osmdb_prefetch_t* self)
-{
-	ASSERT(self);
-
-	if(self->batch_size == 0)
-	{
-		return 1;
-	}
-
-	sqlite3_stmt* stmt = self->stmt_end;
-	if(sqlite3_step(stmt) == SQLITE_DONE)
-	{
-		self->batch_size = 0;
-	}
-	else
-	{
-		LOGE("sqlite3_step: %s",
-		     sqlite3_errmsg(self->db));
-		goto fail_step;
-	}
-
-	if(sqlite3_reset(stmt) != SQLITE_OK)
-	{
-		LOGW("sqlite3_reset failed");
-	}
-
-	// success
-	return 1;
-
-	// failure
-	fail_step:
-	{
-		if(sqlite3_reset(stmt) != SQLITE_OK)
-		{
-			LOGW("sqlite3_reset failed");
-		}
-	}
-	return 0;
-}
-
-static int
-osmdb_prefetch_beginTransaction(osmdb_prefetch_t* self)
-{
-	ASSERT(self);
-
-	if(self->batch_size >= BATCH_SIZE)
-	{
-		if(osmdb_prefetch_endTransaction(self) == 0)
-		{
-			return 0;
-		}
-	}
-	else if(self->batch_size > 0)
-	{
-		++self->batch_size;
-		return 1;
-	}
-
-	sqlite3_stmt* stmt = self->stmt_begin;
-	if(sqlite3_step(stmt) == SQLITE_DONE)
-	{
-		++self->batch_size;
-	}
-	else
-	{
-		LOGE("sqlite3_step: %s",
-		     sqlite3_errmsg(self->db));
-		goto fail_step;
-	}
-
-	if(sqlite3_reset(stmt) != SQLITE_OK)
-	{
-		LOGW("sqlite3_reset failed");
-	}
-
-	// success
-	return 1;
-
-	// failure
-	fail_step:
-	{
-		if(sqlite3_reset(stmt) != SQLITE_OK)
-		{
-			LOGW("sqlite3_reset failed");
-		}
-	}
-	return 0;
-}
 
 static int
 osmdb_prefetch_make(osmdb_prefetch_t* self,
@@ -307,71 +103,20 @@ osmdb_prefetch_make(osmdb_prefetch_t* self,
 		return 0;
 	}
 
+	int           ret  = 0;
 	size_t        size = 0;
 	osmdb_tile_t* tile;
 	tile = osmdb_tiler_make(self->tiler, 0,
 	                        zoom, x, y, &size);
-	if((tile == NULL) || (size > INT_MAX))
+	if(tile && (size <= INT_MAX))
 	{
-		FREE(tile);
-		return 0;
-	}
-
-	int64_t pow220   = cc_pow2n(20);
-	int     idx_id   = self->idx_save_id;
-	int     idx_blob = self->idx_save_blob;
-	int64_t zoom64   = (int64_t) zoom;
-	int64_t x64      = (int64_t) x;
-	int64_t y64      = (int64_t) y;
-	int64_t id       = zoom64 + 256*x64 + 256*pow220*y64;
-
-	sqlite3_stmt* stmt = self->stmt_save;
-	if((sqlite3_bind_int64(stmt, idx_id, id) != SQLITE_OK) ||
-	   (sqlite3_bind_blob(stmt, idx_blob,
-	                      (void*) tile, (int) size,
-	                      SQLITE_TRANSIENT) != SQLITE_OK))
-	{
-		LOGE("sqlite3_bind failed");
-		goto fail_bind;
-	}
-
-	// skip empty tiles
-	if((tile->count_rels == 0) &&
-	   (tile->count_ways == 0) &&
-	   (tile->count_nodes == 0))
-	{
-		osmdb_tile_delete(&tile);
-		return 1;
-	}
-
-	if(sqlite3_step(stmt) != SQLITE_DONE)
-	{
-		LOGE("sqlite3_step: %s",
-		     sqlite3_errmsg(self->db));
-		goto fail_step;
-	}
-
-	if(sqlite3_reset(stmt) != SQLITE_OK)
-	{
-		LOGW("sqlite3_reset failed");
+		ret = osmdb_cache_save(self->cache, zoom, x, y,
+		                       size, (const void*) tile);
 	}
 
 	osmdb_tile_delete(&tile);
 
-	// success
-	return 1;
-
-	// failure
-	fail_step:
-	{
-		if(sqlite3_reset(stmt) != SQLITE_OK)
-		{
-			LOGW("sqlite3_reset failed");
-		}
-	}
-	fail_bind:
-		osmdb_tile_delete(&tile);
-	return 0;
+	return ret;
 }
 
 static int
@@ -379,11 +124,6 @@ osmdb_prefetch_tile(osmdb_prefetch_t* self,
                     int zoom, int x, int y)
 {
 	ASSERT(self);
-
-	if(osmdb_prefetch_beginTransaction(self) == 0)
-	{
-		return 0;
-	}
 
 	if(osmdb_prefetch_make(self, zoom, x, y) == 0)
 	{
@@ -569,101 +309,35 @@ int main(int argc, char** argv)
 		goto fail_tiler;
 	}
 
-	int flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
-	if(sqlite3_open_v2(fname_cache, &self->db,
-	                   flags, NULL) != SQLITE_OK)
+	self->cache = osmdb_cache_create(fname_cache,
+	                                 self->tiler->changeset,
+	                                 latT, lonL, latB, lonR);
+	if(self->cache == NULL)
 	{
-		LOGE("sqlite3_open_v2 %s failed", fname_cache);
-		goto fail_db_open;
+		goto fail_cache;
 	}
-
-	if(osmdb_prefetch_createTables(self) == 0)
-	{
-		goto fail_createTables;
-	}
-
-	const char* sql_begin = "BEGIN;";
-	if(sqlite3_prepare_v2(self->db, sql_begin, -1,
-	                      &self->stmt_begin,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s",
-		     sqlite3_errmsg(self->db));
-		goto fail_prepare_begin;
-	}
-
-	const char* sql_end = "END;";
-	if(sqlite3_prepare_v2(self->db, sql_end, -1,
-	                      &self->stmt_end,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s",
-		     sqlite3_errmsg(self->db));
-		goto fail_prepare_end;
-	}
-
-	const char* sql_save = "INSERT INTO tbl_tile (id, blob)"
-	                       "	VALUES (@arg_id, @arg_blob);";
-	if(sqlite3_prepare_v2(self->db, sql_save, -1,
-	                      &self->stmt_save,
-	                      NULL) != SQLITE_OK)
-	{
-		LOGE("sqlite3_prepare_v2: %s",
-		     sqlite3_errmsg(self->db));
-		goto fail_prepare_save;
-	}
-
-	self->idx_save_id   = sqlite3_bind_parameter_index(self->stmt_save,
-	                                                   "@arg_id");
-	self->idx_save_blob = sqlite3_bind_parameter_index(self->stmt_save,
-	                                                   "@arg_blob");
 
 	if(osmdb_prefetch_tiles(self, 0, 0, 0) == 0)
 	{
 		goto fail_run;
 	}
 
-	osmdb_prefetch_endTransaction(self);
+	osmdb_cache_delete(&self->cache);
+	osmdb_tiler_delete(&self->tiler);
 
 	// success
-	// fall through
-	ret = EXIT_SUCCESS;
+	LOGI("SUCCESS");
+	return EXIT_SUCCESS;
 
 	// failure
 	fail_run:
-	{
-		osmdb_prefetch_endTransaction(self);
-		sqlite3_finalize(self->stmt_save);
-	}
-	fail_prepare_save:
-		sqlite3_finalize(self->stmt_end);
-	fail_prepare_end:
-		sqlite3_finalize(self->stmt_begin);
-	fail_prepare_begin:
-	fail_createTables:
-	fail_db_open:
-	{
-		// close db even when open fails
-		if(sqlite3_close_v2(self->db) != SQLITE_OK)
-		{
-			LOGW("sqlite3_close_v2 failed");
-		}
-
-		// tiler shuts down sqlite
+		osmdb_cache_delete(&self->cache);
+	fail_cache:
 		osmdb_tiler_delete(&self->tiler);
-	}
 	fail_tiler:
 	{
 		FREE(self);
-
-		if(ret == EXIT_SUCCESS)
-		{
-			LOGI("SUCCESS");
-		}
-		else
-		{
-			LOGE("FAILURE");
-		}
+		LOGE("FAILURE");
 	}
 	return ret;
 }
