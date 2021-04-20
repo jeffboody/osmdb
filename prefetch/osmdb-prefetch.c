@@ -131,13 +131,61 @@ osmdb_prefetch_createTables(osmdb_prefetch_t* self)
 
 	// insert changeset
 	int64_t changeset = self->tiler->changeset;
-	char    sql_changeset[256];
-	snprintf(sql_changeset, 256,
+	char    sql[256];
+	snprintf(sql, 256,
 	         "INSERT INTO tbl_attr (key, val)"
 	         "	VALUES ('changeset', '%" PRId64 "');",
 	         changeset);
+	if(sqlite3_exec(self->db, sql, NULL, NULL,
+	                NULL) != SQLITE_OK)
+	{
+		LOGE("sqlite3_exec(%i): %s",
+		     i, sqlite3_errmsg(self->db));
+		return 0;
+	}
 
-	if(sqlite3_exec(self->db, sql_changeset, NULL, NULL,
+	// insert bounds
+	snprintf(sql, 256,
+	         "INSERT INTO tbl_attr (key, val)"
+	         "	VALUES ('latT', '%lf');",
+	         self->latT);
+	if(sqlite3_exec(self->db, sql, NULL, NULL,
+	                NULL) != SQLITE_OK)
+	{
+		LOGE("sqlite3_exec(%i): %s",
+		     i, sqlite3_errmsg(self->db));
+		return 0;
+	}
+
+	snprintf(sql, 256,
+	         "INSERT INTO tbl_attr (key, val)"
+	         "	VALUES ('lonL', '%lf');",
+	         self->lonL);
+	if(sqlite3_exec(self->db, sql, NULL, NULL,
+	                NULL) != SQLITE_OK)
+	{
+		LOGE("sqlite3_exec(%i): %s",
+		     i, sqlite3_errmsg(self->db));
+		return 0;
+	}
+
+	snprintf(sql, 256,
+	         "INSERT INTO tbl_attr (key, val)"
+	         "	VALUES ('latB', '%lf');",
+	         self->latB);
+	if(sqlite3_exec(self->db, sql, NULL, NULL,
+	                NULL) != SQLITE_OK)
+	{
+		LOGE("sqlite3_exec(%i): %s",
+		     i, sqlite3_errmsg(self->db));
+		return 0;
+	}
+
+	snprintf(sql, 256,
+	         "INSERT INTO tbl_attr (key, val)"
+	         "	VALUES ('lonR', '%lf');",
+	         self->lonR);
+	if(sqlite3_exec(self->db, sql, NULL, NULL,
 	                NULL) != SQLITE_OK)
 	{
 		LOGE("sqlite3_exec(%i): %s",
