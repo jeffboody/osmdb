@@ -29,12 +29,12 @@
 #include <unistd.h>
 
 #define LOG_TAG "osmdb-prefetch"
+#include "libbfs/bfs_file.h"
 #include "libcc/math/cc_pow2n.h"
 #include "libcc/cc_log.h"
 #include "libcc/cc_memory.h"
 #include "libcc/cc_timestamp.h"
 #include "libsqlite3/sqlite3.h"
-#include "osmdb/cache/osmdb_cache.h"
 #include "osmdb/tiler/osmdb_tiler.h"
 #include "osmdb/osmdb_util.h"
 #include "terrain/terrain_util.h"
@@ -75,7 +75,7 @@ typedef struct
 	uint64_t total;
 
 	osmdb_tiler_t* tiler;
-	osmdb_cache_t* cache;
+	bfs_file_t*    cache;
 } osmdb_prefetch_t;
 
 /***********************************************************
@@ -110,8 +110,10 @@ osmdb_prefetch_make(osmdb_prefetch_t* self,
 	                        zoom, x, y, &size);
 	if(tile && (size <= INT_MAX))
 	{
-		ret = osmdb_cache_save(self->cache, zoom, x, y,
-		                       size, (const void*) tile);
+		char name[256];
+		snprintf(name, 256, "%i/%i/%i", zoom, x, y);
+		ret = bfs_file_store(self->cache, name, size,
+		                     (const void*) tile);
 	}
 
 	osmdb_tile_delete(&tile);
@@ -273,12 +275,6 @@ int main(int argc, char** argv)
 		return EXIT_FAILURE;
 	}
 
-	if(osmdb_fileExists(fname_cache))
-	{
-		LOGE("invalid %s", fname_cache);
-		return EXIT_FAILURE;
-	}
-
 	osmdb_prefetch_t* self;
 	self = (osmdb_prefetch_t*)
 	       CALLOC(1, sizeof(osmdb_prefetch_t));
@@ -309,12 +305,23 @@ int main(int argc, char** argv)
 		goto fail_tiler;
 	}
 
-	self->cache = osmdb_cache_create(fname_cache,
-	                                 self->tiler->changeset,
-	                                 latT, lonL, latB, lonR);
+	self->cache = bfs_file_open(fname_cache, 1,
+	                            BFS_MODE_STREAM);
 	if(self->cache == NULL)
 	{
 		goto fail_cache;
+	}
+
+	char changeset[256];
+	char bounds[256];
+	snprintf(changeset, 256, "%" PRId64,
+	         self->tiler->changeset);
+	snprintf(bounds, 256, "%lf %lf %lf %lf",
+	         latT, lonL, latB, lonR);
+	if((bfs_file_set(self->cache, "changeset", changeset) == 0) ||
+	   (bfs_file_set(self->cache, "bounds", bounds) == 0))
+	{
+		goto fail_attr;
 	}
 
 	if(osmdb_prefetch_tiles(self, 0, 0, 0) == 0)
@@ -322,7 +329,7 @@ int main(int argc, char** argv)
 		goto fail_run;
 	}
 
-	osmdb_cache_delete(&self->cache);
+	bfs_file_close(&self->cache);
 	osmdb_tiler_delete(&self->tiler);
 
 	// success
@@ -331,7 +338,8 @@ int main(int argc, char** argv)
 
 	// failure
 	fail_run:
-		osmdb_cache_delete(&self->cache);
+	fail_attr:
+		bfs_file_close(&self->cache);
 	fail_cache:
 		osmdb_tiler_delete(&self->tiler);
 	fail_tiler:
