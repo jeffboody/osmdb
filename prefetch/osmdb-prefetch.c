@@ -312,14 +312,20 @@ int main(int argc, char** argv)
 		goto fail_cache;
 	}
 
-	char changeset[256];
+	char pa[256];
 	char bounds[256];
-	snprintf(changeset, 256, "%" PRId64,
-	         self->tiler->changeset);
+	char cs[256];
+	snprintf(pa, 256, "%s", "zoom/x/y");
 	snprintf(bounds, 256, "%lf %lf %lf %lf",
 	         latT, lonL, latB, lonR);
-	if((bfs_file_set(self->cache, "changeset", changeset) == 0) ||
-	   (bfs_file_set(self->cache, "bounds", bounds) == 0))
+	snprintf(cs, 256, "%" PRId64, self->tiler->changeset);
+	if((bfs_file_set(self->cache, "name", "osmdbv5") == 0) ||
+	   (bfs_file_set(self->cache, "pattern", pa)     == 0) ||
+	   (bfs_file_set(self->cache, "ext", "osmdb")    == 0) ||
+	   (bfs_file_set(self->cache, "bounds", bounds)  == 0) ||
+	   (bfs_file_set(self->cache, "zmin", "9")       == 0) ||
+	   (bfs_file_set(self->cache, "zmax", "15")      == 0) ||
+	   (bfs_file_set(self->cache, "changeset", cs)   == 0))
 	{
 		goto fail_attr;
 	}
