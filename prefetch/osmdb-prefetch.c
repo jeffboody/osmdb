@@ -112,8 +112,8 @@ osmdb_prefetch_make(osmdb_prefetch_t* self,
 	{
 		char name[256];
 		snprintf(name, 256, "%i/%i/%i", zoom, x, y);
-		ret = bfs_file_store(self->cache, name, size,
-		                     (const void*) tile);
+		ret = bfs_file_blobSet(self->cache, name, size,
+		                       (const void*) tile);
 	}
 
 	osmdb_tile_delete(&tile);
@@ -319,13 +319,13 @@ int main(int argc, char** argv)
 	snprintf(bounds, 256, "%lf %lf %lf %lf",
 	         latT, lonL, latB, lonR);
 	snprintf(cs, 256, "%" PRId64, self->tiler->changeset);
-	if((bfs_file_set(self->cache, "name", "osmdbv5") == 0) ||
-	   (bfs_file_set(self->cache, "pattern", pa)     == 0) ||
-	   (bfs_file_set(self->cache, "ext", "osmdb")    == 0) ||
-	   (bfs_file_set(self->cache, "bounds", bounds)  == 0) ||
-	   (bfs_file_set(self->cache, "zmin", "9")       == 0) ||
-	   (bfs_file_set(self->cache, "zmax", "15")      == 0) ||
-	   (bfs_file_set(self->cache, "changeset", cs)   == 0))
+	if((bfs_file_attrSet(self->cache, "name", "osmdbv5") == 0) ||
+	   (bfs_file_attrSet(self->cache, "pattern", pa)     == 0) ||
+	   (bfs_file_attrSet(self->cache, "ext", "osmdb")    == 0) ||
+	   (bfs_file_attrSet(self->cache, "bounds", bounds)  == 0) ||
+	   (bfs_file_attrSet(self->cache, "zmin", "9")       == 0) ||
+	   (bfs_file_attrSet(self->cache, "zmax", "15")      == 0) ||
+	   (bfs_file_attrSet(self->cache, "changeset", cs)   == 0))
 	{
 		goto fail_attr;
 	}
