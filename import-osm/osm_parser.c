@@ -29,6 +29,7 @@
 #include <math.h>
 
 #define LOG_TAG "osmdb"
+#include "libbfs/bfs_util.h"
 #include "libcc/cc_log.h"
 #include "libcc/cc_memory.h"
 #include "libcc/cc_timestamp.h"
@@ -2053,6 +2054,11 @@ osm_parser_new(const char* style,
 
 	self->t0 = cc_timestamp();
 
+	if(bfs_util_initialize() == 0)
+	{
+		goto fail_init;
+	}
+
 	self->index = osmdb_index_new(db_name,
 	                              OSMDB_INDEX_MODE_CREATE,
 	                              1, 4.0f);
@@ -2221,6 +2227,8 @@ osm_parser_new(const char* style,
 	fail_style:
 		osmdb_index_delete(&self->index);
 	fail_index:
+		bfs_util_shutdown();
+	fail_init:
 		FREE(self);
 	return NULL;
 }
@@ -2248,6 +2256,7 @@ void osm_parser_delete(osm_parser_t** _self)
 
 		osmdb_style_delete(&self->style);
 		osmdb_index_delete(&self->index);
+		bfs_util_shutdown();
 
 		FREE(self);
 		*_self = NULL;

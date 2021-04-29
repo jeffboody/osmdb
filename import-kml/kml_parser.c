@@ -29,6 +29,7 @@
 #include "kml_parser.h"
 
 #define LOG_TAG "osmdb"
+#include "libbfs/bfs_util.h"
 #include "libcc/cc_log.h"
 #include "libcc/cc_memory.h"
 #include "osmdb/osmdb_util.h"
@@ -1253,6 +1254,11 @@ kml_parser_t* kml_parser_new(const char* db_name)
 		goto fail_seg_nds;
 	}
 
+	if(bfs_util_initialize() == 0)
+	{
+		goto fail_init;
+	}
+
 	self->index = osmdb_index_new(db_name,
 	                              OSMDB_INDEX_MODE_APPEND,
 	                              1, 1.0f);
@@ -1266,6 +1272,8 @@ kml_parser_t* kml_parser_new(const char* db_name)
 
 	// failure
 	fail_index:
+		bfs_util_shutdown();
+	fail_init:
 		FREE(self->seg_nds);
 	fail_seg_nds:
 		FREE(self->node_info);
@@ -1306,6 +1314,7 @@ void kml_parser_delete(kml_parser_t** _self)
 		}
 
 		osmdb_index_delete(&self->index);
+		bfs_util_shutdown();
 		FREE(self->seg_nds);
 		FREE(self->node_info);
 		cc_map_delete(&self->map_node_coords);

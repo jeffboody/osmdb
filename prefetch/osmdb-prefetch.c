@@ -30,6 +30,7 @@
 
 #define LOG_TAG "osmdb-prefetch"
 #include "libbfs/bfs_file.h"
+#include "libbfs/bfs_util.h"
 #include "libcc/math/cc_pow2n.h"
 #include "libcc/cc_log.h"
 #include "libcc/cc_memory.h"
@@ -299,6 +300,11 @@ int main(int argc, char** argv)
 	self->total += osmdb_prefetch_range(self, 12);
 	self->total += osmdb_prefetch_range(self, 15);
 
+	if(bfs_util_initialize() == 0)
+	{
+		goto fail_init;
+	}
+
 	self->tiler = osmdb_tiler_new(fname_index, 1, smem);
 	if(self->tiler == NULL)
 	{
@@ -337,6 +343,7 @@ int main(int argc, char** argv)
 
 	bfs_file_close(&self->cache);
 	osmdb_tiler_delete(&self->tiler);
+	bfs_util_shutdown();
 
 	// success
 	LOGI("SUCCESS");
@@ -349,6 +356,8 @@ int main(int argc, char** argv)
 	fail_cache:
 		osmdb_tiler_delete(&self->tiler);
 	fail_tiler:
+		bfs_util_shutdown();
+	fail_init:
 	{
 		FREE(self);
 		LOGE("FAILURE");

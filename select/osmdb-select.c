@@ -27,6 +27,7 @@
 #include <string.h>
 
 #define LOG_TAG "osmdb"
+#include "libbfs/bfs_util.h"
 #include "libcc/cc_log.h"
 #include "libcc/cc_memory.h"
 #include "libsqlite3/sqlite3.h"
@@ -307,6 +308,11 @@ int main(int argc, const char** argv)
 		return EXIT_FAILURE;
 	}
 
+	if(bfs_util_initialize() == 0)
+	{
+		goto fail_init;
+	}
+
 	osmdb_tiler_t* tiler;
 	tiler = osmdb_tiler_new(fname, 1, 1.0f);
 	if(tiler == NULL)
@@ -378,6 +384,7 @@ int main(int argc, const char** argv)
 
 	osmdb_tile_delete(&tile);
 	osmdb_tiler_delete(&tiler);
+	bfs_util_shutdown();
 	texgz_tex_delete(&img);
 
 	size_t memsize = MEMSIZE();
@@ -400,6 +407,8 @@ int main(int argc, const char** argv)
 	fail_data:
 		osmdb_tiler_delete(&tiler);
 	fail_tiler:
+		bfs_util_shutdown();
+	fail_init:
 		texgz_tex_delete(&img);
 	return EXIT_FAILURE;
 }

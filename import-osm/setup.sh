@@ -1,3 +1,4 @@
+ln -s ../../libbfs
 ln -s ../../libcc
 ln -s ../../terrain
 ln -s ../../libexpat

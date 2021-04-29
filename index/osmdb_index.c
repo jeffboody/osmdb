@@ -990,12 +990,6 @@ osmdb_index_new(const char* fname, int mode, int nth,
 	};
 	sqlite3_config(SQLITE_CONFIG_MALLOC, &xmem);
 
-	if(sqlite3_initialize() != SQLITE_OK)
-	{
-		LOGE("sqlite3_initialize failed");
-		goto fail_init;
-	}
-
 	int flags = SQLITE_OPEN_READONLY;
 	if(mode == OSMDB_INDEX_MODE_CREATE)
 	{
@@ -1130,14 +1124,8 @@ osmdb_index_new(const char* fname, int mode, int nth,
 		{
 			LOGW("sqlite3_close_v2 failed");
 		}
-
-		if(sqlite3_shutdown() != SQLITE_OK)
-		{
-			LOGW("sqlite3_shutdown failed");
-		}
-	}
-	fail_init:
 		FREE(self);
+	}
 	return NULL;
 }
 
@@ -1193,11 +1181,6 @@ void osmdb_index_delete(osmdb_index_t** _self)
 		if(sqlite3_close_v2(self->db) != SQLITE_OK)
 		{
 			LOGW("sqlite3_close_v2 failed");
-		}
-
-		if(sqlite3_shutdown() != SQLITE_OK)
-		{
-			LOGW("sqlite3_shutdown failed");
 		}
 
 		FREE(self);

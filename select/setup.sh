@@ -1,4 +1,5 @@
 ln -s ../../osmdb
+ln -s ../../libbfs
 ln -s ../../libcc
 ln -s ../../terrain
 ln -s ../../texgz
