@@ -31,8 +31,7 @@
 	<color name="gray"            val="7F7F7FFF" />
 	<color name="dkgray"          val="3F3F3FFF" />
 	<color name="gray:halo"       val="7F7F7FBF" />
-	<color name="runway:line"     val="314DB2FF" />
-	<color name="runway:halo"     val="314DB27F" />
+	<color name="runway:line"     val="8DA0CBFF" />
 	<!-- rdylgn9 color scheme -->
 	<color name="trail:text"      val="D9EF8BFF" />
 	<color name="trail:line"      val="A6D96AFF" />
@@ -84,12 +83,12 @@
 	<line name="secondary_link15"  min_zoom="15" mode="striped" color1="primary:line"  color2="dkgray" width="1.5" />
 	<line name="tertiary_link15"   min_zoom="15" mode="striped" color1="ltgray"        color2="dkgray" width="1.5" />
 	<line name="road15"            min_zoom="15" mode="striped" color1="ltgray"        color2="dkgray" width="1.9" />
-	<line name="pedestrian15"      min_zoom="15" mode="dashed,striped" color1="trail:line" color2="dkgray"      width="1.4" />
-	<line name="runway15"          min_zoom="15" mode="dashed,striped" color1="white"      color2="runway:line" width="4.0" />
-	<line name="taxiway15"         min_zoom="15" color1="runway:line" width="1.5" />
-	<line name="trail15"           min_zoom="15" mode="dashed,striped" color1="trail:line" color2="dkgray" width="1.7" />
-	<line name="track15"           min_zoom="15" mode="striped"        color1="track:line" color2="dkgray" width="1.7" />
-	<line name="railway15"         min_zoom="15" mode="dashed,striped" color1="gray"       color2="ltgray" width="1.7" />
+	<line name="pedestrian15"      min_zoom="15" mode="dashed,striped" color1="trail:line"  color2="dkgray" width="1.4" />
+	<line name="runway15"          min_zoom="15" mode="dashed,striped" color1="runway:line" color2="dkgray" width="4.0" />
+	<line name="taxiway15"         min_zoom="15" mode="striped"        color1="runway:line" color2="dkgray" width="1.5" />
+	<line name="trail15"           min_zoom="15" mode="dashed,striped" color1="trail:line"  color2="dkgray" width="1.7" />
+	<line name="track15"           min_zoom="15" mode="striped"        color1="track:line"  color2="dkgray" width="1.7" />
+	<line name="railway15"         min_zoom="15" mode="dashed,striped" color1="gray"        color2="ltgray" width="1.7" />
 	<line name="river12"           min_zoom="12" color1="river:line" width="3.0" />
 	<line name="stream15"          min_zoom="15" color1="river:line" width="1.7" />
 	<line name="footway15"         min_zoom="15" mode="dashed,striped" color1="trail:line" color2="dkgray" />
