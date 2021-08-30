@@ -1208,16 +1208,20 @@ int osmdb_stAbrevToCode(const char* abrev)
 
 const char* osmdb_stCodeToName(int code)
 {
-	ASSERT((code >= 0) && (code < 60));
-
-	return OSM_UTIL_ST[code].state;
+	if((code >= 0) && (code < 60))
+	{
+		return OSM_UTIL_ST[code].state;
+	}
+	return NULL;
 }
 
 const char* osmdb_stCodeToAbrev(int code)
 {
-	ASSERT((code >= 0) && (code < 60));
-
-	return OSM_UTIL_ST[code].st;
+	if((code >= 0) && (code < 60))
+	{
+		return OSM_UTIL_ST[code].st;
+	}
+	return NULL;
 }
 
 int osmdb_classNameToCode(const char* name)
@@ -1250,40 +1254,29 @@ int osmdb_classKVToCode(const char* k, const char* v)
 
 const char* osmdb_classCodeToName(int code)
 {
-	int idx = 0;
-	while(OSM_UTIL_CLASSES[idx].class)
+	int count = osmdb_classCount();
+	if(code < count)
 	{
-		if(idx == code)
-		{
-			return OSM_UTIL_CLASSES[code].class;
-		}
-		++idx;
+		return OSM_UTIL_CLASSES[code].class;
 	}
 	return OSM_UTIL_CLASSES[0].class;
 }
 
 int osmdb_classCodeToRank(int code)
 {
-	int idx = 0;
-	while(OSM_UTIL_CLASSES[idx].class)
+	int count = osmdb_classCount();
+	if(code < count)
 	{
-		if(idx == code)
-		{
-			return OSM_UTIL_CLASSES[code].rank;
-		}
-		++idx;
+		return OSM_UTIL_CLASSES[code].rank;
 	}
 	return OSM_UTIL_CLASSES[0].rank;
 }
 
 int osmdb_classCount(void)
 {
-	int idx = 0;
-	while(OSM_UTIL_CLASSES[idx].class)
-	{
-		++idx;
-	}
-	return idx;
+	// note that the last class is NULL
+	return sizeof(OSM_UTIL_CLASSES)/
+	       sizeof(osmdb_utilClass_t) - 1;
 }
 
 int osmdb_relationTagTypeToCode(const char* type)
@@ -1306,14 +1299,12 @@ int osmdb_relationTagTypeToCode(const char* type)
 
 const char* osmdb_relationTagCodeToType(int code)
 {
-	int idx = 0;
-	while(OSM_UTIL_RELATION_TAG_TYPE[idx])
+	// note that the last item is NULL
+	int count = sizeof(OSM_UTIL_RELATION_TAG_TYPE)/
+	            sizeof(char*) - 1;
+	if(code < count)
 	{
-		if(idx == code)
-		{
-			return OSM_UTIL_RELATION_TAG_TYPE[code];
-		}
-		++idx;
+		return OSM_UTIL_RELATION_TAG_TYPE[code];
 	}
 	return OSM_UTIL_RELATION_TAG_TYPE[0];
 }
@@ -1338,14 +1329,12 @@ int osmdb_relationMemberTypeToCode(const char* type)
 
 const char* osmdb_relationMemberCodeToType(int code)
 {
-	int idx = 0;
-	while(OSM_UTIL_RELATION_MEMBER_TYPE[idx])
+	// note that the last item is NULL
+	int count = sizeof(OSM_UTIL_RELATION_MEMBER_TYPE)/
+	            sizeof(char*) - 1;
+	if(code < count)
 	{
-		if(idx == code)
-		{
-			return OSM_UTIL_RELATION_MEMBER_TYPE[code];
-		}
-		++idx;
+		return OSM_UTIL_RELATION_MEMBER_TYPE[code];
 	}
 	return OSM_UTIL_RELATION_MEMBER_TYPE[0];
 }
@@ -1370,14 +1359,12 @@ int osmdb_relationMemberRoleToCode(const char* role)
 
 const char* osmdb_relationMemberCodeToRole(int code)
 {
-	int idx = 0;
-	while(OSM_UTIL_RELATION_MEMBER_ROLE[idx])
+	// note that the last item is NULL
+	int count = sizeof(OSM_UTIL_RELATION_MEMBER_ROLE)/
+	            sizeof(char*) - 1;
+	if(code < count)
 	{
-		if(idx == code)
-		{
-			return OSM_UTIL_RELATION_MEMBER_ROLE[code];
-		}
-		++idx;
+		return OSM_UTIL_RELATION_MEMBER_ROLE[code];
 	}
 	return OSM_UTIL_RELATION_MEMBER_ROLE[0];
 }
