@@ -435,12 +435,11 @@ kml_parser_parseNode(kml_parser_t* self, char* s)
 	};
 
 	osmdb_nodeCoord_t* node_coord;
-	cc_mapIter_t miterator;
-	node_coord = (osmdb_nodeCoord_t*)
-	             cc_map_findp(self->map_node_coords,
-	                          &miterator,
-	                          sizeof(kml_coordKey_t), &key);
-	if(node_coord == NULL)
+
+	cc_mapIter_t* miter;
+	miter = cc_map_findp(self->map_node_coords,
+	                     sizeof(kml_coordKey_t), &key);
+	if(miter == NULL)
 	{
 		node_coord = (osmdb_nodeCoord_t*)
 		             MALLOC(sizeof(osmdb_nodeCoord_t));
@@ -455,7 +454,7 @@ kml_parser_parseNode(kml_parser_t* self, char* s)
 
 		if(cc_map_addp(self->map_node_coords,
 		               (const void*) node_coord,
-		               sizeof(kml_coordKey_t), &key) == 0)
+		               sizeof(kml_coordKey_t), &key) == NULL)
 		{
 			FREE(node_coord);
 			return 0;
@@ -463,6 +462,10 @@ kml_parser_parseNode(kml_parser_t* self, char* s)
 
 		// advance the next node_coord nid
 		self->nid -= 1;
+	}
+	else
+	{
+		node_coord = (osmdb_nodeCoord_t*) cc_map_val(miter);
 	}
 
 	kml_parser_wayAddNd(self, node_coord);
@@ -1293,9 +1296,8 @@ void kml_parser_delete(kml_parser_t** _self)
 	kml_parser_t* self = *_self;
 	if(self)
 	{
-		cc_mapIter_t  miterator;
 		cc_mapIter_t* miter;
-		miter = cc_map_head(self->map_node_coords, &miterator);
+		miter = cc_map_head(self->map_node_coords);
 		while(miter)
 		{
 			osmdb_nodeCoord_t* node_coord;
@@ -1345,9 +1347,8 @@ int kml_parser_finish(kml_parser_t* self)
 	ASSERT(self);
 
 	// add node coords
-	cc_mapIter_t  miterator;
 	cc_mapIter_t* miter;
-	miter = cc_map_head(self->map_node_coords, &miterator);
+	miter = cc_map_head(self->map_node_coords);
 	while(miter)
 	{
 		osmdb_nodeCoord_t* node_coord;

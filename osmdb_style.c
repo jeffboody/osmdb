@@ -39,58 +39,57 @@ static void osmdb_style_finish(osmdb_style_t* self)
 {
 	ASSERT(self);
 
-	cc_mapIter_t  iterator;
-	cc_mapIter_t* iter;
-	iter = cc_map_head(self->classes, &iterator);
-	while(iter)
+	cc_mapIter_t* miter;
+	miter = cc_map_head(self->classes);
+	while(miter)
 	{
 		osmdb_styleClass_t* class;
 		class = (osmdb_styleClass_t*)
-		        cc_map_remove(self->classes, &iter);
+		        cc_map_remove(self->classes, &miter);
 		FREE(class);
 	}
 
-	iter = cc_map_head(self->polys, &iterator);
-	while(iter)
+	miter = cc_map_head(self->polys);
+	while(miter)
 	{
 		osmdb_stylePolygon_t* poly;
 		poly = (osmdb_stylePolygon_t*)
-		       cc_map_remove(self->polys, &iter);
+		       cc_map_remove(self->polys, &miter);
 		FREE(poly);
 	}
 
-	iter = cc_map_head(self->lines, &iterator);
-	while(iter)
+	miter = cc_map_head(self->lines);
+	while(miter)
 	{
 		osmdb_styleLine_t* line;
 		line = (osmdb_styleLine_t*)
-		       cc_map_remove(self->lines, &iter);
+		       cc_map_remove(self->lines, &miter);
 		FREE(line);
 	}
 
-	iter = cc_map_head(self->points, &iterator);
-	while(iter)
+	miter = cc_map_head(self->points);
+	while(miter)
 	{
 		osmdb_stylePoint_t* point;
 		point = (osmdb_stylePoint_t*)
-		        cc_map_remove(self->points, &iter);
+		        cc_map_remove(self->points, &miter);
 		FREE(point);
 	}
 
-	iter = cc_map_head(self->colors, &iterator);
-	while(iter)
+	miter = cc_map_head(self->colors);
+	while(miter)
 	{
 		cc_vec4f_t* color;
 		color = (cc_vec4f_t*)
-		        cc_map_remove(self->colors, &iter);
+		        cc_map_remove(self->colors, &miter);
 		cc_vec4f_delete(&color);
 	}
 
-	iter = cc_map_head(self->layers, &iterator);
-	while(iter)
+	miter = cc_map_head(self->layers);
+	while(miter)
 	{
 		int* layerp = (int*)
-		              cc_map_remove(self->layers, &iter);
+		              cc_map_remove(self->layers, &miter);
 		FREE(layerp);
 	}
 }
@@ -196,7 +195,7 @@ osmdb_style_beginOsmLayer(osmdb_style_t* self,
 	*layerp = cc_map_size(self->layers);
 
 	if(cc_map_add(self->layers, (const void*) layerp,
-	              name) == 0)
+	              name) == NULL)
 	{
 		goto fail_add;
 	}
@@ -259,7 +258,7 @@ osmdb_style_beginOsmColor(osmdb_style_t* self,
 	}
 
 	if(cc_map_add(self->colors, (const void*) c,
-	              name) == 0)
+	              name) == NULL)
 	{
 		goto fail_add;
 	}
@@ -334,57 +333,57 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 		return 0;
 	}
 
-	cc_mapIter_t iter;
-	cc_vec4f_t* tc1 = NULL;
+	cc_mapIter_t* miter;
+	cc_vec4f_t*   tc1 = NULL;
 	if(text_color1)
 	{
-		tc1 = (cc_vec4f_t*)
-		      cc_map_find(self->colors, &iter, text_color1);
-		if(tc1 == NULL)
+		miter = cc_map_find(self->colors, text_color1);
+		if(miter == NULL)
 		{
 			LOGE("invalid line=%i text_color1=%s",
 			     line, text_color1);
 			return 0;
 		}
+		tc1 = (cc_vec4f_t*) cc_map_val(miter);
 	}
 
 	cc_vec4f_t* tc2 = NULL;
 	if(text_color2)
 	{
-		tc2 = (cc_vec4f_t*)
-		      cc_map_find(self->colors, &iter, text_color2);
-		if(tc2 == NULL)
+		miter = cc_map_find(self->colors, text_color2);
+		if(miter == NULL)
 		{
 			LOGE("invalid line=%i text_color2=%s",
 			     line, text_color2);
 			return 0;
 		}
+		tc2 = (cc_vec4f_t*) cc_map_val(miter);
 	}
 
 	cc_vec4f_t* mc1 = NULL;
 	if(marker_color1)
 	{
-		mc1 = (cc_vec4f_t*)
-		      cc_map_find(self->colors, &iter, marker_color1);
-		if(mc1 == NULL)
+		miter = cc_map_find(self->colors, marker_color1);
+		if(miter == NULL)
 		{
 			LOGE("invalid line=%i marker_color1=%s",
 			     line, marker_color1);
 			return 0;
 		}
+		mc1 = (cc_vec4f_t*) cc_map_val(miter);
 	}
 
 	cc_vec4f_t* mc2 = NULL;
 	if(marker_color2)
 	{
-		mc2 = (cc_vec4f_t*)
-		      cc_map_find(self->colors, &iter, marker_color2);
-		if(mc2 == NULL)
+		miter = cc_map_find(self->colors, marker_color2);
+		if(miter == NULL)
 		{
 			LOGE("invalid line=%i marker_color2=%s",
 			     line, marker_color2);
 			return 0;
 		}
+		mc2 = (cc_vec4f_t*) cc_map_val(miter);
 	}
 
 	// parse flags
@@ -457,7 +456,7 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 	point->marker_color2 = mc2;
 
 	if(cc_map_add(self->points, (const void*) point,
-	              name) == 0)
+	              name) == NULL)
 	{
 		goto fail_add;
 	}
@@ -534,28 +533,28 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 	}
 
 	cc_vec4f_t* c1 = NULL;
-	cc_mapIter_t iter;
+	cc_mapIter_t* miter;
 	if(color1)
 	{
-		c1 = (cc_vec4f_t*)
-		     cc_map_find(self->colors, &iter, color1);
-		if(c1 == NULL)
+		miter = cc_map_find(self->colors, color1);
+		if(miter == NULL)
 		{
 			LOGE("invalid line=%i", line);
 			return 0;
 		}
+		c1 = (cc_vec4f_t*) cc_map_val(miter);
 	}
 
 	cc_vec4f_t* c2 = NULL;
 	if(color2)
 	{
-		c2 = (cc_vec4f_t*)
-		     cc_map_find(self->colors, &iter, color2);
-		if(c2 == NULL)
+		miter = cc_map_find(self->colors, color2);
+		if(miter == NULL)
 		{
 			LOGE("invalid line=%i", line);
 			return 0;
 		}
+		c2 = (cc_vec4f_t*) cc_map_val(miter);
 	}
 
 	float w = 1.0f;
@@ -579,7 +578,7 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 	linep->color2   = c2;
 
 	if(cc_map_add(self->lines, (const void*) linep,
-	              name) == 0)
+	              name) == NULL)
 	{
 		goto fail_add;
 	}
@@ -636,16 +635,16 @@ osmdb_style_beginOsmPoly(osmdb_style_t* self,
 
 
 	cc_vec4f_t* c = NULL;
-	cc_mapIter_t iter;
+	cc_mapIter_t* miter;
 	if(color)
 	{
-		c = (cc_vec4f_t*)
-		    cc_map_find(self->colors, &iter, color);
-		if(c == NULL)
+		miter = cc_map_find(self->colors, color);
+		if(miter == NULL)
 		{
 			LOGE("invalid line=%i color=%s", line, color);
 			return 0;
 		}
+		c = (cc_vec4f_t*) cc_map_val(miter);
 	}
 
 	osmdb_stylePolygon_t* poly;
@@ -660,7 +659,7 @@ osmdb_style_beginOsmPoly(osmdb_style_t* self,
 	poly->color    = c;
 
 	if(cc_map_add(self->polys, (const void*) poly,
-	              name) == 0)
+	              name) == NULL)
 	{
 		goto fail_add;
 	}
@@ -726,53 +725,54 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 	}
 
 	int layeri = 0;
-	cc_mapIter_t iter;
+	cc_mapIter_t* miter;
 	if(layer)
 	{
-		int* layerp = (int*)
-		              cc_map_find(self->layers, &iter, layer);
-		if(layerp == NULL)
+		miter = cc_map_find(self->layers, layer);
+		if(miter == NULL)
 		{
 			LOGE("invalid line=%i", line);
 			return 0;
 		}
+		int* layerp = (int*) cc_map_val(miter);
+
 		layeri = *layerp;
 	}
 
 	osmdb_styleLine_t* linep = NULL;
 	if(ln)
 	{
-		linep = (osmdb_styleLine_t*)
-		        cc_map_find(self->lines, &iter, ln);
-		if(linep == NULL)
+		miter = cc_map_find(self->lines, ln);
+		if(miter == NULL)
 		{
 			LOGE("invalid line=%i", line);
 			return 0;
 		}
+		linep = (osmdb_styleLine_t*) cc_map_val(miter);
 	}
 
 	osmdb_stylePolygon_t* polyp = NULL;
 	if(poly)
 	{
-		polyp = (osmdb_stylePolygon_t*)
-		        cc_map_find(self->polys, &iter, poly);
-		if(polyp == NULL)
+		miter = cc_map_find(self->polys, poly);
+		if(miter == NULL)
 		{
 			LOGE("invalid line=%i, poly=%s", line, poly);
 			return 0;
 		}
+		polyp = (osmdb_stylePolygon_t*) cc_map_val(miter);
 	}
 
 	osmdb_stylePoint_t* pointp = NULL;
 	if(point)
 	{
-		pointp = (osmdb_stylePoint_t*)
-		         cc_map_find(self->points, &iter, point);
-		if(pointp == NULL)
+		miter = cc_map_find(self->points, point);
+		if(miter == NULL)
 		{
 			LOGE("invalid line=%i, point=%s", line, point);
 			return 0;
 		}
+		pointp = (osmdb_stylePoint_t*) cc_map_val(miter);
 	}
 
 	osmdb_styleClass_t* class;
@@ -789,7 +789,7 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 	class->point = pointp;
 
 	if(cc_map_add(self->classes, (const void*) class,
-	              name) == 0)
+	              name) == NULL)
 	{
 		goto fail_add;
 	}
@@ -1112,7 +1112,11 @@ osmdb_styleClass_t* osmdb_style_class(osmdb_style_t* self,
 	ASSERT(self);
 	ASSERT(name);
 
-	cc_mapIter_t iter;
-	return (osmdb_styleClass_t*)
-	       cc_map_find(self->classes, &iter, name);
+	cc_mapIter_t* miter = cc_map_find(self->classes, name);
+	if(miter)
+	{
+		return (osmdb_styleClass_t*) cc_map_val(miter);
+	}
+
+	return NULL;
 }

@@ -147,9 +147,8 @@ void osmdb_tilerState_reset(osmdb_tilerState_t* self,
 	cc_map_discard(self->map_export);
 
 	// delete way segments
-	cc_mapIter_t  miterator;
 	cc_mapIter_t* miter;
-	miter = cc_map_head(self->map_segs, &miterator);
+	miter = cc_map_head(self->map_segs);
 	while(miter)
 	{
 		osmdb_waySegment_t* seg;

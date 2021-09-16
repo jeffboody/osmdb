@@ -702,11 +702,9 @@ osmdb_index_trim(osmdb_index_t* self)
 		};
 
 		// remove the entry
-		cc_mapIter_t  miterator;
-		cc_mapIter_t* miter = &miterator;
-		iter = (cc_listIter_t*)
-		       cc_map_findp(self->cache_map, miter,
-		                    sizeof(osmdb_cacheMapKey_t), &key);
+		cc_mapIter_t* miter;
+		miter = cc_map_findp(self->cache_map,
+		                     sizeof(osmdb_cacheMapKey_t), &key);
 		cc_map_remove(self->cache_map, &miter);
 		cc_list_remove(self->cache_list, &iter);
 		if(osmdb_index_evict(self, &entry) == 0)
@@ -771,13 +769,13 @@ int osmdb_index_add(osmdb_index_t* self,
 	};
 
 	// check if entry is in cache
-	cc_mapIter_t   miterator;
 	cc_listIter_t* iter;
-	iter = (cc_listIter_t*)
-	       cc_map_findp(self->cache_map, &miterator,
-	                    sizeof(osmdb_cacheMapKey_t), &key);
-	if(iter)
+	cc_mapIter_t*  miter;
+	miter = cc_map_findp(self->cache_map,
+	                     sizeof(osmdb_cacheMapKey_t), &key);
+	if(miter)
 	{
+		iter  = (cc_listIter_t*) cc_map_val(miter);
 		entry = (osmdb_entry_t*) cc_list_peekIter(iter);
 
 		if(osmdb_entry_add(entry, 0, size, data) == 0)
@@ -812,7 +810,7 @@ int osmdb_index_add(osmdb_index_t* self,
 	}
 
 	if(cc_map_addp(self->cache_map, (const void*) iter,
-	               sizeof(osmdb_cacheMapKey_t), &key) == 0)
+	               sizeof(osmdb_cacheMapKey_t), &key) == NULL)
 	{
 		goto fail_add;
 	}
@@ -853,13 +851,13 @@ int osmdb_index_addTile(osmdb_index_t* self, int type,
 
 	// check if entry is in cache
 	osmdb_tileRefs_t* tile_refs;
-	cc_mapIter_t      miterator;
+	cc_mapIter_t*     miter;
 	cc_listIter_t*    iter;
-	iter = (cc_listIter_t*)
-	       cc_map_findp(self->cache_map, &miterator,
-	                    sizeof(osmdb_cacheMapKey_t), &key);
-	if(iter)
+	miter = cc_map_findp(self->cache_map,
+	                     sizeof(osmdb_cacheMapKey_t), &key);
+	if(miter)
 	{
+		iter  = (cc_listIter_t*) cc_map_val(miter);
 		entry = (osmdb_entry_t*) cc_list_peekIter(iter);
 
 		if(osmdb_entry_add(entry, 0, sizeof(int64_t),
@@ -899,7 +897,7 @@ int osmdb_index_addTile(osmdb_index_t* self, int type,
 	}
 
 	if(cc_map_addp(self->cache_map, (const void*) iter,
-	               sizeof(osmdb_cacheMapKey_t), &key) == 0)
+	               sizeof(osmdb_cacheMapKey_t), &key) == NULL)
 	{
 		goto fail_add;
 	}
@@ -1139,11 +1137,10 @@ void osmdb_index_delete(osmdb_index_t** _self)
 		// empty cache
 		double         t0 = cc_timestamp();
 		double         t1 = t0;
-		cc_mapIter_t   miterator;
 		cc_mapIter_t*  miter;
 		cc_listIter_t* iter;
 		osmdb_entry_t* entry;
-		miter = cc_map_head(self->cache_map, &miterator);
+		miter = cc_map_head(self->cache_map);
 		while(miter)
 		{
 			double t2 = cc_timestamp();
@@ -1279,13 +1276,12 @@ int osmdb_index_get(osmdb_index_t* self,
 	// find the entry in the cache
 	// note that it is not an error to return a NULL hnd
 	osmdb_entry_t* entry;
-	cc_mapIter_t   miterator;
 	cc_listIter_t* iter;
-	iter = (cc_listIter_t*)
-	       cc_map_findp(self->cache_map, &miterator,
-	                    sizeof(osmdb_cacheMapKey_t), &key);
-	if(iter)
+	miter = cc_map_findp(self->cache_map,
+	                     sizeof(osmdb_cacheMapKey_t), &key);
+	if(miter)
 	{
+		iter  = (cc_listIter_t*) cc_map_val(miter);
 		entry = (osmdb_entry_t*) cc_list_peekIter(iter);
 
 		osmdb_index_lockExclusive(self);
@@ -1312,11 +1308,11 @@ int osmdb_index_get(osmdb_index_t* self,
 
 	// retry find after locking for load since the entry
 	// could have been loaded in parallel by another thread
-	iter = (cc_listIter_t*)
-	       cc_map_findp(self->cache_map, &miterator,
-	                    sizeof(osmdb_cacheMapKey_t), &key);
-	if(iter)
+	miter = cc_map_findp(self->cache_map,
+	                     sizeof(osmdb_cacheMapKey_t), &key);
+	if(miter)
 	{
+		iter  = (cc_listIter_t*) cc_map_val(miter);
 		entry = (osmdb_entry_t*) cc_list_peekIter(iter);
 
 		// upgrade load lock
@@ -1371,7 +1367,7 @@ int osmdb_index_get(osmdb_index_t* self,
 	}
 
 	if(cc_map_addp(self->cache_map, (const void*) iter,
-	               sizeof(osmdb_cacheMapKey_t), &key) == 0)
+	               sizeof(osmdb_cacheMapKey_t), &key) == NULL)
 	{
 		goto fail_add;
 	}

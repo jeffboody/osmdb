@@ -78,9 +78,8 @@ static void osm_parser_discardClass(osm_parser_t* self)
 {
 	ASSERT(self);
 
-	cc_mapIter_t  iterator;
 	cc_mapIter_t* iter;
-	iter = cc_map_head(self->class_map, &iterator);
+	iter = cc_map_head(self->class_map);
 	while(iter)
 	{
 		int* cls;
@@ -97,9 +96,14 @@ static int osm_parser_findClass(osm_parser_t* self,
 	ASSERT(key);
 	ASSERT(val);
 
-	cc_mapIter_t iter;
-	int* cls = (int*) cc_map_findf(self->class_map, &iter,
-	                               "%s:%s", key, val);
+	int* cls = NULL;
+
+	cc_mapIter_t* miter;
+	miter = cc_map_findf(self->class_map, "%s:%s", key, val);
+	if(miter)
+	{
+		cls = (int*) cc_map_val(miter);
+	}
 
 	return cls ? *cls : 0;
 }
@@ -123,7 +127,7 @@ osm_parser_fillClass(osm_parser_t* self)
 
 		if(cc_map_add(self->class_map,
 		              (const void*) cls,
-		              osmdb_classCodeToName(i)) == 0)
+		              osmdb_classCodeToName(i)) == NULL)
 		{
 			goto fail_add;
 		}

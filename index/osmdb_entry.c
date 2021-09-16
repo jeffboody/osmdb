@@ -41,9 +41,8 @@ osmdb_entry_unmap(osmdb_entry_t* self)
 
 	if(self->map)
 	{
-		cc_mapIter_t  miterator;
 		cc_mapIter_t* miter;
-		miter = cc_map_head(self->map, &miterator);
+		miter = cc_map_head(self->map);
 		while(miter)
 		{
 			osmdb_handle_t* hnd;
@@ -170,7 +169,7 @@ osmdb_entry_map(osmdb_entry_t* self, size_t offset)
 		}
 
 		if(cc_map_addp(self->map, (const void*) hnd,
-		               sizeof(int64_t), &minor_id) == 0)
+		               sizeof(int64_t), &minor_id) == NULL)
 		{
 			LOGE("invalid type=%i, major_id=%" PRId64 ", minor_id=%" PRId64,
 			     self->type, self->major_id, minor_id);
@@ -240,20 +239,23 @@ osmdb_entry_get(osmdb_entry_t* self, int64_t minor_id,
 	ASSERT(self);
 	ASSERT(_hnd);
 
-	cc_mapIter_t miterator;
-
 	if(osmdb_entry_map(self, 0) == 0)
 	{
 		return 0;
 	}
 
 	// note that it is not an error to return a NULL hnd
-	*_hnd = (osmdb_handle_t*)
-	         cc_map_findp(self->map, &miterator,
-	                      sizeof(int64_t), &minor_id);
-	if(*_hnd)
+	cc_mapIter_t* miter;
+	miter = cc_map_findp(self->map, sizeof(int64_t),
+	                     &minor_id);
+	if(miter)
 	{
+		*_hnd = (osmdb_handle_t*) cc_map_val(miter);
 		++self->refcount;
+	}
+	else
+	{
+		*_hnd = NULL;
 	}
 
 	return 1;

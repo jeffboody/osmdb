@@ -73,9 +73,10 @@ osmdb_tiler_gatherNode(osmdb_tiler_t* self,
 	};
 
 	// check if node is already included by a relation
-	cc_mapIter_t miterator;
-	if(cc_map_findp(state->map_export, &miterator,
-	                sizeof(osmdb_exportKey_t), &key))
+	cc_mapIter_t* miter;
+	miter = cc_map_findp(state->map_export,
+	                     sizeof(osmdb_exportKey_t), &key);
+	if(miter)
 	{
 		return 1;
 	}
@@ -397,12 +398,12 @@ osmdb_tiler_joinWays(osmdb_tiler_t* self, int tid)
 
 	osmdb_waySegment_t* seg1;
 	osmdb_waySegment_t* seg2;
-	cc_multimapIter_t   miterator1;
-	cc_multimapIter_t*  miter1;
-	cc_multimapIter_t   miterator2;
-	cc_mapIter_t        hiter1;
-	cc_mapIter_t        hiterator2;
-	cc_mapIter_t*       hiter2;
+	cc_multimapIter_t   mmiterator1;
+	cc_multimapIter_t*  mmiter1;
+	cc_multimapIter_t   mmiterator2;
+	cc_mapIter_t        miter1;
+	cc_mapIter_t        miterator2;
+	cc_mapIter_t*       miter2;
 	cc_listIter_t*      iter1;
 	cc_listIter_t*      iter2;
 	cc_list_t*          list1;
@@ -413,14 +414,14 @@ osmdb_tiler_joinWays(osmdb_tiler_t* self, int tid)
 	int64_t             ref1;
 	int64_t             ref2;
 	int                 len;
-	miter1 = cc_multimap_head(state->mm_nds_join,
-	                          &miterator1);
-	while(miter1)
+	mmiter1 = cc_multimap_head(state->mm_nds_join,
+	                           &mmiterator1);
+	while(mmiter1)
 	{
-		_ref1  = (int64_t*) cc_multimap_key(miter1, &len);
+		_ref1  = (int64_t*) cc_multimap_key(mmiter1, &len);
 		ref1   = *_ref1;
 
-		list1 = (cc_list_t*) cc_multimap_list(miter1);
+		list1 = (cc_list_t*) cc_multimap_list(mmiter1);
 		iter1 = cc_list_head(list1);
 		while(iter1)
 		{
@@ -431,19 +432,19 @@ osmdb_tiler_joinWays(osmdb_tiler_t* self, int tid)
 				continue;
 			}
 
-			seg1 = (osmdb_waySegment_t*)
-			       cc_map_findp(state->map_segs, &hiter1,
-			                    sizeof(int64_t), id1);
-			if(seg1 == NULL)
+			miter1 = cc_map_findp(state->map_segs,
+			                      sizeof(int64_t), id1);
+			if(miter1 == NULL)
 			{
 				iter1 = cc_list_next(iter1);
 				continue;
 			}
+			seg1 = (osmdb_waySegment_t*) cc_map_val(miter1);
 
 			iter2 = cc_list_next(iter1);
 			while(iter2)
 			{
-				hiter2 = &hiterator2;
+				miter2 = &miterator2;
 				id2 = (int64_t*) cc_list_peekIter(iter2);
 				if(*id2 == -1)
 				{
@@ -451,14 +452,14 @@ osmdb_tiler_joinWays(osmdb_tiler_t* self, int tid)
 					continue;
 				}
 
-				seg2 = (osmdb_waySegment_t*)
-				       cc_map_findp(state->map_segs, hiter2,
-				                    sizeof(int64_t), id2);
-				if(seg2 == NULL)
+				miter2 = cc_map_findp(state->map_segs,
+				                      sizeof(int64_t), id2);
+				if(miter2 == NULL)
 				{
 					iter2 = cc_list_next(iter2);
 					continue;
 				}
+				seg2 = (osmdb_waySegment_t*) cc_map_val(miter2);
 
 				if(osmdb_tiler_joinWay(self, tid, seg1, seg2,
 				                       ref1, &ref2) == 0)
@@ -469,9 +470,8 @@ osmdb_tiler_joinWays(osmdb_tiler_t* self, int tid)
 
 				// replace ref2->id2 with ref2->id1 in
 				// mm_nds_join
-				list2 = (cc_list_t*)
-				        cc_multimap_findf(state->mm_nds_join,
-				                          &miterator2,
+				list2 = cc_multimap_findf(state->mm_nds_join,
+				                          &mmiterator2,
 				                          "%" PRId64, ref2);
 				iter2 = cc_list_head(list2);
 				while(iter2)
@@ -491,7 +491,7 @@ osmdb_tiler_joinWays(osmdb_tiler_t* self, int tid)
 				*id2 = -1;
 
 				// remove seg2 from map_segs
-				cc_map_remove(state->map_segs, &hiter2);
+				cc_map_remove(state->map_segs, &miter2);
 				osmdb_waySegment_delete(self->index, &seg2);
 				iter2 = NULL;
 			}
@@ -499,7 +499,7 @@ osmdb_tiler_joinWays(osmdb_tiler_t* self, int tid)
 			iter1 = cc_list_next(iter1);
 		}
 
-		miter1 = cc_multimap_nextList(miter1);
+		mmiter1 = cc_multimap_nextList(mmiter1);
 	}
 
 	return 1;
@@ -581,9 +581,8 @@ osmdb_tiler_sampleWays(osmdb_tiler_t* self, int tid)
 
 	osmdb_tilerState_t* state = self->state[tid];
 
-	cc_mapIter_t  miterator;
 	cc_mapIter_t* miter;
-	miter = cc_map_head(state->map_segs, &miterator);
+	miter = cc_map_head(state->map_segs);
 	while(miter)
 	{
 		osmdb_waySegment_t* seg;
@@ -839,9 +838,8 @@ osmdb_tiler_clipWays(osmdb_tiler_t* self, int tid)
 	double latB = state->latB - dlat;
 	double lonR = state->lonR + dlon;
 
-	cc_mapIter_t  miterator;
 	cc_mapIter_t* miter;
-	miter = cc_map_head(state->map_segs, &miterator);
+	miter = cc_map_head(state->map_segs);
 	while(miter)
 	{
 		osmdb_waySegment_t* seg;
@@ -874,9 +872,10 @@ osmdb_tiler_gatherWay(osmdb_tiler_t* self,
 	};
 
 	// check if way is already included
-	cc_mapIter_t miterator;
-	if(cc_map_findp(state->map_export, &miterator,
-	                sizeof(osmdb_exportKey_t), &key))
+	cc_mapIter_t* miter;
+	miter = cc_map_findp(state->map_export,
+	                     sizeof(osmdb_exportKey_t), &key);
+	if(miter)
 	{
 		return 1;
 	}
@@ -894,7 +893,7 @@ osmdb_tiler_gatherWay(osmdb_tiler_t* self,
 	}
 
 	if(cc_map_addp(state->map_segs, (const void*) seg,
-	               sizeof(int64_t), &wid) == 0)
+	               sizeof(int64_t), &wid) == NULL)
 	{
 		osmdb_waySegment_delete(self->index, &seg);
 		return 0;
@@ -1014,9 +1013,8 @@ osmdb_tiler_exportWays(osmdb_tiler_t* self, int tid)
 	osmdb_tilerState_t* state = self->state[tid];
 
 	osmdb_waySegment_t* seg;
-	cc_mapIter_t        miterator;
 	cc_mapIter_t*       miter;
-	miter = cc_map_head(state->map_segs, &miterator);
+	miter = cc_map_head(state->map_segs);
 	while(miter)
 	{
 		seg = (osmdb_waySegment_t*) cc_map_val(miter);
@@ -1190,7 +1188,7 @@ osmdb_tiler_gatherMemberWay(osmdb_tiler_t* self,
 
 		if(cc_map_addp(state->map_export,
 		               (const void*) &OSMDB_ONE,
-		               sizeof(osmdb_exportKey_t), &key) == 0)
+		               sizeof(osmdb_exportKey_t), &key) == NULL)
 		{
 			goto fail_mark;
 		}
@@ -1321,7 +1319,7 @@ osmdb_tiler_gatherRel(osmdb_tiler_t* self,
 
 		if(cc_map_addp(state->map_export,
 		               (const void*) &OSMDB_ONE,
-		               sizeof(osmdb_exportKey_t), &key) == 0)
+		               sizeof(osmdb_exportKey_t), &key) == NULL)
 		{
 			goto fail_mark;
 		}
