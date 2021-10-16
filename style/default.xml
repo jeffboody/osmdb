@@ -124,7 +124,6 @@
 	<class name="highway:secondary"        layer="secondary"   point="primary17"  line="secondary12" />
 	<class name="highway:tertiary"         layer="tertiary"    point="default17"  line="tertiary12" />
 	<class name="highway:unclassified"     layer="residential" point="default17"  line="road15" />
-	<class name="highway:service"          layer="residential" point="default17"  line="road15" />
 	<class name="highway:residential"      layer="residential" point="default17"  line="road15" />
 	<class name="highway:motorway_link"    layer="link"        line="motorway_link15" />
 	<class name="highway:trunk_link"       layer="link"        line="trunk_link15" />
@@ -137,9 +136,7 @@
 	<class name="highway:escape"           layer="ground"      point="default17" line="road15" />
 	<class name="highway:raceway"          layer="ground"      point="default17" line="road15" />
 	<class name="highway:road"             layer="residential" point="default17" line="road15" />
-	<class name="highway:footway"          layer="trail"       point="trail17"   line="footway15" />
 	<class name="highway:bridleway"        layer="trail"       point="trail17"   line="trail15" />
-	<class name="highway:steps"            layer="trail"       point="trail17"   line="footway15" />
 	<class name="highway:path"             layer="trail"       point="trail17"   line="trail15" />
 	<class name="highway:cycleway"         layer="trail"       point="trail17"   line="trail15" />
 	<class name="natural:water"            layer="water"       point="water15"   poly="water9" />
