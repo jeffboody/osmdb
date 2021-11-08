@@ -16,6 +16,7 @@
 	<layer name="taxiway" />
 	<layer name="runway" />
 	<layer name="air" />
+	<layer name="place" />
 
 	<color name="magenta"         val="FF00FFFF" />
 	<color name="white"           val="FFFFFFFF" />
@@ -60,16 +61,16 @@
 	<point name="town12"     min_zoom="12" text_color1="city:text"     text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
 	<point name="village13"  min_zoom="13" text_color1="city:text"     text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
 	<point name="water15"    min_zoom="15" text_color1="lake:text"     text_color2="black" />
-	<point name="water17"    min_zoom="17" text_color1="lake:text"     text_color2="black" />
+	<point name="water17"    min_zoom="15" text_color1="lake:text"     text_color2="black" />
 	<point name="glacier15"  min_zoom="15" text_color1="glacier:text"  text_color2="black" />
-	<point name="outdoor16"  min_zoom="16" text_color1="peak:text"     text_color2="black" />
+	<point name="outdoor16"  min_zoom="15" text_color1="peak:text"     text_color2="black" />
 	<point name="forest12"   min_zoom="12" text_color1="peak:text"     text_color2="black" />
-	<point name="trail17"    min_zoom="17" text_color1="trail:text"    text_color2="black" />
-	<point name="track17"    min_zoom="17" text_color1="track:text"    text_color2="black" />
+	<point name="trail17"    min_zoom="15" text_color1="trail:text"    text_color2="black" />
+	<point name="track17"    min_zoom="15" text_color1="track:text"    text_color2="black" />
 	<point name="core12"     min_zoom="12" text_color1="core:text"     text_color2="black" flags="marker:show,ele:show" />
-	<point name="default17"  min_zoom="17" text_color1="white"         text_color2="black" />
-	<point name="motorway17" min_zoom="17" text_color1="motorway:text" text_color2="black" />
-	<point name="primary17"  min_zoom="17" text_color1="primary:text"  text_color2="black" />
+	<point name="default17"  min_zoom="15" text_color1="white"         text_color2="black" />
+	<point name="motorway17" min_zoom="15" text_color1="motorway:text" text_color2="black" />
+	<point name="primary17"  min_zoom="15" text_color1="primary:text"  text_color2="black" />
 
 	<line name="aerialway15"       min_zoom="15" mode="dashed,striped" color1="ltgray" color2="white" />
 	<line name="motorway9"         min_zoom="9"  mode="striped" color1="motorway:line" color2="dkgray" width="3.5" />
@@ -168,12 +169,12 @@
 	<class name="core:mineral"             layer="core"        line="core:mineral12"    point="core12" />
 	<class name="core:historic"            layer="core"        line="core:historic12"   point="core12" />
 	<class name="default:waypoint"         point="default17" />
-	<class name="natural:peak"             point="peak15" />
-	<class name="natural:volcano"          point="peak15" />
-	<class name="natural:saddle"           point="saddle15" />
-	<class name="place:city"               point="city9" />
-	<class name="place:town"               point="town12" />
-	<class name="place:village"            point="village13" />
+	<class name="natural:peak"             layer="place" point="peak15" />
+	<class name="natural:volcano"          layer="place" point="peak15" />
+	<class name="natural:saddle"           layer="place" point="saddle15" />
+	<class name="place:city"               layer="place" point="city9" />
+	<class name="place:town"               layer="place" point="town12" />
+	<class name="place:village"            layer="place" point="village13" />
 	<class name="leisure:disc_golf_course" point="outdoor16" />
 	<class name="leisure:dog_park"         point="outdoor16" />
 	<class name="leisure:nature_reserve"   point="outdoor16" />
