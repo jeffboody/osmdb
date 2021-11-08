@@ -26,6 +26,7 @@
 	<color name="primary:text"    val="FFFFBFFF" />
 	<color name="primary:line"    val="FEE08BFF" />
 	<color name="tertiary:line"   val="F0F0ACFF" />
+	<color name="tertiary:text"   val="F0F0ACFF" />
 	<color name="white:halo"      val="FFFFFF7F" />
 	<color name="black"           val="000000FF" />
 	<color name="ltgray"          val="C6C6C6FF" />
@@ -71,18 +72,19 @@
 	<point name="default17"  min_zoom="15" text_color1="white"         text_color2="black" />
 	<point name="motorway17" min_zoom="15" text_color1="motorway:text" text_color2="black" />
 	<point name="primary17"  min_zoom="15" text_color1="primary:text"  text_color2="black" />
+	<point name="tertiary17" min_zoom="15" text_color1="tertiary:text" text_color2="black" />
 
 	<line name="aerialway15"       min_zoom="15" mode="dashed,striped" color1="ltgray" color2="white" />
 	<line name="motorway9"         min_zoom="9"  mode="striped" color1="motorway:line" color2="dkgray" width="3.5" />
 	<line name="trunk9"            min_zoom="9"  mode="striped" color1="motorway:line" color2="dkgray" width="3.5" />
 	<line name="primary9"          min_zoom="9"  mode="striped" color1="primary:line"  color2="dkgray" width="3.5" />
 	<line name="secondary12"       min_zoom="12" mode="striped" color1="primary:line"  color2="dkgray" width="2.75" />
-	<line name="tertiary12"        min_zoom="12" mode="striped" color1="ltgray"        color2="dkgray" width="2.75" />
+	<line name="tertiary12"        min_zoom="12" mode="striped" color1="tertiary:line" color2="dkgray" width="2.75" />
 	<line name="motorway_link15"   min_zoom="15" mode="striped" color1="motorway:line" color2="dkgray" width="2.5" />
 	<line name="trunk_link15"      min_zoom="15" mode="striped" color1="motorway:line" color2="dkgray" width="2.5" />
 	<line name="primary_link15"    min_zoom="15" mode="striped" color1="primary:line"  color2="dkgray" width="2.5" />
 	<line name="secondary_link15"  min_zoom="15" mode="striped" color1="primary:line"  color2="dkgray" width="1.5" />
-	<line name="tertiary_link15"   min_zoom="15" mode="striped" color1="ltgray"        color2="dkgray" width="1.5" />
+	<line name="tertiary_link15"   min_zoom="15" mode="striped" color1="tertiary:line" color2="dkgray" width="1.5" />
 	<line name="road15"            min_zoom="15" mode="striped" color1="ltgray"        color2="dkgray" width="1.9" />
 	<line name="pedestrian15"      min_zoom="15" mode="dashed,striped" color1="trail:line"  color2="dkgray" width="1.4" />
 	<line name="runway15"          min_zoom="15" mode="dashed,striped" color1="runway:line" color2="dkgray" width="4.0" />
@@ -123,7 +125,7 @@
 	<class name="highway:trunk"            layer="trunk"       point="motorway17" line="trunk9" />
 	<class name="highway:primary"          layer="primary"     point="primary17"  line="primary9" />
 	<class name="highway:secondary"        layer="secondary"   point="primary17"  line="secondary12" />
-	<class name="highway:tertiary"         layer="tertiary"    point="default17"  line="tertiary12" />
+	<class name="highway:tertiary"         layer="tertiary"    point="tertiary17" line="tertiary12" />
 	<class name="highway:unclassified"     layer="residential" point="default17"  line="road15" />
 	<class name="highway:service"          layer="residential" point="default17"  line="road15" />
 	<class name="highway:residential"      layer="residential" point="default17"  line="road15" />
