@@ -56,23 +56,23 @@
 	<color name="core:mineral"    val="DE1B1BBF" />
 	<color name="core:historic"   val="E988D0BF" />
 
-	<point name="peak15"     min_zoom="15" text_color1="peak:text"     text_color2="black" marker_color1="peak:point" marker_color2="black" flags="marker:show,ele:show" />
-	<point name="saddle15"   min_zoom="15" text_color1="peak:text"     text_color2="black" marker_color1="peak:point" marker_color2="black" flags="marker:show" />
-	<point name="city9"      min_zoom="9"  text_color1="city:text"     text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
-	<point name="town12"     min_zoom="12" text_color1="city:text"     text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
-	<point name="village13"  min_zoom="13" text_color1="city:text"     text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
-	<point name="water15"    min_zoom="15" text_color1="lake:text"     text_color2="black" />
-	<point name="water17"    min_zoom="15" text_color1="lake:text"     text_color2="black" />
-	<point name="glacier15"  min_zoom="15" text_color1="glacier:text"  text_color2="black" />
-	<point name="outdoor16"  min_zoom="15" text_color1="peak:text"     text_color2="black" />
-	<point name="forest12"   min_zoom="12" text_color1="peak:text"     text_color2="black" />
-	<point name="trail17"    min_zoom="15" text_color1="trail:text"    text_color2="black" />
-	<point name="track17"    min_zoom="15" text_color1="track:text"    text_color2="black" />
-	<point name="core12"     min_zoom="12" text_color1="core:text"     text_color2="black" flags="marker:show,ele:show" />
-	<point name="default17"  min_zoom="15" text_color1="white"         text_color2="black" />
-	<point name="motorway17" min_zoom="15" text_color1="motorway:text" text_color2="black" />
-	<point name="primary17"  min_zoom="15" text_color1="primary:text"  text_color2="black" />
-	<point name="tertiary17" min_zoom="15" text_color1="tertiary:text" text_color2="black" />
+	<point name="peak15"     min_zoom="15" text_scale="1.00f" text_color1="peak:text"     text_color2="black" marker_color1="peak:point" marker_color2="black" flags="marker:show,ele:show" />
+	<point name="saddle15"   min_zoom="15" text_scale="1.00f" text_color1="peak:text"     text_color2="black" marker_color1="peak:point" marker_color2="black" flags="marker:show" />
+	<point name="city9"      min_zoom="9"  text_scale="1.15f" text_color1="city:text"     text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
+	<point name="town12"     min_zoom="12" text_scale="1.10f" text_color1="city:text"     text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
+	<point name="village13"  min_zoom="13" text_scale="1.05f" text_color1="city:text"     text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
+	<point name="water15"    min_zoom="15" text_scale="1.00f" text_color1="lake:text"     text_color2="black" />
+	<point name="water17"    min_zoom="15" text_scale="1.00f" text_color1="lake:text"     text_color2="black" />
+	<point name="glacier15"  min_zoom="15" text_scale="1.00f" text_color1="glacier:text"  text_color2="black" />
+	<point name="outdoor16"  min_zoom="15" text_scale="1.00f" text_color1="peak:text"     text_color2="black" />
+	<point name="forest12"   min_zoom="12" text_scale="1.00f" text_color1="peak:text"     text_color2="black" />
+	<point name="trail17"    min_zoom="15" text_scale="0.95f" text_color1="trail:text"    text_color2="black" />
+	<point name="track17"    min_zoom="15" text_scale="0.95f" text_color1="track:text"    text_color2="black" />
+	<point name="core12"     min_zoom="12" text_scale="1.00f" text_color1="core:text"     text_color2="black" flags="marker:show,ele:show" />
+	<point name="default17"  min_zoom="15" text_scale="0.95f" text_color1="white"         text_color2="black" />
+	<point name="motorway17" min_zoom="15" text_scale="1.15f" text_color1="motorway:text" text_color2="black" />
+	<point name="primary17"  min_zoom="15" text_scale="1.10f" text_color1="primary:text"  text_color2="black" />
+	<point name="tertiary17" min_zoom="15" text_scale="1.05f" text_color1="tertiary:text" text_color2="black" />
 
 	<line name="aerialway15"       min_zoom="15" mode="dashed,striped" color1="ltgray" color2="white" />
 	<line name="motorway9"         min_zoom="9"  mode="striped" color1="motorway:line" color2="dkgray" width="3.5" />

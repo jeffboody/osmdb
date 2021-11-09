@@ -47,6 +47,7 @@ typedef struct
 	int show_ele;
 	int show_marker;
 
+	float       text_scale;
 	cc_vec4f_t* text_color1;
 	cc_vec4f_t* text_color2;
 	cc_vec4f_t* marker_color1;

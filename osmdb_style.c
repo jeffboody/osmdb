@@ -283,6 +283,7 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 
 	const char* name          = NULL;
 	const char* min_zoom      = NULL;
+	float       text_scale    = 1.0f;
 	const char* text_color1   = NULL;
 	const char* text_color2   = NULL;
 	const char* marker_color1 = NULL;
@@ -301,6 +302,10 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 		else if(strcmp(atts[idx0], "min_zoom") == 0)
 		{
 			min_zoom = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "text_scale") == 0)
+		{
+			text_scale = strtof(atts[idx1], NULL);
 		}
 		else if(strcmp(atts[idx0], "text_color1") == 0)
 		{
@@ -450,6 +455,7 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 	point->min_zoom      = (int) strtol(min_zoom, NULL, 0);
 	point->show_ele      = show_ele;
 	point->show_marker   = show_marker;
+	point->text_scale    = text_scale;
 	point->text_color1   = tc1;
 	point->text_color2   = tc2;
 	point->marker_color1 = mc1;
