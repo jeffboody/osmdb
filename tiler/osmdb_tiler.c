@@ -401,13 +401,13 @@ osmdb_tiler_joinWays(osmdb_tiler_t* self, int tid)
 	cc_multimapIter_t   mmiterator1;
 	cc_multimapIter_t*  mmiter1;
 	cc_multimapIter_t   mmiterator2;
-	cc_mapIter_t        miter1;
+	cc_mapIter_t*       miter1;
 	cc_mapIter_t        miterator2;
 	cc_mapIter_t*       miter2;
 	cc_listIter_t*      iter1;
 	cc_listIter_t*      iter2;
 	cc_list_t*          list1;
-	cc_list_t*          list2;
+	const cc_list_t*    list2;
 	int64_t*            id1;
 	int64_t*            id2;
 	int64_t*            _ref1;

@@ -1277,6 +1277,7 @@ int osmdb_index_get(osmdb_index_t* self,
 	// note that it is not an error to return a NULL hnd
 	osmdb_entry_t* entry;
 	cc_listIter_t* iter;
+	cc_mapIter_t*  miter;
 	miter = cc_map_findp(self->cache_map,
 	                     sizeof(osmdb_cacheMapKey_t), &key);
 	if(miter)
