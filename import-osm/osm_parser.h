@@ -86,6 +86,12 @@ typedef struct
 	// class name/code map
 	cc_map_t* class_map;
 
+	// ignore capitolization map
+	cc_map_t* nocaps_map;
+
+	// abreviation map
+	cc_map_t* abrev_map;
+
 	// UTF-8 to ASCII conversion
 	iconv_t cd;
 } osm_parser_t;

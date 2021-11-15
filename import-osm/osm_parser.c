@@ -70,6 +70,91 @@ void osmdb_relInfo_addName(osmdb_relInfo_t* self,
 #define ICONV_OPEN_ERR ((iconv_t) (-1))
 #define ICONV_CONV_ERR ((size_t) (-1))
 
+static const char* OSM_NOCAPS_ARRAY[] =
+{
+	"a",
+	"an",
+	"and",
+	"at",
+	"by",
+	"cdt",
+	"du",
+	"e",
+	"el",
+	"em",
+	"en",
+	"de",
+	"del",
+	"des",
+	"ft",
+	"for",
+	"in",
+	"l",
+	"la",
+	"las",
+	"ll",
+	"los",
+	"n",
+	"nd",
+	"near",
+	"o",
+	"on",
+	"of",
+	"our",
+	"rd",
+	"s",
+	"st",
+	"t",
+	"th",
+	"the",
+	"to",
+	"via",
+	"with",
+	"y",
+	NULL
+};
+
+typedef struct
+{
+	const char* from;
+	const char* to;
+} osm_abrev_t;
+
+// abreviations based loosely on
+// https://github.com/nvkelso/map-label-style-manual
+// http://pe.usps.gov/text/pub28/28c1_001.htm
+const osm_abrev_t OSM_ABREV_ARRAY[] =
+{
+	{ .from="North",      .to="N"     },
+	{ .from="East",       .to="E"     },
+	{ .from="South",      .to="S"     },
+	{ .from="West",       .to="W"     },
+	{ .from="Northeast",  .to="NE"    },
+	{ .from="Northwest",  .to="NW"    },
+	{ .from="Southeast",  .to="SE"    },
+	{ .from="Southwest",  .to="SW"    },
+	{ .from="Avenue",     .to="Ave"   },
+	{ .from="Boulevard",  .to="Blvd"  },
+	{ .from="Court",      .to="Ct"    },
+	{ .from="Circle",     .to="Cir"   },
+	{ .from="Drive",      .to="Dr"    },
+	{ .from="Expressway", .to="Expwy" },
+	{ .from="Freeway",    .to="Fwy"   },
+	{ .from="Highway",    .to="Hwy"   },
+	{ .from="Lane",       .to="Ln"    },
+	{ .from="Parkway",    .to="Pkwy"  },
+	{ .from="Place",      .to="Pl"    },
+	{ .from="Road",       .to="Rd"    },
+	{ .from="Street",     .to="St"    },
+	{ .from="Terrace",    .to="Ter"   },
+	{ .from="Trail",      .to="Tr"    },
+	{ .from="Mount",      .to="Mt"    },
+	{ .from="Mt.",        .to="Mt"    },
+	{ .from="Mountain",   .to="Mtn"   },
+	{ .from="Trailhead",  .to="TH"    },
+	{ .from=NULL,         .to=NULL    },
+};
+
 /***********************************************************
 * private - class utils                                    *
 ***********************************************************/
@@ -144,6 +229,48 @@ osm_parser_fillClass(osm_parser_t* self)
 	return 0;
 }
 
+static int
+osm_parser_fillNocaps(osm_parser_t* self)
+{
+	ASSERT(self);
+
+	int idx = 0;
+	while(OSM_NOCAPS_ARRAY[idx])
+	{
+		if(cc_map_add(self->nocaps_map,
+		              (const void*) OSM_NOCAPS_ARRAY[idx],
+		              OSM_NOCAPS_ARRAY[idx]) == NULL)
+		{
+			return 0;
+		}
+
+		++idx;
+	}
+
+	return 1;
+}
+
+static int
+osm_parser_fillAbrev(osm_parser_t* self)
+{
+	ASSERT(self);
+
+	int idx = 0;
+	while(OSM_ABREV_ARRAY[idx].from)
+	{
+		if(cc_map_add(self->abrev_map,
+		              (const void*) OSM_ABREV_ARRAY[idx].to,
+		              OSM_ABREV_ARRAY[idx].from) == NULL)
+		{
+			return 0;
+		}
+
+		++idx;
+	}
+
+	return 1;
+}
+
 /***********************************************************
 * private - parsing utils                                  *
 ***********************************************************/
@@ -156,176 +283,6 @@ typedef struct
 	char sep[2];
 } osm_token_t;
 
-static void osm_capitolizeWord(osm_token_t* tok)
-{
-	ASSERT(tok);
-
-	char c = tok->word[0];
-	if((strncmp(tok->word, "a",    256) == 0) ||
-	   (strncmp(tok->word, "an",   256) == 0) ||
-	   (strncmp(tok->word, "and",  256) == 0) ||
-	   (strncmp(tok->word, "at",   256) == 0) ||
-	   (strncmp(tok->word, "by",   256) == 0) ||
-	   (strncmp(tok->word, "cdt",  256) == 0) ||
-	   (strncmp(tok->word, "du",   256) == 0) ||
-	   (strncmp(tok->word, "e",    256) == 0) ||
-	   (strncmp(tok->word, "el",   256) == 0) ||
-	   (strncmp(tok->word, "em",   256) == 0) ||
-	   (strncmp(tok->word, "en",   256) == 0) ||
-	   (strncmp(tok->word, "de",   256) == 0) ||
-	   (strncmp(tok->word, "del",  256) == 0) ||
-	   (strncmp(tok->word, "des",  256) == 0) ||
-	   (strncmp(tok->word, "ft",   256) == 0) ||
-	   (strncmp(tok->word, "for",  256) == 0) ||
-	   (strncmp(tok->word, "in",   256) == 0) ||
-	   (strncmp(tok->word, "l",    256) == 0) ||
-	   (strncmp(tok->word, "la",   256) == 0) ||
-	   (strncmp(tok->word, "las",  256) == 0) ||
-	   (strncmp(tok->word, "ll",   256) == 0) ||
-	   (strncmp(tok->word, "los",  256) == 0) ||
-	   (strncmp(tok->word, "n",    256) == 0) ||
-	   (strncmp(tok->word, "near", 256) == 0) ||
-	   (strncmp(tok->word, "o",    256) == 0) ||
-	   (strncmp(tok->word, "on",   256) == 0) ||
-	   (strncmp(tok->word, "of",   256) == 0) ||
-	   (strncmp(tok->word, "our",  256) == 0) ||
-	   (strncmp(tok->word, "s",    256) == 0) ||
-	   (strncmp(tok->word, "t",    256) == 0) ||
-	   (strncmp(tok->word, "the",  256) == 0) ||
-	   (strncmp(tok->word, "to",   256) == 0) ||
-	   (strncmp(tok->word, "via",  256) == 0) ||
-	   (strncmp(tok->word, "with", 256) == 0) ||
-	   (strncmp(tok->word, "y",    256) == 0))
-	{
-		// skip
-	}
-	else if((c >= 'a') && (c <= 'z'))
-	{
-		tok->word[0] = c - 'a' + 'A';
-	}
-}
-
-static int osm_abreviateWord(const char* a, char* b)
-{
-	ASSERT(a);
-	ASSERT(b);
-
-	int abreviate = 1;
-
-	// abreviations based loosely on
-	// https://github.com/nvkelso/map-label-style-manual
-	// http://pe.usps.gov/text/pub28/28c1_001.htm
-	if(strncmp(a, "North", 256) == 0)
-	{
-		strncat(b, "N", 256);
-	}
-	else if(strncmp(a, "East", 256) == 0)
-	{
-		strncat(b, "E", 256);
-	}
-	else if(strncmp(a, "South", 256) == 0)
-	{
-		strncat(b, "S", 256);
-	}
-	else if(strncmp(a, "West", 256) == 0)
-	{
-		strncat(b, "W", 256);
-	}
-	else if(strncmp(a, "Northeast", 256) == 0)
-	{
-		strncat(b, "NE", 256);
-	}
-	else if(strncmp(a, "Northwest", 256) == 0)
-	{
-		strncat(b, "NW", 256);
-	}
-	else if(strncmp(a, "Southeast", 256) == 0)
-	{
-		strncat(b, "SE", 256);
-	}
-	else if(strncmp(a, "Southwest", 256) == 0)
-	{
-		strncat(b, "SW", 256);
-	}
-	else if(strncmp(a, "Avenue", 256) == 0)
-	{
-		strncat(b, "Ave", 256);
-	}
-	else if(strncmp(a, "Boulevard", 256) == 0)
-	{
-		strncat(b, "Blvd", 256);
-	}
-	else if(strncmp(a, "Court", 256) == 0)
-	{
-		strncat(b, "Ct", 256);
-	}
-	else if(strncmp(a, "Circle", 256) == 0)
-	{
-		strncat(b, "Cir", 256);
-	}
-	else if(strncmp(a, "Drive", 256) == 0)
-	{
-		strncat(b, "Dr", 256);
-	}
-	else if(strncmp(a, "Expressway", 256) == 0)
-	{
-		strncat(b, "Expwy", 256);
-	}
-	else if(strncmp(a, "Freeway", 256) == 0)
-	{
-		strncat(b, "Fwy", 256);
-	}
-	else if(strncmp(a, "Highway", 256) == 0)
-	{
-		strncat(b, "Hwy", 256);
-	}
-	else if(strncmp(a, "Lane", 256) == 0)
-	{
-		strncat(b, "Ln", 256);
-	}
-	else if(strncmp(a, "Parkway", 256) == 0)
-	{
-		strncat(b, "Pkwy", 256);
-	}
-	else if(strncmp(a, "Place", 256) == 0)
-	{
-		strncat(b, "Pl", 256);
-	}
-	else if(strncmp(a, "Road", 256) == 0)
-	{
-		strncat(b, "Rd", 256);
-	}
-	else if(strncmp(a, "Street", 256) == 0)
-	{
-		strncat(b, "St", 256);
-	}
-	else if(strncmp(a, "Terrace", 256) == 0)
-	{
-		strncat(b, "Ter", 256);
-	}
-	else if(strncmp(a, "Trail", 256) == 0)
-	{
-		strncat(b, "Tr", 256);
-	}
-	else if((strncmp(a, "Mount", 256) == 0) ||
-	        (strncmp(a, "Mt.",   256) == 0))
-	{
-		strncat(b, "Mt", 256);
-	}
-	else if(strncmp(a, "Mountain", 256) == 0)
-	{
-		strncat(b, "Mtn", 256);
-	}
-	else
-	{
-		strncat(b, a, 256);
-		abreviate = 0;
-	}
-	b[255] = '\0';
-
-	return abreviate;
-}
-
 static void osm_catWord(char* str, char* word)
 {
 	ASSERT(str);
@@ -335,10 +292,56 @@ static void osm_catWord(char* str, char* word)
 	str[255] = '\0';
 }
 
-static const char* osm_parseWord(int line,
-                                 const char* str,
-                                 osm_token_t* tok)
+static void
+osm_parser_capitolizeWord(osm_parser_t* self,
+                          char* word)
 {
+	ASSERT(self);
+	ASSERT(word);
+
+	// capitolize the first letter
+	if(cc_map_find(self->nocaps_map, word) == NULL)
+	{
+		char c = word[0];
+		if((c >= 'a') && (c <= 'z'))
+		{
+			word[0] = c - 'a' + 'A';
+		}
+	}
+}
+
+static int
+osm_parser_abreviateWord(osm_parser_t* self,
+                         const char* word, char* abrev)
+{
+	ASSERT(self);
+	ASSERT(word);
+	ASSERT(abrev);
+
+	int abreviate = 1;
+
+	// abreviate selected words
+	cc_mapIter_t* miter = cc_map_find(self->abrev_map, word);
+	if(miter)
+	{
+		strncat(abrev, (const char*) cc_map_val(miter), 256);
+	}
+	else
+	{
+		strncat(abrev, word, 256);
+		abreviate = 0;
+	}
+	abrev[255] = '\0';
+
+	return abreviate;
+}
+
+static const char*
+osm_parser_parseWord(osm_parser_t* self,
+                     int line, const char* str,
+                     osm_token_t* tok)
+{
+	ASSERT(self);
 	ASSERT(str);
 	ASSERT(tok);
 
@@ -419,9 +422,10 @@ static const char* osm_parseWord(int line,
 		}
 		else if(c == '\0')
 		{
-			osm_capitolizeWord(tok);
-			tok->abreviate = osm_abreviateWord(tok->word,
-			                                   tok->abrev);
+			osm_parser_capitolizeWord(self, tok->word);
+			tok->abreviate = osm_parser_abreviateWord(self,
+			                                          tok->word,
+			                                          tok->abrev);
 			return &str[i];
 		}
 		else if((c == ' ')  ||
@@ -432,9 +436,10 @@ static const char* osm_parseWord(int line,
 		        (c == '(')  ||
 		        (c == ')'))
 		{
-			osm_capitolizeWord(tok);
-			tok->abreviate = osm_abreviateWord(tok->word,
-			                                   tok->abrev);
+			osm_parser_capitolizeWord(self, tok->word);
+			tok->abreviate = osm_parser_abreviateWord(self,
+			                                          tok->word,
+			                                          tok->abrev);
 			tok->sep[0] = c;
 			return &str[i + 1];
 		}
@@ -448,9 +453,11 @@ static const char* osm_parseWord(int line,
 }
 
 static int
-osm_parseName(int line, const char* input, char* name,
-              char* abrev)
+osm_parser_parseName(osm_parser_t* self,
+                     int line, const char* input,
+                     char* name, char* abrev)
 {
+	ASSERT(self);
 	ASSERT(input);
 	ASSERT(name);
 	ASSERT(abrev);
@@ -466,7 +473,7 @@ osm_parseName(int line, const char* input, char* name,
 	osm_token_t word[WORDS];
 	while(str && (words < WORDS))
 	{
-		str = osm_parseWord(line, str, &word[words]);
+		str = osm_parser_parseWord(self, line, str, &word[words]);
 		if(str)
 		{
 			++words;
@@ -576,8 +583,11 @@ osm_parseName(int line, const char* input, char* name,
 	return 1;
 }
 
-static int osm_parseEle(int line, const char* a, int ft)
+static int
+osm_parser_parseEle(osm_parser_t* self,
+                    int line, const char* a, int ft)
 {
+	ASSERT(self);
 	ASSERT(a);
 
 	// assume the ele is in meters
@@ -593,7 +603,7 @@ static int osm_parseEle(int line, const char* a, int ft)
 	osm_token_t wn;
 
 	const char* str = a;
-	str = osm_parseWord(line, str, &w0);
+	str = osm_parser_parseWord(self, line, str, &w0);
 	if(str == NULL)
 	{
 		// input is null string
@@ -601,14 +611,14 @@ static int osm_parseEle(int line, const char* a, int ft)
 		return 0;
 	}
 
-	str = osm_parseWord(line, str, &w1);
+	str = osm_parser_parseWord(self, line, str, &w1);
 	if(str == NULL)
 	{
 		// input is single word
 		return (int) (ele + 0.5f);
 	}
 
-	str = osm_parseWord(line, str, &wn);
+	str = osm_parser_parseWord(self, line, str, &wn);
 	if(str == NULL)
 	{
 		// check if w1 is ft
@@ -1029,13 +1039,15 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 			}
 			else if((strcmp(atts[j], "name") == 0) &&
 			        (self->name_en == 0) &&
-			        osm_parseName(line, val, name, abrev))
+			        osm_parser_parseName(self, line, val,
+			                             name, abrev))
 			{
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
 			}
 			else if((strcmp(atts[j], "name:en") == 0) &&
-			        osm_parseName(line, val, name, abrev))
+			        osm_parser_parseName(self, line, val,
+			                             name, abrev))
 			{
 				self->name_en = 1;
 				snprintf(self->tag_name,  256, "%s", name);
@@ -1043,11 +1055,13 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 			}
 			else if(strcmp(atts[j], "ele:ft") == 0)
 			{
-				self->node_info->ele = osm_parseEle(line, val, 1);
+				self->node_info->ele = osm_parser_parseEle(self, line,
+				                                           val, 1);
 			}
 			else if(strcmp(atts[j], "ele") == 0)
 			{
-				self->node_info->ele = osm_parseEle(line, val, 0);
+				self->node_info->ele = osm_parser_parseEle(self, line,
+				                                           val, 0);
 			}
 		}
 
@@ -1469,13 +1483,15 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 			}
 			else if((strcmp(atts[j], "name") == 0) &&
 			        (self->name_en == 0) &&
-			        osm_parseName(line, val, name, abrev))
+			        osm_parser_parseName(self, line, val,
+			                             name, abrev))
 			{
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
 			}
 			else if((strcmp(atts[j], "name:en") == 0) &&
-			        osm_parseName(line, val, name, abrev))
+			        osm_parser_parseName(self, line, val,
+			                             name, abrev))
 			{
 				self->name_en = 1;
 				snprintf(self->tag_name,  256, "%s", name);
@@ -1950,13 +1966,15 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 			}
 			else if((strcmp(atts[j], "name") == 0) &&
 			        (self->name_en == 0) &&
-			        osm_parseName(line, val, name, abrev))
+			        osm_parser_parseName(self, line, val,
+			                             name, abrev))
 			{
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
 			}
 			else if((strcmp(atts[j], "name:en") == 0) &&
-			        osm_parseName(line, val, name, abrev))
+			        osm_parser_parseName(self, line, val,
+			                             name, abrev))
 			{
 				self->name_en = 1;
 				snprintf(self->tag_name,  256, "%s", name);
@@ -2228,6 +2246,28 @@ osm_parser_new(const char* style,
 		goto fail_fill_class;
 	}
 
+	self->nocaps_map = cc_map_new();
+	if(self->nocaps_map == NULL)
+	{
+		goto fail_nocaps_map;
+	}
+
+	if(osm_parser_fillNocaps(self) == 0)
+	{
+		goto fail_fill_nocaps;
+	}
+
+	self->abrev_map = cc_map_new();
+	if(self->abrev_map == NULL)
+	{
+		goto fail_abrev_map;
+	}
+
+	if(osm_parser_fillAbrev(self) == 0)
+	{
+		goto fail_fill_abrev;
+	}
+
 	// initialize locale for iconv
 	setlocale(LC_CTYPE, "");
 
@@ -2257,6 +2297,14 @@ osm_parser_new(const char* style,
 
 	// failure
 	fail_iconv_open:
+		cc_map_discard(self->abrev_map);
+	fail_fill_abrev:
+		cc_map_delete(&self->abrev_map);
+	fail_abrev_map:
+		cc_map_discard(self->nocaps_map);
+	fail_fill_nocaps:
+		cc_map_delete(&self->nocaps_map);
+	fail_nocaps_map:
 		osm_parser_discardClass(self);
 	fail_fill_class:
 		cc_map_delete(&self->class_map);
@@ -2295,6 +2343,12 @@ void osm_parser_delete(osm_parser_t** _self)
 	if(self)
 	{
 		iconv_close(self->cd);
+
+		cc_map_discard(self->abrev_map);
+		cc_map_delete(&self->abrev_map);
+
+		cc_map_discard(self->nocaps_map);
+		cc_map_delete(&self->nocaps_map);
 
 		osm_parser_discardClass(self);
 		cc_map_delete(&self->class_map);
