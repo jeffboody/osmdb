@@ -854,6 +854,7 @@ static void osm_parser_initNode(osm_parser_t* self)
 	self->name_en      = 0;
 	self->tag_name[0]  = '\0';
 	self->tag_abrev[0] = '\0';
+	self->tag_ref[0]   = '\0';
 }
 
 static void osm_parser_initWay(osm_parser_t* self)
@@ -874,6 +875,7 @@ static void osm_parser_initWay(osm_parser_t* self)
 	self->name_en      = 0;
 	self->tag_name[0]  = '\0';
 	self->tag_abrev[0] = '\0';
+	self->tag_ref[0]   = '\0';
 }
 
 static void osm_parser_initRel(osm_parser_t* self)
@@ -895,6 +897,7 @@ static void osm_parser_initRel(osm_parser_t* self)
 	self->name_en      = 0;
 	self->tag_name[0]  = '\0';
 	self->tag_abrev[0] = '\0';
+	self->tag_ref[0]   = '\0';
 }
 
 static int
@@ -1183,6 +1186,10 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 				self->name_en = 1;
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
+			}
+			else if(strcmp(atts[j], "ref") == 0)
+			{
+				snprintf(self->tag_ref,  256, "%s", val);
 			}
 			else if(strcmp(atts[j], "ele:ft") == 0)
 			{
@@ -1627,6 +1634,10 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 				self->name_en = 1;
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
+			}
+			else if(strcmp(atts[j], "ref") == 0)
+			{
+				snprintf(self->tag_ref,  256, "%s", val);
 			}
 			else if(strcmp(atts[j], "layer") == 0)
 			{
@@ -2110,6 +2121,10 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 				self->name_en = 1;
 				snprintf(self->tag_name,  256, "%s", name);
 				snprintf(self->tag_abrev, 256, "%s", abrev);
+			}
+			else if(strcmp(atts[j], "ref") == 0)
+			{
+				snprintf(self->tag_ref,  256, "%s", val);
 			}
 			else if((strcmp(atts[j], "type") == 0))
 			{

@@ -66,6 +66,7 @@ typedef struct
 	int64_t tag_changeset;
 	char    tag_name[256];
 	char    tag_abrev[256];
+	char    tag_ref[256];
 
 	// class constants
 	int class_none;
