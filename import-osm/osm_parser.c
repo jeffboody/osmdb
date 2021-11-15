@@ -156,6 +156,55 @@ typedef struct
 	char sep[2];
 } osm_token_t;
 
+static void osm_capitolizeWord(osm_token_t* tok)
+{
+	ASSERT(tok);
+
+	char c = tok->word[0];
+	if((strncmp(tok->word, "a",    256) == 0) ||
+	   (strncmp(tok->word, "an",   256) == 0) ||
+	   (strncmp(tok->word, "and",  256) == 0) ||
+	   (strncmp(tok->word, "at",   256) == 0) ||
+	   (strncmp(tok->word, "by",   256) == 0) ||
+	   (strncmp(tok->word, "cdt",  256) == 0) ||
+	   (strncmp(tok->word, "du",   256) == 0) ||
+	   (strncmp(tok->word, "e",    256) == 0) ||
+	   (strncmp(tok->word, "el",   256) == 0) ||
+	   (strncmp(tok->word, "em",   256) == 0) ||
+	   (strncmp(tok->word, "en",   256) == 0) ||
+	   (strncmp(tok->word, "de",   256) == 0) ||
+	   (strncmp(tok->word, "del",  256) == 0) ||
+	   (strncmp(tok->word, "des",  256) == 0) ||
+	   (strncmp(tok->word, "ft",   256) == 0) ||
+	   (strncmp(tok->word, "for",  256) == 0) ||
+	   (strncmp(tok->word, "in",   256) == 0) ||
+	   (strncmp(tok->word, "l",    256) == 0) ||
+	   (strncmp(tok->word, "la",   256) == 0) ||
+	   (strncmp(tok->word, "las",  256) == 0) ||
+	   (strncmp(tok->word, "ll",   256) == 0) ||
+	   (strncmp(tok->word, "los",  256) == 0) ||
+	   (strncmp(tok->word, "n",    256) == 0) ||
+	   (strncmp(tok->word, "near", 256) == 0) ||
+	   (strncmp(tok->word, "o",    256) == 0) ||
+	   (strncmp(tok->word, "on",   256) == 0) ||
+	   (strncmp(tok->word, "of",   256) == 0) ||
+	   (strncmp(tok->word, "our",  256) == 0) ||
+	   (strncmp(tok->word, "s",    256) == 0) ||
+	   (strncmp(tok->word, "t",    256) == 0) ||
+	   (strncmp(tok->word, "the",  256) == 0) ||
+	   (strncmp(tok->word, "to",   256) == 0) ||
+	   (strncmp(tok->word, "via",  256) == 0) ||
+	   (strncmp(tok->word, "with", 256) == 0) ||
+	   (strncmp(tok->word, "y",    256) == 0))
+	{
+		// skip
+	}
+	else if((c >= 'a') && (c <= 'z'))
+	{
+		tok->word[0] = c - 'a' + 'A';
+	}
+}
+
 static int osm_abreviateWord(const char* a, char* b)
 {
 	ASSERT(a);
@@ -370,22 +419,23 @@ static const char* osm_parseWord(int line,
 		}
 		else if(c == '\0')
 		{
+			osm_capitolizeWord(tok);
 			tok->abreviate = osm_abreviateWord(tok->word,
 			                                   tok->abrev);
 			return &str[i];
 		}
-		else if(c == ' ')
+		else if((c == ' ')  ||
+		        (c == '-')  ||
+		        (c == '\'') ||
+		        (c == ':')  ||
+		        (c == ';')  ||
+		        (c == '(')  ||
+		        (c == ')'))
 		{
+			osm_capitolizeWord(tok);
 			tok->abreviate = osm_abreviateWord(tok->word,
 			                                   tok->abrev);
-			tok->sep[0] = ' ';
-			return &str[i + 1];
-		}
-		else if(c == ';')
-		{
-			tok->abreviate = osm_abreviateWord(tok->word,
-			                                   tok->abrev);
-			tok->sep[0] = ';';
+			tok->sep[0] = c;
 			return &str[i + 1];
 		}
 
