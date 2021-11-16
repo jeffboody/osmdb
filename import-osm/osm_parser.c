@@ -480,13 +480,56 @@ osm_parser_parseName(osm_parser_t* self,
 		}
 	}
 
-	// trim elevation from name
-	// e.g. "Mt Meeker 13,870 ft"
-	if((words >= 2) &&
-	   (strncmp(word[words - 1].word, "ft", 256) == 0))
+	if(words >= 3)
 	{
-		// LOGW("trim %s", input);
-		words -= 2;
+		if((strncmp(word[words - 3].word, "Multi", 256) == 0) &&
+		   (strncmp(word[words - 2].word, "Use", 256) == 0) &&
+		   (strncmp(word[words - 1].word, "Path", 256) == 0))
+		{
+			// abreviate Multi Use Path or Multi-Use Path
+			osm_token_t* tmp = &word[words - 3];
+			snprintf(tmp->word,  256, "%s", "MUP");
+			snprintf(tmp->abrev, 256, "%s", "MUP");
+			tmp->abreviate = 1;
+			tmp->sep[0] = '\0';
+			tmp->sep[1] = '\0';
+			words -= 2;
+		}
+	}
+
+	if(words >= 2)
+	{
+		if(strncmp(word[words - 1].word, "ft", 256) == 0)
+		{
+			// trim elevation from name
+			// e.g. "Mt Meeker 13,870 ft"
+			// LOGW("trim %s", input);
+			words -= 2;
+		}
+		else if((strncmp(word[words - 2].word, "Multiuse", 256) == 0) &&
+		        (strncmp(word[words - 1].word, "Path", 256) == 0))
+		{
+			// abreviate Multiuse Path
+			osm_token_t* tmp = &word[words - 2];
+			snprintf(tmp->word,  256, "%s", "MUP");
+			snprintf(tmp->abrev, 256, "%s", "MUP");
+			tmp->abreviate = 1;
+			tmp->sep[0] = '\0';
+			tmp->sep[1] = '\0';
+			words -= 1;
+		}
+		else if((strncmp(word[words - 2].word, "Trail", 256) == 0) &&
+		        (strncmp(word[words - 1].word, "Head", 256) == 0))
+		{
+			// abreviate Trail Head (incorrect spelling)
+			osm_token_t* tmp = &word[words - 2];
+			snprintf(tmp->word,  256, "%s", "TH");
+			snprintf(tmp->abrev, 256, "%s", "TH");
+			tmp->abreviate = 1;
+			tmp->sep[0] = '\0';
+			tmp->sep[1] = '\0';
+			words -= 1;
+		}
 	}
 
 	if(words == 0)
