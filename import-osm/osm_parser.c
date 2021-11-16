@@ -387,6 +387,13 @@ osm_parser_parseWord(osm_parser_t* self,
 	{
 		char c = str[i];
 
+		// validate len
+		if((len == 255) || ((len == 0) && (c == '\0')))
+		{
+			// LOGW("invalid line=%i",line);
+			return NULL;
+		}
+
 		// validate characters
 		// disallow '"' because of "Skyscraper Peak", etc.
 		// disallow '|' since it is used as a SQL data separator
@@ -424,14 +431,14 @@ osm_parser_parseWord(osm_parser_t* self,
 		}
 
 		// check for word boundary
-		if((c == '\0') && (len == 0))
+		if(((c >= 'a') && (c <= 'z')) ||
+		   ((c >= 'A') && (c <= 'Z')))
 		{
-			return NULL;
-		}
-		else if(len == 255)
-		{
-			// LOGW("invalid line=%i",line);
-			return NULL;
+			// append character to word
+			tok->word[len]     = c;
+			tok->word[len + 1] = '\0';
+			++len;
+			++i;
 		}
 		else if(c == '\0')
 		{
@@ -441,13 +448,7 @@ osm_parser_parseWord(osm_parser_t* self,
 			                                          tok->abrev);
 			return &str[i];
 		}
-		else if((c == ' ')  ||
-		        (c == '-')  ||
-		        (c == '\'') ||
-		        (c == ':')  ||
-		        (c == ';')  ||
-		        (c == '(')  ||
-		        (c == ')'))
+		else
 		{
 			osm_parser_capitolizeWord(self, tok->word);
 			tok->abreviate = osm_parser_abreviateWord(self,
@@ -465,12 +466,6 @@ osm_parser_parseWord(osm_parser_t* self,
 			}
 			return &str[i + 1];
 		}
-
-		// append character to word
-		tok->word[len]     = c;
-		tok->word[len + 1] = '\0';
-		++len;
-		++i;
 	}
 }
 
