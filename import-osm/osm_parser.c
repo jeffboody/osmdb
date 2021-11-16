@@ -338,8 +338,8 @@ osm_parser_abreviateWord(osm_parser_t* self,
 
 static const char*
 osm_parser_parseWord(osm_parser_t* self,
-                     int line, const char* str,
-                     osm_token_t* tok)
+                     int line, int first,
+                     const char* str, osm_token_t* tok)
 {
 	ASSERT(self);
 	ASSERT(str);
@@ -356,13 +356,26 @@ osm_parser_parseWord(osm_parser_t* self,
 	while(1)
 	{
 		char c = str[i];
-		if((c == ' ')  ||
-		   (c == '\n') ||
-		   (c == '\t') ||
-		   (c == '\r'))
+		if(first)
 		{
-			++i;
-			continue;
+			if((c == ' ')  ||
+			   (c == '\n') ||
+			   (c == '\t') ||
+			   (c == '\r'))
+			{
+				++i;
+				continue;
+			}
+		}
+		else
+		{
+			if((c == '\n') ||
+			   (c == '\t') ||
+			   (c == '\r'))
+			{
+				++i;
+				continue;
+			}
 		}
 
 		break;
@@ -470,13 +483,16 @@ osm_parser_parseName(osm_parser_t* self,
 	const char* str   = input;
 	const int   WORDS = 16;
 	int         words = 0;
+	int         first = 1;
 	osm_token_t word[WORDS];
 	while(str && (words < WORDS))
 	{
-		str = osm_parser_parseWord(self, line, str, &word[words]);
+		str = osm_parser_parseWord(self, line, first,
+		                           str, &word[words]);
 		if(str)
 		{
 			++words;
+			first = 0;
 		}
 	}
 
@@ -646,7 +662,7 @@ osm_parser_parseEle(osm_parser_t* self,
 	osm_token_t wn;
 
 	const char* str = a;
-	str = osm_parser_parseWord(self, line, str, &w0);
+	str = osm_parser_parseWord(self, 1, line, str, &w0);
 	if(str == NULL)
 	{
 		// input is null string
@@ -654,14 +670,14 @@ osm_parser_parseEle(osm_parser_t* self,
 		return 0;
 	}
 
-	str = osm_parser_parseWord(self, line, str, &w1);
+	str = osm_parser_parseWord(self, 0, line, str, &w1);
 	if(str == NULL)
 	{
 		// input is single word
 		return (int) (ele + 0.5f);
 	}
 
-	str = osm_parser_parseWord(self, line, str, &wn);
+	str = osm_parser_parseWord(self, 0, line, str, &wn);
 	if(str == NULL)
 	{
 		// check if w1 is ft
