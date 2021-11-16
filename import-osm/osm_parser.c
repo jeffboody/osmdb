@@ -453,7 +453,16 @@ osm_parser_parseWord(osm_parser_t* self,
 			tok->abreviate = osm_parser_abreviateWord(self,
 			                                          tok->word,
 			                                          tok->abrev);
-			tok->sep[0] = c;
+			if((c == '.') &&
+			   ((tok->word[0] < '0') ||
+			    (tok->word[0] > '9')))
+			{
+				// disalow '.' for non-numbers
+			}
+			else
+			{
+				tok->sep[0] = c;
+			}
 			return &str[i + 1];
 		}
 
