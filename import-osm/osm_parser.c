@@ -280,7 +280,7 @@ typedef struct
 	int abreviate;
 	char word[256];
 	char abrev[256];
-	char sep[2];
+	char sep[256];
 } osm_token_t;
 
 static void osm_catWord(char* str, char* word)
@@ -349,7 +349,6 @@ osm_parser_parseWord(osm_parser_t* self,
 	tok->word[0]   = '\0';
 	tok->abrev[0]  = '\0';
 	tok->sep[0]    = '\0';
-	tok->sep[1]    = '\0';
 
 	// eat whitespace
 	int i = 0;
@@ -388,9 +387,13 @@ osm_parser_parseWord(osm_parser_t* self,
 		char c = str[i];
 
 		// validate len
-		if((len == 255) || ((len == 0) && (c == '\0')))
+		if(len == 255)
 		{
 			// LOGW("invalid line=%i",line);
+			return NULL;
+		}
+		else if((len == 0) && (c == '\0'))
+		{
 			return NULL;
 		}
 
@@ -454,19 +457,85 @@ osm_parser_parseWord(osm_parser_t* self,
 			tok->abreviate = osm_parser_abreviateWord(self,
 			                                          tok->word,
 			                                          tok->abrev);
-			if((c == '.') &&
-			   ((tok->word[0] < '0') ||
-			    (tok->word[0] > '9')))
-			{
-				// disalow '.' for non-numbers
-			}
-			else
-			{
-				tok->sep[0] = c;
-			}
-			return &str[i + 1];
+			break;
 		}
 	}
+
+	// find a sep
+	len = 0;
+	while(1)
+	{
+		char c = str[i];
+
+		// validate len
+		if(len == 255)
+		{
+			// LOGW("invalid line=%i",line);
+			return NULL;
+		}
+
+		// validate characters
+		// disallow '"' because of "Skyscraper Peak", etc.
+		// disallow '|' since it is used as a SQL data separator
+		if((c == '\n') ||
+		   (c == '\t') ||
+		   (c == '\r') ||
+		   (c == '"'))
+		{
+			// eat unsupported characters
+			// if(c == '"')
+			// {
+			// 	LOGW("quote i=%i, line=%i, str=%s",
+			// 	     i, line, str);
+			// }
+			++i;
+			continue;
+		}
+		else if((c == '.') &&
+		        ((tok->word[0] < '0') ||
+		         (tok->word[0] > '9')))
+		{
+			// disalow '.' for non-numbers
+			++i;
+			continue;
+		}
+		else if(c == '|')
+		{
+			// pipe is reserved for SQLite tables
+			c = ' ';
+		}
+		else if(((c >= 32) && (c <= 126)) ||
+		        (c == '\0'))
+		{
+			// accept printable characters and null char
+		}
+		else
+		{
+			// eat invalid characters
+			// LOGW("invalid line=%i, c=0x%X, str=%s",
+			//      line, (unsigned int) c, str);
+			++i;
+			continue;
+		}
+
+		// check for word boundary
+		if(((c >= 'a') && (c <= 'z')) ||
+		   ((c >= 'A') && (c <= 'Z')) ||
+		   (c == '\0'))
+		{
+			break;
+		}
+		else
+		{
+			// append character to sep
+			tok->sep[len]     = c;
+			tok->sep[len + 1] = '\0';
+			++len;
+			++i;
+		}
+	}
+
+	return &str[i];
 }
 
 static int
@@ -510,9 +579,7 @@ osm_parser_parseName(osm_parser_t* self,
 			osm_token_t* tmp = &word[words - 3];
 			snprintf(tmp->word,  256, "%s", "MUP");
 			snprintf(tmp->abrev, 256, "%s", "MUP");
-			tmp->abreviate = 1;
 			tmp->sep[0] = '\0';
-			tmp->sep[1] = '\0';
 			words -= 2;
 		}
 	}
@@ -533,9 +600,7 @@ osm_parser_parseName(osm_parser_t* self,
 			osm_token_t* tmp = &word[words - 2];
 			snprintf(tmp->word,  256, "%s", "MUP");
 			snprintf(tmp->abrev, 256, "%s", "MUP");
-			tmp->abreviate = 1;
 			tmp->sep[0] = '\0';
-			tmp->sep[1] = '\0';
 			words -= 1;
 		}
 		else if((strncmp(word[words - 2].word, "Trail", 256) == 0) &&
@@ -545,7 +610,6 @@ osm_parser_parseName(osm_parser_t* self,
 			osm_token_t* tmp = &word[words - 2];
 			snprintf(tmp->word,  256, "%s", "TH");
 			snprintf(tmp->abrev, 256, "%s", "TH");
-			tmp->abreviate = 1;
 			tmp->sep[0] = '\0';
 			tmp->sep[1] = '\0';
 			words -= 1;
@@ -561,7 +625,7 @@ osm_parser_parseName(osm_parser_t* self,
 	else if(words == 1)
 	{
 		// input is single word (don't abreviate)
-		snprintf(name, 256, "%s", word[0].word);
+		snprintf(name, 256, "%s%s", word[0].word, word[0].sep);
 		return 1;
 	}
 	else if(words == 2)
@@ -569,6 +633,7 @@ osm_parser_parseName(osm_parser_t* self,
 		osm_catWord(name, word[0].word);
 		osm_catWord(name, word[0].sep);
 		osm_catWord(name, word[1].word);
+		osm_catWord(name, word[1].sep);
 
 		// input is two words
 		if(word[1].abreviate)
@@ -578,12 +643,14 @@ osm_parser_parseName(osm_parser_t* self,
 			osm_catWord(abrev, word[0].word);
 			osm_catWord(abrev, word[0].sep);
 			osm_catWord(abrev, word[1].abrev);
+			osm_catWord(abrev, word[1].sep);
 		}
 		else if(word[0].abreviate)
 		{
 			osm_catWord(abrev, word[0].abrev);
 			osm_catWord(abrev, word[0].sep);
 			osm_catWord(abrev, word[1].word);
+			osm_catWord(abrev, word[1].sep);
 		}
 		return 1;
 	}
@@ -605,6 +672,7 @@ osm_parser_parseName(osm_parser_t* self,
 	osm_catWord(abrev, word[0].sep);
 
 	osm_catWord(name, word[1].word);
+	osm_catWord(name, word[1].sep);
 	if(word[1].abreviate)
 	{
 		abreviate = 1;
@@ -614,15 +682,14 @@ osm_parser_parseName(osm_parser_t* self,
 	{
 		osm_catWord(abrev, word[1].word);
 	}
+	osm_catWord(abrev, word[1].sep);
 
 	// parse the rest of the line
 	int n = 2;
 	while(n < words)
 	{
-		osm_catWord(name, word[n - 1].sep);
 		osm_catWord(name, word[n].word);
-
-		osm_catWord(abrev, word[n - 1].sep);
+		osm_catWord(name, word[n].sep);
 
 		if(word[n].abreviate)
 		{
@@ -633,6 +700,7 @@ osm_parser_parseName(osm_parser_t* self,
 		{
 			osm_catWord(abrev, word[n].word);
 		}
+		osm_catWord(abrev, word[n].sep);
 
 		++n;
 	}
