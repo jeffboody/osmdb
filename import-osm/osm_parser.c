@@ -1527,24 +1527,45 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	int selected = 0;
 	int polygon  = 0;
 
-	// select ways when a line/poly exists or when
-	// a point and name exists
+	// select ways
 	osmdb_styleClass_t* sc;
 	sc = osmdb_style_class(self->style,
 	                       osmdb_classCodeToName(self->way_info->class));
-	if(sc && (sc->line || sc->poly))
+	if(sc)
 	{
-		if(sc->poly)
+		int has_name = 0;
+		if(self->tag_name[0] != '\0')
 		{
-			polygon = 1;
+			has_name = 1;
 		}
 
-		selected = 1;
-	}
-	else if(sc && sc->point && (self->tag_name[0] != '\0'))
-	{
-		selected = 1;
-		center   = 1;
+		// select the way as a line
+		// when named or when the named mode is not set
+		if(sc->line &&
+		   (has_name ||
+		    ((sc->line->mode & OSMDB_STYLE_MODE_NAMED) == 0)))
+		{
+			selected = 1;
+		}
+
+		// select the way as a polygon
+		if(sc->poly)
+		{
+			polygon  = 1;
+			selected = 1;
+		}
+
+		// select the way as a point when named
+		if(sc->point && has_name)
+		{
+			// set the center flag when not selected as a line/poly
+			if(selected == 0)
+			{
+				center = 1;
+			}
+
+			selected = 1;
+		}
 	}
 
 	// fill the name

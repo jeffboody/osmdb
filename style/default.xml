@@ -86,6 +86,7 @@
 	<line name="secondary_link15"  min_zoom="15" mode="striped" color1="primary:line"  color2="dkgray" width="1.5" />
 	<line name="tertiary_link15"   min_zoom="15" mode="striped" color1="tertiary:line" color2="dkgray" width="1.5" />
 	<line name="road15"            min_zoom="15" mode="striped" color1="ltgray"        color2="dkgray" width="1.9" />
+	<line name="service15"         min_zoom="15" mode="striped,named" color1="ltgray"       color2="dkgray" width="1.9" />
 	<line name="pedestrian15"      min_zoom="15" mode="dashed,striped" color1="trail:line"  color2="dkgray" width="1.4" />
 	<line name="runway15"          min_zoom="15" mode="dashed,striped" color1="runway:line" color2="dkgray" width="4.0" />
 	<line name="taxiway15"         min_zoom="15" mode="striped"        color1="runway:line" color2="dkgray" width="1.5" />
@@ -94,7 +95,7 @@
 	<line name="railway15"         min_zoom="15" mode="dashed,striped" color1="gray"        color2="ltgray" width="1.7" />
 	<line name="river12"           min_zoom="12" color1="river:line" width="3.0" />
 	<line name="stream15"          min_zoom="15" color1="river:line" width="1.7" />
-	<line name="footway15"         min_zoom="15" mode="dashed,striped" color1="trail:line" color2="dkgray" />
+	<line name="footway15"         min_zoom="15" mode="dashed,striped,named" color1="trail:line" color2="dkgray" />
 	<line name="core:wilderness12" min_zoom="12" color1="core:wilderness" color2="core:wilderness" width="2.5" />
 	<line name="core:recreation12" min_zoom="12" color1="core:recreation" color2="core:recreation" width="2.5" />
 	<line name="core:special12"    min_zoom="12" color1="core:special"    color2="core:special"    width="2.5" />
@@ -127,7 +128,7 @@
 	<class name="highway:secondary"        layer="secondary"   point="primary17"  line="secondary12" />
 	<class name="highway:tertiary"         layer="tertiary"    point="tertiary17" line="tertiary12" />
 	<class name="highway:unclassified"     layer="residential" point="default17"  line="road15" />
-	<class name="highway:service"          layer="residential" point="default17"  line="road15" />
+	<class name="highway:service"          layer="residential" point="default17"  line="service15" />
 	<class name="highway:residential"      layer="residential" point="default17"  line="road15" />
 	<class name="highway:motorway_link"    layer="link"        line="motorway_link15" />
 	<class name="highway:trunk_link"       layer="link"        line="trunk_link15" />

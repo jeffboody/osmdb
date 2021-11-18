@@ -40,6 +40,7 @@
 #define OSMDB_STYLE_MODE_SOLID   0
 #define OSMDB_STYLE_MODE_DASHED  1
 #define OSMDB_STYLE_MODE_STRIPED 2
+#define OSMDB_STYLE_MODE_NAMED   4
 
 typedef struct
 {
@@ -57,6 +58,8 @@ typedef struct
 typedef struct
 {
 	// mode: solid|dashed|striped|dashed,striped
+	// mode may also include the named flag which instructs
+	// the importer to discard unnamed ways of this class
 	int   min_zoom;
 	float width;
 	int   mode;

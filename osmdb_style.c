@@ -122,6 +122,10 @@ static int osmdb_style_parseLineMode(const char* mode)
 			{
 				m |= OSMDB_STYLE_MODE_STRIPED;
 			}
+			else if(strcmp(str, "named") == 0)
+			{
+				m |= OSMDB_STYLE_MODE_NAMED;
+			}
 
 			// end of string
 			if(mode[src] == '\0')
