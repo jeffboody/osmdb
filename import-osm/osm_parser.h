@@ -76,6 +76,7 @@ typedef struct
 	int historic_yes;
 	int man_made_yes;
 	int tourism_yes;
+	int highway_motorway;
 
 	// relation member constants
 	int rel_member_type_node;

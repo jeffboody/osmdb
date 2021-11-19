@@ -1133,6 +1133,25 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 	return 1;
 }
 
+static void
+osm_parser_truncate(char* s, char c)
+{
+	ASSERT(s);
+
+	// truncate string to first instance of c
+	int i = 0;
+	while(s[i] != '\0')
+	{
+		if(s[i] == c)
+		{
+			s[i] = '\0';
+			break;
+		}
+
+		++i;
+	}
+}
+
 static int
 osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
                            const char** atts)
@@ -1173,24 +1192,30 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 					self->node_info->class = class;
 				}
 			}
-			else if((strcmp(atts[j], "name") == 0) &&
-			        (self->name_en == 0) &&
+			else if(strcmp(atts[j], "name") == 0)
+			{
+				osm_parser_truncate(val, ';');
+				if((self->name_en == 0) &&
 			        osm_parser_parseName(self, line, val,
 			                             name, abrev))
-			{
-				snprintf(self->tag_name,  256, "%s", name);
-				snprintf(self->tag_abrev, 256, "%s", abrev);
+				{
+					snprintf(self->tag_name,  256, "%s", name);
+					snprintf(self->tag_abrev, 256, "%s", abrev);
+				}
 			}
-			else if((strcmp(atts[j], "name:en") == 0) &&
-			        osm_parser_parseName(self, line, val,
-			                             name, abrev))
+			else if(strcmp(atts[j], "name:en") == 0)
 			{
-				self->name_en = 1;
-				snprintf(self->tag_name,  256, "%s", name);
-				snprintf(self->tag_abrev, 256, "%s", abrev);
+				osm_parser_truncate(val, ';');
+				if(osm_parser_parseName(self, line, val, name, abrev))
+				{
+					self->name_en = 1;
+					snprintf(self->tag_name,  256, "%s", name);
+					snprintf(self->tag_abrev, 256, "%s", abrev);
+				}
 			}
 			else if(strcmp(atts[j], "ref") == 0)
 			{
+				osm_parser_truncate(val, ';');
 				snprintf(self->tag_ref,  256, "%s", val);
 			}
 			else if(strcmp(atts[j], "ele:ft") == 0)
@@ -1536,7 +1561,8 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	if(sc)
 	{
 		int has_name = 0;
-		if(self->tag_name[0] != '\0')
+		if((self->tag_name[0] != '\0') ||
+		   (self->tag_ref[0]  != '\0'))
 		{
 			has_name = 1;
 		}
@@ -1571,15 +1597,27 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	}
 
 	// fill the name
-	if(self->tag_abrev[0] == '\0')
+	if((self->way_info->class == self->highway_motorway) &&
+	   (self->tag_ref[0] != '\0'))
+	{
+		// prefer ref for motorways
+		osmdb_wayInfo_addName(self->way_info,
+		                      self->tag_ref);
+	}
+	else if(self->tag_abrev[0] != '\0')
+	{
+		osmdb_wayInfo_addName(self->way_info,
+		                      self->tag_abrev);
+	}
+	else if(self->tag_name[0] != '\0')
 	{
 		osmdb_wayInfo_addName(self->way_info,
 		                      self->tag_name);
 	}
-	else
+	else if(self->tag_ref[0] != '\0')
 	{
 		osmdb_wayInfo_addName(self->way_info,
-		                      self->tag_abrev);
+		                      self->tag_ref);
 	}
 
 	// always add ways since they may be transitively selected
@@ -1642,24 +1680,30 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 					self->way_info->class = class;
 				}
 			}
-			else if((strcmp(atts[j], "name") == 0) &&
-			        (self->name_en == 0) &&
+			else if(strcmp(atts[j], "name") == 0)
+			{
+				osm_parser_truncate(val, ';');
+				if((self->name_en == 0) &&
 			        osm_parser_parseName(self, line, val,
 			                             name, abrev))
-			{
-				snprintf(self->tag_name,  256, "%s", name);
-				snprintf(self->tag_abrev, 256, "%s", abrev);
+				{
+					snprintf(self->tag_name,  256, "%s", name);
+					snprintf(self->tag_abrev, 256, "%s", abrev);
+				}
 			}
-			else if((strcmp(atts[j], "name:en") == 0) &&
-			        osm_parser_parseName(self, line, val,
-			                             name, abrev))
+			else if(strcmp(atts[j], "name:en") == 0)
 			{
-				self->name_en = 1;
-				snprintf(self->tag_name,  256, "%s", name);
-				snprintf(self->tag_abrev, 256, "%s", abrev);
+				osm_parser_truncate(val, ';');
+				if(osm_parser_parseName(self, line, val, name, abrev))
+				{
+					self->name_en = 1;
+					snprintf(self->tag_name,  256, "%s", name);
+					snprintf(self->tag_abrev, 256, "%s", abrev);
+				}
 			}
 			else if(strcmp(atts[j], "ref") == 0)
 			{
+				osm_parser_truncate(val, ';');
 				snprintf(self->tag_ref,  256, "%s", val);
 			}
 			else if(strcmp(atts[j], "layer") == 0)
@@ -2129,24 +2173,30 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 					self->rel_info->class = class;
 				}
 			}
-			else if((strcmp(atts[j], "name") == 0) &&
-			        (self->name_en == 0) &&
+			else if(strcmp(atts[j], "name") == 0)
+			{
+				osm_parser_truncate(val, ';');
+				if((self->name_en == 0) &&
 			        osm_parser_parseName(self, line, val,
 			                             name, abrev))
-			{
-				snprintf(self->tag_name,  256, "%s", name);
-				snprintf(self->tag_abrev, 256, "%s", abrev);
+				{
+					snprintf(self->tag_name,  256, "%s", name);
+					snprintf(self->tag_abrev, 256, "%s", abrev);
+				}
 			}
-			else if((strcmp(atts[j], "name:en") == 0) &&
-			        osm_parser_parseName(self, line, val,
-			                             name, abrev))
+			else if(strcmp(atts[j], "name:en") == 0)
 			{
-				self->name_en = 1;
-				snprintf(self->tag_name,  256, "%s", name);
-				snprintf(self->tag_abrev, 256, "%s", abrev);
+				osm_parser_truncate(val, ';');
+				if(osm_parser_parseName(self, line, val, name, abrev))
+				{
+					self->name_en = 1;
+					snprintf(self->tag_name,  256, "%s", name);
+					snprintf(self->tag_abrev, 256, "%s", abrev);
+				}
 			}
 			else if(strcmp(atts[j], "ref") == 0)
 			{
+				osm_parser_truncate(val, ';');
 				snprintf(self->tag_ref,  256, "%s", val);
 			}
 			else if((strcmp(atts[j], "type") == 0))
@@ -2447,13 +2497,14 @@ osm_parser_new(const char* style,
 		goto fail_iconv_open;
 	}
 
-	self->class_none   = osmdb_classKVToCode("class",    "none");
-	self->building_yes = osmdb_classKVToCode("building", "yes");
-	self->barrier_yes  = osmdb_classKVToCode("barrier",  "yes");
-	self->office_yes   = osmdb_classKVToCode("office",   "yes");
-	self->historic_yes = osmdb_classKVToCode("historic", "yes");
-	self->man_made_yes = osmdb_classKVToCode("man_made", "yes");
-	self->tourism_yes  = osmdb_classKVToCode("tourism",  "yes");
+	self->class_none       = osmdb_classKVToCode("class",    "none");
+	self->building_yes     = osmdb_classKVToCode("building", "yes");
+	self->barrier_yes      = osmdb_classKVToCode("barrier",  "yes");
+	self->office_yes       = osmdb_classKVToCode("office",   "yes");
+	self->historic_yes     = osmdb_classKVToCode("historic", "yes");
+	self->man_made_yes     = osmdb_classKVToCode("man_made", "yes");
+	self->tourism_yes      = osmdb_classKVToCode("tourism",  "yes");
+	self->highway_motorway = osmdb_classKVToCode("highway",  "motorway");
 
 	self->rel_member_type_node         = osmdb_relationMemberTypeToCode("node");
 	self->rel_member_type_way          = osmdb_relationMemberTypeToCode("way");
