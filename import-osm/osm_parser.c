@@ -152,6 +152,8 @@ const osm_abrev_t OSM_ABREV_ARRAY[] =
 	{ .from="Mt.",        .to="Mt"    },
 	{ .from="Mountain",   .to="Mtn"   },
 	{ .from="Trailhead",  .to="TH"    },
+	{ .from="Building",   .to="Bldg"  },
+	{ .from="Campground", .to="CG"    },
 	{ .from=NULL,         .to=NULL    },
 };
 
