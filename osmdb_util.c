@@ -917,7 +917,7 @@ osmdb_utilClass_t OSM_UTIL_CLASSES[] =
 	{ 0, "shop:window_blind",                           },
 	{ 0, "shop:computer",                               },
 	{ 0, "shop:robot",                                  },
-	{ 0, "shop:electonics",                             },
+	{ 0, "shop:electronics",                            },
 	{ 0, "shop:hifi",                                   },
 	{ 0, "shop:mobile_phone",                           },
 	{ 0, "shop:radiotechnics",                          },
