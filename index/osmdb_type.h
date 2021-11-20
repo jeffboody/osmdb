@@ -53,10 +53,13 @@ typedef struct
 	double  lon;
 } osmdb_nodeCoord_t;
 
+#define OSMDB_NODEINFO_FLAG_BUILDING 0x0020
+
 typedef struct
 {
 	int64_t nid;
 	int     class;
+	int     flags;
 	int     ele;
 	int     size_name;
 	// size_name must be multiple of 4 bytes
@@ -69,14 +72,15 @@ typedef struct
 #define OSMDB_WAYINFO_FLAG_BRIDGE    0x0004
 #define OSMDB_WAYINFO_FLAG_TUNNEL    0x0008
 #define OSMDB_WAYINFO_FLAG_CUTTING   0x0010
+#define OSMDB_WAYINFO_FLAG_BUILDING  0x0020
 #define OSMDB_WAYINFO_FLAG_RESERVED1 0x1000 // INNER
 
 typedef struct
 {
 	int64_t wid;
 	int     class;
-	int     layer;
 	int     flags;
+	int     layer;
 	int     size_name;
 	// size_name must be multiple of 4 bytes
 	// char name[];
@@ -102,12 +106,15 @@ typedef struct
 #define OSMDB_RELINFO_TYPE_BOUNDARY     1
 #define OSMDB_RELINFO_TYPE_MULTIPOLYGON 2
 
+#define OSMDB_RELINFO_FLAG_BUILDING 0x0020
+
 typedef struct
 {
 	int64_t rid;
 	int64_t nid;
-	int     type;
 	int     class;
+	int     flags;
+	int     type;
 	int     size_name;
 	// size_name must be multiple of 4 bytes
 	// char name[];

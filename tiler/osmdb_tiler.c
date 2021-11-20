@@ -318,9 +318,9 @@ osmdb_tiler_joinWay(osmdb_tiler_t* self, int tid,
 	// check way attributes
 	osmdb_wayInfo_t* ai = a->hwi->way_info;
 	osmdb_wayInfo_t* bi = b->hwi->way_info;
-	if((ai->class   != bi->class)  ||
-	   (ai->layer   != bi->layer)  ||
-	   (ai->flags   != bi->flags))
+	if((ai->class != bi->class)  ||
+	   (ai->flags != bi->flags)  ||
+	   (ai->layer != bi->layer))
 	{
 		return 0;
 	}

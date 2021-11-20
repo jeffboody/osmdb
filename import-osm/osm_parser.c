@@ -1149,10 +1149,16 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 
 	self->state = OSM_STATE_OSM;
 
+	int is_building = self->node_info->flags &
+	                  OSMDB_NODEINFO_FLAG_BUILDING;
+
+	const char* class_name;
+	class_name = osmdb_classCodeToName(self->node_info->class);
+
 	// select nodes when a point and name exists
 	osmdb_styleClass_t* sc;
-	sc = osmdb_style_class(self->style,
-	                       osmdb_classCodeToName(self->node_info->class));
+	sc = osmdb_style_class(self->style, class_name,
+	                       is_building);
 	if(sc && sc->point && (self->tag_name[0] != '\0'))
 	{
 		int min_zoom = sc->point->min_zoom;
@@ -1250,6 +1256,12 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 				   (self->node_info->class == self->tourism_yes))
 				{
 					self->node_info->class = class;
+				}
+
+				// set the building flag
+				if(strstr(atts[j], "building"))
+				{
+					self->node_info->flags |= OSMDB_NODEINFO_FLAG_BUILDING;
 				}
 			}
 			else if(strcmp(atts[j], "name") == 0)
@@ -1614,10 +1626,16 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	int selected = 0;
 	int polygon  = 0;
 
+	int is_building = self->way_info->flags &
+	                  OSMDB_WAYINFO_FLAG_BUILDING;
+
+	const char* class_name;
+	class_name = osmdb_classCodeToName(self->way_info->class);
+
 	// select ways
 	osmdb_styleClass_t* sc;
-	sc = osmdb_style_class(self->style,
-	                       osmdb_classCodeToName(self->way_info->class));
+	sc = osmdb_style_class(self->style, class_name,
+	                       is_building);
 	if(sc)
 	{
 		int has_name = 0;
@@ -1738,6 +1756,12 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 				   (self->way_info->class == self->tourism_yes))
 				{
 					self->way_info->class = class;
+				}
+
+				// set the building flag
+				if(strstr(atts[j], "building"))
+				{
+					self->way_info->flags |= OSMDB_WAYINFO_FLAG_BUILDING;
 				}
 			}
 			else if(strcmp(atts[j], "name") == 0)
@@ -2134,11 +2158,17 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 	int center   = 0;
 	int polygon  = 0;
 
+	int is_building = self->rel_info->flags &
+	                  OSMDB_RELINFO_FLAG_BUILDING;
+
+	const char* class_name;
+	class_name = osmdb_classCodeToName(self->rel_info->class);
+
 	// select relations when a line/poly exists or
 	// when a point and name exists
 	osmdb_styleClass_t* sc;
-	sc = osmdb_style_class(self->style,
-	                       osmdb_classCodeToName(self->rel_info->class));
+	sc = osmdb_style_class(self->style, class_name,
+	                       is_building);
 	if(sc && (sc->line || sc->poly))
 	{
 		if(sc->poly)
@@ -2231,6 +2261,12 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 				   (self->rel_info->class == self->tourism_yes))
 				{
 					self->rel_info->class = class;
+				}
+
+				// set the building flag
+				if(strstr(atts[j], "building"))
+				{
+					self->rel_info->flags |= OSMDB_RELINFO_FLAG_BUILDING;
 				}
 			}
 			else if(strcmp(atts[j], "name") == 0)

@@ -158,9 +158,10 @@ static int osmdb_relFn(void* priv, osmdb_rel_t* rel)
 	ASSERT(rel);
 
 	char* name = osmdb_rel_name(rel);
-	printf("R: type=%i, class=%s, count=%i, name=%s,\n",
-	       rel->type, osmdb_classCodeToName(rel->class),
-	       rel->count, name ? name : "NULL");
+	printf("R: class=%s, flags=0x%X, type=%i, "
+	       "count=%i, name=%s\n",
+	       osmdb_classCodeToName(rel->class), rel->flags,
+	       rel->type, rel->count, name ? name : "NULL");
 	printf("     center={%i,%i}, range={%i,%i,%i,%i}\n",
 	       (int) rel->center.x, (int) rel->center.y,
 	       (int) rel->range.t,  (int) rel->range.l,
@@ -177,11 +178,10 @@ static int osmdb_memberFn(void* priv, osmdb_way_t* way)
 	texgz_tex_t* img = (texgz_tex_t*) priv;
 
 	char* name = osmdb_way_name(way);
-	printf("   M: class=%s, layer=%i, flags=0x%X, "
+	printf("   M: class=%s, flags=0x%X, layer=%i, "
 	       "count=%i, name=%s\n",
-	       osmdb_classCodeToName(way->class),
-	       way->layer, way->flags, way->count,
-	       name ? name : "NULL");
+	       osmdb_classCodeToName(way->class), way->flags,
+	       way->layer, way->count, name ? name : "NULL");
 	printf("      center={%i,%i}, range={%i,%i,%i,%i}\n",
 	       (int) way->center.x, (int) way->center.y,
 	       (int) way->range.t,  (int) way->range.l,
@@ -222,11 +222,10 @@ static int osmdb_wayFn(void* priv, osmdb_way_t* way)
 	texgz_tex_t* img = (texgz_tex_t*) priv;
 
 	char* name = osmdb_way_name(way);
-	printf("W: class=%s, layer=%i, flags=0x%X, "
+	printf("W: class=%s, flags=0x%X, layer=%i, "
 	       "count=%i, name=%s\n",
-	       osmdb_classCodeToName(way->class),
-	       way->layer, way->flags, way->count,
-	       name ? name : "NULL");
+	       osmdb_classCodeToName(way->class), way->flags,
+	       way->layer, way->count, name ? name : "NULL");
 	printf("   center={%i,%i}, range={%i,%i,%i,%i}\n",
 	       (int) way->center.x, (int) way->center.y,
 	       (int) way->range.t,  (int) way->range.l,
@@ -267,9 +266,9 @@ static int osmdb_nodeFn(void* priv, osmdb_node_t* node)
 	texgz_tex_t* img = (texgz_tex_t*) priv;
 
 	char* name = osmdb_node_name(node);
-	printf("N: class=%s, ele=%i, name=%s, pt=%i,%i\n",
-	       osmdb_classCodeToName(node->class), node->ele,
-	       name ? name : "NULL",
+	printf("N: class=%s, flags=0x%X, ele=%i, name=%s, pt=%i,%i\n",
+	       osmdb_classCodeToName(node->class), node->flags,
+	       node->ele, name ? name : "NULL",
 	       (int) node->pt.x, (int) node->pt.y);
 
 	osmdb_draw(img, node->pt.x, node->pt.y);

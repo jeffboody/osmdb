@@ -323,8 +323,9 @@ int osmdb_ostream_beginRel(osmdb_ostream_t* self,
 	{
 		return 0;
 	}
-	rel->type  = rel_info->type;
 	rel->class = rel_info->class;
+	rel->flags = rel_info->flags;
+	rel->type  = rel_info->type;
 	rel->count = 0;
 
 	// initalize center
@@ -426,8 +427,8 @@ int osmdb_ostream_beginWay(osmdb_ostream_t* self,
 		return 0;
 	}
 	way->class = way_info->class;
-	way->layer = way_info->layer;
 	way->flags = way_info->flags | flags;
+	way->layer = way_info->layer;
 	way->count = 0;
 
 	// initalize center
@@ -605,6 +606,7 @@ int osmdb_ostream_addNode(osmdb_ostream_t* self,
 		return 0;
 	}
 	node->class = node_info->class;
+	node->flags = node_info->flags;
 	node->ele   = node_info->ele;
 
 	double lat = node_coord->lat;

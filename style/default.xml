@@ -15,6 +15,7 @@
 	<layer name="motorway" />
 	<layer name="taxiway" />
 	<layer name="runway" />
+	<layer name="building" />
 	<layer name="air" />
 	<layer name="place" />
 
@@ -23,6 +24,9 @@
 	<color name="ltgray"          val="C6C6C6FF" />
 	<color name="gray"            val="7F7F7FFF" />
 	<color name="dkgray"          val="3F3F3FFF" />
+
+	<color name="building:line"   val="3F3F3F7F" />
+	<color name="building:poly"   val="7F7F7F7F" />
 
 	<color name="trunk:text"      val="F48440FF" />
 	<color name="trunk:line"      val="F48440FF" />
@@ -107,11 +111,13 @@
 	<line name="core:special12"    min_zoom="12" color1="core:special"    color2="core:special"    width="2.5" />
 	<line name="core:mineral12"    min_zoom="12" color1="core:mineral"    color2="core:mineral"    width="2.5" />
 	<line name="core:historic12"   min_zoom="12" color1="core:historic"   color2="core:historic"   width="2.5" />
+	<line name="building15"        min_zoom="15" color1="building:line"   color2="dkgray" width="0.25" />
 
-	<poly name="glacier15" min_zoom="15" color="glacier:poly" />
-	<poly name="water9"    min_zoom="9"  color="lake:poly" />
-	<poly name="water12"   min_zoom="12" color="lake:poly" />
-	<poly name="water15"   min_zoom="15" color="lake:poly" />
+	<poly name="glacier15"  min_zoom="15" color="glacier:poly" />
+	<poly name="water9"     min_zoom="9"  color="lake:poly" />
+	<poly name="water12"    min_zoom="12" color="lake:poly" />
+	<poly name="water15"    min_zoom="15" color="lake:poly" />
+	<poly name="building15" min_zoom="15" color="building:poly" />
 
 	<class name="aerialway:cable_car"      layer="ground"      line="aerialway15" />
 	<class name="aerialway:gondola"        layer="air"         line="aerialway15" />
@@ -201,4 +207,5 @@
 	<class name="natural:mud"              point="forest12" />
 	<class name="natural:wetland"          point="forest12" />
 	<class name="natural:valley"           point="forest12" />
+	<class name="building:yes"             layer="building" line="building15" poly="building15" />
 </osmdb>

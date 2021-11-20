@@ -1117,7 +1117,8 @@ void osmdb_style_delete(osmdb_style_t** _self)
 }
 
 osmdb_styleClass_t* osmdb_style_class(osmdb_style_t* self,
-                                      const char* name)
+                                      const char* name,
+                                      int is_building)
 {
 	ASSERT(self);
 	ASSERT(name);
@@ -1126,6 +1127,16 @@ osmdb_styleClass_t* osmdb_style_class(osmdb_style_t* self,
 	if(miter)
 	{
 		return (osmdb_styleClass_t*) cc_map_val(miter);
+	}
+
+	// optionally fall back to building style
+	if(is_building || strstr(name, "building:"))
+	{
+		miter = cc_map_find(self->classes, "building:yes");
+		if(miter)
+		{
+			return (osmdb_styleClass_t*) cc_map_val(miter);
+		}
 	}
 
 	return NULL;

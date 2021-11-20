@@ -27,7 +27,7 @@
 #include <stdint.h>
 
 #define OSMDB_TILE_MAGIC   0xB00D90DB
-#define OSMDB_TILE_VERSION 20210416
+#define OSMDB_TILE_VERSION 20211120
 
 typedef struct
 {
@@ -43,9 +43,12 @@ typedef struct
 	short r;
 } osmdb_range_t;
 
+#define OSMDB_NODE_FLAG_BUILDING 0x0020
+
 typedef struct
 {
 	int class;
+	int flags;
 	int ele;
 
 	osmdb_point_t pt;
@@ -61,18 +64,19 @@ char* osmdb_node_name(osmdb_node_t* self);
 // INNER flag is the osmdb_relData_t role
 // OUTER is the default role
 // other roles are used to define center
-#define OSMDB_WAY_FLAG_FORWARD 0x0001
-#define OSMDB_WAY_FLAG_REVERSE 0x0002
-#define OSMDB_WAY_FLAG_BRIDGE  0x0004
-#define OSMDB_WAY_FLAG_TUNNEL  0x0008
-#define OSMDB_WAY_FLAG_CUTTING 0x0010
-#define OSMDB_WAY_FLAG_INNER   0x1000
+#define OSMDB_WAY_FLAG_FORWARD  0x0001
+#define OSMDB_WAY_FLAG_REVERSE  0x0002
+#define OSMDB_WAY_FLAG_BRIDGE   0x0004
+#define OSMDB_WAY_FLAG_TUNNEL   0x0008
+#define OSMDB_WAY_FLAG_CUTTING  0x0010
+#define OSMDB_WAY_FLAG_BUILDING 0x0020
+#define OSMDB_WAY_FLAG_INNER    0x1000
 
 typedef struct
 {
 	int class;
-	int layer;
 	int flags;
+	int layer;
 
 	osmdb_point_t center;
 	osmdb_range_t range;
@@ -87,10 +91,13 @@ typedef struct
 char*          osmdb_way_name(osmdb_way_t* self);
 osmdb_point_t* osmdb_way_pts(osmdb_way_t* self);
 
+#define OSMDB_REL_FLAG_BUILDING 0x0020
+
 typedef struct
 {
-	int type;
 	int class;
+	int flags;
+	int type;
 
 	osmdb_point_t center;
 	osmdb_range_t range;
