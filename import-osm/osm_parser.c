@@ -574,8 +574,8 @@ osm_parser_parseName(osm_parser_t* self,
 	if(words >= 3)
 	{
 		if((strncmp(word[words - 3].word, "Multi", 256) == 0) &&
-		   (strncmp(word[words - 2].word, "Use", 256) == 0) &&
-		   (strncmp(word[words - 1].word, "Path", 256) == 0))
+		   (strncmp(word[words - 2].word, "Use",   256) == 0) &&
+		   (strncmp(word[words - 1].word, "Path",  256) == 0))
 		{
 			// abreviate Multi Use Path or Multi-Use Path
 			osm_token_t* tmp = &word[words - 3];
@@ -583,6 +583,27 @@ osm_parser_parseName(osm_parser_t* self,
 			snprintf(tmp->abrev, 256, "%s", "MUP");
 			tmp->sep[0] = '\0';
 			words -= 2;
+		}
+		else if((strncmp(word[0].word, "United",  256) == 0) &&
+		        (strncmp(word[1].word, "States",  256) == 0) &&
+		        ((strncmp(word[2].word, "Highway", 256) == 0) ||
+		         (strncmp(word[2].word, "Hwy",     256) == 0)))
+		{
+		    // e.g. United States Highway 6
+		    snprintf(word[0].word,  256, "%s", "US");
+		    snprintf(word[0].abrev, 256, "%s", "US");
+		    snprintf(word[0].sep,   256, "%s", word[2].sep);
+		    word[0].abreviate = 0;
+			words -= 2;
+
+			int i;
+			for(i = 1; i < words; ++i)
+			{
+				snprintf(word[i].word,  256, "%s", word[i + 2].word);
+				snprintf(word[i].abrev, 256, "%s", word[i + 2].abrev);
+				snprintf(word[i].sep,   256, "%s", word[i + 2].sep);
+				word[i].abreviate = word[i + 2].abreviate;
+			}
 		}
 	}
 
@@ -596,7 +617,7 @@ osm_parser_parseName(osm_parser_t* self,
 			words -= 2;
 		}
 		else if((strncmp(word[words - 2].word, "Multiuse", 256) == 0) &&
-		        (strncmp(word[words - 1].word, "Path", 256) == 0))
+		        (strncmp(word[words - 1].word, "Path",     256) == 0))
 		{
 			// abreviate Multiuse Path
 			osm_token_t* tmp = &word[words - 2];
@@ -606,7 +627,7 @@ osm_parser_parseName(osm_parser_t* self,
 			words -= 1;
 		}
 		else if((strncmp(word[words - 2].word, "Trail", 256) == 0) &&
-		        (strncmp(word[words - 1].word, "Head", 256) == 0))
+		        (strncmp(word[words - 1].word, "Head",  256) == 0))
 		{
 			// abreviate Trail Head (incorrect spelling)
 			osm_token_t* tmp = &word[words - 2];
@@ -615,6 +636,45 @@ osm_parser_parseName(osm_parser_t* self,
 			tmp->sep[0] = '\0';
 			tmp->sep[1] = '\0';
 			words -= 1;
+		}
+		else if((strncmp(word[0].word, "County", 256) == 0) &&
+		        (strncmp(word[1].word, "Road",   256) == 0))
+		{
+		    // e.g. County Road 11D
+		    snprintf(word[0].word,  256, "%s", "CR");
+		    snprintf(word[0].abrev, 256, "%s", "CR");
+		    snprintf(word[0].sep,   256, "%s", word[1].sep);
+		    word[0].abreviate = 0;
+			words -= 1;
+
+			int i;
+			for(i = 1; i < words; ++i)
+			{
+				snprintf(word[i].word,  256, "%s", word[i + 1].word);
+				snprintf(word[i].abrev, 256, "%s", word[i + 1].abrev);
+				snprintf(word[i].sep,   256, "%s", word[i + 1].sep);
+				word[i].abreviate = word[i + 1].abreviate;
+			}
+		}
+		else if((strncmp(word[0].word, "US",      256) == 0) &&
+		        ((strncmp(word[1].word, "Highway", 256) == 0) ||
+		         (strncmp(word[1].word, "Hwy",     256) == 0)))
+		{
+		    // e.g. US Highway 6
+		    snprintf(word[0].word,  256, "%s", "US");
+		    snprintf(word[0].abrev, 256, "%s", "US");
+		    snprintf(word[0].sep,   256, "%s", word[1].sep);
+		    word[0].abreviate = 0;
+			words -= 1;
+
+			int i;
+			for(i = 1; i < words; ++i)
+			{
+				snprintf(word[i].word,  256, "%s", word[i + 1].word);
+				snprintf(word[i].abrev, 256, "%s", word[i + 1].abrev);
+				snprintf(word[i].sep,   256, "%s", word[i + 1].sep);
+				word[i].abreviate = word[i + 1].abreviate;
+			}
 		}
 	}
 
