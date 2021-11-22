@@ -35,6 +35,7 @@ int         osmdb_classNameToCode(const char* name);
 int         osmdb_classKVToCode(const char* k, const char* v);
 const char* osmdb_classCodeToName(int code);
 int         osmdb_classCodeToRank(int code);
+int         osmdb_classIsBuilding(int code);
 int         osmdb_classCount(void);
 
 // relation tag type conversions

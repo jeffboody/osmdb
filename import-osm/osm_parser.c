@@ -1149,16 +1149,22 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 
 	self->state = OSM_STATE_OSM;
 
-	int is_building = self->node_info->flags &
-	                  OSMDB_NODEINFO_FLAG_BUILDING;
-
 	const char* class_name;
 	class_name = osmdb_classCodeToName(self->node_info->class);
 
 	// select nodes when a point and name exists
 	osmdb_styleClass_t* sc;
-	sc = osmdb_style_class(self->style, class_name,
-	                       is_building);
+	sc = osmdb_style_class(self->style, class_name);
+	if((sc == NULL) || (sc->point == NULL))
+	{
+		int is_bldg = self->node_info->flags &
+		              OSMDB_NODEINFO_FLAG_BUILDING;
+		if(is_bldg)
+		{
+			sc = osmdb_style_class(self->style, "building:yes");
+		}
+	}
+
 	if(sc && sc->point && (self->tag_name[0] != '\0'))
 	{
 		int min_zoom = sc->point->min_zoom;
@@ -1240,10 +1246,15 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 			// iconv value
 			osm_parser_iconv(self, atts[n], val);
 
+			// set the building flag
+			if(strcmp(atts[j], "building") == 0)
+			{
+				self->node_info->flags |= OSMDB_NODEINFO_FLAG_BUILDING;
+			}
+
 			char name[256];
 			char abrev[256];
-
-			int class = osm_parser_findClass(self, atts[j], val);
+			int  class = osm_parser_findClass(self, atts[j], val);
 			if(class)
 			{
 				// set or overwrite generic class
@@ -1253,15 +1264,10 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 				   (self->node_info->class == self->office_yes)   ||
 				   (self->node_info->class == self->historic_yes) ||
 				   (self->node_info->class == self->man_made_yes) ||
-				   (self->node_info->class == self->tourism_yes))
+				   (self->node_info->class == self->tourism_yes)  ||
+				   osmdb_classIsBuilding(self->node_info->class))
 				{
 					self->node_info->class = class;
-				}
-
-				// set the building flag
-				if(strstr(atts[j], "building"))
-				{
-					self->node_info->flags |= OSMDB_NODEINFO_FLAG_BUILDING;
 				}
 			}
 			else if(strcmp(atts[j], "name") == 0)
@@ -1613,6 +1619,11 @@ osm_parser_insertWay(osm_parser_t* self,
 	return 1;
 }
 
+static int min(int a, int b)
+{
+	return (b < a) ? b : a;
+}
+
 static int
 osm_parser_endOsmWay(osm_parser_t* self, int line,
                      float progress, const char* content)
@@ -1626,17 +1637,23 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	int selected = 0;
 	int polygon  = 0;
 
-	int is_building = self->way_info->flags &
-	                  OSMDB_WAYINFO_FLAG_BUILDING;
-
 	const char* class_name;
 	class_name = osmdb_classCodeToName(self->way_info->class);
 
 	// select ways
-	osmdb_styleClass_t* sc;
-	sc = osmdb_style_class(self->style, class_name,
-	                       is_building);
-	if(sc)
+	osmdb_styleClass_t* sc1;
+	osmdb_styleClass_t* sc2 = NULL;
+	sc1 = osmdb_style_class(self->style, class_name);
+
+	int is_bldg = self->way_info->flags &
+	              OSMDB_WAYINFO_FLAG_BUILDING;
+	if(is_bldg)
+	{
+		sc2 = osmdb_style_class(self->style, "building:yes");
+	}
+
+	int min_zoom = 999;
+	if(sc1 || sc2)
 	{
 		int has_name = 0;
 		if((self->tag_name[0] != '\0') ||
@@ -1647,22 +1664,39 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 
 		// select the way as a line
 		// when named or when the named mode is not set
-		if(sc->line &&
-		   (has_name ||
-		    ((sc->line->mode & OSMDB_STYLE_MODE_NAMED) == 0)))
+		if(sc1 &&
+		   (sc1->line &&
+		    (has_name ||
+		     ((sc1->line->mode & OSMDB_STYLE_MODE_NAMED) == 0))))
 		{
 			selected = 1;
+			min_zoom = min(min_zoom, osmdb_styleClass_minZoom(sc1));
+		}
+		else if(sc2 &&
+		        (sc2->line &&
+		         (has_name ||
+		          ((sc2->line->mode & OSMDB_STYLE_MODE_NAMED) == 0))))
+		{
+			selected = 1;
+			min_zoom = min(min_zoom, osmdb_styleClass_minZoom(sc2));
 		}
 
 		// select the way as a polygon
-		if(sc->poly)
+		if(sc1 && sc1->poly)
 		{
 			polygon  = 1;
 			selected = 1;
+			min_zoom = min(min_zoom, osmdb_styleClass_minZoom(sc1));
+		}
+		else if(sc2 && sc2->poly)
+		{
+			polygon  = 1;
+			selected = 1;
+			min_zoom = min(min_zoom, osmdb_styleClass_minZoom(sc2));
 		}
 
 		// select the way as a point when named
-		if(sc->point && has_name)
+		if(sc1 && sc1->point && has_name)
 		{
 			// set the center flag when not selected as a line/poly
 			if(selected == 0)
@@ -1671,6 +1705,18 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 			}
 
 			selected = 1;
+			min_zoom = min(min_zoom, osmdb_styleClass_minZoom(sc1));
+		}
+		else if(sc2 && sc2->point && has_name)
+		{
+			// set the center flag when not selected as a line/poly
+			if(selected == 0)
+			{
+				center = 1;
+			}
+
+			selected = 1;
+			min_zoom = min(min_zoom, osmdb_styleClass_minZoom(sc2));
 		}
 	}
 
@@ -1699,7 +1745,6 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	}
 
 	// always add ways since they may be transitively selected
-	int min_zoom = sc ? osmdb_styleClass_minZoom(sc) : 999;
 	if(osm_parser_insertWay(self, center, polygon,
 	                        selected, min_zoom) == 0)
 	{
@@ -1740,10 +1785,15 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 			// iconv value
 			osm_parser_iconv(self, atts[n], val);
 
+			// set the building flag
+			if(strcmp(atts[j], "building") == 0)
+			{
+				self->way_info->flags |= OSMDB_WAYINFO_FLAG_BUILDING;
+			}
+
 			char name[256];
 			char abrev[256];
-
-			int class = osm_parser_findClass(self, atts[j], val);
+			int  class = osm_parser_findClass(self, atts[j], val);
 			if(class)
 			{
 				// set or overwrite generic class
@@ -1753,15 +1803,10 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 				   (self->way_info->class == self->office_yes)   ||
 				   (self->way_info->class == self->historic_yes) ||
 				   (self->way_info->class == self->man_made_yes) ||
-				   (self->way_info->class == self->tourism_yes))
+				   (self->way_info->class == self->tourism_yes)  ||
+				   osmdb_classIsBuilding(self->way_info->class))
 				{
 					self->way_info->class = class;
-				}
-
-				// set the building flag
-				if(strstr(atts[j], "building"))
-				{
-					self->way_info->flags |= OSMDB_WAYINFO_FLAG_BUILDING;
 				}
 			}
 			else if(strcmp(atts[j], "name") == 0)
@@ -2158,30 +2203,54 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 	int center   = 0;
 	int polygon  = 0;
 
-	int is_building = self->rel_info->flags &
-	                  OSMDB_RELINFO_FLAG_BUILDING;
-
 	const char* class_name;
 	class_name = osmdb_classCodeToName(self->rel_info->class);
 
 	// select relations when a line/poly exists or
 	// when a point and name exists
-	osmdb_styleClass_t* sc;
-	sc = osmdb_style_class(self->style, class_name,
-	                       is_building);
-	if(sc && (sc->line || sc->poly))
+	osmdb_styleClass_t* sc1;
+	osmdb_styleClass_t* sc2 = NULL;
+	sc1 = osmdb_style_class(self->style, class_name);
+
+	int is_bldg = self->rel_info->flags &
+	              OSMDB_RELINFO_FLAG_BUILDING;
+	if(is_bldg)
 	{
-		if(sc->poly)
+		sc2 = osmdb_style_class(self->style, "building:yes");
+	}
+
+	int min_zoom = 999;
+	if(sc1 && (sc1->line || sc1->poly))
+	{
+		if(sc1->poly)
 		{
 			polygon = 1;
 		}
 
 		selected = 1;
+		min_zoom = min(min_zoom, osmdb_styleClass_minZoom(sc1));
 	}
-	else if(sc && sc->point && (self->tag_name[0] != '\0'))
+	else if(sc2 && (sc2->line || sc2->poly))
+	{
+		if(sc2->poly)
+		{
+			polygon = 1;
+		}
+
+		selected = 1;
+		min_zoom = min(min_zoom, osmdb_styleClass_minZoom(sc2));
+	}
+	else if(sc1 && sc1->point && (self->tag_name[0] != '\0'))
 	{
 		selected = 1;
 		center   = 1;
+		min_zoom = min(min_zoom, osmdb_styleClass_minZoom(sc1));
+	}
+	else if(sc2 && sc2->point && (self->tag_name[0] != '\0'))
+	{
+		selected = 1;
+		center   = 1;
+		min_zoom = min(min_zoom, osmdb_styleClass_minZoom(sc2));
 	}
 
 	// discard relations when not selected
@@ -2204,7 +2273,6 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 		                      self->tag_abrev);
 	}
 
-	int min_zoom = sc ? osmdb_styleClass_minZoom(sc) : 999;
 	if(osm_parser_insertRel(self, center,
 	                        polygon, min_zoom) == 0)
 	{
@@ -2245,10 +2313,15 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 			// iconv value
 			osm_parser_iconv(self, atts[n], val);
 
+			// set the building flag
+			if(strcmp(atts[j], "building") == 0)
+			{
+				self->rel_info->flags |= OSMDB_RELINFO_FLAG_BUILDING;
+			}
+
 			char name[256];
 			char abrev[256];
-
-			int class = osm_parser_findClass(self, atts[j], val);
+			int  class = osm_parser_findClass(self, atts[j], val);
 			if(class)
 			{
 				// set or overwrite generic class
@@ -2258,15 +2331,10 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 				   (self->rel_info->class == self->office_yes)   ||
 				   (self->rel_info->class == self->historic_yes) ||
 				   (self->rel_info->class == self->man_made_yes) ||
-				   (self->rel_info->class == self->tourism_yes))
+				   (self->rel_info->class == self->tourism_yes)  ||
+				   osmdb_classIsBuilding(self->rel_info->class))
 				{
 					self->rel_info->class = class;
-				}
-
-				// set the building flag
-				if(strstr(atts[j], "building"))
-				{
-					self->rel_info->flags |= OSMDB_RELINFO_FLAG_BUILDING;
 				}
 			}
 			else if(strcmp(atts[j], "name") == 0)
