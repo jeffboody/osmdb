@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <osmdb>
+	<layer name="place:low" />
 	<layer name="core" />
 	<layer name="water" />
 	<layer name="ground" />
@@ -17,7 +18,7 @@
 	<layer name="runway" />
 	<layer name="building" />
 	<layer name="air" />
-	<layer name="place" />
+	<layer name="place:high" />
 
 	<color name="white"           val="FFFFFFFF" />
 	<color name="black"           val="000000FF" />
@@ -25,6 +26,7 @@
 	<color name="gray"            val="7F7F7FFF" />
 	<color name="dkgray"          val="3F3F3FFF" />
 
+	<color name="building:text"   val="EEDFCCFF" />
 	<color name="building:line"   val="3F3F3F7F" />
 	<color name="building:poly"   val="7F7F7F7F" />
 
@@ -48,6 +50,7 @@
 	<color name="peak:text"       val="66BD63FF" />
 	<color name="peak:point"      val="66BD63FF" />
 
+	<color name="airport"         val="8DA0CBFF" />
 	<color name="runway:line"     val="8DA0CBFF" />
 	<color name="river:line"      val="4788D9BF" />
 	<color name="lake:text"       val="B6CDEDFF" />
@@ -70,19 +73,27 @@
 	<point name="town12"      min_zoom="12" text_scale="1.10f" text_color1="city:text"      text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
 	<point name="village13"   min_zoom="13" text_scale="1.05f" text_color1="city:text"      text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
 	<point name="water15"     min_zoom="15" text_scale="1.00f" text_color1="lake:text"      text_color2="black" />
-	<point name="water17"     min_zoom="15" text_scale="1.00f" text_color1="lake:text"      text_color2="black" />
 	<point name="glacier15"   min_zoom="15" text_scale="1.00f" text_color1="glacier:text"   text_color2="black" />
 	<point name="outdoor16"   min_zoom="15" text_scale="1.00f" text_color1="peak:text"      text_color2="black" />
 	<point name="forest12"    min_zoom="12" text_scale="1.00f" text_color1="peak:text"      text_color2="black" />
-	<point name="trail17"     min_zoom="15" text_scale="0.95f" text_color1="trail:text"     text_color2="black" />
-	<point name="track17"     min_zoom="15" text_scale="0.95f" text_color1="track:text"     text_color2="black" />
+	<point name="trail15"     min_zoom="15" text_scale="0.95f" text_color1="trail:text"     text_color2="black" />
+	<point name="track15"     min_zoom="15" text_scale="0.95f" text_color1="track:text"     text_color2="black" />
 	<point name="core12"      min_zoom="12" text_scale="1.00f" text_color1="core:text"      text_color2="black" flags="marker:show,ele:show" />
-	<point name="default17"   min_zoom="15" text_scale="0.95f" text_color1="white"          text_color2="black" />
-	<point name="motorway17"  min_zoom="15" text_scale="1.15f" text_color1="motorway:text"  text_color2="black" />
-	<point name="trunk17"     min_zoom="15" text_scale="1.10f" text_color1="trunk:text"     text_color2="black" />
-	<point name="primary17"   min_zoom="15" text_scale="1.10f" text_color1="primary:text"   text_color2="black" />
-	<point name="secondary17" min_zoom="15" text_scale="1.05f" text_color1="secondary:text" text_color2="black" />
-	<point name="tertiary17"  min_zoom="15" text_scale="1.05f" text_color1="tertiary:text"  text_color2="black" />
+	<point name="road15"      min_zoom="15" text_scale="0.95f" text_color1="white"          text_color2="black" />
+	<point name="waypoint15"  min_zoom="15" text_scale="0.95f" text_color1="white"          text_color2="black" />
+	<point name="motorway15"  min_zoom="15" text_scale="1.15f" text_color1="motorway:text"  text_color2="black" />
+	<point name="trunk15"     min_zoom="15" text_scale="1.10f" text_color1="trunk:text"     text_color2="black" />
+	<point name="primary15"   min_zoom="15" text_scale="1.10f" text_color1="primary:text"   text_color2="black" />
+	<point name="secondary15" min_zoom="15" text_scale="1.05f" text_color1="secondary:text" text_color2="black" />
+	<point name="tertiary15"  min_zoom="15" text_scale="1.05f" text_color1="tertiary:text"  text_color2="black" />
+	<point name="airport15"   min_zoom="15" text_scale="1.05f" text_color1="airport"        text_color2="black" marker_color1="airport" marker_color2="black" flags="marker:show" />
+	<point name="amenity15"   min_zoom="15" text_scale="0.95f" text_color1="building:text"  text_color2="black" marker_color1="building:text" marker_color2="black" />
+	<point name="craft15"     min_zoom="15" text_scale="0.95f" text_color1="building:text"  text_color2="black" marker_color1="building:text" marker_color2="black" />
+	<point name="leisure15"   min_zoom="15" text_scale="0.95f" text_color1="building:text"  text_color2="black" marker_color1="building:text" marker_color2="black" />
+	<point name="office15"    min_zoom="15" text_scale="0.95f" text_color1="building:text"  text_color2="black" marker_color1="building:text" marker_color2="black" />
+	<point name="shop15"      min_zoom="15" text_scale="0.95f" text_color1="building:text"  text_color2="black" marker_color1="building:text" marker_color2="black" />
+	<point name="sport15"     min_zoom="15" text_scale="0.95f" text_color1="building:text"  text_color2="black" marker_color1="building:text" marker_color2="black" />
+	<point name="tourism15"   min_zoom="15" text_scale="0.95f" text_color1="building:text"  text_color2="black" marker_color1="building:text" marker_color2="black" />
 
 	<line name="aerialway15"       min_zoom="15" mode="dashed,striped" color1="ltgray"  color2="white" />
 	<line name="motorway9"         min_zoom="9"  mode="striped" color1="motorway:line"  color2="dkgray" width="3.5" />
@@ -119,93 +130,546 @@
 	<poly name="water15"    min_zoom="15" color="lake:poly" />
 	<poly name="building15" min_zoom="15" color="building:poly" />
 
-	<class name="aerialway:cable_car"      layer="ground"      line="aerialway15" />
-	<class name="aerialway:gondola"        layer="air"         line="aerialway15" />
-	<class name="aerialway:chair_lift"     layer="air"         line="aerialway15" />
-	<class name="aerialway:mixed_lift"     layer="ground"      line="aerialway15" />
-	<class name="aerialway:drag_lift"      layer="ground"      line="aerialway15" />
-	<class name="aerialway:t-bar"          layer="ground"      line="aerialway15" />
-	<class name="aerialway:j-bar"          layer="ground"      line="aerialway15" />
-	<class name="aerialway:platter"        layer="ground"      line="aerialway15" />
-	<class name="aerialway:rope_tow"       layer="ground"      line="aerialway15" />
-	<class name="aerialway:magic_carpet"   layer="ground"      line="aerialway15" />
-	<class name="aerialway:zip_line"       layer="air"         line="aerialway15" />
-	<class name="aerialway:canopy"         layer="air"         line="aerialway15" />
-	<class name="aeroway:runway"           layer="runway"      line="runway15" />
-	<class name="aeroway:taxilane"         layer="taxiway"     line="taxiway15" />
-	<class name="aeroway:taxiway"          layer="taxiway"     line="taxiway15" />
-	<class name="highway:motorway"         layer="motorway"    point="motorway17"  line="motorway9" />
-	<class name="highway:trunk"            layer="trunk"       point="trunk17"     line="trunk9" />
-	<class name="highway:primary"          layer="primary"     point="primary17"   line="primary9" />
-	<class name="highway:secondary"        layer="secondary"   point="secondary17" line="secondary12" />
-	<class name="highway:tertiary"         layer="tertiary"    point="tertiary17"  line="tertiary12" />
-	<class name="highway:unclassified"     layer="residential" point="default17"   line="road15" />
-	<class name="highway:service"          layer="residential" point="default17"   line="service15" />
-	<class name="highway:residential"      layer="residential" point="default17"   line="road15" />
-	<class name="highway:motorway_link"    layer="link"        line="motorway_link15" />
-	<class name="highway:trunk_link"       layer="link"        line="trunk_link15" />
-	<class name="highway:primary_link"     layer="link"        line="primary_link15" />
-	<class name="highway:secondary_link"   layer="link"        line="secondary_link15" />
-	<class name="highway:tertiary_link"    layer="link"        line="tertiary_link15" />
-	<class name="highway:living_street"    layer="trail"       point="trail17"   line="pedestrian15" />
-	<class name="highway:pedestrian"       layer="trail"       point="trail17"   line="pedestrian15" />
-	<class name="highway:track"            layer="track"       point="track17"   line="track15" />
-	<class name="highway:escape"           layer="ground"      point="default17" line="road15" />
-	<class name="highway:raceway"          layer="ground"      point="default17" line="road15" />
-	<class name="highway:road"             layer="residential" point="default17" line="road15" />
-	<class name="highway:footway"          layer="trail"       point="trail17"   line="footway15" />
-	<class name="highway:bridleway"        layer="trail"       point="trail17"   line="trail15" />
-	<class name="highway:steps"            layer="trail"       point="trail17"   line="footway15" />
-	<class name="highway:path"             layer="trail"       point="trail17"   line="trail15" />
-	<class name="highway:cycleway"         layer="trail"       point="trail17"   line="trail15" />
-	<class name="natural:water"            layer="water"       point="water15"   poly="water9" />
-	<class name="natural:bay"              layer="water"       point="water15"   poly="water9" />
-	<class name="natural:glacier"          layer="water"       point="glacier15" poly="glacier15" />
-	<class name="landuse:reservoir"        layer="water"       point="water15"   poly="water9" />
-	<class name="landuse:salt_pond"        layer="water"       point="water15"   poly="water15" />
-	<class name="landuse:basin"            layer="water"       point="water15"   poly="water9" />
-	<class name="waterway:river"           layer="water"       point="water17"   line="river12" />
-	<class name="waterway:riverbank"       layer="water"       point="water17"   poly="water12" />
-	<class name="waterway:stream"          layer="water"       point="water17"   line="stream15" />
-	<class name="waterway:canal"           layer="water"       line="stream15" />
-	<class name="waterway:ditch"           layer="water"       line="stream15" />
-	<class name="waterway:drain"           layer="water"       line="stream15" />
-	<class name="railway:funicular"        layer="railway"     line="railway15" />
-	<class name="railway:light_rail"       layer="railway"     line="railway15" />
-	<class name="railway:monorail"         layer="railway"     line="railway15" />
-	<class name="railway:narrow_gauge"     layer="railway"     line="railway15" />
-	<class name="railway:preserved"        layer="railway"     line="railway15" />
-	<class name="railway:rail"             layer="railway"     line="railway15" />
-	<class name="railway:subway"           layer="railway"     line="railway15" />
-	<class name="railway:tram"             layer="railway"     line="railway15" />
-	<class name="core:wilderness"          layer="core"        line="core:wilderness12" point="core12" />
-	<class name="core:recreation"          layer="core"        line="core:recreation12" point="core12" />
-	<class name="core:special"             layer="core"        line="core:special12"    point="core12" />
-	<class name="core:mineral"             layer="core"        line="core:mineral12"    point="core12" />
-	<class name="core:historic"            layer="core"        line="core:historic12"   point="core12" />
-	<class name="default:waypoint"         point="default17" />
-	<class name="natural:peak"             layer="place" point="peak15" />
-	<class name="natural:volcano"          layer="place" point="peak15" />
-	<class name="natural:saddle"           layer="place" point="saddle15" />
-	<class name="place:city"               layer="place" point="city9" />
-	<class name="place:town"               layer="place" point="town12" />
-	<class name="place:village"            layer="place" point="village13" />
-	<class name="leisure:disc_golf_course" point="outdoor16" />
-	<class name="leisure:dog_park"         point="outdoor16" />
-	<class name="leisure:nature_reserve"   point="outdoor16" />
-	<class name="leisure:park"             point="outdoor16" />
-	<class name="landuse:forest"           point="forest12" />
-	<class name="natural:wood"             point="forest12" />
-	<class name="natural:scrub"            point="forest12" />
-	<class name="natural:heath"            point="forest12" />
-	<class name="natural:grassland"        point="forest12" />
-	<class name="natural:fell"             point="forest12" />
-	<class name="natural:bare_rock"        point="forest12" />
-	<class name="natural:scree"            point="forest12" />
-	<class name="natural:shingle"          point="forest12" />
-	<class name="natural:sand"             point="forest12" />
-	<class name="natural:mud"              point="forest12" />
-	<class name="natural:wetland"          point="forest12" />
-	<class name="natural:valley"           point="forest12" />
-	<class name="building:yes"             layer="building" line="building15" poly="building15" />
+	<class name="aerialway:cable_car"              layer="ground"      line="aerialway15" />
+	<class name="aerialway:gondola"                layer="air"         line="aerialway15" />
+	<class name="aerialway:chair_lift"             layer="air"         line="aerialway15" />
+	<class name="aerialway:mixed_lift"             layer="ground"      line="aerialway15" />
+	<class name="aerialway:drag_lift"              layer="ground"      line="aerialway15" />
+	<class name="aerialway:t-bar"                  layer="ground"      line="aerialway15" />
+	<class name="aerialway:j-bar"                  layer="ground"      line="aerialway15" />
+	<class name="aerialway:platter"                layer="ground"      line="aerialway15" />
+	<class name="aerialway:rope_tow"               layer="ground"      line="aerialway15" />
+	<class name="aerialway:magic_carpet"           layer="ground"      line="aerialway15" />
+	<class name="aerialway:zip_line"               layer="air"         line="aerialway15" />
+	<class name="aerialway:canopy"                 layer="air"         line="aerialway15" />
+	<class name="aeroway:runway"                   layer="runway"      line="runway15" />
+	<class name="aeroway:taxilane"                 layer="taxiway"     line="taxiway15" />
+	<class name="aeroway:taxiway"                  layer="taxiway"     line="taxiway15" />
+	<class name="highway:motorway"                 layer="motorway"    point="motorway15"  line="motorway9" />
+	<class name="highway:trunk"                    layer="trunk"       point="trunk15"     line="trunk9" />
+	<class name="highway:primary"                  layer="primary"     point="primary15"   line="primary9" />
+	<class name="highway:secondary"                layer="secondary"   point="secondary15" line="secondary12" />
+	<class name="highway:tertiary"                 layer="tertiary"    point="tertiary15"  line="tertiary12" />
+	<class name="highway:unclassified"             layer="residential" point="road15"      line="road15" />
+	<class name="highway:service"                  layer="residential" point="road15"      line="service15" />
+	<class name="highway:residential"              layer="residential" point="road15"      line="road15" />
+	<class name="highway:motorway_link"            layer="link"        line="motorway_link15" />
+	<class name="highway:trunk_link"               layer="link"        line="trunk_link15" />
+	<class name="highway:primary_link"             layer="link"        line="primary_link15" />
+	<class name="highway:secondary_link"           layer="link"        line="secondary_link15" />
+	<class name="highway:tertiary_link"            layer="link"        line="tertiary_link15" />
+	<class name="highway:living_street"            layer="trail"       point="trail15"   line="pedestrian15" />
+	<class name="highway:pedestrian"               layer="trail"       point="trail15"   line="pedestrian15" />
+	<class name="highway:track"                    layer="track"       point="track15"   line="track15" />
+	<class name="highway:escape"                   layer="ground"      point="road15"    line="road15" />
+	<class name="highway:raceway"                  layer="ground"      point="road15"    line="road15" />
+	<class name="highway:road"                     layer="residential" point="road15"    line="road15" />
+	<class name="highway:footway"                  layer="trail"       point="trail15"   line="footway15" />
+	<class name="highway:bridleway"                layer="trail"       point="trail15"   line="trail15" />
+	<class name="highway:steps"                    layer="trail"       point="trail15"   line="footway15" />
+	<class name="highway:path"                     layer="trail"       point="trail15"   line="trail15" />
+	<class name="highway:cycleway"                 layer="trail"       point="trail15"   line="trail15" />
+	<class name="natural:water"                    layer="water"       point="water15"   poly="water9" />
+	<class name="natural:bay"                      layer="water"       point="water15"   poly="water9" />
+	<class name="natural:glacier"                  layer="water"       point="glacier15" poly="glacier15" />
+	<class name="landuse:reservoir"                layer="water"       point="water15"   poly="water9" />
+	<class name="landuse:salt_pond"                layer="water"       point="water15"   poly="water15" />
+	<class name="landuse:basin"                    layer="water"       point="water15"   poly="water9" />
+	<class name="waterway:river"                   layer="water"       point="water15"   line="river12" />
+	<class name="waterway:riverbank"               layer="water"       point="water15"   poly="water12" />
+	<class name="waterway:stream"                  layer="water"       point="water15"   line="stream15" />
+	<class name="waterway:canal"                   layer="water"       line="stream15" />
+	<class name="waterway:ditch"                   layer="water"       line="stream15" />
+	<class name="waterway:drain"                   layer="water"       line="stream15" />
+	<class name="railway:funicular"                layer="railway"     line="railway15" />
+	<class name="railway:light_rail"               layer="railway"     line="railway15" />
+	<class name="railway:monorail"                 layer="railway"     line="railway15" />
+	<class name="railway:narrow_gauge"             layer="railway"     line="railway15" />
+	<class name="railway:preserved"                layer="railway"     line="railway15" />
+	<class name="railway:rail"                     layer="railway"     line="railway15" />
+	<class name="railway:subway"                   layer="railway"     line="railway15" />
+	<class name="railway:tram"                     layer="railway"     line="railway15" />
+	<class name="core:wilderness"                  layer="core"        line="core:wilderness12" point="core12" />
+	<class name="core:recreation"                  layer="core"        line="core:recreation12" point="core12" />
+	<class name="core:special"                     layer="core"        line="core:special12"    point="core12" />
+	<class name="core:mineral"                     layer="core"        line="core:mineral12"    point="core12" />
+	<class name="core:historic"                    layer="core"        line="core:historic12"   point="core12" />
+	<class name="default:waypoint"                 layer="place:high"  point="waypoint15" />
+	<class name="natural:peak"                     layer="place:high"  point="peak15" />
+	<class name="natural:volcano"                  layer="place:high"  point="peak15" />
+	<class name="natural:saddle"                   layer="place:high"  point="saddle15" />
+	<class name="place:city"                       layer="place:high"  point="city9" />
+	<class name="place:town"                       layer="place:high"  point="town12" />
+	<class name="place:village"                    layer="place:high"  point="village13" />
+	<class name="leisure:disc_golf_course"         layer="place:low"   point="outdoor16" />
+	<class name="leisure:dog_park"                 layer="place:low"   point="outdoor16" />
+	<class name="leisure:nature_reserve"           layer="place:high"  point="outdoor16" />
+	<class name="leisure:park"                     layer="place:high"  point="outdoor16" />
+	<class name="landuse:forest"                   layer="place:high"  point="forest12" />
+	<class name="natural:wood"                     layer="place:high"  point="forest12" />
+	<class name="natural:scrub"                    layer="place:high"  point="forest12" />
+	<class name="natural:heath"                    layer="place:high"  point="forest12" />
+	<class name="natural:grassland"                layer="place:high"  point="forest12" />
+	<class name="natural:fell"                     layer="place:high"  point="forest12" />
+	<class name="natural:bare_rock"                layer="place:high"  point="forest12" />
+	<class name="natural:scree"                    layer="place:high"  point="forest12" />
+	<class name="natural:shingle"                  layer="place:high"  point="forest12" />
+	<class name="natural:sand"                     layer="place:high"  point="forest12" />
+	<class name="natural:mud"                      layer="place:high"  point="forest12" />
+	<class name="natural:wetland"                  layer="place:high"  point="forest12" />
+	<class name="natural:valley"                   layer="place:high"  point="forest12" />
+	<class name="aeroway:aerodrome"                layer="place:high"  point="airport15" />
+	<class name="aeroway:helipad"                  layer="place:high"  point="airport15" />
+	<class name="amenity:bar"                      layer="place:low"   point="amenity15" />
+	<class name="amenity:bbq"                      layer="place:low"   point="amenity15" />
+	<class name="amenity:biergarten"               layer="place:low"   point="amenity15" />
+	<class name="amenity:cafe"                     layer="place:low"   point="amenity15" />
+	<class name="amenity:fast_food"                layer="place:low"   point="amenity15" />
+	<class name="amenity:food_court"               layer="place:low"   point="amenity15" />
+	<class name="amenity:ice_cream"                layer="place:low"   point="amenity15" />
+	<class name="amenity:pub"                      layer="place:low"   point="amenity15" />
+	<class name="amenity:restaurant"               layer="place:low"   point="amenity15" />
+	<class name="amenity:college"                  layer="place:low"   point="amenity15" />
+	<class name="amenity:kindergarten"             layer="place:low"   point="amenity15" />
+	<class name="amenity:library"                  layer="place:low"   point="amenity15" />
+	<class name="amenity:archive"                  layer="place:low"   point="amenity15" />
+	<class name="amenity:school"                   layer="place:low"   point="amenity15" />
+	<class name="amenity:music_school"             layer="place:low"   point="amenity15" />
+	<class name="amenity:driving_school"           layer="place:low"   point="amenity15" />
+	<class name="amenity:language_school"          layer="place:low"   point="amenity15" />
+	<class name="amenity:university"               layer="place:low"   point="amenity15" />
+	<class name="amenity:research_institute"       layer="place:low"   point="amenity15" />
+	<class name="amenity:boat_rental"              layer="place:low"   point="amenity15" />
+	<class name="amenity:bus_station"              layer="place:low"   point="amenity15" />
+	<class name="amenity:car_rental"               layer="place:low"   point="amenity15" />
+	<class name="amenity:car_wash"                 layer="place:low"   point="amenity15" />
+	<class name="amenity:ferry_terminal"           layer="place:low"   point="amenity15" />
+	<class name="amenity:fuel"                     layer="place:low"   point="amenity15" />
+	<class name="amenity:bank"                     layer="place:low"   point="amenity15" />
+	<class name="amenity:clinic"                   layer="place:low"   point="amenity15" />
+	<class name="amenity:dentist"                  layer="place:low"   point="amenity15" />
+	<class name="amenity:doctors"                  layer="place:low"   point="amenity15" />
+	<class name="amenity:hospital"                 layer="place:low"   point="amenity15" />
+	<class name="amenity:nursing_home"             layer="place:low"   point="amenity15" />
+	<class name="amenity:pharmacy"                 layer="place:low"   point="amenity15" />
+	<class name="amenity:social_facility"          layer="place:low"   point="amenity15" />
+	<class name="amenity:veterinary"               layer="place:low"   point="amenity15" />
+	<class name="amenity:arts_centre"              layer="place:low"   point="amenity15" />
+	<class name="amenity:casino"                   layer="place:low"   point="amenity15" />
+	<class name="amenity:cinema"                   layer="place:low"   point="amenity15" />
+	<class name="amenity:community_centre"         layer="place:low"   point="amenity15" />
+	<class name="amenity:nightclub"                layer="place:low"   point="amenity15" />
+	<class name="amenity:planetarium"              layer="place:low"   point="amenity15" />
+	<class name="amenity:social_centre"            layer="place:low"   point="amenity15" />
+	<class name="amenity:studio"                   layer="place:low"   point="amenity15" />
+	<class name="amenity:theatre"                  layer="place:low"   point="amenity15" />
+	<class name="amenity:animal_boarding"          layer="place:low"   point="amenity15" />
+	<class name="amenity:animal_shelter"           layer="place:low"   point="amenity15" />
+	<class name="amenity:courthouse"               layer="place:low"   point="amenity15" />
+	<class name="amenity:coworking_space"          layer="place:low"   point="amenity15" />
+	<class name="amenity:crematorium"              layer="place:low"   point="amenity15" />
+	<class name="amenity:crypt"                    layer="place:low"   point="amenity15" />
+	<class name="amenity:dive_centre"              layer="place:low"   point="amenity15" />
+	<class name="amenity:dojo"                     layer="place:low"   point="amenity15" />
+	<class name="amenity:embassy"                  layer="place:low"   point="amenity15" />
+	<class name="amenity:fire_station"             layer="place:low"   point="amenity15" />
+	<class name="amenity:grave_yard"               layer="place:low"   point="amenity15" />
+	<class name="amenity:internet_cafe"            layer="place:low"   point="amenity15" />
+	<class name="amenity:kitchen"                  layer="place:low"   point="amenity15" />
+	<class name="amenity:marketplace"              layer="place:low"   point="amenity15" />
+	<class name="amenity:police"                   layer="place:low"   point="amenity15" />
+	<class name="amenity:post_office"              layer="place:low"   point="amenity15" />
+	<class name="amenity:prison"                   layer="place:low"   point="amenity15" />
+	<class name="amenity:public_bath"              layer="place:low"   point="amenity15" />
+	<class name="amenity:ranger_station"           layer="place:low"   point="amenity15" />
+	<class name="amenity:rescue_station"           layer="place:low"   point="amenity15" />
+	<class name="amenity:shelter"                  layer="place:low"   point="amenity15" />
+	<class name="amenity:townhall"                 layer="place:low"   point="amenity15" />
+	<class name="amenity:waste_transfer_station"   layer="place:low"   point="amenity15" />
+	<class name="amenity:watering_place"           layer="place:low"   point="amenity15" />
+	<class name="amenity:water_point"              layer="place:low"   point="amenity15" />
+	<class name="craft:agricultural_engines"       layer="place:low"   point="craft15"   />
+	<class name="craft:bakery"                     layer="place:low"   point="craft15"   />
+	<class name="craft:basket_maker"               layer="place:low"   point="craft15"   />
+	<class name="craft:beekeeper"                  layer="place:low"   point="craft15"   />
+	<class name="craft:blacksmith"                 layer="place:low"   point="craft15"   />
+	<class name="craft:boatbuilder"                layer="place:low"   point="craft15"   />
+	<class name="craft:bookbinder"                 layer="place:low"   point="craft15"   />
+	<class name="craft:brewery"                    layer="place:low"   point="craft15"   />
+	<class name="craft:builder"                    layer="place:low"   point="craft15"   />
+	<class name="craft:carpenter"                  layer="place:low"   point="craft15"   />
+	<class name="craft:carpet_layer"               layer="place:low"   point="craft15"   />
+	<class name="craft:caterer"                    layer="place:low"   point="craft15"   />
+	<class name="craft:chimney_sweeper"            layer="place:low"   point="craft15"   />
+	<class name="craft:clockmaker"                 layer="place:low"   point="craft15"   />
+	<class name="craft:confectionery"              layer="place:low"   point="craft15"   />
+	<class name="craft:dental_technican"           layer="place:low"   point="craft15"   />
+	<class name="craft:distillery"                 layer="place:low"   point="craft15"   />
+	<class name="craft:dressmaker"                 layer="place:low"   point="craft15"   />
+	<class name="craft:embroiderer"                layer="place:low"   point="craft15"   />
+	<class name="craft:electrician"                layer="place:low"   point="craft15"   />
+	<class name="craft:engraver"                   layer="place:low"   point="craft15"   />
+	<class name="craft:floorer"                    layer="place:low"   point="craft15"   />
+	<class name="craft:gardener"                   layer="place:low"   point="craft15"   />
+	<class name="craft:glaziery"                   layer="place:low"   point="craft15"   />
+	<class name="craft:handicraft"                 layer="place:low"   point="craft15"   />
+	<class name="craft:hvac"                       layer="place:low"   point="craft15"   />
+	<class name="craft:insulation"                 layer="place:low"   point="craft15"   />
+	<class name="craft:jeweller"                   layer="place:low"   point="craft15"   />
+	<class name="craft:joiner"                     layer="place:low"   point="craft15"   />
+	<class name="craft:key_cutter"                 layer="place:low"   point="craft15"   />
+	<class name="craft:locksmith"                  layer="place:low"   point="craft15"   />
+	<class name="craft:metal_construction"         layer="place:low"   point="craft15"   />
+	<class name="craft:mint"                       layer="place:low"   point="craft15"   />
+	<class name="craft:optician"                   layer="place:low"   point="craft15"   />
+	<class name="craft:painter"                    layer="place:low"   point="craft15"   />
+	<class name="craft:photographer"               layer="place:low"   point="craft15"   />
+	<class name="craft:photographic_laboratory"    layer="place:low"   point="craft15"   />
+	<class name="craft:piano_tuner"                layer="place:low"   point="craft15"   />
+	<class name="craft:plasterer"                  layer="place:low"   point="craft15"   />
+	<class name="craft:plumber"                    layer="place:low"   point="craft15"   />
+	<class name="craft:pottery"                    layer="place:low"   point="craft15"   />
+	<class name="craft:printmaker"                 layer="place:low"   point="craft15"   />
+	<class name="craft:rigger"                     layer="place:low"   point="craft15"   />
+	<class name="craft:roofer"                     layer="place:low"   point="craft15"   />
+	<class name="craft:saddler"                    layer="place:low"   point="craft15"   />
+	<class name="craft:sailmaker"                  layer="place:low"   point="craft15"   />
+	<class name="craft:sawmill"                    layer="place:low"   point="craft15"   />
+	<class name="craft:scaffolder"                 layer="place:low"   point="craft15"   />
+	<class name="craft:sculpter"                   layer="place:low"   point="craft15"   />
+	<class name="craft:shoemaker"                  layer="place:low"   point="craft15"   />
+	<class name="craft:stand_builder"              layer="place:low"   point="craft15"   />
+	<class name="craft:stonemason"                 layer="place:low"   point="craft15"   />
+	<class name="craft:sun_protection"             layer="place:low"   point="craft15"   />
+	<class name="craft:tailor"                     layer="place:low"   point="craft15"   />
+	<class name="craft:tiler"                      layer="place:low"   point="craft15"   />
+	<class name="craft:tinsmith"                   layer="place:low"   point="craft15"   />
+	<class name="craft:toolmaker"                  layer="place:low"   point="craft15"   />
+	<class name="craft:turner"                     layer="place:low"   point="craft15"   />
+	<class name="craft:upholsterer"                layer="place:low"   point="craft15"   />
+	<class name="craft:watchmaker"                 layer="place:low"   point="craft15"   />
+	<class name="craft:window_construction"        layer="place:low"   point="craft15"   />
+	<class name="craft:winery"                     layer="place:low"   point="craft15"   />
+	<class name="leisure:adult_gaming_centre"      layer="place:low"   point="leisure15" />
+	<class name="leisure:amusement_arcade"         layer="place:low"   point="leisure15" />
+	<class name="leisure:beach_resort"             layer="place:low"   point="leisure15" />
+	<class name="leisure:bandstand"                layer="place:low"   point="leisure15" />
+	<class name="leisure:dance"                    layer="place:low"   point="leisure15" />
+	<class name="leisure:escape_game"              layer="place:low"   point="leisure15" />
+	<class name="leisure:fishing"                  layer="place:low"   point="leisure15" />
+	<class name="leisure:fitness_centre"           layer="place:low"   point="leisure15" />
+	<class name="leisure:garden"                   layer="place:low"   point="leisure15" />
+	<class name="leisure:hackerspace"              layer="place:low"   point="leisure15" />
+	<class name="leisure:horse_riding"             layer="place:low"   point="leisure15" />
+	<class name="leisure:ice_rink"                 layer="place:low"   point="leisure15" />
+	<class name="leisure:marina"                   layer="place:low"   point="leisure15" />
+	<class name="leisure:minature_golf"            layer="place:low"   point="leisure15" />
+	<class name="leisure:pitch"                    layer="place:low"   point="leisure15" />
+	<class name="leisure:playground"               layer="place:low"   point="leisure15" />
+	<class name="leisure:slipway"                  layer="place:low"   point="leisure15" />
+	<class name="leisure:sports_centre"            layer="place:low"   point="leisure15" />
+	<class name="leisure:stadium"                  layer="place:low"   point="leisure15" />
+	<class name="leisure:summer_camp"              layer="place:low"   point="leisure15" />
+	<class name="leisure:swimming_area"            layer="place:low"   point="leisure15" />
+	<class name="leisure:swimming_pool"            layer="place:low"   point="leisure15" />
+	<class name="leisure:track"                    layer="place:low"   point="leisure15" />
+	<class name="leisure:water_park"               layer="place:low"   point="leisure15" />
+	<class name="office:accountant"                layer="place:low"   point="office15"  />
+	<class name="office:adoption_agency"           layer="place:low"   point="office15"  />
+	<class name="office:advertising_agency"        layer="place:low"   point="office15"  />
+	<class name="office:architect"                 layer="place:low"   point="office15"  />
+	<class name="office:association"               layer="place:low"   point="office15"  />
+	<class name="office:charity"                   layer="place:low"   point="office15"  />
+	<class name="office:company"                   layer="place:low"   point="office15"  />
+	<class name="office:educational_institution"   layer="place:low"   point="office15"  />
+	<class name="office:employment_agency"         layer="place:low"   point="office15"  />
+	<class name="office:energy_supplier"           layer="place:low"   point="office15"  />
+	<class name="office:estate_agent"              layer="place:low"   point="office15"  />
+	<class name="office:forestry"                  layer="place:low"   point="office15"  />
+	<class name="office:foundation"                layer="place:low"   point="office15"  />
+	<class name="office:government"                layer="place:low"   point="office15"  />
+	<class name="office:guide"                     layer="place:low"   point="office15"  />
+	<class name="office:healer"                    layer="place:low"   point="office15"  />
+	<class name="office:insurance"                 layer="place:low"   point="office15"  />
+	<class name="office:it"                        layer="place:low"   point="office15"  />
+	<class name="office:lawyer"                    layer="place:low"   point="office15"  />
+	<class name="office:logistics"                 layer="place:low"   point="office15"  />
+	<class name="office:moving_company"            layer="place:low"   point="office15"  />
+	<class name="office:newspaper"                 layer="place:low"   point="office15"  />
+	<class name="office:ngo"                       layer="place:low"   point="office15"  />
+	<class name="office:notary"                    layer="place:low"   point="office15"  />
+	<class name="office:physican"                  layer="place:low"   point="office15"  />
+	<class name="office:political_party"           layer="place:low"   point="office15"  />
+	<class name="office:private_investigator"      layer="place:low"   point="office15"  />
+	<class name="office:property_management"       layer="place:low"   point="office15"  />
+	<class name="office:quango"                    layer="place:low"   point="office15"  />
+	<class name="office:real_estate_agent"         layer="place:low"   point="office15"  />
+	<class name="office:research"                  layer="place:low"   point="office15"  />
+	<class name="office:surveyor"                  layer="place:low"   point="office15"  />
+	<class name="office:tax"                       layer="place:low"   point="office15"  />
+	<class name="office:tax_advisor"               layer="place:low"   point="office15"  />
+	<class name="office:telecommunication"         layer="place:low"   point="office15"  />
+	<class name="office:therapist"                 layer="place:low"   point="office15"  />
+	<class name="office:travel_agent"              layer="place:low"   point="office15"  />
+	<class name="office:water_utility"             layer="place:low"   point="office15"  />
+	<class name="shop:alcohol"                     layer="place:low"   point="shop15"    />
+	<class name="shop:bakery"                      layer="place:low"   point="shop15"    />
+	<class name="shop:beverages"                   layer="place:low"   point="shop15"    />
+	<class name="shop:brewing_supplies"            layer="place:low"   point="shop15"    />
+	<class name="shop:butcher"                     layer="place:low"   point="shop15"    />
+	<class name="shop:cheese"                      layer="place:low"   point="shop15"    />
+	<class name="shop:chocolate"                   layer="place:low"   point="shop15"    />
+	<class name="shop:coffee"                      layer="place:low"   point="shop15"    />
+	<class name="shop:confectionery"               layer="place:low"   point="shop15"    />
+	<class name="shop:convenience"                 layer="place:low"   point="shop15"    />
+	<class name="shop:deli"                        layer="place:low"   point="shop15"    />
+	<class name="shop:dairy"                       layer="place:low"   point="shop15"    />
+	<class name="shop:farm"                        layer="place:low"   point="shop15"    />
+	<class name="shop:frozen_food"                 layer="place:low"   point="shop15"    />
+	<class name="shop:greengrocier"                layer="place:low"   point="shop15"    />
+	<class name="shop:health_food"                 layer="place:low"   point="shop15"    />
+	<class name="shop:ice_cream"                   layer="place:low"   point="shop15"    />
+	<class name="shop:pasta"                       layer="place:low"   point="shop15"    />
+	<class name="shop:pastry"                      layer="place:low"   point="shop15"    />
+	<class name="shop:seafood"                     layer="place:low"   point="shop15"    />
+	<class name="shop:spices"                      layer="place:low"   point="shop15"    />
+	<class name="shop:tea"                         layer="place:low"   point="shop15"    />
+	<class name="shop:water"                       layer="place:low"   point="shop15"    />
+	<class name="shop:department_store"            layer="place:low"   point="shop15"    />
+	<class name="shop:general"                     layer="place:low"   point="shop15"    />
+	<class name="shop:kiosk"                       layer="place:low"   point="shop15"    />
+	<class name="shop:mall"                        layer="place:low"   point="shop15"    />
+	<class name="shop:supermarket"                 layer="place:low"   point="shop15"    />
+	<class name="shop:wholesale"                   layer="place:low"   point="shop15"    />
+	<class name="shop:baby_goods"                  layer="place:low"   point="shop15"    />
+	<class name="shop:bag"                         layer="place:low"   point="shop15"    />
+	<class name="shop:boutique"                    layer="place:low"   point="shop15"    />
+	<class name="shop:clothes"                     layer="place:low"   point="shop15"    />
+	<class name="shop:fabric"                      layer="place:low"   point="shop15"    />
+	<class name="shop:fashion"                     layer="place:low"   point="shop15"    />
+	<class name="shop:jewelry"                     layer="place:low"   point="shop15"    />
+	<class name="shop:leather"                     layer="place:low"   point="shop15"    />
+	<class name="shop:sewing"                      layer="place:low"   point="shop15"    />
+	<class name="shop:shoes"                       layer="place:low"   point="shop15"    />
+	<class name="shop:tailor"                      layer="place:low"   point="shop15"    />
+	<class name="shop:watches"                     layer="place:low"   point="shop15"    />
+	<class name="shop:charity"                     layer="place:low"   point="shop15"    />
+	<class name="shop:second_hand"                 layer="place:low"   point="shop15"    />
+	<class name="shop:variety_store"               layer="place:low"   point="shop15"    />
+	<class name="shop:beauty"                      layer="place:low"   point="shop15"    />
+	<class name="shop:chemist"                     layer="place:low"   point="shop15"    />
+	<class name="shop:cosmetics"                   layer="place:low"   point="shop15"    />
+	<class name="shop:erotic"                      layer="place:low"   point="shop15"    />
+	<class name="shop:hairdresser"                 layer="place:low"   point="shop15"    />
+	<class name="shop:hairdresser_suply"           layer="place:low"   point="shop15"    />
+	<class name="shop:hearing_aids"                layer="place:low"   point="shop15"    />
+	<class name="shop:herbalist"                   layer="place:low"   point="shop15"    />
+	<class name="shop:massage"                     layer="place:low"   point="shop15"    />
+	<class name="shop:medical_supply"              layer="place:low"   point="shop15"    />
+	<class name="shop:nutrition_supplements"       layer="place:low"   point="shop15"    />
+	<class name="shop:optician"                    layer="place:low"   point="shop15"    />
+	<class name="shop:perfumery"                   layer="place:low"   point="shop15"    />
+	<class name="shop:tattoo"                      layer="place:low"   point="shop15"    />
+	<class name="shop:agrarian"                    layer="place:low"   point="shop15"    />
+	<class name="shop:appliance"                   layer="place:low"   point="shop15"    />
+	<class name="shop:bathroom_furnishing"         layer="place:low"   point="shop15"    />
+	<class name="shop:doityourself"                layer="place:low"   point="shop15"    />
+	<class name="shop:electrical"                  layer="place:low"   point="shop15"    />
+	<class name="shop:energy"                      layer="place:low"   point="shop15"    />
+	<class name="shop:fireplace"                   layer="place:low"   point="shop15"    />
+	<class name="shop:florist"                     layer="place:low"   point="shop15"    />
+	<class name="shop:garden_centre"               layer="place:low"   point="shop15"    />
+	<class name="shop:garden_furniture"            layer="place:low"   point="shop15"    />
+	<class name="shop:gas"                         layer="place:low"   point="shop15"    />
+	<class name="shop:glaziery"                    layer="place:low"   point="shop15"    />
+	<class name="shop:hardware"                    layer="place:low"   point="shop15"    />
+	<class name="shop:houseware"                   layer="place:low"   point="shop15"    />
+	<class name="shop:locksmith"                   layer="place:low"   point="shop15"    />
+	<class name="shop:paint"                       layer="place:low"   point="shop15"    />
+	<class name="shop:security"                    layer="place:low"   point="shop15"    />
+	<class name="shop:trade"                       layer="place:low"   point="shop15"    />
+	<class name="shop:antiques"                    layer="place:low"   point="shop15"    />
+	<class name="shop:bed"                         layer="place:low"   point="shop15"    />
+	<class name="shop:candles"                     layer="place:low"   point="shop15"    />
+	<class name="shop:carpet"                      layer="place:low"   point="shop15"    />
+	<class name="shop:curtain"                     layer="place:low"   point="shop15"    />
+	<class name="shop:doors"                       layer="place:low"   point="shop15"    />
+	<class name="shop:flooring"                    layer="place:low"   point="shop15"    />
+	<class name="shop:furniture"                   layer="place:low"   point="shop15"    />
+	<class name="shop:interior_decoration"         layer="place:low"   point="shop15"    />
+	<class name="shop:kitchen"                     layer="place:low"   point="shop15"    />
+	<class name="shop:lamps"                       layer="place:low"   point="shop15"    />
+	<class name="shop:tiles"                       layer="place:low"   point="shop15"    />
+	<class name="shop:window_blind"                layer="place:low"   point="shop15"    />
+	<class name="shop:computer"                    layer="place:low"   point="shop15"    />
+	<class name="shop:robot"                       layer="place:low"   point="shop15"    />
+	<class name="shop:electronics"                 layer="place:low"   point="shop15"    />
+	<class name="shop:hifi"                        layer="place:low"   point="shop15"    />
+	<class name="shop:mobile_phone"                layer="place:low"   point="shop15"    />
+	<class name="shop:radiotechnics"               layer="place:low"   point="shop15"    />
+	<class name="shop:vacuum_cleaner"              layer="place:low"   point="shop15"    />
+	<class name="shop:atv"                         layer="place:low"   point="shop15"    />
+	<class name="shop:bicycle"                     layer="place:low"   point="shop15"    />
+	<class name="shop:boat"                        layer="place:low"   point="shop15"    />
+	<class name="shop:car"                         layer="place:low"   point="shop15"    />
+	<class name="shop:car_repair"                  layer="place:low"   point="shop15"    />
+	<class name="shop:car_parts"                   layer="place:low"   point="shop15"    />
+	<class name="shop:fuel"                        layer="place:low"   point="shop15"    />
+	<class name="shop:fishing"                     layer="place:low"   point="shop15"    />
+	<class name="shop:free_flying"                 layer="place:low"   point="shop15"    />
+	<class name="shop:hunting"                     layer="place:low"   point="shop15"    />
+	<class name="shop:jetski"                      layer="place:low"   point="shop15"    />
+	<class name="shop:motorcycle"                  layer="place:low"   point="shop15"    />
+	<class name="shop:outdoor"                     layer="place:low"   point="shop15"    />
+	<class name="shop:scuba_diving"                layer="place:low"   point="shop15"    />
+	<class name="shop:ski"                         layer="place:low"   point="shop15"    />
+	<class name="shop:snowmobile"                  layer="place:low"   point="shop15"    />
+	<class name="shop:sports"                      layer="place:low"   point="shop15"    />
+	<class name="shop:swimming_pool"               layer="place:low"   point="shop15"    />
+	<class name="shop:tyres"                       layer="place:low"   point="shop15"    />
+	<class name="shop:art"                         layer="place:low"   point="shop15"    />
+	<class name="shop:collector"                   layer="place:low"   point="shop15"    />
+	<class name="shop:craft"                       layer="place:low"   point="shop15"    />
+	<class name="shop:frame"                       layer="place:low"   point="shop15"    />
+	<class name="shop:games"                       layer="place:low"   point="shop15"    />
+	<class name="shop:model"                       layer="place:low"   point="shop15"    />
+	<class name="shop:music"                       layer="place:low"   point="shop15"    />
+	<class name="shop:musical_instrument"          layer="place:low"   point="shop15"    />
+	<class name="shop:photo"                       layer="place:low"   point="shop15"    />
+	<class name="shop:camera"                      layer="place:low"   point="shop15"    />
+	<class name="shop:trophy"                      layer="place:low"   point="shop15"    />
+	<class name="shop:video"                       layer="place:low"   point="shop15"    />
+	<class name="shop:video_games"                 layer="place:low"   point="shop15"    />
+	<class name="shop:anime"                       layer="place:low"   point="shop15"    />
+	<class name="shop:books"                       layer="place:low"   point="shop15"    />
+	<class name="shop:gift"                        layer="place:low"   point="shop15"    />
+	<class name="shop:lottery"                     layer="place:low"   point="shop15"    />
+	<class name="shop:newsagent"                   layer="place:low"   point="shop15"    />
+	<class name="shop:stationery"                  layer="place:low"   point="shop15"    />
+	<class name="shop:ticket"                      layer="place:low"   point="shop15"    />
+	<class name="shop:bookmaker"                   layer="place:low"   point="shop15"    />
+	<class name="shop:copyshop"                    layer="place:low"   point="shop15"    />
+	<class name="shop:dry_cleaning"                layer="place:low"   point="shop15"    />
+	<class name="shop:e-cigarette"                 layer="place:low"   point="shop15"    />
+	<class name="shop:funeral_directors"           layer="place:low"   point="shop15"    />
+	<class name="shop:laundry"                     layer="place:low"   point="shop15"    />
+	<class name="shop:money_lender"                layer="place:low"   point="shop15"    />
+	<class name="shop:party"                       layer="place:low"   point="shop15"    />
+	<class name="shop:pawnbroker"                  layer="place:low"   point="shop15"    />
+	<class name="shop:pet"                         layer="place:low"   point="shop15"    />
+	<class name="shop:pyrotechnics"                layer="place:low"   point="shop15"    />
+	<class name="shop:religion"                    layer="place:low"   point="shop15"    />
+	<class name="shop:storage_rental"              layer="place:low"   point="shop15"    />
+	<class name="shop:tobacco"                     layer="place:low"   point="shop15"    />
+	<class name="shop:toys"                        layer="place:low"   point="shop15"    />
+	<class name="shop:travel_agency"               layer="place:low"   point="shop15"    />
+	<class name="shop:vacant"                      layer="place:low"   point="shop15"    />
+	<class name="shop:weapons"                     layer="place:low"   point="shop15"    />
+	<class name="sport:archery"                    layer="place:low"   point="sport15"   />
+	<class name="sport:athletics"                  layer="place:low"   point="sport15"   />
+	<class name="sport:australian_football"        layer="place:low"   point="sport15"   />
+	<class name="sport:badminton"                  layer="place:low"   point="sport15"   />
+	<class name="sport:bandy"                      layer="place:low"   point="sport15"   />
+	<class name="sport:base"                       layer="place:low"   point="sport15"   />
+	<class name="sport:baseball"                   layer="place:low"   point="sport15"   />
+	<class name="sport:basketball"                 layer="place:low"   point="sport15"   />
+	<class name="sport:beachvolleyball"            layer="place:low"   point="sport15"   />
+	<class name="sport:billards"                   layer="place:low"   point="sport15"   />
+	<class name="sport:bmx"                        layer="place:low"   point="sport15"   />
+	<class name="sport:bobsleigh"                  layer="place:low"   point="sport15"   />
+	<class name="sport:boules"                     layer="place:low"   point="sport15"   />
+	<class name="sport:bowls"                      layer="place:low"   point="sport15"   />
+	<class name="sport:boxing"                     layer="place:low"   point="sport15"   />
+	<class name="sport:canadian_football"          layer="place:low"   point="sport15"   />
+	<class name="sport:canoe"                      layer="place:low"   point="sport15"   />
+	<class name="sport:chess"                      layer="place:low"   point="sport15"   />
+	<class name="sport:cliff_diving"               layer="place:low"   point="sport15"   />
+	<class name="sport:climbing"                   layer="place:low"   point="sport15"   />
+	<class name="sport:climbing_adventure"         layer="place:low"   point="sport15"   />
+	<class name="sport:cricket"                    layer="place:low"   point="sport15"   />
+	<class name="sport:croquet"                    layer="place:low"   point="sport15"   />
+	<class name="sport:curling"                    layer="place:low"   point="sport15"   />
+	<class name="sport:cycling"                    layer="place:low"   point="sport15"   />
+	<class name="sport:darts"                      layer="place:low"   point="sport15"   />
+	<class name="sport:dog_racing"                 layer="place:low"   point="sport15"   />
+	<class name="sport:equestrian"                 layer="place:low"   point="sport15"   />
+	<class name="sport:fencing"                    layer="place:low"   point="sport15"   />
+	<class name="sport:field_hockey"               layer="place:low"   point="sport15"   />
+	<class name="sport:free_flying"                layer="place:low"   point="sport15"   />
+	<class name="sport:futsal"                     layer="place:low"   point="sport15"   />
+	<class name="sport:gaelic_games"               layer="place:low"   point="sport15"   />
+	<class name="sport:golf"                       layer="place:low"   point="sport15"   />
+	<class name="sport:gymnastics"                 layer="place:low"   point="sport15"   />
+	<class name="sport:handball"                   layer="place:low"   point="sport15"   />
+	<class name="sport:hapkido"                    layer="place:low"   point="sport15"   />
+	<class name="sport:horseshoes"                 layer="place:low"   point="sport15"   />
+	<class name="sport:horse_racing"               layer="place:low"   point="sport15"   />
+	<class name="sport:ice_hockey"                 layer="place:low"   point="sport15"   />
+	<class name="sport:ice_skating"                layer="place:low"   point="sport15"   />
+	<class name="sport:ice_stock"                  layer="place:low"   point="sport15"   />
+	<class name="sport:judo"                       layer="place:low"   point="sport15"   />
+	<class name="sport:karate"                     layer="place:low"   point="sport15"   />
+	<class name="sport:karting"                    layer="place:low"   point="sport15"   />
+	<class name="sport:kitesurfing"                layer="place:low"   point="sport15"   />
+	<class name="sport:korfball"                   layer="place:low"   point="sport15"   />
+	<class name="sport:lacrosse"                   layer="place:low"   point="sport15"   />
+	<class name="sport:model_aerodrome"            layer="place:low"   point="sport15"   />
+	<class name="sport:motocross"                  layer="place:low"   point="sport15"   />
+	<class name="sport:motor"                      layer="place:low"   point="sport15"   />
+	<class name="sport:multi"                      layer="place:low"   point="sport15"   />
+	<class name="sport:netball"                    layer="place:low"   point="sport15"   />
+	<class name="sport:obstacle_course"            layer="place:low"   point="sport15"   />
+	<class name="sport:orienteering"               layer="place:low"   point="sport15"   />
+	<class name="sport:paddle_tennis"              layer="place:low"   point="sport15"   />
+	<class name="sport:padel"                      layer="place:low"   point="sport15"   />
+	<class name="sport:parachuting"                layer="place:low"   point="sport15"   />
+	<class name="sport:paragliding"                layer="place:low"   point="sport15"   />
+	<class name="sport:pelota"                     layer="place:low"   point="sport15"   />
+	<class name="sport:racquet"                    layer="place:low"   point="sport15"   />
+	<class name="sport:rc_car"                     layer="place:low"   point="sport15"   />
+	<class name="sport:roller_skating"             layer="place:low"   point="sport15"   />
+	<class name="sport:rowing"                     layer="place:low"   point="sport15"   />
+	<class name="sport:rugby_league"               layer="place:low"   point="sport15"   />
+	<class name="sport:rugby_union"                layer="place:low"   point="sport15"   />
+	<class name="sport:running"                    layer="place:low"   point="sport15"   />
+	<class name="sport:sailing"                    layer="place:low"   point="sport15"   />
+	<class name="sport:scuba_diving"               layer="place:low"   point="sport15"   />
+	<class name="sport:shooting"                   layer="place:low"   point="sport15"   />
+	<class name="sport:skateboard"                 layer="place:low"   point="sport15"   />
+	<class name="sport:soccer"                     layer="place:low"   point="sport15"   />
+	<class name="sport:sumo"                       layer="place:low"   point="sport15"   />
+	<class name="sport:surfing"                    layer="place:low"   point="sport15"   />
+	<class name="sport:swimming"                   layer="place:low"   point="sport15"   />
+	<class name="sport:table_tennis"               layer="place:low"   point="sport15"   />
+	<class name="sport:table_soccer"               layer="place:low"   point="sport15"   />
+	<class name="sport:taekwondo"                  layer="place:low"   point="sport15"   />
+	<class name="sport:tennis"                     layer="place:low"   point="sport15"   />
+	<class name="sport:toboggan"                   layer="place:low"   point="sport15"   />
+	<class name="sport:volleyball"                 layer="place:low"   point="sport15"   />
+	<class name="sport:water_polo"                 layer="place:low"   point="sport15"   />
+	<class name="sport:water_ski"                  layer="place:low"   point="sport15"   />
+	<class name="sport:weightlifting"              layer="place:low"   point="sport15"   />
+	<class name="sport:wrestling"                  layer="place:low"   point="sport15"   />
+	<class name="sport:yoga"                       layer="place:low"   point="sport15"   />
+	<class name="tourism:alpine_hut"               layer="place:low"   point="tourism15" />
+	<class name="tourism:apartment"                layer="place:low"   point="tourism15" />
+	<class name="tourism:aquarium"                 layer="place:low"   point="tourism15" />
+	<class name="tourism:artwork"                  layer="place:low"   point="tourism15" />
+	<class name="tourism:attraction"               layer="place:low"   point="tourism15" />
+	<class name="tourism:camp_site"                layer="place:low"   point="tourism15" />
+	<class name="tourism:caravan_site"             layer="place:low"   point="tourism15" />
+	<class name="tourism:chalet"                   layer="place:low"   point="tourism15" />
+	<class name="tourism:gallery"                  layer="place:low"   point="tourism15" />
+	<class name="tourism:guest_house"              layer="place:low"   point="tourism15" />
+	<class name="tourism:hostel"                   layer="place:low"   point="tourism15" />
+	<class name="tourism:hotel"                    layer="place:low"   point="tourism15" />
+	<class name="tourism:information"              layer="place:low"   point="tourism15" />
+	<class name="tourism:motel"                    layer="place:low"   point="tourism15" />
+	<class name="tourism:museum"                   layer="place:low"   point="tourism15" />
+	<class name="tourism:picnic_site"              layer="place:low"   point="tourism15" />
+	<class name="tourism:theme_park"               layer="place:low"   point="tourism15" />
+	<class name="tourism:viewpoint"                layer="place:low"   point="tourism15" />
+	<class name="tourism:wilderness_hut"           layer="place:low"   point="tourism15" />
+	<class name="tourism:zoo"                      layer="place:low"   point="tourism15" />
+	<class name="building:yes"                     layer="building"    line="building15" poly="building15" />
 </osmdb>
