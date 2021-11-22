@@ -201,6 +201,7 @@ osmdb_style_beginOsmLayer(osmdb_style_t* self,
 	if(cc_map_add(self->layers, (const void*) layerp,
 	              name) == NULL)
 	{
+		LOGE("invalid line=%i", line);
 		goto fail_add;
 	}
 
@@ -264,6 +265,7 @@ osmdb_style_beginOsmColor(osmdb_style_t* self,
 	if(cc_map_add(self->colors, (const void*) c,
 	              name) == NULL)
 	{
+		LOGE("invalid line=%i", line);
 		goto fail_add;
 	}
 
@@ -468,6 +470,7 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 	if(cc_map_add(self->points, (const void*) point,
 	              name) == NULL)
 	{
+		LOGE("invalid line=%i", line);
 		goto fail_add;
 	}
 
@@ -590,6 +593,7 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 	if(cc_map_add(self->lines, (const void*) linep,
 	              name) == NULL)
 	{
+		LOGE("invalid line=%i", line);
 		goto fail_add;
 	}
 
@@ -671,6 +675,7 @@ osmdb_style_beginOsmPoly(osmdb_style_t* self,
 	if(cc_map_add(self->polys, (const void*) poly,
 	              name) == NULL)
 	{
+		LOGE("invalid line=%i", line);
 		goto fail_add;
 	}
 
@@ -801,6 +806,7 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 	if(cc_map_add(self->classes, (const void*) class,
 	              name) == NULL)
 	{
+		LOGE("invalid line=%i", line);
 		goto fail_add;
 	}
 
