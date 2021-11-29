@@ -626,6 +626,16 @@ osm_parser_parseName(osm_parser_t* self,
 			tmp->sep[0] = '\0';
 			words -= 1;
 		}
+		else if((strncmp(word[0].word, "State", 256) == 0) &&
+		        ((strncmp(word[1].word, "Highway", 256) == 0) ||
+		         (strncmp(word[1].word, "Hwy",     256) == 0) ||
+		         (strncmp(word[1].word, "Route",   256) == 0) ||
+		         (strncmp(word[1].word, "Rte",     256) == 0)))
+		{
+			// prefer ref for state highways
+			// e.g. State Highway 72 => CO 72
+			self->tag_highway = 1;
+		}
 		else if((strncmp(word[words - 2].word, "Trail", 256) == 0) &&
 		        (strncmp(word[words - 1].word, "Head",  256) == 0))
 		{
@@ -686,6 +696,14 @@ osm_parser_parseName(osm_parser_t* self,
 	}
 	else if(words == 1)
 	{
+		if(((strncmp(word[0].word, "Highway", 256) == 0) ||
+		    (strncmp(word[0].word, "Hwy",     256) == 0)))
+		{
+			// prefer ref for state highways
+			// e.g. Highway 119 => CO 119
+			self->tag_highway = 1;
+		}
+
 		// input is single word (don't abreviate)
 		snprintf(name, 256, "%s%s", word[0].word, word[0].sep);
 		return 1;
@@ -917,6 +935,7 @@ static void osm_parser_initNode(osm_parser_t* self)
 	self->tag_name[0]  = '\0';
 	self->tag_abrev[0] = '\0';
 	self->tag_ref[0]   = '\0';
+	self->tag_highway  = 0;
 }
 
 static void osm_parser_initWay(osm_parser_t* self)
@@ -938,6 +957,7 @@ static void osm_parser_initWay(osm_parser_t* self)
 	self->tag_name[0]  = '\0';
 	self->tag_abrev[0] = '\0';
 	self->tag_ref[0]   = '\0';
+	self->tag_highway  = 0;
 }
 
 static void osm_parser_initRel(osm_parser_t* self)
@@ -960,6 +980,7 @@ static void osm_parser_initRel(osm_parser_t* self)
 	self->tag_name[0]  = '\0';
 	self->tag_abrev[0] = '\0';
 	self->tag_ref[0]   = '\0';
+	self->tag_highway  = 0;
 }
 
 static int
@@ -1725,6 +1746,13 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	   (self->tag_ref[0] != '\0'))
 	{
 		// prefer ref for motorways
+		osmdb_wayInfo_addName(self->way_info,
+		                      self->tag_ref);
+	}
+	else if(self->tag_highway && (self->tag_ref[0] != '\0'))
+	{
+		// prefer ref for highways
+		// e.g. State Highway 72 or Highway 119
 		osmdb_wayInfo_addName(self->way_info,
 		                      self->tag_ref);
 	}

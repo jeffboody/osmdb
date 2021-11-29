@@ -67,6 +67,7 @@ typedef struct
 	char    tag_name[256];
 	char    tag_abrev[256];
 	char    tag_ref[256];
+	int     tag_highway;
 
 	// class constants
 	int class_none;
