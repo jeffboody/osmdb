@@ -647,8 +647,11 @@ osm_parser_parseName(osm_parser_t* self,
 			tmp->sep[1] = '\0';
 			words -= 1;
 		}
-		else if((strncmp(word[0].word, "County", 256) == 0) &&
-		        (strncmp(word[1].word, "Road",   256) == 0))
+		else if((strncmp(word[0].word, "County",   256) == 0) &&
+		        ((strncmp(word[1].word, "Road",    256) == 0) ||
+		         (strncmp(word[1].word, "Rd",      256) == 0) ||
+		         (strncmp(word[1].word, "Highway", 256) == 0) ||
+		         (strncmp(word[1].word, "Hwy",     256) == 0)))
 		{
 		    // e.g. County Road 11D
 		    snprintf(word[0].word,  256, "%s", "CR");
