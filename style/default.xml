@@ -16,6 +16,7 @@
 	<layer name="primary" />
 	<layer name="trunk" />
 	<layer name="motorway" />
+	<layer name="junction" />
 	<layer name="taxiway" />
 	<layer name="runway" />
 	<layer name="air" />
@@ -32,6 +33,7 @@
 
 	<color name="other:text"      val="EEDFCCFF" />
 	<color name="military:text"   val="FFC0CBFF" />
+	<color name="junction:text"   val="90EE90FF" />
 
 	<color name="trunk:text"      val="F48440FF" />
 	<color name="trunk:line"      val="F48440FF" />
@@ -92,6 +94,7 @@
 	<point name="airport15"    min_zoom="15" text_scale="1.05f" text_color1="airport"        text_color2="black" marker_color1="airport"       marker_color2="black" flags="marker:show" />
 	<point name="other15"      min_zoom="15" text_scale="0.95f" text_color1="other:text"     text_color2="black" marker_color1="other:text"    marker_color2="black" />
 	<point name="military15"   min_zoom="15" text_scale="0.95f" text_color1="military:text"  text_color2="black" marker_color1="military:text" marker_color2="black" />
+	<point name="junction15"   min_zoom="15" text_scale="1.10f" text_color1="junction:text"  text_color2="black" />
 
 	<line name="aerialway15"       min_zoom="15" mode="dashed,striped" color1="ltgray"  color2="white" />
 	<line name="motorway9"         min_zoom="9"  mode="striped" color1="motorway:line"  color2="dkgray" width="3.5" />
@@ -305,6 +308,7 @@
 	<class name="highway:steps"                    layer="trail"       point="trail15"   line="footway15" />
 	<class name="highway:path"                     layer="trail"       point="trail15"   line="trail15" />
 	<class name="highway:cycleway"                 layer="trail"       point="trail15"   line="trail15" />
+	<class name="highway:motorway_junction"        layer="junction"    point="junction15" />
 	<class name="historic:aircraft"                layer="place:low0"  point="other15" />
 	<class name="historic:aqueduct"                layer="place:low0"  point="other15" />
 	<class name="historic:archaeological_site"     layer="place:low0"  point="other15" />
@@ -339,7 +343,6 @@
 	<class name="historic:wayside_shrine"          layer="place:low0"  point="other15" />
 	<class name="historic:wreck"                   layer="place:low0"  point="other15" />
 	<class name="landuse:commercial"               layer="place:low2"  point="other15" />
-	<class name="landuse:education"                layer="place:low2"  point="other15" />
 	<class name="landuse:industrial"               layer="place:low2"  point="other15" />
 	<class name="landuse:residential"              layer="place:low2"  point="other15" />
 	<class name="landuse:retail"                   layer="place:low2"  point="other15" />

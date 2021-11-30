@@ -78,6 +78,7 @@ typedef struct
 	int man_made_yes;
 	int tourism_yes;
 	int highway_motorway;
+	int highway_junction;
 
 	// relation member constants
 	int rel_member_type_node;

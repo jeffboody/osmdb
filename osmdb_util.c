@@ -570,6 +570,7 @@ osmdb_utilClass_t OSM_UTIL_CLASSES[] =
 	{ 0, 0, "landuse:quarry",                              },
 	{ 0, 0, "landuse:railway",                             },
 	{ 0, 0, "landuse:recreation_ground",                   },
+	{ 0, 0, "landuse:winter_sports",                       },
 	{ 0, 0, "landuse:religious",                           },
 	{ 3, 0, "landuse:reservoir",                           },
 	{ 3, 0, "landuse:salt_pond",                           },

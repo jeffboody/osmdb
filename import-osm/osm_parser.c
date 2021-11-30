@@ -1189,12 +1189,26 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 		}
 	}
 
-	if(sc && sc->point && (self->tag_name[0] != '\0'))
+	int has_name = 0;
+	if((self->tag_name[0] != '\0') ||
+	   ((self->node_info->class == self->highway_junction) &&
+	    (self->tag_ref[0] != '\0')))
+	{
+		has_name = 1;
+	}
+
+	if(sc && sc->point && has_name)
 	{
 		int min_zoom = sc->point->min_zoom;
 
 		// fill the name
-		if(self->tag_abrev[0] == '\0')
+		if((self->node_info->class == self->highway_junction) &&
+	       (self->tag_ref[0] != '\0'))
+		{
+			osmdb_nodeInfo_addName(self->node_info,
+			                       self->tag_ref);
+		}
+		else if(self->tag_abrev[0] == '\0')
 		{
 			osmdb_nodeInfo_addName(self->node_info,
 			                       self->tag_name);
@@ -1315,7 +1329,9 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 					snprintf(self->tag_abrev, 256, "%s", abrev);
 				}
 			}
-			else if(strcmp(atts[j], "ref") == 0)
+			else if((strcmp(atts[j], "ref") == 0) ||
+			        ((strcmp(atts[j], "junction:ref") == 0) &&
+			         (self->tag_ref[0] == '\0')))
 			{
 				osm_parser_truncate(val, ';');
 				snprintf(self->tag_ref,  256, "%s", val);
@@ -1861,7 +1877,9 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 					snprintf(self->tag_abrev, 256, "%s", abrev);
 				}
 			}
-			else if(strcmp(atts[j], "ref") == 0)
+			else if((strcmp(atts[j], "ref") == 0) ||
+			        ((strcmp(atts[j], "junction:ref") == 0) &&
+			         (self->tag_ref[0] == '\0')))
 			{
 				osm_parser_truncate(val, ';');
 				snprintf(self->tag_ref,  256, "%s", val);
@@ -2389,7 +2407,9 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 					snprintf(self->tag_abrev, 256, "%s", abrev);
 				}
 			}
-			else if(strcmp(atts[j], "ref") == 0)
+			else if((strcmp(atts[j], "ref") == 0) ||
+			        ((strcmp(atts[j], "junction:ref") == 0) &&
+			         (self->tag_ref[0] == '\0')))
 			{
 				osm_parser_truncate(val, ';');
 				snprintf(self->tag_ref,  256, "%s", val);
@@ -2700,6 +2720,7 @@ osm_parser_new(const char* style,
 	self->man_made_yes     = osmdb_classKVToCode("man_made", "yes");
 	self->tourism_yes      = osmdb_classKVToCode("tourism",  "yes");
 	self->highway_motorway = osmdb_classKVToCode("highway",  "motorway");
+	self->highway_junction = osmdb_classKVToCode("highway",  "motorway_junction");
 
 	self->rel_member_type_node         = osmdb_relationMemberTypeToCode("node");
 	self->rel_member_type_way          = osmdb_relationMemberTypeToCode("way");
