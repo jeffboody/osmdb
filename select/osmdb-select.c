@@ -131,7 +131,7 @@ osmdb_parseRequest(const char* s,
 
 	// determine the type pattern
 	char* p;
-	if((p = strstr(tmp, "/osmdbv4/")) && (p == tmp))
+	if((p = strstr(tmp, "/osmdbv6/")) && (p == tmp))
 	{
 		p = &(p[9]);
 		if(osmdb_parseZoom(p, zoom, x, y) == 0)
@@ -285,7 +285,7 @@ int main(int argc, const char** argv)
 	if(argc != 3)
 	{
 		LOGE("usage: %s file.sqlite3 [TILE]", argv[0]);
-		LOGE("TILE: /osmdbv4/zoom/x/y");
+		LOGE("TILE: /osmdbv6/zoom/x/y");
 		return EXIT_FAILURE;
 	}
 
