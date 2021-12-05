@@ -62,6 +62,7 @@
 	<color name="lake:poly"       val="4788D9BF" />
 	<color name="glacier:text"    val="C0F0F1FF" />
 	<color name="glacier:poly"    val="9BDFE07F" />
+	<color name="aerialway"       val="9BDFE0FF" />
 	<color name="city:text"       val="FFFFFFFF" />
 	<color name="city:point"      val="606060FF" />
 
@@ -95,8 +96,9 @@
 	<point name="other15"      min_zoom="15" text_scale="0.95f" text_color1="other:text"     text_color2="black" marker_color1="other:text"    marker_color2="black" />
 	<point name="military15"   min_zoom="15" text_scale="0.95f" text_color1="military:text"  text_color2="black" marker_color1="military:text" marker_color2="black" />
 	<point name="junction15"   min_zoom="15" text_scale="1.10f" text_color1="junction:text"  text_color2="black" />
+	<point name="aerialway15"  min_zoom="15" text_scale="0.95f" text_color1="aerialway"      text_color2="black" />
 
-	<line name="aerialway15"       min_zoom="15" mode="dashed,striped" color1="ltgray"  color2="white" />
+	<line name="aerialway15"       min_zoom="15" mode="dashed,striped" color1="aerialway"  color2="dkgray" width="1.4" />
 	<line name="motorway9"         min_zoom="9"  mode="striped" color1="motorway:line"  color2="dkgray" width="3.5" />
 	<line name="trunk9"            min_zoom="9"  mode="striped" color1="trunk:line"     color2="dkgray" width="3.5" />
 	<line name="primary9"          min_zoom="9"  mode="striped" color1="primary:line"   color2="dkgray" width="3.5" />
@@ -131,18 +133,18 @@
 	<poly name="water15"    min_zoom="15" color="lake:poly" />
 	<poly name="building15" min_zoom="15" color="building:poly" />
 
-	<class name="aerialway:cable_car"              layer="ground"      line="aerialway15" />
-	<class name="aerialway:gondola"                layer="air"         line="aerialway15" />
-	<class name="aerialway:chair_lift"             layer="air"         line="aerialway15" />
-	<class name="aerialway:mixed_lift"             layer="ground"      line="aerialway15" />
-	<class name="aerialway:drag_lift"              layer="ground"      line="aerialway15" />
-	<class name="aerialway:t-bar"                  layer="ground"      line="aerialway15" />
-	<class name="aerialway:j-bar"                  layer="ground"      line="aerialway15" />
-	<class name="aerialway:platter"                layer="ground"      line="aerialway15" />
-	<class name="aerialway:rope_tow"               layer="ground"      line="aerialway15" />
-	<class name="aerialway:magic_carpet"           layer="ground"      line="aerialway15" />
-	<class name="aerialway:zip_line"               layer="air"         line="aerialway15" />
-	<class name="aerialway:canopy"                 layer="air"         line="aerialway15" />
+	<class name="aerialway:cable_car"              layer="ground"      point="aerialway15" line="aerialway15" />
+	<class name="aerialway:gondola"                layer="air"         point="aerialway15" line="aerialway15" />
+	<class name="aerialway:chair_lift"             layer="air"         point="aerialway15" line="aerialway15" />
+	<class name="aerialway:mixed_lift"             layer="ground"      point="aerialway15" line="aerialway15" />
+	<class name="aerialway:drag_lift"              layer="ground"      point="aerialway15" line="aerialway15" />
+	<class name="aerialway:t-bar"                  layer="ground"      point="aerialway15" line="aerialway15" />
+	<class name="aerialway:j-bar"                  layer="ground"      point="aerialway15" line="aerialway15" />
+	<class name="aerialway:platter"                layer="ground"      point="aerialway15" line="aerialway15" />
+	<class name="aerialway:rope_tow"               layer="ground"      point="aerialway15" line="aerialway15" />
+	<class name="aerialway:magic_carpet"           layer="ground"      point="aerialway15" line="aerialway15" />
+	<class name="aerialway:zip_line"               layer="air"         point="aerialway15" line="aerialway15" />
+	<class name="aerialway:canopy"                 layer="air"         point="aerialway15" line="aerialway15" />
 	<class name="aeroway:aerodrome"                layer="place:high"  point="airport15" />
 	<class name="aeroway:helipad"                  layer="place:low1"  point="airport15" />
 	<class name="aeroway:heliport"                 layer="place:low1"  point="airport15" />
