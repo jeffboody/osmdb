@@ -7,15 +7,15 @@ OBJECTS  = $(TARGET).o $(CLASSES:%=%.o)
 HFILES   = $(CLASSES:%=%.h)
 OPT      = -O2 -Wall -Wno-format-truncation
 CFLAGS   = $(OPT) -I.
-LDFLAGS  = -Llibsqlite3 -lsqlite3 -Llibbfs -lbfs -Llibcc -lcc -Lterrain -lterrain -Llibpak -lpak -Llibxmlstream -lxmlstream -Llibexpat/expat/lib -lexpat -ldl -lpthread -lm -lz
+LDFLAGS  = -Llibsqlite3 -lsqlite3 -Llibbfs -lbfs -Llibcc -lcc -Lterrain -lterrain -Llibxmlstream -lxmlstream -Llibexpat/expat/lib -lexpat -ldl -lpthread -lm -lz
 CCC      = gcc
 
 all: $(TARGET)
 
-$(TARGET): $(OBJECTS) libsqlite3 libbfs libcc terrain libpak xmlstream libexpat
+$(TARGET): $(OBJECTS) libsqlite3 libbfs libcc terrain xmlstream libexpat
 	$(CCC) $(OPT) $(OBJECTS) -o $@ $(LDFLAGS)
 
-.PHONY: libsqlite3 libbfs libcc terrain libpak xmlstream libexpat
+.PHONY: libsqlite3 libbfs libcc terrain xmlstream libexpat
 
 libbfs:
 	$(MAKE) -C libbfs
@@ -25,9 +25,6 @@ libcc:
 
 terrain:
 	$(MAKE) -C terrain
-
-libpak:
-	$(MAKE) -C libpak
 
 xmlstream:
 	$(MAKE) -C libxmlstream
@@ -43,10 +40,9 @@ clean:
 	$(MAKE) -C libbfs clean
 	$(MAKE) -C libcc clean
 	$(MAKE) -C terrain clean
-	$(MAKE) -C libpak clean
 	$(MAKE) -C libxmlstream clean
 	$(MAKE) -C libexpat/expat/lib clean
 	$(MAKE) -C libsqlite3 clean
-	rm libsqlite3 libbfs libcc terrain libpak libxmlstream libexpat osmdb
+	rm libsqlite3 libbfs libcc terrain libxmlstream libexpat osmdb
 
 $(OBJECTS): $(HFILES)

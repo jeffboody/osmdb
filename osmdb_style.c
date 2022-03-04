@@ -27,7 +27,7 @@
 #define LOG_TAG "osmdb"
 #include "../libcc/cc_log.h"
 #include "../libcc/cc_memory.h"
-#include "../libpak/pak_file.h"
+#include "../libbfs/bfs_file.h"
 #include "../libxmlstream/xml_istream.h"
 #include "osmdb_style.h"
 
@@ -975,29 +975,33 @@ osmdb_style_new(const char* resource, const char* fname)
 		goto fail_classes;
 	}
 
-	pak_file_t* pak = pak_file_open(resource, PAK_FLAG_READ);
-	if(pak == NULL)
+	bfs_file_t* bfs;
+	bfs = bfs_file_open(resource, 1, BFS_MODE_RDONLY);
+	if(bfs == NULL)
 	{
 		LOGE("invalid %s", resource);
-		goto fail_pak;
+		goto fail_bfs;
 	}
 
-	int len = pak_file_seek(pak, fname);
-	if(len == 0)
+	size_t size = 0;
+	void*  data = NULL;
+	if(bfs_file_blobGet(bfs, 0, fname,
+	                    &size, &data) == 0)
 	{
-		LOGE("invalid %s", fname);
-		goto fail_seek;
+		goto fail_get;
 	}
 
-	if(xml_istream_parseFile((void*) self,
-	                         osmdb_style_start,
-	                         osmdb_style_end,
-	                         pak->f, len) == 0)
+	if(xml_istream_parseBuffer((void*) self,
+	                           osmdb_style_start,
+	                           osmdb_style_end,
+	                           (const char*) data,
+	                           size) == 0)
 	{
 		goto fail_parse;
 	}
 
-	pak_file_close(&pak);
+	FREE(data);
+	bfs_file_close(&bfs);
 
 	// success
 	return self;
@@ -1005,9 +1009,10 @@ osmdb_style_new(const char* resource, const char* fname)
 	// failure
 	fail_parse:
 		osmdb_style_finish(self);
-	fail_seek:
-		pak_file_close(&pak);
-	fail_pak:
+		FREE(data);
+	fail_get:
+		bfs_file_close(&bfs);
+	fail_bfs:
 		cc_map_delete(&self->classes);
 	fail_classes:
 		cc_map_delete(&self->polys);
