@@ -77,25 +77,25 @@
 	<point name="saddle15"     min_zoom="15" text_scale="1.00f" text_color1="peak:text"      text_color2="black" marker_color1="peak:point" marker_color2="black" flags="marker:show" />
 	<point name="city9"        min_zoom="9"  text_scale="1.15f" text_color1="city:text"      text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
 	<point name="town12"       min_zoom="12" text_scale="1.10f" text_color1="city:text"      text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
-	<point name="village13"    min_zoom="13" text_scale="1.05f" text_color1="city:text"      text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
+	<point name="village12"    min_zoom="13" text_scale="1.05f" text_color1="city:text"      text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
 	<point name="water15"      min_zoom="15" text_scale="1.00f" text_color1="lake:text"      text_color2="black" />
 	<point name="glacier15"    min_zoom="15" text_scale="1.00f" text_color1="glacier:text"   text_color2="black" />
 	<point name="outdoor15"    min_zoom="15" text_scale="1.00f" text_color1="peak:text"      text_color2="black" />
 	<point name="forest12"     min_zoom="12" text_scale="1.00f" text_color1="peak:text"      text_color2="black" />
-	<point name="trail15"      min_zoom="15" text_scale="0.95f" text_color1="trail:text"     text_color2="black" />
-	<point name="track15"      min_zoom="15" text_scale="0.95f" text_color1="track:text"     text_color2="black" />
+	<point name="trail15"      min_zoom="17" text_scale="0.95f" text_color1="trail:text"     text_color2="black" />
+	<point name="track15"      min_zoom="17" text_scale="0.95f" text_color1="track:text"     text_color2="black" />
 	<point name="core12"       min_zoom="12" text_scale="1.00f" text_color1="core:text"      text_color2="black" flags="marker:show,ele:show" />
-	<point name="road15"       min_zoom="15" text_scale="0.95f" text_color1="white"          text_color2="black" />
+	<point name="road15"       min_zoom="17" text_scale="0.95f" text_color1="white"          text_color2="black" />
 	<point name="waypoint15"   min_zoom="15" text_scale="0.95f" text_color1="white"          text_color2="black" />
-	<point name="motorway15"   min_zoom="15" text_scale="1.15f" text_color1="motorway:text"  text_color2="black" />
-	<point name="trunk15"      min_zoom="15" text_scale="1.10f" text_color1="trunk:text"     text_color2="black" />
-	<point name="primary15"    min_zoom="15" text_scale="1.10f" text_color1="primary:text"   text_color2="black" />
-	<point name="secondary15"  min_zoom="15" text_scale="1.05f" text_color1="secondary:text" text_color2="black" />
-	<point name="tertiary15"   min_zoom="15" text_scale="1.05f" text_color1="tertiary:text"  text_color2="black" />
+	<point name="motorway15"   min_zoom="10" text_scale="1.15f" text_color1="motorway:text"  text_color2="black" />
+	<point name="trunk15"      min_zoom="11" text_scale="1.10f" text_color1="trunk:text"     text_color2="black" />
+	<point name="primary15"    min_zoom="12" text_scale="1.10f" text_color1="primary:text"   text_color2="black" />
+	<point name="secondary15"  min_zoom="13" text_scale="1.05f" text_color1="secondary:text" text_color2="black" />
+	<point name="tertiary15"   min_zoom="14" text_scale="1.05f" text_color1="tertiary:text"  text_color2="black" />
 	<point name="airport15"    min_zoom="15" text_scale="1.05f" text_color1="airport"        text_color2="black" marker_color1="airport"       marker_color2="black" flags="marker:show" />
-	<point name="other15"      min_zoom="15" text_scale="0.95f" text_color1="other:text"     text_color2="black" marker_color1="other:text"    marker_color2="black" />
-	<point name="military15"   min_zoom="15" text_scale="0.95f" text_color1="military:text"  text_color2="black" marker_color1="military:text" marker_color2="black" />
-	<point name="junction15"   min_zoom="15" text_scale="1.10f" text_color1="junction:text"  text_color2="black" />
+	<point name="other15"      min_zoom="17" text_scale="0.95f" text_color1="other:text"     text_color2="black" marker_color1="other:text"    marker_color2="black" />
+	<point name="military15"   min_zoom="17" text_scale="0.95f" text_color1="military:text"  text_color2="black" marker_color1="military:text" marker_color2="black" />
+	<point name="junction15"   min_zoom="17" text_scale="1.10f" text_color1="junction:text"  text_color2="black" />
 	<point name="aerialway15"  min_zoom="15" text_scale="0.95f" text_color1="aerialway"      text_color2="black" />
 
 	<line name="aerialway15"       min_zoom="15" mode="dashed,striped" color1="aerialway"  color2="dkgray" width="1.4" />
@@ -465,7 +465,7 @@
 	<class name="office:water_utility"             layer="place:low0"  point="other15"  />
 	<class name="place:city"                       layer="place:high"  point="city9" />
 	<class name="place:town"                       layer="place:high"  point="town12" />
-	<class name="place:village"                    layer="place:high"  point="village13" />
+	<class name="place:village"                    layer="place:high"  point="village12" />
 	<class name="power:plant"                      layer="place:low0"  point="other15" />
 	<class name="public_transport:station"         layer="place:low0"  point="other15" />
 	<class name="railway:funicular"                layer="railway"     line="railway15" />
