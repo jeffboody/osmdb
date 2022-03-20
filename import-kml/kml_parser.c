@@ -207,10 +207,11 @@ kml_parser_addTileRange(kml_parser_t* self,
 	int   ix1;
 	int   iy1;
 	int   id;
-	int   i       = 0;
-	int   zoom[]  = { 15, 12, 9, -1 };
-	int   pow2n[] = { 32768, 4096, 512 };
-	while(min_zoom <= zoom[i])
+	int   i          = 0;
+	int   zoom[]     = { 15, 12, 9, -1 };
+	int   max_zoom[] = { 1000, 15, 12, -1 };
+	int   pow2n[]    = { 32768, 4096, 512 };
+	while(min_zoom < max_zoom[i])
 	{
 		terrain_coord2tile(latT, lonL,
 		                   zoom[i], &x0, &y0);
@@ -607,9 +608,10 @@ kml_parser_addTileCoord(kml_parser_t* self,
 
 	int ix;
 	int iy;
-	int i       = 0;
-	int zoom[]  = { 15, 12, 9, -1 };
-	int pow2n[] = { 32768, 4096, 512 };
+	int i          = 0;
+	int zoom[]     = { 15, 12, 9, -1 };
+	int max_zoom[] = { 1000, 15, 12, -1 };
+	int pow2n[]    = { 32768, 4096, 512 };
 
 	int type_array[]  =
 	{
@@ -618,7 +620,7 @@ kml_parser_addTileCoord(kml_parser_t* self,
 		OSMDB_TYPE_TILEREF_NODE9,
 	};
 
-	while(min_zoom <= zoom[i])
+	while(min_zoom < max_zoom[i])
 	{
 		terrain_coord2tile(lat, lon,
 		                   zoom[i], &x, &y);
