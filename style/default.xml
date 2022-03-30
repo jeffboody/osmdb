@@ -98,7 +98,7 @@
 	<point name="junction15"   min_zoom="17" text_scale="1.10f" text_color1="junction:text"  text_color2="black" />
 	<point name="aerialway15"  min_zoom="15" text_scale="0.95f" text_color1="aerialway"      text_color2="black" />
 
-	<line name="aerialway15"       min_zoom="15" mode="dashed,striped" color1="aerialway"  color2="dkgray" width="1.4" />
+	<line name="aerialway15"       min_zoom="15" mode="dashed,striped" color1="aerialway"  color2="dkgray" width="1.7" />
 	<line name="motorway9"         min_zoom="9"  mode="striped" color1="motorway:line"  color2="dkgray" width="3.5" />
 	<line name="trunk9"            min_zoom="9"  mode="striped" color1="trunk:line"     color2="dkgray" width="3.5" />
 	<line name="primary9"          min_zoom="9"  mode="striped" color1="primary:line"   color2="dkgray" width="3.5" />
@@ -107,13 +107,13 @@
 	<line name="motorway_link15"   min_zoom="15" mode="striped" color1="motorway:line"  color2="dkgray" width="2.5" />
 	<line name="trunk_link15"      min_zoom="15" mode="striped" color1="trunk:line"     color2="dkgray" width="2.5" />
 	<line name="primary_link15"    min_zoom="15" mode="striped" color1="primary:line"   color2="dkgray" width="2.5" />
-	<line name="secondary_link15"  min_zoom="15" mode="striped" color1="secondary:line" color2="dkgray" width="1.5" />
-	<line name="tertiary_link15"   min_zoom="15" mode="striped" color1="tertiary:line"  color2="dkgray" width="1.5" />
+	<line name="secondary_link15"  min_zoom="15" mode="striped" color1="secondary:line" color2="dkgray" width="1.7" />
+	<line name="tertiary_link15"   min_zoom="15" mode="striped" color1="tertiary:line"  color2="dkgray" width="1.7" />
 	<line name="road15"            min_zoom="15" mode="striped" color1="ltgray"         color2="dkgray" width="1.9" />
 	<line name="service15"         min_zoom="15" mode="striped,named" color1="ltgray"       color2="dkgray" width="1.9" />
-	<line name="pedestrian15"      min_zoom="15" mode="dashed,striped" color1="trail:line"  color2="dkgray" width="1.4" />
-	<line name="runway15"          min_zoom="15" mode="dashed,striped" color1="runway:line" color2="dkgray" width="4.0" />
-	<line name="taxiway15"         min_zoom="15" mode="striped"        color1="runway:line" color2="dkgray" width="1.5" />
+	<line name="pedestrian15"      min_zoom="15" mode="dashed,striped" color1="trail:line"  color2="dkgray" width="1.7" />
+	<line name="runway15"          min_zoom="15" mode="dashed,striped" color1="runway:line" color2="dkgray" width="3.0" />
+	<line name="taxiway15"         min_zoom="15" mode="striped"        color1="runway:line" color2="dkgray" width="1.7" />
 	<line name="trail15"           min_zoom="15" mode="dashed,striped" color1="trail:line"  color2="dkgray" width="1.7" />
 	<line name="track15"           min_zoom="15" mode="striped"        color1="track:line"  color2="dkgray" width="1.7" />
 	<line name="railway15"         min_zoom="15" mode="dashed,striped" color1="gray"        color2="ltgray" width="1.7" />
