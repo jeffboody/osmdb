@@ -589,11 +589,11 @@ osm_parser_parseName(osm_parser_t* self,
 		        ((strncmp(word[2].word, "Highway", 256) == 0) ||
 		         (strncmp(word[2].word, "Hwy",     256) == 0)))
 		{
-		    // e.g. United States Highway 6
-		    snprintf(word[0].word,  256, "%s", "US");
-		    snprintf(word[0].abrev, 256, "%s", "US");
-		    snprintf(word[0].sep,   256, "%s", word[2].sep);
-		    word[0].abreviate = 0;
+			// e.g. United States Highway 6
+			snprintf(word[0].word,  256, "%s", "US");
+			snprintf(word[0].abrev, 256, "%s", "US");
+			snprintf(word[0].sep,   256, "%s", word[2].sep);
+			word[0].abreviate = 0;
 			words -= 2;
 
 			int i;
@@ -653,11 +653,11 @@ osm_parser_parseName(osm_parser_t* self,
 		         (strncmp(word[1].word, "Highway", 256) == 0) ||
 		         (strncmp(word[1].word, "Hwy",     256) == 0)))
 		{
-		    // e.g. County Road 11D
-		    snprintf(word[0].word,  256, "%s", "CR");
-		    snprintf(word[0].abrev, 256, "%s", "CR");
-		    snprintf(word[0].sep,   256, "%s", word[1].sep);
-		    word[0].abreviate = 0;
+			// e.g. County Road 11D
+			snprintf(word[0].word,  256, "%s", "CR");
+			snprintf(word[0].abrev, 256, "%s", "CR");
+			snprintf(word[0].sep,   256, "%s", word[1].sep);
+			word[0].abreviate = 0;
 			words -= 1;
 
 			int i;
@@ -673,11 +673,11 @@ osm_parser_parseName(osm_parser_t* self,
 		        ((strncmp(word[1].word, "Highway", 256) == 0) ||
 		         (strncmp(word[1].word, "Hwy",     256) == 0)))
 		{
-		    // e.g. US Highway 6
-		    snprintf(word[0].word,  256, "%s", "US");
-		    snprintf(word[0].abrev, 256, "%s", "US");
-		    snprintf(word[0].sep,   256, "%s", word[1].sep);
-		    word[0].abreviate = 0;
+			// e.g. US Highway 6
+			snprintf(word[0].word,  256, "%s", "US");
+			snprintf(word[0].abrev, 256, "%s", "US");
+			snprintf(word[0].sep,   256, "%s", word[1].sep);
+			word[0].abreviate = 0;
 			words -= 1;
 
 			int i;
