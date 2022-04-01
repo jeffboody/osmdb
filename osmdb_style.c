@@ -703,6 +703,8 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 	const char* poly  = NULL;
 	const char* point = NULL;
 
+	int abrev = 0;
+
 	// find atts
 	int idx0 = 0;
 	int idx1 = 1;
@@ -711,6 +713,10 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 		if(strcmp(atts[idx0], "name") == 0)
 		{
 			name = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "abrev") == 0)
+		{
+			abrev = (int) strtol(atts[idx1], NULL, 0);
 		}
 		else if(strcmp(atts[idx0], "layer") == 0)
 		{
@@ -798,6 +804,7 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 		LOGE("CALLOC failed");
 		return 0;
 	}
+	class->abrev = abrev;
 	class->layer = layeri;
 	class->line  = linep;
 	class->poly  = polyp;

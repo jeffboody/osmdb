@@ -133,25 +133,25 @@
 	<poly name="water15"    min_zoom="15" color="lake:poly" />
 	<poly name="building15" min_zoom="15" color="building:poly" />
 
-	<class name="aerialway:cable_car"              layer="ground"      point="aerialway15" line="aerialway15" />
-	<class name="aerialway:gondola"                layer="air"         point="aerialway15" line="aerialway15" />
-	<class name="aerialway:chair_lift"             layer="air"         point="aerialway15" line="aerialway15" />
-	<class name="aerialway:mixed_lift"             layer="ground"      point="aerialway15" line="aerialway15" />
-	<class name="aerialway:drag_lift"              layer="ground"      point="aerialway15" line="aerialway15" />
-	<class name="aerialway:t-bar"                  layer="ground"      point="aerialway15" line="aerialway15" />
-	<class name="aerialway:j-bar"                  layer="ground"      point="aerialway15" line="aerialway15" />
-	<class name="aerialway:platter"                layer="ground"      point="aerialway15" line="aerialway15" />
-	<class name="aerialway:rope_tow"               layer="ground"      point="aerialway15" line="aerialway15" />
-	<class name="aerialway:magic_carpet"           layer="ground"      point="aerialway15" line="aerialway15" />
-	<class name="aerialway:zip_line"               layer="air"         point="aerialway15" line="aerialway15" />
-	<class name="aerialway:canopy"                 layer="air"         point="aerialway15" line="aerialway15" />
+	<class name="aerialway:cable_car"              layer="ground"      abrev="1" point="aerialway15" line="aerialway15" />
+	<class name="aerialway:gondola"                layer="air"         abrev="1" point="aerialway15" line="aerialway15" />
+	<class name="aerialway:chair_lift"             layer="air"         abrev="1" point="aerialway15" line="aerialway15" />
+	<class name="aerialway:mixed_lift"             layer="ground"      abrev="1" point="aerialway15" line="aerialway15" />
+	<class name="aerialway:drag_lift"              layer="ground"      abrev="1" point="aerialway15" line="aerialway15" />
+	<class name="aerialway:t-bar"                  layer="ground"      abrev="1" point="aerialway15" line="aerialway15" />
+	<class name="aerialway:j-bar"                  layer="ground"      abrev="1" point="aerialway15" line="aerialway15" />
+	<class name="aerialway:platter"                layer="ground"      abrev="1" point="aerialway15" line="aerialway15" />
+	<class name="aerialway:rope_tow"               layer="ground"      abrev="1" point="aerialway15" line="aerialway15" />
+	<class name="aerialway:magic_carpet"           layer="ground"      abrev="1" point="aerialway15" line="aerialway15" />
+	<class name="aerialway:zip_line"               layer="air"         abrev="1" point="aerialway15" line="aerialway15" />
+	<class name="aerialway:canopy"                 layer="air"         abrev="1" point="aerialway15" line="aerialway15" />
 	<class name="aeroway:aerodrome"                layer="place:high"  point="airport15" />
 	<class name="aeroway:helipad"                  layer="place:low1"  point="airport15" />
 	<class name="aeroway:heliport"                 layer="place:low1"  point="airport15" />
-	<class name="aeroway:runway"                   layer="runway"      line="runway15" />
+	<class name="aeroway:runway"                   layer="runway"      abrev="1" line="runway15" />
 	<class name="aeroway:spaceport"                layer="place:low2"  point="airport15" />
-	<class name="aeroway:taxilane"                 layer="taxiway"     line="taxiway15" />
-	<class name="aeroway:taxiway"                  layer="taxiway"     line="taxiway15" />
+	<class name="aeroway:taxilane"                 layer="taxiway"     abrev="1" line="taxiway15" />
+	<class name="aeroway:taxiway"                  layer="taxiway"     abrev="1" line="taxiway15" />
 	<class name="amenity:bar"                      layer="place:low1"  point="other15" />
 	<class name="amenity:bbq"                      layer="place:low1"  point="other15" />
 	<class name="amenity:biergarten"               layer="place:low1"  point="other15" />
@@ -177,6 +177,7 @@
 	<class name="amenity:car_wash"                 layer="place:low0"  point="other15" />
 	<class name="amenity:ferry_terminal"           layer="place:low0"  point="other15" />
 	<class name="amenity:fuel"                     layer="place:low1"  point="other15" />
+	<class name="amenity:parking"                  layer="place:low1"  abrev="1" point="other15" />
 	<class name="amenity:bank"                     layer="place:low1"  point="other15" />
 	<class name="amenity:clinic"                   layer="place:low0"  point="other15" />
 	<class name="amenity:dentist"                  layer="place:low0"  point="other15" />
@@ -286,31 +287,31 @@
 	<class name="geological:moraine"               layer="place:low0"  point="other15" />
 	<class name="geological:outcrop"               layer="place:low0"  point="other15" />
 	<class name="geological:palaeontological_site" layer="place:low0"  point="other15" />
-	<class name="highway:motorway"                 layer="motorway"    point="motorway15"  line="motorway9" />
-	<class name="highway:trunk"                    layer="trunk"       point="trunk15"     line="trunk9" />
-	<class name="highway:primary"                  layer="primary"     point="primary15"   line="primary9" />
-	<class name="highway:secondary"                layer="secondary"   point="secondary15" line="secondary12" />
-	<class name="highway:tertiary"                 layer="tertiary"    point="tertiary15"  line="tertiary12" />
-	<class name="highway:unclassified"             layer="residential" point="road15"      line="road15" />
-	<class name="highway:service"                  layer="residential" point="road15"      line="service15" />
-	<class name="highway:residential"              layer="residential" point="road15"      line="road15" />
-	<class name="highway:motorway_link"            layer="link"        line="motorway_link15" />
-	<class name="highway:trunk_link"               layer="link"        line="trunk_link15" />
-	<class name="highway:primary_link"             layer="link"        line="primary_link15" />
-	<class name="highway:secondary_link"           layer="link"        line="secondary_link15" />
-	<class name="highway:tertiary_link"            layer="link"        line="tertiary_link15" />
-	<class name="highway:living_street"            layer="trail"       point="trail15"   line="pedestrian15" />
-	<class name="highway:pedestrian"               layer="trail"       point="trail15"   line="pedestrian15" />
-	<class name="highway:track"                    layer="track"       point="track15"   line="track15" />
-	<class name="highway:escape"                   layer="ground"      point="road15"    line="road15" />
-	<class name="highway:raceway"                  layer="ground"      point="road15"    line="road15" />
-	<class name="highway:road"                     layer="residential" point="road15"    line="road15" />
-	<class name="highway:footway"                  layer="trail"       point="trail15"   line="footway15" />
-	<class name="highway:bridleway"                layer="trail"       point="trail15"   line="trail15" />
-	<class name="highway:steps"                    layer="trail"       point="trail15"   line="footway15" />
-	<class name="highway:path"                     layer="trail"       point="trail15"   line="trail15" />
-	<class name="highway:cycleway"                 layer="trail"       point="trail15"   line="trail15" />
-	<class name="highway:motorway_junction"        layer="junction"    point="junction15" />
+	<class name="highway:motorway"                 layer="motorway"    abrev="1" point="motorway15"  line="motorway9" />
+	<class name="highway:trunk"                    layer="trunk"       abrev="1" point="trunk15"     line="trunk9" />
+	<class name="highway:primary"                  layer="primary"     abrev="1" point="primary15"   line="primary9" />
+	<class name="highway:secondary"                layer="secondary"   abrev="1" point="secondary15" line="secondary12" />
+	<class name="highway:tertiary"                 layer="tertiary"    abrev="1" point="tertiary15"  line="tertiary12" />
+	<class name="highway:unclassified"             layer="residential" abrev="1" point="road15"      line="road15" />
+	<class name="highway:service"                  layer="residential" abrev="1" point="road15"      line="service15" />
+	<class name="highway:residential"              layer="residential" abrev="1" point="road15"      line="road15" />
+	<class name="highway:motorway_link"            layer="link"        abrev="1" line="motorway_link15" />
+	<class name="highway:trunk_link"               layer="link"        abrev="1" line="trunk_link15" />
+	<class name="highway:primary_link"             layer="link"        abrev="1" line="primary_link15" />
+	<class name="highway:secondary_link"           layer="link"        abrev="1" line="secondary_link15" />
+	<class name="highway:tertiary_link"            layer="link"        abrev="1" line="tertiary_link15" />
+	<class name="highway:living_street"            layer="trail"       abrev="1" point="trail15"   line="pedestrian15" />
+	<class name="highway:pedestrian"               layer="trail"       abrev="1" point="trail15"   line="pedestrian15" />
+	<class name="highway:track"                    layer="track"       abrev="1" point="track15"   line="track15" />
+	<class name="highway:escape"                   layer="ground"      abrev="1" point="road15"    line="road15" />
+	<class name="highway:raceway"                  layer="ground"      abrev="1" point="road15"    line="road15" />
+	<class name="highway:road"                     layer="residential" abrev="1" point="road15"    line="road15" />
+	<class name="highway:footway"                  layer="trail"       abrev="1" point="trail15"   line="footway15" />
+	<class name="highway:bridleway"                layer="trail"       abrev="1" point="trail15"   line="trail15" />
+	<class name="highway:steps"                    layer="trail"       abrev="1" point="trail15"   line="footway15" />
+	<class name="highway:path"                     layer="trail"       abrev="1" point="trail15"   line="trail15" />
+	<class name="highway:cycleway"                 layer="trail"       abrev="1" point="trail15"   line="trail15" />
+	<class name="highway:motorway_junction"        layer="junction"    abrev="1" point="junction15" />
 	<class name="historic:aircraft"                layer="place:low0"  point="other15" />
 	<class name="historic:aqueduct"                layer="place:low0"  point="other15" />
 	<class name="historic:archaeological_site"     layer="place:low0"  point="other15" />
@@ -395,36 +396,36 @@
 	<class name="military:office"                  layer="place:low0"  point="military15" />
 	<class name="military:range"                   layer="place:low0"  point="military15" />
 	<class name="military:training_area"           layer="place:low0"  point="military15" />
-	<class name="natural:wood"                     layer="place:low1"  point="other15" />
-	<class name="natural:scrub"                    layer="place:low1"  point="other15" />
-	<class name="natural:heath"                    layer="place:low1"  point="other15" />
-	<class name="natural:grassland"                layer="place:low1"  point="other15" />
-	<class name="natural:fell"                     layer="place:low1"  point="other15" />
-	<class name="natural:bare_rock"                layer="place:low1"  point="other15" />
-	<class name="natural:scree"                    layer="place:low1"  point="other15" />
-	<class name="natural:shingle"                  layer="place:low1"  point="other15" />
-	<class name="natural:sand"                     layer="place:low1"  point="other15" />
-	<class name="natural:mud"                      layer="place:low1"  point="other15" />
-	<class name="natural:water"                    layer="water"       point="water15"   poly="water9" />
-	<class name="natural:wetland"                  layer="place:low1"  point="other15" />
-	<class name="natural:glacier"                  layer="water"       point="glacier15" poly="glacier15" />
-	<class name="natural:bay"                      layer="water"       point="water15"   poly="water9" />
-	<class name="natural:cape"                     layer="place:low0"  point="other15" />
-	<class name="natural:beach"                    layer="place:low1"  point="other15" />
-	<class name="natural:spring"                   layer="place:low0"  point="other15" />
-	<class name="natural:hot_spring"               layer="place:low0"  point="other15" />
-	<class name="natural:geyser"                   layer="place:low0"  point="other15" />
-	<class name="natural:peak"                     layer="place:high"  point="peak15" />
-	<class name="natural:volcano"                  layer="place:high"  point="peak15" />
-	<class name="natural:valley"                   layer="place:low1"  point="other15" />
-	<class name="natural:ridge"                    layer="place:low1"  point="other15" />
-	<class name="natural:arete"                    layer="place:low0"  point="other15" />
-	<class name="natural:cliff"                    layer="place:low0"  point="other15" />
-	<class name="natural:saddle"                   layer="place:high"  point="saddle15" />
-	<class name="natural:rock"                     layer="place:low0"  point="other15" />
-	<class name="natural:stone"                    layer="place:low0"  point="other15" />
-	<class name="natural:sinkhole"                 layer="place:low0"  point="other15" />
-	<class name="natural:cave_entrance"            layer="place:low0"  point="other15" />
+	<class name="natural:wood"                     layer="place:low1"  abrev="1" point="other15" />
+	<class name="natural:scrub"                    layer="place:low1"  abrev="1" point="other15" />
+	<class name="natural:heath"                    layer="place:low1"  abrev="1" point="other15" />
+	<class name="natural:grassland"                layer="place:low1"  abrev="1" point="other15" />
+	<class name="natural:fell"                     layer="place:low1"  abrev="1" point="other15" />
+	<class name="natural:bare_rock"                layer="place:low1"  abrev="1" point="other15" />
+	<class name="natural:scree"                    layer="place:low1"  abrev="1" point="other15" />
+	<class name="natural:shingle"                  layer="place:low1"  abrev="1" point="other15" />
+	<class name="natural:sand"                     layer="place:low1"  abrev="1" point="other15" />
+	<class name="natural:mud"                      layer="place:low1"  abrev="1" point="other15" />
+	<class name="natural:water"                    layer="water"       abrev="1" point="water15"   poly="water9" />
+	<class name="natural:wetland"                  layer="place:low1"  abrev="1" point="other15" />
+	<class name="natural:glacier"                  layer="water"       abrev="1" point="glacier15" poly="glacier15" />
+	<class name="natural:bay"                      layer="water"       abrev="1" point="water15"   poly="water9" />
+	<class name="natural:cape"                     layer="place:low0"  abrev="1" point="other15" />
+	<class name="natural:beach"                    layer="place:low1"  abrev="1" point="other15" />
+	<class name="natural:spring"                   layer="place:low0"  abrev="1" point="other15" />
+	<class name="natural:hot_spring"               layer="place:low0"  abrev="1" point="other15" />
+	<class name="natural:geyser"                   layer="place:low0"  abrev="1" point="other15" />
+	<class name="natural:peak"                     layer="place:high"  abrev="1" point="peak15" />
+	<class name="natural:volcano"                  layer="place:high"  abrev="1" point="peak15" />
+	<class name="natural:valley"                   layer="place:low1"  abrev="1" point="other15" />
+	<class name="natural:ridge"                    layer="place:low1"  abrev="1" point="other15" />
+	<class name="natural:arete"                    layer="place:low0"  abrev="1" point="other15" />
+	<class name="natural:cliff"                    layer="place:low0"  abrev="1" point="other15" />
+	<class name="natural:saddle"                   layer="place:high"  abrev="1" point="saddle15" />
+	<class name="natural:rock"                     layer="place:low0"  abrev="1" point="other15" />
+	<class name="natural:stone"                    layer="place:low0"  abrev="1" point="other15" />
+	<class name="natural:sinkhole"                 layer="place:low0"  abrev="1" point="other15" />
+	<class name="natural:cave_entrance"            layer="place:low0"  abrev="1" point="other15" />
 	<class name="office:accountant"                layer="place:low0"  point="other15"  />
 	<class name="office:adoption_agency"           layer="place:low0"  point="other15"  />
 	<class name="office:advertising_agency"        layer="place:low0"  point="other15"  />
@@ -468,14 +469,14 @@
 	<class name="place:village"                    layer="place:high"  point="village12" />
 	<class name="power:plant"                      layer="place:low0"  point="other15" />
 	<class name="public_transport:station"         layer="place:low0"  point="other15" />
-	<class name="railway:funicular"                layer="railway"     line="railway15" />
-	<class name="railway:light_rail"               layer="railway"     line="railway15" />
-	<class name="railway:monorail"                 layer="railway"     line="railway15" />
-	<class name="railway:narrow_gauge"             layer="railway"     line="railway15" />
-	<class name="railway:preserved"                layer="railway"     line="railway15" />
-	<class name="railway:rail"                     layer="railway"     line="railway15" />
-	<class name="railway:subway"                   layer="railway"     line="railway15" />
-	<class name="railway:tram"                     layer="railway"     line="railway15" />
+	<class name="railway:funicular"                layer="railway"     abrev="1" line="railway15" />
+	<class name="railway:light_rail"               layer="railway"     abrev="1" line="railway15" />
+	<class name="railway:monorail"                 layer="railway"     abrev="1" line="railway15" />
+	<class name="railway:narrow_gauge"             layer="railway"     abrev="1" line="railway15" />
+	<class name="railway:preserved"                layer="railway"     abrev="1" line="railway15" />
+	<class name="railway:rail"                     layer="railway"     abrev="1" line="railway15" />
+	<class name="railway:subway"                   layer="railway"     abrev="1" line="railway15" />
+	<class name="railway:tram"                     layer="railway"     abrev="1" line="railway15" />
 	<class name="railway:station"                  layer="place:low0"  point="other15" />
 	<class name="shop:alcohol"                     layer="place:low1"  point="other15"    />
 	<class name="shop:bakery"                      layer="place:low1"  point="other15"    />
@@ -721,27 +722,27 @@
 	<class name="tourism:aquarium"                 layer="place:low0"  point="other15" />
 	<class name="tourism:artwork"                  layer="place:low0"  point="other15" />
 	<class name="tourism:attraction"               layer="place:low0"  point="other15" />
-	<class name="tourism:camp_site"                layer="place:low1"  point="other15" />
-	<class name="tourism:caravan_site"             layer="place:low0"  point="other15" />
+	<class name="tourism:camp_site"                layer="place:low1"  abrev="1" point="other15" />
+	<class name="tourism:caravan_site"             layer="place:low0"  abrev="1" point="other15" />
 	<class name="tourism:chalet"                   layer="place:low0"  point="other15" />
 	<class name="tourism:gallery"                  layer="place:low0"  point="other15" />
 	<class name="tourism:guest_house"              layer="place:low0"  point="other15" />
 	<class name="tourism:hostel"                   layer="place:low0"  point="other15" />
 	<class name="tourism:hotel"                    layer="place:low0"  point="other15" />
-	<class name="tourism:information"              layer="place:low0"  point="other15" />
+	<class name="tourism:information"              layer="place:low0"  abrev="1" point="other15" />
 	<class name="tourism:motel"                    layer="place:low0"  point="other15" />
 	<class name="tourism:museum"                   layer="place:low0"  point="other15" />
-	<class name="tourism:picnic_site"              layer="place:low1"  point="other15" />
+	<class name="tourism:picnic_site"              layer="place:low1"  abrev="1" point="other15" />
 	<class name="tourism:theme_park"               layer="place:low0"  point="other15" />
-	<class name="tourism:viewpoint"                layer="place:low1"  point="other15" />
+	<class name="tourism:viewpoint"                layer="place:low1"  abrev="1" point="other15" />
 	<class name="tourism:wilderness_hut"           layer="place:low0"  point="other15" />
 	<class name="tourism:zoo"                      layer="place:low0"  point="other15" />
-	<class name="waterway:river"                   layer="water"       point="water15"   line="river12" />
-	<class name="waterway:riverbank"               layer="water"       point="water15"   poly="water12" />
-	<class name="waterway:stream"                  layer="water"       point="water15"   line="stream15" />
-	<class name="waterway:canal"                   layer="water"       line="stream15" />
-	<class name="waterway:ditch"                   layer="water"       line="stream15" />
-	<class name="waterway:drain"                   layer="water"       line="stream15" />
+	<class name="waterway:river"                   layer="water"       abrev="1" point="water15"   line="river12" />
+	<class name="waterway:riverbank"               layer="water"       abrev="1" point="water15"   poly="water12" />
+	<class name="waterway:stream"                  layer="water"       abrev="1" point="water15"   line="stream15" />
+	<class name="waterway:canal"                   layer="water"       abrev="1" line="stream15" />
+	<class name="waterway:ditch"                   layer="water"       abrev="1" line="stream15" />
+	<class name="waterway:drain"                   layer="water"       abrev="1" line="stream15" />
 	<class name="waterway:dock"                    layer="place:low0"  point="other15" />
 	<class name="waterway:boatyard"                layer="place:low0"  point="other15" />
 	<class name="waterway:dam"                     layer="place:low0"  point="other15" />

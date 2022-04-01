@@ -77,6 +77,7 @@ typedef struct
 // https://wiki.openstreetmap.org/wiki/Map_Features
 typedef struct
 {
+	int abrev;
 	int layer;
 
 	osmdb_styleLine_t*    line;

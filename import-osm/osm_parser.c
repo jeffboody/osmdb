@@ -1209,7 +1209,7 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 			osmdb_nodeInfo_addName(self->node_info,
 			                       self->tag_ref);
 		}
-		else if(self->tag_abrev[0] == '\0')
+		else if((self->tag_abrev[0] == '\0') || (sc->abrev == 0))
 		{
 			osmdb_nodeInfo_addName(self->node_info,
 			                       self->tag_name);
@@ -1777,7 +1777,8 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 		osmdb_wayInfo_addName(self->way_info,
 		                      self->tag_ref);
 	}
-	else if(self->tag_abrev[0] != '\0')
+	else if((self->tag_abrev[0] != '\0') &&
+		    sc1 && sc1->abrev)
 	{
 		osmdb_wayInfo_addName(self->way_info,
 		                      self->tag_abrev);
@@ -2313,7 +2314,8 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 	}
 
 	// fill the name
-	if(self->tag_abrev[0] == '\0')
+	if((self->tag_abrev[0] == '\0') ||
+	   (sc1 && (sc1->abrev == 0)))
 	{
 		osmdb_relInfo_addName(self->rel_info,
 		                      self->tag_name);
