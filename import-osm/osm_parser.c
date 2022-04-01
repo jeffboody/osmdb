@@ -626,14 +626,52 @@ osm_parser_parseName(osm_parser_t* self,
 			tmp->sep[0] = '\0';
 			words -= 1;
 		}
-		else if((strncmp(word[0].word, "State", 256) == 0) &&
+		else if((strncmp(word[0].word, "State",  256) == 0) &&
 		        ((strncmp(word[1].word, "Highway", 256) == 0) ||
-		         (strncmp(word[1].word, "Hwy",     256) == 0) ||
-		         (strncmp(word[1].word, "Route",   256) == 0) ||
+		         (strncmp(word[1].word, "Hwy",     256) == 0)))
+		{
+			// e.g. State Highway 93
+			snprintf(word[0].word,  256, "%s", "Hwy");
+			snprintf(word[0].abrev, 256, "%s", "Hwy");
+			snprintf(word[0].sep,   256, "%s", word[1].sep);
+			word[0].abreviate = 0;
+			words -= 1;
+
+			int i;
+			for(i = 1; i < words; ++i)
+			{
+				snprintf(word[i].word,  256, "%s", word[i + 1].word);
+				snprintf(word[i].abrev, 256, "%s", word[i + 1].abrev);
+				snprintf(word[i].sep,   256, "%s", word[i + 1].sep);
+				word[i].abreviate = word[i + 1].abreviate;
+			}
+
+			// prefer ref (if exists) for state highways
+			// e.g. State Highway 72 => CO 72
+			self->tag_highway = 1;
+		}
+		else if((strncmp(word[0].word, "State", 256) == 0) &&
+		        ((strncmp(word[1].word, "Route",   256) == 0) ||
 		         (strncmp(word[1].word, "Rte",     256) == 0)))
 		{
-			// prefer ref for state highways
-			// e.g. State Highway 72 => CO 72
+			// e.g. State Rte XX
+			snprintf(word[0].word,  256, "%s", "Rte");
+			snprintf(word[0].abrev, 256, "%s", "Rte");
+			snprintf(word[0].sep,   256, "%s", word[1].sep);
+			word[0].abreviate = 0;
+			words -= 1;
+
+			int i;
+			for(i = 1; i < words; ++i)
+			{
+				snprintf(word[i].word,  256, "%s", word[i + 1].word);
+				snprintf(word[i].abrev, 256, "%s", word[i + 1].abrev);
+				snprintf(word[i].sep,   256, "%s", word[i + 1].sep);
+				word[i].abreviate = word[i + 1].abreviate;
+			}
+
+			// prefer ref (if exists) for state routes
+			// e.g. State Rte XX => CO XX
 			self->tag_highway = 1;
 		}
 		else if((strncmp(word[words - 2].word, "Trail", 256) == 0) &&
