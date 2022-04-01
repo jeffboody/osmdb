@@ -1375,6 +1375,24 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 				osm_parser_truncate(val, ';');
 				snprintf(self->tag_ref,  256, "%s", val);
 			}
+			else if(strcmp(atts[j], "capital") == 0)
+			{
+				if(strcmp(val, "yes") == 0)
+				{
+					self->node_info->flags |= OSMDB_NODEINFO_FLAG_COUNTRY_CAPITAL;
+				}
+				if(strcmp(val, "4") == 0)
+				{
+					self->node_info->flags |= OSMDB_NODEINFO_FLAG_STATE_CAPITAL;
+				}
+			}
+			else if(strcmp(atts[j], "state_capital") == 0)
+			{
+				if(strcmp(val, "yes") == 0)
+				{
+					self->node_info->flags |= OSMDB_NODEINFO_FLAG_STATE_CAPITAL;
+				}
+			}
 			else if(strcmp(atts[j], "ele:ft") == 0)
 			{
 				self->node_info->ele = osm_parser_parseEle(self, line,

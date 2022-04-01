@@ -43,7 +43,9 @@ typedef struct
 	short r;
 } osmdb_range_t;
 
-#define OSMDB_NODE_FLAG_BUILDING 0x0020
+#define OSMDB_NODE_FLAG_BUILDING        0x0020
+#define OSMDB_NODE_FLAG_STATE_CAPITAL   0x0100
+#define OSMDB_NODE_FLAG_COUNTRY_CAPITAL 0x0200
 
 typedef struct
 {

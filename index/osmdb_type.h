@@ -53,7 +53,9 @@ typedef struct
 	double  lon;
 } osmdb_nodeCoord_t;
 
-#define OSMDB_NODEINFO_FLAG_BUILDING 0x0020
+#define OSMDB_NODEINFO_FLAG_BUILDING        0x0020
+#define OSMDB_NODEINFO_FLAG_STATE_CAPITAL   0x0100
+#define OSMDB_NODEINFO_FLAG_COUNTRY_CAPITAL 0x0200
 
 typedef struct
 {
