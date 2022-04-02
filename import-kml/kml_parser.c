@@ -39,17 +39,18 @@
 #define KML_STATE_KML              1
 #define KML_STATE_DOCUMENT         2
 #define KML_STATE_FOLDER           3
-#define KML_STATE_PLACEMARK        4
-#define KML_STATE_PLACEMARKNAME    5
-#define KML_STATE_POLYGON          6
-#define KML_STATE_MULTIGEOMETRY    7
-#define KML_STATE_OUTERBOUNDARYIS  8
-#define KML_STATE_INNERBOUNDARYIS  9
-#define KML_STATE_LINEARRING       10
-#define KML_STATE_COORDINATES      11
-#define KML_STATE_EXTENDEDDATA     12
-#define KML_STATE_SCHEMADATA       13
-#define KML_STATE_SIMPLEDATA       14
+#define KML_STATE_FOLDERNAME       4
+#define KML_STATE_PLACEMARK        5
+#define KML_STATE_PLACEMARKNAME    6
+#define KML_STATE_POLYGON          7
+#define KML_STATE_MULTIGEOMETRY    8
+#define KML_STATE_OUTERBOUNDARYIS  9
+#define KML_STATE_INNERBOUNDARYIS  10
+#define KML_STATE_LINEARRING       11
+#define KML_STATE_COORDINATES      12
+#define KML_STATE_EXTENDEDDATA     13
+#define KML_STATE_SCHEMADATA       14
+#define KML_STATE_SIMPLEDATA       15
 
 #define KML_SIMPLEDATA_UNKNOWN 0
 #define KML_SIMPLEDATA_TYPE    1
@@ -256,6 +257,12 @@ kml_parser_wayAddSeg(kml_parser_t* self)
 			.wid   = self->wid,
 			.class = self->class
 		};
+
+		// add optional name (e.g. for boundary:state ways)
+		if(self->folder_class && (self->name[0] != '\0'))
+		{
+			osmdb_wayInfo_addName(&way_info, self->name);
+		}
 
 		size_t size = osmdb_wayInfo_sizeof(&way_info);
 		if(osmdb_index_add(self->index,
@@ -580,6 +587,41 @@ kml_parser_endFolder(kml_parser_t* self, int line,
 	// content may be NULL
 	ASSERT(self);
 
+	self->folder_class = 0;
+	self->class        = 0;
+
+	return kml_parser_statePop(self);
+}
+
+static int
+kml_parser_beginFolderName(kml_parser_t* self, int line,
+                           const char** atts)
+{
+	ASSERT(self);
+	ASSERT(atts);
+
+	return kml_parser_statePush(self,
+	                            KML_STATE_FOLDERNAME);
+}
+
+static int
+kml_parser_endFolderName(kml_parser_t* self, int line,
+                         const char* content)
+{
+	// content may be NULL
+	ASSERT(self);
+
+	if(content)
+	{
+		// boundary:state is a custom class for state boundaries
+		// which are imported from cb_2018_us_state_500k.kml
+		if(strcmp(content, "cb_2018_us_state_500k") == 0)
+		{
+			self->class = osmdb_classNameToCode("boundary:state");
+
+			self->folder_class = self->class;
+		}
+	}
 	return kml_parser_statePop(self);
 }
 
@@ -691,7 +733,7 @@ kml_parser_endPlacemark(kml_parser_t* self, int line,
 	}
 
 	snprintf(self->name, 256, "%s", "");
-	self->class = 0;
+	self->class = self->folder_class;
 
 	self->way_nds  = 0;
 	self->way_latT = 0.0;
@@ -957,7 +999,8 @@ kml_parser_endSimpleData(kml_parser_t* self, int line,
 
 	if(content)
 	{
-		if(self->simpledata == KML_SIMPLEDATA_TYPE)
+		if((self->class == 0) &&
+		   (self->simpledata == KML_SIMPLEDATA_TYPE))
 		{
 			if(strcasecmp(content, "Wilderness") == 0)
 			{
@@ -1051,6 +1094,10 @@ static int kml_parser_start(void* priv,
 		if(strcasecmp(name, "Placemark") == 0)
 		{
 			return kml_parser_beginPlacemark(self, line, atts);
+		}
+		else if(strcasecmp(name, "name") == 0)
+		{
+			return kml_parser_beginFolderName(self, line, atts);
 		}
 	}
 	else if(state == KML_STATE_PLACEMARK)
@@ -1160,6 +1207,10 @@ static int kml_parser_end(void* priv,
 	{
 		return kml_parser_endFolder(self, line, content);
 	}
+	else if(state == KML_STATE_FOLDERNAME)
+	{
+		return kml_parser_endFolderName(self, line, content);
+	}
 	else if(state == KML_STATE_PLACEMARK)
 	{
 		return kml_parser_endPlacemark(self, line, content);
@@ -1225,9 +1276,8 @@ kml_parser_t* kml_parser_new(const char* db_name)
 	}
 
 	// -1 is reserved for an invalid ID
-	self->nid   = -2;
-	self->wid   = -2;
-	self->class = osmdb_classNameToCode("class:none");
+	self->nid = -2;
+	self->wid = -2;
 
 	snprintf(self->name, 256, "%s", "");
 

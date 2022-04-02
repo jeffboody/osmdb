@@ -36,6 +36,7 @@ typedef struct
 	int64_t    nid;
 	int64_t    wid;
 	char       name[256];
+	int        folder_class;
 	int        class;
 	int        simpledata;
 	int        discard;

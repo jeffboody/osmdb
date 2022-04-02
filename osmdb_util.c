@@ -124,6 +124,8 @@ typedef struct
 // 2: parks/natural/tourism/airport/university/library/bridge/places
 // 1: trails/river
 // 0: other
+// boundary:state is a custom class for state boundaries
+// which are imported from cb_2018_us_state_500k.kml
 osmdb_utilClass_t OSM_UTIL_CLASSES[] =
 {
 	{ 0, 0, "class:none",                                  },
@@ -1122,6 +1124,7 @@ osmdb_utilClass_t OSM_UTIL_CLASSES[] =
 	{ 0, 0, "rec:special",                                 },
 	{ 0, 0, "rec:mineral",                                 },
 	{ 0, 0, "craft:parquet_layer",                         },
+	{ 0, 0, "boundary:state"                               },
 	{ 0, 0, NULL                                           },
 };
 

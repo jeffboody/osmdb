@@ -65,6 +65,7 @@
 	<color name="aerialway"       val="9BDFE0FF" />
 	<color name="city:text"       val="FFFFFFFF" />
 	<color name="city:point"      val="606060FF" />
+	<color name="state:line"      val="904ABC7F" />
 
 	<color name="core:text"       val="F29999FF" />
 	<color name="core:wilderness" val="119d11BF" />
@@ -126,6 +127,7 @@
 	<line name="core:mineral12"    min_zoom="12" color1="core:mineral"    color2="core:mineral"    width="2.5" />
 	<line name="core:historic12"   min_zoom="12" color1="core:historic"   color2="core:historic"   width="2.5" />
 	<line name="building15"        min_zoom="15" color1="building:line"   color2="dkgray" width="0.25" />
+	<line name="state9"            min_zoom="9"  color1="state:line" color2="state:line" width="2.5" />
 
 	<poly name="glacier15"  min_zoom="15" color="glacier:poly" />
 	<poly name="water9"     min_zoom="9"  color="lake:poly" />
@@ -753,4 +755,5 @@
 	<class name="core:historic"                    layer="core"        line="core:historic12"   point="core12" />
 	<class name="default:waypoint"                 layer="place:high"  point="waypoint15" />
 	<class name="building:yes"                     layer="place:low0"  point="other15" line="building15" poly="building15" />
+	<class name="boundary:state"                   layer="place:low0"  line="state9" />
 </osmdb>

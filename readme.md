@@ -43,12 +43,18 @@ To import planet.osm to sqlite3.
 Import KML
 ==========
 
+Download state shapefile (cb_2018_us_state_500k.zip):
+
+	https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.html
+
 Convert shapefiles to KML files (https://www.igismap.com/shp-to-kml/).
 
 	sudo apt install gdal-bin
+	ogr2ogr -f KML cb_2018_us_state_500k.kml cb_2018_us_state_500k.shp
+	ogr2ogr -f KML CORE_Act.kml CORE_Act.shp
 	ogr2ogr -f KML CORE_Act.kml CORE_Act.shp
 	ogr2ogr -f KML REC_Act.kml REC_Act.shp
 
-To import The CORE/REC Act kml files.
+To import optional kml files.
 
-	import-kml planet.sqlite3 CORE_Act.kml REC_Act.kml
+	import-kml planet.sqlite3 cb_2018_us_state_500k.kml CORE_Act.kml REC_Act.kml
