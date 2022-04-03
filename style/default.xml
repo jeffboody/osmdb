@@ -77,8 +77,8 @@
 	<color name="core:mineral"    val="DE1B1BBF" />
 	<color name="core:historic"   val="E988D0BF" />
 
-	<point name="peak15"       min_zoom="15" text_scale="1.00f" text_color1="peak:text"      text_color2="black" marker_color1="peak:point" marker_color2="black" flags="marker:show,ele:show" />
-	<point name="saddle15"     min_zoom="15" text_scale="1.00f" text_color1="peak:text"      text_color2="black" marker_color1="peak:point" marker_color2="black" flags="marker:show" />
+	<point name="peak12"       min_zoom="14" text_scale="1.00f" text_color1="peak:text"      text_color2="black" marker_color1="peak:point" marker_color2="black" flags="marker:show,ele:show" />
+	<point name="saddle12"     min_zoom="14" text_scale="1.00f" text_color1="peak:text"      text_color2="black" marker_color1="peak:point" marker_color2="black" flags="marker:show" />
 	<point name="state9"       min_zoom="9"  text_scale="1.20f" text_color1="state:text"     text_color2="black" marker_color1="state:text" marker_color2="black" flags="marker:show" />
 	<point name="city9"        min_zoom="9"  text_scale="1.15f" text_color1="city:text"      text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
 	<point name="town9"        min_zoom="11" text_scale="1.10f" text_color1="city:text"      text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
@@ -421,13 +421,13 @@
 	<class name="natural:spring"                   layer="place:low0"  abrev="1" point="other15" />
 	<class name="natural:hot_spring"               layer="place:low0"  abrev="1" point="other15" />
 	<class name="natural:geyser"                   layer="place:low0"  abrev="1" point="other15" />
-	<class name="natural:peak"                     layer="place:high0" abrev="1" point="peak15" />
-	<class name="natural:volcano"                  layer="place:high0" abrev="1" point="peak15" />
+	<class name="natural:peak"                     layer="place:high0" abrev="1" point="peak12" />
+	<class name="natural:volcano"                  layer="place:high0" abrev="1" point="peak12" />
 	<class name="natural:valley"                   layer="place:low1"  abrev="1" point="other15" />
 	<class name="natural:ridge"                    layer="place:low1"  abrev="1" point="other15" />
 	<class name="natural:arete"                    layer="place:low0"  abrev="1" point="other15" />
 	<class name="natural:cliff"                    layer="place:low0"  abrev="1" point="other15" />
-	<class name="natural:saddle"                   layer="place:high0" abrev="1" point="saddle15" />
+	<class name="natural:saddle"                   layer="place:high0" abrev="1" point="saddle12" />
 	<class name="natural:rock"                     layer="place:low0"  abrev="1" point="other15" />
 	<class name="natural:stone"                    layer="place:low0"  abrev="1" point="other15" />
 	<class name="natural:sinkhole"                 layer="place:low0"  abrev="1" point="other15" />
