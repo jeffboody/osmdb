@@ -92,7 +92,7 @@
 	<point name="core12"       min_zoom="12" text_scale="1.00f" text_color1="core:text"      text_color2="black" flags="marker:show,ele:show" />
 	<point name="road15"       min_zoom="17" text_scale="0.95f" text_color1="white"          text_color2="black" />
 	<point name="waypoint15"   min_zoom="15" text_scale="0.95f" text_color1="white"          text_color2="black" />
-	<point name="motorway15"   min_zoom="10" text_scale="1.15f" text_color1="motorway:text"  text_color2="black" />
+	<point name="motorway9"    min_zoom="10" text_scale="1.15f" text_color1="motorway:text"  text_color2="black" />
 	<point name="trunk15"      min_zoom="11" text_scale="1.10f" text_color1="trunk:text"     text_color2="black" />
 	<point name="primary15"    min_zoom="12" text_scale="1.10f" text_color1="primary:text"   text_color2="black" />
 	<point name="secondary15"  min_zoom="13" text_scale="1.05f" text_color1="secondary:text" text_color2="black" />
@@ -293,7 +293,7 @@
 	<class name="geological:moraine"               layer="place:low0"  point="other15" />
 	<class name="geological:outcrop"               layer="place:low0"  point="other15" />
 	<class name="geological:palaeontological_site" layer="place:low0"  point="other15" />
-	<class name="highway:motorway"                 layer="motorway"    abrev="1" point="motorway15"  line="motorway9" />
+	<class name="highway:motorway"                 layer="motorway"    abrev="1" point="motorway9"  line="motorway9" />
 	<class name="highway:trunk"                    layer="trunk"       abrev="1" point="trunk15"     line="trunk9" />
 	<class name="highway:primary"                  layer="primary"     abrev="1" point="primary15"   line="primary9" />
 	<class name="highway:secondary"                layer="secondary"   abrev="1" point="secondary15" line="secondary12" />
