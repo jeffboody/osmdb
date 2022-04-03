@@ -20,7 +20,9 @@
 	<layer name="taxiway" />
 	<layer name="runway" />
 	<layer name="air" />
-	<layer name="place:high" />
+	<layer name="place:high0" />
+	<layer name="place:high1" />
+	<layer name="place:high2" />
 
 	<color name="white"           val="FFFFFFFF" />
 	<color name="black"           val="000000FF" />
@@ -79,8 +81,8 @@
 	<point name="saddle15"     min_zoom="15" text_scale="1.00f" text_color1="peak:text"      text_color2="black" marker_color1="peak:point" marker_color2="black" flags="marker:show" />
 	<point name="state9"       min_zoom="9"  text_scale="1.20f" text_color1="state:text"     text_color2="black" marker_color1="state:text" marker_color2="black" flags="marker:show" />
 	<point name="city9"        min_zoom="9"  text_scale="1.15f" text_color1="city:text"      text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
-	<point name="town12"       min_zoom="12" text_scale="1.10f" text_color1="city:text"      text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
-	<point name="village12"    min_zoom="13" text_scale="1.05f" text_color1="city:text"      text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
+	<point name="town9"        min_zoom="11" text_scale="1.10f" text_color1="city:text"      text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
+	<point name="village9"     min_zoom="11" text_scale="1.05f" text_color1="city:text"      text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
 	<point name="water15"      min_zoom="15" text_scale="1.00f" text_color1="lake:text"      text_color2="black" />
 	<point name="glacier15"    min_zoom="15" text_scale="1.00f" text_color1="glacier:text"   text_color2="black" />
 	<point name="outdoor15"    min_zoom="15" text_scale="1.00f" text_color1="peak:text"      text_color2="black" />
@@ -149,7 +151,7 @@
 	<class name="aerialway:magic_carpet"           layer="ground"      abrev="1" point="aerialway15" line="aerialway15" />
 	<class name="aerialway:zip_line"               layer="air"         abrev="1" point="aerialway15" line="aerialway15" />
 	<class name="aerialway:canopy"                 layer="air"         abrev="1" point="aerialway15" line="aerialway15" />
-	<class name="aeroway:aerodrome"                layer="place:high"  point="airport15" />
+	<class name="aeroway:aerodrome"                layer="place:high0" point="airport15" />
 	<class name="aeroway:helipad"                  layer="place:low1"  point="airport15" />
 	<class name="aeroway:heliport"                 layer="place:low1"  point="airport15" />
 	<class name="aeroway:runway"                   layer="runway"      abrev="1" line="runway15" />
@@ -419,13 +421,13 @@
 	<class name="natural:spring"                   layer="place:low0"  abrev="1" point="other15" />
 	<class name="natural:hot_spring"               layer="place:low0"  abrev="1" point="other15" />
 	<class name="natural:geyser"                   layer="place:low0"  abrev="1" point="other15" />
-	<class name="natural:peak"                     layer="place:high"  abrev="1" point="peak15" />
-	<class name="natural:volcano"                  layer="place:high"  abrev="1" point="peak15" />
+	<class name="natural:peak"                     layer="place:high0" abrev="1" point="peak15" />
+	<class name="natural:volcano"                  layer="place:high0" abrev="1" point="peak15" />
 	<class name="natural:valley"                   layer="place:low1"  abrev="1" point="other15" />
 	<class name="natural:ridge"                    layer="place:low1"  abrev="1" point="other15" />
 	<class name="natural:arete"                    layer="place:low0"  abrev="1" point="other15" />
 	<class name="natural:cliff"                    layer="place:low0"  abrev="1" point="other15" />
-	<class name="natural:saddle"                   layer="place:high"  abrev="1" point="saddle15" />
+	<class name="natural:saddle"                   layer="place:high0" abrev="1" point="saddle15" />
 	<class name="natural:rock"                     layer="place:low0"  abrev="1" point="other15" />
 	<class name="natural:stone"                    layer="place:low0"  abrev="1" point="other15" />
 	<class name="natural:sinkhole"                 layer="place:low0"  abrev="1" point="other15" />
@@ -468,10 +470,11 @@
 	<class name="office:therapist"                 layer="place:low0"  point="other15"  />
 	<class name="office:travel_agent"              layer="place:low0"  point="other15"  />
 	<class name="office:water_utility"             layer="place:low0"  point="other15"  />
-	<class name="place:state"                      layer="place:high"  point="state9" />
-	<class name="place:city"                       layer="place:high"  point="city9" />
-	<class name="place:town"                       layer="place:high"  point="town12" />
-	<class name="place:village"                    layer="place:high"  point="village12" />
+	<class name="place:state"                      layer="place:high2" point="state9" />
+	<class name="place:city"                       layer="place:high1" point="city9" />
+	<class name="place:town"                       layer="place:high1" point="town9" />
+	<class name="place:village"                    layer="place:high0" point="village9" />
+	<class name="place:hamlet"                     layer="place:high0" point="village9" />
 	<class name="power:plant"                      layer="place:low0"  point="other15" />
 	<class name="public_transport:station"         layer="place:low0"  point="other15" />
 	<class name="railway:funicular"                layer="railway"     abrev="1" line="railway15" />
@@ -756,7 +759,7 @@
 	<class name="core:special"                     layer="core"        line="core:special12"    point="core12" />
 	<class name="core:mineral"                     layer="core"        line="core:mineral12"    point="core12" />
 	<class name="core:historic"                    layer="core"        line="core:historic12"   point="core12" />
-	<class name="default:waypoint"                 layer="place:high"  point="waypoint15" />
+	<class name="default:waypoint"                 layer="place:high2" point="waypoint15" />
 	<class name="building:yes"                     layer="place:low0"  point="other15" line="building15" poly="building15" />
 	<class name="boundary:state"                   layer="place:low0"  line="state9" />
 </osmdb>
