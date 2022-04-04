@@ -44,6 +44,7 @@ typedef struct
 } osmdb_range_t;
 
 #define OSMDB_NODE_FLAG_BUILDING        0x0020
+#define OSMDB_NODE_FLAG_NAMEREF         0x0040
 #define OSMDB_NODE_FLAG_STATE_CAPITAL   0x0100
 #define OSMDB_NODE_FLAG_COUNTRY_CAPITAL 0x0200
 
@@ -72,6 +73,7 @@ char* osmdb_node_name(osmdb_node_t* self);
 #define OSMDB_WAY_FLAG_TUNNEL   0x0008
 #define OSMDB_WAY_FLAG_CUTTING  0x0010
 #define OSMDB_WAY_FLAG_BUILDING 0x0020
+#define OSMDB_WAY_FLAG_NAMEREF  0x0040
 #define OSMDB_WAY_FLAG_INNER    0x1000
 
 typedef struct
@@ -94,6 +96,7 @@ char*          osmdb_way_name(osmdb_way_t* self);
 osmdb_point_t* osmdb_way_pts(osmdb_way_t* self);
 
 #define OSMDB_REL_FLAG_BUILDING 0x0020
+#define OSMDB_REL_FLAG_NAMEREF  0x0040
 
 typedef struct
 {

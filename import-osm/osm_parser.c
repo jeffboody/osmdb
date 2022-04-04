@@ -1244,6 +1244,7 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 		if((self->node_info->class == self->highway_junction) &&
 	       (self->tag_ref[0] != '\0'))
 		{
+			self->node_info->flags |= OSMDB_NODEINFO_FLAG_NAMEREF;
 			osmdb_nodeInfo_addName(self->node_info,
 			                       self->tag_ref);
 		}
@@ -1823,6 +1824,7 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	   (self->tag_ref[0] != '\0'))
 	{
 		// prefer ref for motorways
+		self->way_info->flags |= OSMDB_WAYINFO_FLAG_NAMEREF;
 		osmdb_wayInfo_addName(self->way_info,
 		                      self->tag_ref);
 	}
@@ -1830,6 +1832,7 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	{
 		// prefer ref for highways
 		// e.g. State Highway 72 or Highway 119
+		self->way_info->flags |= OSMDB_WAYINFO_FLAG_NAMEREF;
 		osmdb_wayInfo_addName(self->way_info,
 		                      self->tag_ref);
 	}
@@ -1846,6 +1849,7 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	}
 	else if(self->tag_ref[0] != '\0')
 	{
+		self->way_info->flags |= OSMDB_WAYINFO_FLAG_NAMEREF;
 		osmdb_wayInfo_addName(self->way_info,
 		                      self->tag_ref);
 	}
