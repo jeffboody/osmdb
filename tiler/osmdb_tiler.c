@@ -1186,9 +1186,14 @@ osmdb_tiler_gatherMemberWay(osmdb_tiler_t* self,
 			.id   = data->wid
 		};
 
-		if(cc_map_addp(state->map_export,
-		               (const void*) &OSMDB_ONE,
-		               sizeof(osmdb_exportKey_t), &key) == NULL)
+		cc_mapIter_t* miter;
+		miter = cc_map_findp(state->map_export,
+		                     sizeof(osmdb_exportKey_t), &key);
+		if((miter == NULL) &&
+		   (cc_map_addp(state->map_export,
+		                (const void*) &OSMDB_ONE,
+		                sizeof(osmdb_exportKey_t),
+		                &key) == NULL))
 		{
 			goto fail_mark;
 		}
@@ -1317,9 +1322,13 @@ osmdb_tiler_gatherRel(osmdb_tiler_t* self,
 			.id   = hni->node_info->nid
 		};
 
-		if(cc_map_addp(state->map_export,
-		               (const void*) &OSMDB_ONE,
-		               sizeof(osmdb_exportKey_t), &key) == NULL)
+		cc_mapIter_t* miter;
+		miter = cc_map_findp(state->map_export,
+		                     sizeof(osmdb_exportKey_t), &key);
+		if((miter == NULL) &&
+		   (cc_map_addp(state->map_export,
+		                (const void*) &OSMDB_ONE,
+		                sizeof(osmdb_exportKey_t), &key) == NULL))
 		{
 			goto fail_mark;
 		}
