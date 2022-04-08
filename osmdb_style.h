@@ -47,6 +47,7 @@ typedef struct
 	int min_zoom;
 	int show_ele;
 	int show_marker;
+	int label_center;
 
 	float       text_scale;
 	cc_vec4f_t* text_color1;

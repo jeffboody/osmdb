@@ -398,8 +398,9 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 	}
 
 	// parse flags
-	int show_ele    = 0;
-	int show_marker = 0;
+	int show_ele     = 0;
+	int show_marker  = 0;
+	int label_center = 0;
 	if(flags)
 	{
 		char str[256];
@@ -425,6 +426,10 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 				else if(strcmp(str, "marker:show") == 0)
 				{
 					show_marker = 1;
+				}
+				else if(strcmp(str, "label:center") == 0)
+				{
+					label_center = 1;
 				}
 				else
 				{
@@ -461,6 +466,7 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 	point->min_zoom      = (int) strtol(min_zoom, NULL, 0);
 	point->show_ele      = show_ele;
 	point->show_marker   = show_marker;
+	point->label_center  = label_center;
 	point->text_scale    = text_scale;
 	point->text_color1   = tc1;
 	point->text_color2   = tc2;

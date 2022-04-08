@@ -62,6 +62,10 @@ typedef struct
 	// english flag
 	int name_en;
 
+	// for national_park/protected_area
+	int protect_class;
+	int ownership_national;
+
 	// tags
 	int64_t tag_changeset;
 	char    tag_name[256];
@@ -79,6 +83,10 @@ typedef struct
 	int tourism_yes;
 	int highway_motorway;
 	int highway_junction;
+	int boundary_np;  // national_park
+	int boundary_np2; // national_park2     (protect class 2)
+	int boundary_nm3; // national_monument3 (protect class 3)
+	int boundary_pa;  // protected_area
 
 	// relation member constants
 	int rel_member_type_node;
