@@ -152,6 +152,11 @@ osmdb_tiler_gatherNodes(osmdb_tiler_t* self, int tid)
 		type = OSMDB_TYPE_TILEREF_NODE9;
 		id   = 512*state->y + state->x; // 2^9
 	}
+	else if(state->zoom == 6)
+	{
+		type = OSMDB_TYPE_TILEREF_NODE6;
+		id   = 64*state->y + state->x; // 2^6
+	}
 	else
 	{
 		LOGE("invalid zoom=%i", state->zoom);
@@ -1053,6 +1058,11 @@ osmdb_tiler_gatherWays(osmdb_tiler_t* self, int tid)
 		type = OSMDB_TYPE_TILEREF_WAY9;
 		id   = 512*state->y + state->x; // 2^9
 	}
+	else if(state->zoom == 6)
+	{
+		type = OSMDB_TYPE_TILEREF_WAY6;
+		id   = 64*state->y + state->x; // 2^6
+	}
 	else
 	{
 		LOGE("invalid zoom=%i", state->zoom);
@@ -1382,6 +1392,11 @@ osmdb_tiler_gatherRels(osmdb_tiler_t* self, int tid)
 	{
 		type = OSMDB_TYPE_TILEREF_REL9;
 		id   = 512*state->y + state->x; // 2^9
+	}
+	else if(state->zoom == 6)
+	{
+		type = OSMDB_TYPE_TILEREF_REL6;
+		id   = 64*state->y + state->x; // 2^6
 	}
 	else
 	{

@@ -23,6 +23,7 @@
 	<layer name="place:high0" />
 	<layer name="place:high1" />
 	<layer name="place:high2" />
+	<layer name="place:high3" />
 
 	<color name="white"           val="FFFFFFFF" />
 	<color name="black"           val="000000FF" />
@@ -74,6 +75,7 @@
 	<color name="city:text"       val="FFFFFFFF" />
 	<color name="city:point"      val="404040FF" />
 	<color name="village:text"    val="EEEEEEFF" />
+	<color name="country:text"    val="7929ABFF" />
 	<color name="state:text"      val="904ABCFF" />
 	<color name="state:line"      val="904ABC7F" />
 
@@ -84,11 +86,12 @@
 	<color name="core:mineral"    val="DE1B1BBF" />
 	<color name="core:historic"   val="E988D0BF" />
 
-	<point name="peak12"           min_zoom="14" text_scale="1.00f" text_color1="peak:text"           text_color2="black" marker_color1="peak:point" marker_color2="black" flags="marker:show,ele:show" />
-	<point name="saddle12"         min_zoom="14" text_scale="1.00f" text_color1="peak:text"           text_color2="black" marker_color1="peak:point" marker_color2="black" flags="marker:show" />
-	<point name="state9"           min_zoom="9"  text_scale="1.20f" text_color1="state:text"          text_color2="black" marker_color1="state:text" marker_color2="black" flags="marker:show" />
-	<point name="city9"            min_zoom="9"  text_scale="1.15f" text_color1="city:text"           text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
-	<point name="town9"            min_zoom="11" text_scale="1.08f" text_color1="city:text"           text_color2="black" marker_color1="city:point" marker_color2="white" flags="marker:show" />
+	<point name="peak12"           min_zoom="14" text_scale="1.00f" text_color1="peak:text"           text_color2="black" marker_color1="peak:point"   marker_color2="black" flags="marker:show,ele:show" />
+	<point name="saddle12"         min_zoom="14" text_scale="1.00f" text_color1="peak:text"           text_color2="black" marker_color1="peak:point"   marker_color2="black" flags="marker:show" />
+	<point name="country6"         min_zoom="6"  text_scale="1.20f" text_color1="country:text"        text_color2="black" marker_color1="country:text" marker_color2="black" flags="marker:show" />
+	<point name="state6"           min_zoom="6"  text_scale="1.20f" text_color1="state:text"          text_color2="black" marker_color1="state:text"   marker_color2="black" flags="marker:show" />
+	<point name="city9"            min_zoom="9"  text_scale="1.15f" text_color1="city:text"           text_color2="black" marker_color1="city:point"   marker_color2="white" flags="marker:show" />
+	<point name="town9"            min_zoom="11" text_scale="1.08f" text_color1="city:text"           text_color2="black" marker_color1="city:point"   marker_color2="white" flags="marker:show" />
 	<point name="village9"         min_zoom="11" text_scale="0.95f" text_color1="village:text"        text_color2="black" />
 	<point name="water15"          min_zoom="15" text_scale="1.00f" text_color1="lake:text"           text_color2="black" />
 	<point name="glacier15"        min_zoom="15" text_scale="1.00f" text_color1="glacier:text"        text_color2="black" />
@@ -140,7 +143,7 @@
 	<line name="core:mineral12"    min_zoom="12" color1="core:mineral"    color2="core:mineral"    width="2.5" />
 	<line name="core:historic12"   min_zoom="12" color1="core:historic"   color2="core:historic"   width="2.5" />
 	<line name="building15"        min_zoom="15" color1="building:line"   color2="dkgray" width="0.25" />
-	<line name="state9"            min_zoom="9"  color1="state:line" color2="state:line" width="3.5" />
+	<line name="state6"            min_zoom="6"  color1="state:line" color2="state:line" width="3.5" />
 	<line name="national_park12"   min_zoom="12" color1="national_park:line" color2="national_park:line" width="3.5" />
 
 	<poly name="glacier15"  min_zoom="15" color="glacier:poly" />
@@ -480,7 +483,8 @@
 	<class name="office:therapist"                 layer="place:low0"  point="other15"  />
 	<class name="office:travel_agent"              layer="place:low0"  point="other15"  />
 	<class name="office:water_utility"             layer="place:low0"  point="other15"  />
-	<class name="place:state"                      layer="place:high2" point="state9" />
+	<class name="place:country"                    layer="place:high3" point="country6" />
+	<class name="place:state"                      layer="place:high2" point="state6" />
 	<class name="place:city"                       layer="place:high1" point="city9" />
 	<class name="place:town"                       layer="place:high1" point="town9" />
 	<class name="place:village"                    layer="place:high0" point="village9" />
@@ -771,7 +775,7 @@
 	<class name="core:historic"                    layer="core"        line="core:historic12"   point="core12" />
 	<class name="default:waypoint"                 layer="place:high2" point="waypoint15" />
 	<class name="building:yes"                     layer="place:low0"  point="other15" line="building15" poly="building15" />
-	<class name="boundary:state"                   layer="place:low0"  line="state9" />
+	<class name="boundary:state"                   layer="place:low0"  line="state6" />
 	<class name="boundary:national_park2"          layer="place:low0"  point="national_park12" line="national_park12" />
 	<class name="boundary:national_monument3"      layer="place:low0"  point="national_park12" line="national_park12" />
 	<class name="boundary:national_park"           layer="place:low0"  point="national_park12" />

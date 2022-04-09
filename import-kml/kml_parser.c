@@ -176,12 +176,14 @@ kml_parser_addTileRange(kml_parser_t* self,
 		OSMDB_TYPE_TILEREF_WAY15,
 		OSMDB_TYPE_TILEREF_WAY12,
 		OSMDB_TYPE_TILEREF_WAY9,
+		OSMDB_TYPE_TILEREF_WAY6,
 	};
 	int type_rel[]  =
 	{
 		OSMDB_TYPE_TILEREF_REL15,
 		OSMDB_TYPE_TILEREF_REL12,
 		OSMDB_TYPE_TILEREF_REL9,
+		OSMDB_TYPE_TILEREF_REL6,
 	};
 	int* type_array;
 	if(type == OSMDB_TYPE_WAYRANGE)
@@ -209,9 +211,9 @@ kml_parser_addTileRange(kml_parser_t* self,
 	int   iy1;
 	int   id;
 	int   i          = 0;
-	int   zoom[]     = { 15, 12, 9, -1 };
-	int   max_zoom[] = { 1000, 15, 12, -1 };
-	int   pow2n[]    = { 32768, 4096, 512 };
+	int   zoom[]     = { 15, 12, 9, 6, -1 };
+	int   max_zoom[] = { 1000, 15, 12, 9, -1 };
+	int   pow2n[]    = { 32768, 4096, 512, 64 };
 	while(min_zoom < max_zoom[i])
 	{
 		terrain_coord2tile(latT, lonL,
@@ -651,15 +653,16 @@ kml_parser_addTileCoord(kml_parser_t* self,
 	int ix;
 	int iy;
 	int i          = 0;
-	int zoom[]     = { 15, 12, 9, -1 };
-	int max_zoom[] = { 1000, 15, 12, -1 };
-	int pow2n[]    = { 32768, 4096, 512 };
+	int zoom[]     = { 15, 12, 9, 6, -1 };
+	int max_zoom[] = { 1000, 15, 12, 9, -1 };
+	int pow2n[]    = { 32768, 4096, 512, 64 };
 
 	int type_array[]  =
 	{
 		OSMDB_TYPE_TILEREF_NODE15,
 		OSMDB_TYPE_TILEREF_NODE12,
 		OSMDB_TYPE_TILEREF_NODE9,
+		OSMDB_TYPE_TILEREF_NODE6,
 	};
 
 	while(min_zoom < max_zoom[i])

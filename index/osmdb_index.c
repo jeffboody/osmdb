@@ -38,12 +38,15 @@
 
 const char* OSMDB_INDEX_TBL[] =
 {
+	"tbl_nodeTile6",
 	"tbl_nodeTile9",
 	"tbl_nodeTile12",
 	"tbl_nodeTile15",
+	"tbl_wayTile6",
 	"tbl_wayTile9",
 	"tbl_wayTile12",
 	"tbl_wayTile15",
+	"tbl_relTile6",
 	"tbl_relTile9",
 	"tbl_relTile12",
 	"tbl_relTile15",
