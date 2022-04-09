@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 
 	if(argc != 4)
 	{
-		LOGE("%s style.xml input.osm output.sqlite3", argv[0]);
+		LOGE("usage: %s style.xml input.osm output.sqlite3", argv[0]);
 		return EXIT_FAILURE;
 	}
 

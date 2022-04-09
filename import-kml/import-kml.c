@@ -41,13 +41,13 @@ int main(int argc, char** argv)
 {
 	double t0 = cc_timestamp();
 
-	if(argc < 3)
+	if(argc < 4)
 	{
-		LOGE("%s db.sqlite3 input.kml [...]", argv[0]);
+		LOGE("usage: %s style.xml db.sqlite3 input.kml [...]", argv[0]);
 		return EXIT_FAILURE;
 	}
 
-	kml_parser_t* parser = kml_parser_new(argv[1]);
+	kml_parser_t* parser = kml_parser_new(argv[1], argv[2]);
 	if(parser == NULL)
 	{
 		goto fail_parser;
@@ -55,7 +55,7 @@ int main(int argc, char** argv)
 
 	// read all input files
 	int i;
-	for(i = 2; i < argc; ++i)
+	for(i = 3; i < argc; ++i)
 	{
 		if(kml_parser_parse(parser, argv[i]) == 0)
 		{

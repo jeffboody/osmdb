@@ -29,6 +29,7 @@
 #include "libcc/cc_list.h"
 #include "libcc/cc_map.h"
 #include "osmdb/index/osmdb_index.h"
+#include "osmdb/osmdb_style.h"
 
 typedef struct
 {
@@ -54,16 +55,22 @@ typedef struct
 	double seg_lonR;
 
 	// node data
-	cc_map_t* map_node_coords;
+	cc_map_t* map_node_coords6;
+	cc_map_t* map_node_coords9;
+	cc_map_t* map_node_coords12;
+	cc_map_t* map_node_coords15;
 
 	// parsing data
 	osmdb_nodeInfo_t* node_info;
 	osmdb_wayNds_t*   seg_nds;
 
 	osmdb_index_t* index;
+
+	osmdb_style_t* style;
 } kml_parser_t;
 
-kml_parser_t* kml_parser_new(const char* db_name);
+kml_parser_t* kml_parser_new(const char* style,
+                             const char* db_name);
 void          kml_parser_delete(kml_parser_t** _self);
 int           kml_parser_parse(kml_parser_t* self,
                                const char* fname_kml);

@@ -1,7 +1,7 @@
 export CC_USE_MATH = 1
 
 TARGET   = import-kml
-CLASSES  = kml_parser osmdb/index/osmdb_index osmdb/index/osmdb_type osmdb/index/osmdb_entry osmdb/osmdb_util
+CLASSES  = kml_parser osmdb/index/osmdb_index osmdb/index/osmdb_type osmdb/index/osmdb_entry osmdb/osmdb_util osmdb/osmdb_style
 SOURCE   = $(TARGET).c $(CLASSES:%=%.c)
 OBJECTS  = $(TARGET).o $(CLASSES:%=%.o)
 HFILES   = $(CLASSES:%=%.h)
