@@ -772,6 +772,7 @@
 	<class name="core:recreation"                  layer="core"        line="core:recreation12" point="core12" />
 	<class name="core:special"                     layer="core"        line="core:special12"    point="core12" />
 	<class name="core:mineral"                     layer="core"        line="core:mineral12"    point="core12" />
+	<class name="core:coal_methane"                layer="core"        line="core:mineral12"    point="core12" />
 	<class name="core:historic"                    layer="core"        line="core:historic12"   point="core12" />
 	<class name="default:waypoint"                 layer="place:high2" point="waypoint15" />
 	<class name="building:yes"                     layer="place:low0"  point="other15" line="building15" poly="building15" />
