@@ -75,9 +75,9 @@
 	<color name="city:text"       val="FFFFFFFF" />
 	<color name="city:point"      val="404040FF" />
 	<color name="village:text"    val="EEEEEEFF" />
-	<color name="country:text"    val="7929ABFF" />
-	<color name="state:text"      val="904ABCFF" />
-	<color name="state:line"      val="904ABC7F" />
+	<color name="country:text"    val="C71585FF" />
+	<color name="state:text"      val="9932CCFF" />
+	<color name="state:line"      val="4B0082BF" />
 
 	<color name="core:text"       val="F29999FF" />
 	<color name="core:wilderness" val="119d11BF" />
@@ -88,8 +88,8 @@
 
 	<point name="peak12"           min_zoom="14" text_scale="1.00f" text_color1="peak:text"           text_color2="black" marker_color1="peak:point"   marker_color2="black" flags="marker:show,ele:show" />
 	<point name="saddle12"         min_zoom="14" text_scale="1.00f" text_color1="peak:text"           text_color2="black" marker_color1="peak:point"   marker_color2="black" flags="marker:show" />
-	<point name="country6"         min_zoom="6"  text_scale="1.20f" text_color1="country:text"        text_color2="black" marker_color1="country:text" marker_color2="black" flags="marker:show" />
-	<point name="state6"           min_zoom="6"  text_scale="1.20f" text_color1="state:text"          text_color2="black" marker_color1="state:text"   marker_color2="black" flags="marker:show" />
+	<point name="country6"         min_zoom="6"  text_scale="1.20f" text_color1="country:text"        text_color2="black" />
+	<point name="state6"           min_zoom="6"  text_scale="1.20f" text_color1="state:text"          text_color2="black" />
 	<point name="city9"            min_zoom="9"  text_scale="1.15f" text_color1="city:text"           text_color2="black" marker_color1="city:point"   marker_color2="white" flags="marker:show" />
 	<point name="town9"            min_zoom="11" text_scale="1.08f" text_color1="city:text"           text_color2="black" marker_color1="city:point"   marker_color2="white" flags="marker:show" />
 	<point name="village9"         min_zoom="11" text_scale="0.95f" text_color1="village:text"        text_color2="black" />
