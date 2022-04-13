@@ -55,10 +55,12 @@ typedef struct
 	double seg_lonR;
 
 	// node data
+	cc_map_t* map_node_coords4;
 	cc_map_t* map_node_coords6;
-	cc_map_t* map_node_coords9;
+	cc_map_t* map_node_coords8;
+	cc_map_t* map_node_coords10;
 	cc_map_t* map_node_coords12;
-	cc_map_t* map_node_coords15;
+	cc_map_t* map_node_coords14;
 
 	// parsing data
 	osmdb_nodeInfo_t* node_info;

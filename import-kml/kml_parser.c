@@ -164,21 +164,29 @@ kml_parser_addTileRange(kml_parser_t* self,
 {
 	ASSERT(self);
 
-	if(min_zoom >= 15)
+	if(min_zoom >= 14)
 	{
-		min_zoom = 15;
+		min_zoom = 14;
 	}
 	else if(min_zoom >= 12)
 	{
 		min_zoom = 12;
 	}
-	else if(min_zoom >= 9)
+	else if(min_zoom >= 10)
 	{
-		min_zoom = 9;
+		min_zoom = 10;
+	}
+	else if(min_zoom >= 8)
+	{
+		min_zoom = 8;
 	}
 	else if(min_zoom >= 6)
 	{
 		min_zoom = 6;
+	}
+	else if(min_zoom >= 4)
+	{
+		min_zoom = 4;
 	}
 	else
 	{
@@ -195,17 +203,21 @@ kml_parser_addTileRange(kml_parser_t* self,
 	// determine the tile type
 	int type_way[]  =
 	{
-		OSMDB_TYPE_TILEREF_WAY15,
+		OSMDB_TYPE_TILEREF_WAY14,
 		OSMDB_TYPE_TILEREF_WAY12,
-		OSMDB_TYPE_TILEREF_WAY9,
+		OSMDB_TYPE_TILEREF_WAY10,
+		OSMDB_TYPE_TILEREF_WAY8,
 		OSMDB_TYPE_TILEREF_WAY6,
+		OSMDB_TYPE_TILEREF_WAY4,
 	};
 	int type_rel[]  =
 	{
-		OSMDB_TYPE_TILEREF_REL15,
+		OSMDB_TYPE_TILEREF_REL14,
 		OSMDB_TYPE_TILEREF_REL12,
-		OSMDB_TYPE_TILEREF_REL9,
+		OSMDB_TYPE_TILEREF_REL10,
+		OSMDB_TYPE_TILEREF_REL8,
 		OSMDB_TYPE_TILEREF_REL6,
+		OSMDB_TYPE_TILEREF_REL4,
 	};
 	int* type_array;
 	if(type == OSMDB_TYPE_WAYRANGE)
@@ -232,10 +244,10 @@ kml_parser_addTileRange(kml_parser_t* self,
 	int   ix1;
 	int   iy1;
 	int   id;
-	int   i          = 0;
-	int   zoom[]     = { 15, 12, 9, 6, -1 };
-	int   max_zoom[] = { 1000, 15, 12, 9, -1 };
-	int   pow2n[]    = { 32768, 4096, 512, 64 };
+	int   i        = 0;
+	int zoom[]     = { 14,    12,   10,   8,   6,  4,  -1 };
+	int max_zoom[] = { 1000,  14,   12,   10,  8,  6,  -1 };
+	int pow2n[]    = { 16384, 4096, 1024, 256, 64, 16, -1 };
 	while(min_zoom < max_zoom[i])
 	{
 		terrain_coord2tile(latT, lonL,
@@ -426,21 +438,29 @@ kml_parser_parseNode(kml_parser_t* self, int min_zoom,
 	ASSERT(s);
 
 	cc_map_t* map_node_coords;
-	if(min_zoom >= 15)
+	if(min_zoom >= 14)
 	{
-		map_node_coords = self->map_node_coords15;
+		map_node_coords = self->map_node_coords14;
 	}
 	else if(min_zoom >= 12)
 	{
 		map_node_coords = self->map_node_coords12;
 	}
-	else if(min_zoom >= 9)
+	else if(min_zoom >= 10)
 	{
-		map_node_coords = self->map_node_coords9;
+		map_node_coords = self->map_node_coords10;
+	}
+	else if(min_zoom >= 8)
+	{
+		map_node_coords = self->map_node_coords8;
 	}
 	else if(min_zoom >= 6)
 	{
 		map_node_coords = self->map_node_coords6;
+	}
+	else if(min_zoom >= 4)
+	{
+		map_node_coords = self->map_node_coords4;
 	}
 	else
 	{
@@ -711,21 +731,29 @@ kml_parser_addTileCoord(kml_parser_t* self,
 {
 	ASSERT(self);
 
-	if(min_zoom >= 15)
+	if(min_zoom >= 14)
 	{
-		min_zoom = 15;
+		min_zoom = 14;
 	}
 	else if(min_zoom >= 12)
 	{
 		min_zoom = 12;
 	}
-	else if(min_zoom >= 9)
+	else if(min_zoom >= 10)
 	{
-		min_zoom = 9;
+		min_zoom = 10;
+	}
+	else if(min_zoom >= 8)
+	{
+		min_zoom = 8;
 	}
 	else if(min_zoom >= 6)
 	{
 		min_zoom = 6;
+	}
+	else if(min_zoom >= 4)
+	{
+		min_zoom = 4;
 	}
 	else
 	{
@@ -740,16 +768,18 @@ kml_parser_addTileCoord(kml_parser_t* self,
 	int ix;
 	int iy;
 	int i          = 0;
-	int zoom[]     = { 15, 12, 9, 6, -1 };
-	int max_zoom[] = { 1000, 15, 12, 9, -1 };
-	int pow2n[]    = { 32768, 4096, 512, 64 };
+	int zoom[]     = { 14,    12,   10,   8,   6,  4,  -1 };
+	int max_zoom[] = { 1000,  14,   12,   10,  8,  6,  -1 };
+	int pow2n[]    = { 16384, 4096, 1024, 256, 64, 16, -1 };
 
 	int type_array[]  =
 	{
-		OSMDB_TYPE_TILEREF_NODE15,
+		OSMDB_TYPE_TILEREF_NODE14,
 		OSMDB_TYPE_TILEREF_NODE12,
-		OSMDB_TYPE_TILEREF_NODE9,
+		OSMDB_TYPE_TILEREF_NODE10,
+		OSMDB_TYPE_TILEREF_NODE8,
 		OSMDB_TYPE_TILEREF_NODE6,
+		OSMDB_TYPE_TILEREF_NODE4,
 	};
 
 	while(min_zoom < max_zoom[i])
@@ -1391,16 +1421,28 @@ kml_parser_new(const char* style,
 		goto fail_list_state;
 	}
 
+	self->map_node_coords4 = cc_map_new();
+	if(self->map_node_coords4 == NULL)
+	{
+		goto fail_map_node_coords4;
+	}
+
 	self->map_node_coords6 = cc_map_new();
 	if(self->map_node_coords6 == NULL)
 	{
 		goto fail_map_node_coords6;
 	}
 
-	self->map_node_coords9 = cc_map_new();
-	if(self->map_node_coords9 == NULL)
+	self->map_node_coords8 = cc_map_new();
+	if(self->map_node_coords8 == NULL)
 	{
-		goto fail_map_node_coords9;
+		goto fail_map_node_coords8;
+	}
+
+	self->map_node_coords10 = cc_map_new();
+	if(self->map_node_coords10 == NULL)
+	{
+		goto fail_map_node_coords10;
 	}
 
 	self->map_node_coords12 = cc_map_new();
@@ -1409,10 +1451,10 @@ kml_parser_new(const char* style,
 		goto fail_map_node_coords12;
 	}
 
-	self->map_node_coords15 = cc_map_new();
-	if(self->map_node_coords15 == NULL)
+	self->map_node_coords14 = cc_map_new();
+	if(self->map_node_coords14 == NULL)
 	{
-		goto fail_map_node_coords15;
+		goto fail_map_node_coords14;
 	}
 
 	self->node_info = (osmdb_nodeInfo_t*)
@@ -1463,14 +1505,18 @@ kml_parser_new(const char* style,
 	fail_seg_nds:
 		FREE(self->node_info);
 	fail_node_info:
-		cc_map_delete(&self->map_node_coords15);
-	fail_map_node_coords15:
+		cc_map_delete(&self->map_node_coords14);
+	fail_map_node_coords14:
 		cc_map_delete(&self->map_node_coords12);
 	fail_map_node_coords12:
-		cc_map_delete(&self->map_node_coords9);
-	fail_map_node_coords9:
+		cc_map_delete(&self->map_node_coords10);
+	fail_map_node_coords10:
+		cc_map_delete(&self->map_node_coords8);
+	fail_map_node_coords8:
 		cc_map_delete(&self->map_node_coords6);
 	fail_map_node_coords6:
+		cc_map_delete(&self->map_node_coords4);
+	fail_map_node_coords4:
 		cc_list_delete(&self->list_state);
 	fail_list_state:
 		FREE(self);
@@ -1485,6 +1531,16 @@ void kml_parser_delete(kml_parser_t** _self)
 	if(self)
 	{
 		cc_mapIter_t* miter;
+		miter = cc_map_head(self->map_node_coords4);
+		while(miter)
+		{
+			osmdb_nodeCoord_t* node_coord;
+			node_coord = (osmdb_nodeCoord_t*)
+			             cc_map_remove(self->map_node_coords4,
+			                           &miter);
+			FREE(node_coord);
+		}
+
 		miter = cc_map_head(self->map_node_coords6);
 		while(miter)
 		{
@@ -1495,12 +1551,22 @@ void kml_parser_delete(kml_parser_t** _self)
 			FREE(node_coord);
 		}
 
-		miter = cc_map_head(self->map_node_coords9);
+		miter = cc_map_head(self->map_node_coords8);
 		while(miter)
 		{
 			osmdb_nodeCoord_t* node_coord;
 			node_coord = (osmdb_nodeCoord_t*)
-			             cc_map_remove(self->map_node_coords9,
+			             cc_map_remove(self->map_node_coords8,
+			                           &miter);
+			FREE(node_coord);
+		}
+
+		miter = cc_map_head(self->map_node_coords10);
+		while(miter)
+		{
+			osmdb_nodeCoord_t* node_coord;
+			node_coord = (osmdb_nodeCoord_t*)
+			             cc_map_remove(self->map_node_coords10,
 			                           &miter);
 			FREE(node_coord);
 		}
@@ -1515,12 +1581,12 @@ void kml_parser_delete(kml_parser_t** _self)
 			FREE(node_coord);
 		}
 
-		miter = cc_map_head(self->map_node_coords15);
+		miter = cc_map_head(self->map_node_coords14);
 		while(miter)
 		{
 			osmdb_nodeCoord_t* node_coord;
 			node_coord = (osmdb_nodeCoord_t*)
-			             cc_map_remove(self->map_node_coords15,
+			             cc_map_remove(self->map_node_coords14,
 			                           &miter);
 			FREE(node_coord);
 		}
@@ -1538,10 +1604,12 @@ void kml_parser_delete(kml_parser_t** _self)
 		bfs_util_shutdown();
 		FREE(self->seg_nds);
 		FREE(self->node_info);
-		cc_map_delete(&self->map_node_coords15);
+		cc_map_delete(&self->map_node_coords14);
 		cc_map_delete(&self->map_node_coords12);
-		cc_map_delete(&self->map_node_coords9);
+		cc_map_delete(&self->map_node_coords10);
+		cc_map_delete(&self->map_node_coords8);
 		cc_map_delete(&self->map_node_coords6);
+		cc_map_delete(&self->map_node_coords4);
 		cc_list_delete(&self->list_state);
 		FREE(self);
 		*_self = NULL;
@@ -1570,16 +1638,18 @@ int kml_parser_finish(kml_parser_t* self)
 
 	cc_map_t* map_node_coords[] =
 	{
+		self->map_node_coords4,
 		self->map_node_coords6,
-		self->map_node_coords9,
+		self->map_node_coords8,
+		self->map_node_coords10,
 		self->map_node_coords12,
-		self->map_node_coords15,
+		self->map_node_coords14,
 		NULL
 	};
 
 	int min_zoom[] =
 	{
-		6, 9, 12, 15, 0
+		4, 6, 8, 10, 12, 14, 0
 	};
 
 	int i = 0;

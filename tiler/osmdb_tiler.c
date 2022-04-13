@@ -137,25 +137,35 @@ osmdb_tiler_gatherNodes(osmdb_tiler_t* self, int tid)
 
 	int     type;
 	int64_t id;
-	if(state->zoom == 15)
+	if(state->zoom == 14)
 	{
-		type = OSMDB_TYPE_TILEREF_NODE15;
-		id   = 32768*state->y + state->x; // 2^15
+		type = OSMDB_TYPE_TILEREF_NODE14;
+		id   = 16384*state->y + state->x; // 2^14
 	}
 	else if(state->zoom == 12)
 	{
 		type = OSMDB_TYPE_TILEREF_NODE12;
 		id   = 4096*state->y + state->x; // 2^12
 	}
-	else if(state->zoom == 9)
+	else if(state->zoom == 10)
 	{
-		type = OSMDB_TYPE_TILEREF_NODE9;
-		id   = 512*state->y + state->x; // 2^9
+		type = OSMDB_TYPE_TILEREF_NODE10;
+		id   = 1024*state->y + state->x; // 2^10
+	}
+	else if(state->zoom == 8)
+	{
+		type = OSMDB_TYPE_TILEREF_NODE8;
+		id   = 256*state->y + state->x; // 2^8
 	}
 	else if(state->zoom == 6)
 	{
 		type = OSMDB_TYPE_TILEREF_NODE6;
 		id   = 64*state->y + state->x; // 2^6
+	}
+	else if(state->zoom == 4)
+	{
+		type = OSMDB_TYPE_TILEREF_NODE4;
+		id   = 16*state->y + state->x; // 2^4
 	}
 	else
 	{
@@ -1043,25 +1053,35 @@ osmdb_tiler_gatherWays(osmdb_tiler_t* self, int tid)
 
 	int     type;
 	int64_t id;
-	if(state->zoom == 15)
+	if(state->zoom == 14)
 	{
-		type = OSMDB_TYPE_TILEREF_WAY15;
-		id   = 32768*state->y + state->x; // 2^15
+		type = OSMDB_TYPE_TILEREF_WAY14;
+		id   = 16384*state->y + state->x; // 2^14
 	}
 	else if(state->zoom == 12)
 	{
 		type = OSMDB_TYPE_TILEREF_WAY12;
 		id   = 4096*state->y + state->x; // 2^12
 	}
-	else if(state->zoom == 9)
+	else if(state->zoom == 10)
 	{
-		type = OSMDB_TYPE_TILEREF_WAY9;
-		id   = 512*state->y + state->x; // 2^9
+		type = OSMDB_TYPE_TILEREF_WAY10;
+		id   = 1024*state->y + state->x; // 2^10
+	}
+	else if(state->zoom == 8)
+	{
+		type = OSMDB_TYPE_TILEREF_WAY8;
+		id   = 256*state->y + state->x; // 2^8
 	}
 	else if(state->zoom == 6)
 	{
 		type = OSMDB_TYPE_TILEREF_WAY6;
 		id   = 64*state->y + state->x; // 2^6
+	}
+	else if(state->zoom == 4)
+	{
+		type = OSMDB_TYPE_TILEREF_WAY4;
+		id   = 16*state->y + state->x; // 2^4
 	}
 	else
 	{
@@ -1378,25 +1398,35 @@ osmdb_tiler_gatherRels(osmdb_tiler_t* self, int tid)
 
 	int     type;
 	int64_t id;
-	if(state->zoom == 15)
+	if(state->zoom == 14)
 	{
-		type = OSMDB_TYPE_TILEREF_REL15;
-		id   = 32768*state->y + state->x; // 2^15
+		type = OSMDB_TYPE_TILEREF_REL14;
+		id   = 16384*state->y + state->x; // 2^14
 	}
 	else if(state->zoom == 12)
 	{
 		type = OSMDB_TYPE_TILEREF_REL12;
 		id   = 4096*state->y + state->x; // 2^12
 	}
-	else if(state->zoom == 9)
+	else if(state->zoom == 10)
 	{
-		type = OSMDB_TYPE_TILEREF_REL9;
-		id   = 512*state->y + state->x; // 2^9
+		type = OSMDB_TYPE_TILEREF_REL10;
+		id   = 1024*state->y + state->x; // 2^10
+	}
+	else if(state->zoom == 8)
+	{
+		type = OSMDB_TYPE_TILEREF_REL8;
+		id   = 256*state->y + state->x; // 2^8
 	}
 	else if(state->zoom == 6)
 	{
 		type = OSMDB_TYPE_TILEREF_REL6;
 		id   = 64*state->y + state->x; // 2^6
+	}
+	else if(state->zoom == 4)
+	{
+		type = OSMDB_TYPE_TILEREF_REL4;
+		id   = 16*state->y + state->x; // 2^4
 	}
 	else
 	{
