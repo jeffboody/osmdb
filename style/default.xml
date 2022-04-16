@@ -72,6 +72,7 @@
 	<color name="lake:poly"       val="4788D9BF" />
 	<color name="glacier:text"    val="C0F0F1FF" />
 	<color name="glacier:poly"    val="9BDFE07F" />
+	<color name="ocean:text"      val="73A3DDFF" />
 	<color name="aerialway"       val="9BDFE0FF" />
 	<color name="city:text"       val="FFFFFFFF" />
 	<color name="city:point"      val="404040FF" />
@@ -94,6 +95,8 @@
 	<point name="city6"            min_zoom="7"  text_scale="1.15f" text_color1="city:text"           text_color2="black" marker_color1="city:point"   marker_color2="white" flags="marker:show" />
 	<point name="town8"            min_zoom="8"  text_scale="1.08f" text_color1="city:text"           text_color2="black" marker_color1="city:point"   marker_color2="white" flags="marker:show" />
 	<point name="village9"         min_zoom="10" text_scale="0.95f" text_color1="village:text"        text_color2="black" />
+	<point name="water4"           min_zoom="4"  text_scale="1.00f" text_color1="ocean:text"          text_color2="black" />
+	<point name="water9"           min_zoom="9"  text_scale="1.00f" text_color1="lake:text"           text_color2="black" />
 	<point name="water15"          min_zoom="15" text_scale="1.00f" text_color1="lake:text"           text_color2="black" />
 	<point name="glacier15"        min_zoom="15" text_scale="1.00f" text_color1="glacier:text"        text_color2="black" />
 	<point name="outdoor15"        min_zoom="15" text_scale="1.00f" text_color1="outdoor:text"        text_color2="black" />
@@ -430,7 +433,8 @@
 	<class name="natural:water"                    layer="water"       abrev="1" point="water15"   poly="water9" />
 	<class name="natural:wetland"                  layer="place:low1"  abrev="1" point="other15" />
 	<class name="natural:glacier"                  layer="water"       abrev="1" point="glacier15" poly="glacier15" />
-	<class name="natural:bay"                      layer="water"       abrev="1" point="water15"   poly="water9" />
+	<class name="natural:bay"                      layer="water"       abrev="1" point="water9" />
+	<class name="natural:strait"                   layer="water"       abrev="1" point="water9" />
 	<class name="natural:cape"                     layer="place:low0"  abrev="1" point="other15" />
 	<class name="natural:beach"                    layer="place:low1"  abrev="1" point="other15" />
 	<class name="natural:spring"                   layer="place:low0"  abrev="1" point="other15" />
@@ -486,6 +490,8 @@
 	<class name="office:travel_agent"              layer="place:low0"  point="other15"  />
 	<class name="office:water_utility"             layer="place:low0"  point="other15"  />
 	<class name="place:country"                    layer="place:high4" point="country4" />
+	<class name="place:ocean"                      layer="place:high3" point="water4" />
+	<class name="place:sea"                        layer="place:high2" point="water4" />
 	<class name="place:state"                      layer="place:high3" point="state6" />
 	<class name="place:city"                       layer="place:high2" point="city6" />
 	<class name="place:town"                       layer="place:high2" point="town8" />

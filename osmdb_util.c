@@ -1142,6 +1142,9 @@ osmdb_utilClass_t OSM_UTIL_CLASSES[] =
 	{ .boundary=1, .class="boundary:state"                     },
 	{ .boundary=1, .class="boundary:national_park2"            },
 	{ .boundary=1, .class="boundary:national_monument3"        },
+	{ .class="place:ocean"                                     },
+	{ .class="place:sea"                                       },
+	{ .class="natural:strait"                                  },
 	{ .class=NULL                                              },
 };
 
