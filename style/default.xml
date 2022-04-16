@@ -61,6 +61,7 @@
 	<color name="national_park:line"  val="005A32BF" />
 	<color name="national_park:text"  val="238B45FF" />
 	<color name="protected_area:text" val="238B45FF" />
+	<color name="forest:text"         val="41AB5DFF" />
 	<color name="peak:text"           val="74C476FF" />
 	<color name="peak:point"          val="74C476FF" />
 	<color name="outdoor:text"        val="C7E9C0FF" />
@@ -100,7 +101,7 @@
 	<point name="water15"          min_zoom="15" text_scale="1.00f" text_color1="lake:text"           text_color2="black" />
 	<point name="glacier15"        min_zoom="15" text_scale="1.00f" text_color1="glacier:text"        text_color2="black" />
 	<point name="outdoor15"        min_zoom="15" text_scale="1.00f" text_color1="outdoor:text"        text_color2="black" />
-	<point name="forest12"         min_zoom="12" text_scale="1.00f" text_color1="protected_area:text" text_color2="black" />
+	<point name="forest9"          min_zoom="10" text_scale="1.00f" text_color1="forest:text"         text_color2="black" />
 	<point name="trail15"          min_zoom="17" text_scale="0.95f" text_color1="trail:text"          text_color2="black" />
 	<point name="track15"          min_zoom="17" text_scale="0.95f" text_color1="track:text"          text_color2="black" />
 	<point name="core12"           min_zoom="12" text_scale="1.00f" text_color1="core:text"           text_color2="black" flags="marker:show,ele:show" />
@@ -383,7 +384,7 @@
 	<class name="landuse:reservoir"                layer="water"       point="water15"   poly="water9" />
 	<class name="landuse:salt_pond"                layer="water"       point="water15"   poly="water15" />
 	<class name="landuse:basin"                    layer="water"       point="water15"   poly="water9" />
-	<class name="landuse:forest"                   layer="place:low2"  point="forest12" />
+	<class name="landuse:forest"                   layer="place:high0" point="forest9" />
 	<class name="leisure:adult_gaming_centre"      layer="place:low0"  point="other15" />
 	<class name="leisure:amusement_arcade"         layer="place:low0"  point="other15" />
 	<class name="leisure:beach_resort"             layer="place:low0"  point="other15" />
