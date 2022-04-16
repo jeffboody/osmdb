@@ -89,7 +89,7 @@
 
 	<point name="peak12"           min_zoom="14" text_scale="1.00f" text_color1="peak:text"           text_color2="black" marker_color1="peak:point"   marker_color2="black" flags="marker:show,ele:show" />
 	<point name="saddle12"         min_zoom="14" text_scale="1.00f" text_color1="peak:text"           text_color2="black" marker_color1="peak:point"   marker_color2="black" flags="marker:show" />
-	<point name="country6"         min_zoom="6"  text_scale="1.20f" text_color1="country:text"        text_color2="black" />
+	<point name="country4"         min_zoom="4"  text_scale="1.20f" text_color1="country:text"        text_color2="black" />
 	<point name="state6"           min_zoom="6"  text_scale="1.20f" text_color1="state:text"          text_color2="black" />
 	<point name="city6"            min_zoom="7"  text_scale="1.15f" text_color1="city:text"           text_color2="black" marker_color1="city:point"   marker_color2="white" flags="marker:show" />
 	<point name="town8"            min_zoom="8"  text_scale="1.08f" text_color1="city:text"           text_color2="black" marker_color1="city:point"   marker_color2="white" flags="marker:show" />
@@ -485,7 +485,7 @@
 	<class name="office:therapist"                 layer="place:low0"  point="other15"  />
 	<class name="office:travel_agent"              layer="place:low0"  point="other15"  />
 	<class name="office:water_utility"             layer="place:low0"  point="other15"  />
-	<class name="place:country"                    layer="place:high4" point="country6" />
+	<class name="place:country"                    layer="place:high4" point="country4" />
 	<class name="place:state"                      layer="place:high3" point="state6" />
 	<class name="place:city"                       layer="place:high2" point="city6" />
 	<class name="place:town"                       layer="place:high2" point="town8" />
