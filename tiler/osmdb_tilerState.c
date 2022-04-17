@@ -127,9 +127,18 @@ int osmdb_tilerState_init(osmdb_tilerState_t* self,
 	terrain_geo2xyz(self->latB, self->lonR, onemi,
 	                &pb.x, &pb.y, &pb.z);
 
-	// compute min_dist
-	// scale by 1/8th since each tile serves 3 zoom levels
-	float s   = 1.0f/8.0f;
+	// compute min_dist and scale min_dist since
+	// each tile serves multiple zoom levels
+	float s;
+	if(zoom == 14)
+	{
+		s = 1.0f/8.0f;
+	}
+	else
+	{
+		s = 1.0f/2.0f;
+	}
+
 	float pix = sqrtf(2*256.0f*256.0f);
 	self->min_dist = s*cc_vec3f_distance(&pb, &pa)/pix;
 
