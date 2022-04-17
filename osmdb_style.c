@@ -289,6 +289,7 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 
 	const char* name          = NULL;
 	const char* min_zoom      = NULL;
+	const char* layer         = NULL;
 	float       text_scale    = 1.0f;
 	const char* text_color1   = NULL;
 	const char* text_color2   = NULL;
@@ -308,6 +309,10 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 		else if(strcmp(atts[idx0], "min_zoom") == 0)
 		{
 			min_zoom = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "layer") == 0)
+		{
+			layer = atts[idx1];
 		}
 		else if(strcmp(atts[idx0], "text_scale") == 0)
 		{
@@ -344,8 +349,22 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 		return 0;
 	}
 
+	int layeri = 0;
 	cc_mapIter_t* miter;
-	cc_vec4f_t*   tc1 = NULL;
+	if(layer)
+	{
+		miter = cc_map_find(self->layers, layer);
+		if(miter == NULL)
+		{
+			LOGE("invalid line=%i", line);
+			return 0;
+		}
+		int* layerp = (int*) cc_map_val(miter);
+
+		layeri = *layerp;
+	}
+
+	cc_vec4f_t* tc1 = NULL;
 	if(text_color1)
 	{
 		miter = cc_map_find(self->colors, text_color1);
@@ -464,6 +483,7 @@ osmdb_style_beginOsmPoint(osmdb_style_t* self,
 	}
 
 	point->min_zoom      = (int) strtol(min_zoom, NULL, 0);
+	point->layer         = layeri;
 	point->show_ele      = show_ele;
 	point->show_marker   = show_marker;
 	point->label_center  = label_center;
@@ -503,6 +523,7 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 	const char* color1   = NULL;
 	const char* color2   = NULL;
 	const char* min_zoom = NULL;
+	const char* layer    = NULL;
 	const char* width    = NULL;
 
 	// find atts
@@ -530,6 +551,10 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 		{
 			min_zoom = atts[idx1];
 		}
+		else if(strcmp(atts[idx0], "layer") == 0)
+		{
+			layer = atts[idx1];
+		}
 		else if(strcmp(atts[idx0], "width") == 0)
 		{
 			width = atts[idx1];
@@ -545,6 +570,21 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 		return 0;
 	}
 
+	int layeri = 0;
+	cc_mapIter_t* miter;
+	if(layer)
+	{
+		miter = cc_map_find(self->layers, layer);
+		if(miter == NULL)
+		{
+			LOGE("invalid line=%i", line);
+			return 0;
+		}
+		int* layerp = (int*) cc_map_val(miter);
+
+		layeri = *layerp;
+	}
+
 	int modei = OSMDB_STYLE_MODE_SOLID;
 	if(mode)
 	{
@@ -552,7 +592,6 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 	}
 
 	cc_vec4f_t* c1 = NULL;
-	cc_mapIter_t* miter;
 	if(color1)
 	{
 		miter = cc_map_find(self->colors, color1);
@@ -591,6 +630,7 @@ osmdb_style_beginOsmLine(osmdb_style_t* self,
 		return 0;
 	}
 	linep->min_zoom = (int) strtol(min_zoom, NULL, 0);
+	linep->layer    = layeri;
 	linep->width    = w;
 	linep->mode     = modei;
 	linep->color1   = c1;
@@ -623,6 +663,7 @@ osmdb_style_beginOsmPoly(osmdb_style_t* self,
 
 	const char* name     = NULL;
 	const char* min_zoom = NULL;
+	const char* layer    = NULL;
 	const char* color    = NULL;
 
 	// find atts
@@ -637,6 +678,10 @@ osmdb_style_beginOsmPoly(osmdb_style_t* self,
 		else if(strcmp(atts[idx0], "min_zoom") == 0)
 		{
 			min_zoom = atts[idx1];
+		}
+		else if(strcmp(atts[idx0], "layer") == 0)
+		{
+			layer = atts[idx1];
 		}
 		else if(strcmp(atts[idx0], "color") == 0)
 		{
@@ -653,9 +698,22 @@ osmdb_style_beginOsmPoly(osmdb_style_t* self,
 		return 0;
 	}
 
+	int layeri = 0;
+	cc_mapIter_t* miter;
+	if(layer)
+	{
+		miter = cc_map_find(self->layers, layer);
+		if(miter == NULL)
+		{
+			LOGE("invalid line=%i", line);
+			return 0;
+		}
+		int* layerp = (int*) cc_map_val(miter);
+
+		layeri = *layerp;
+	}
 
 	cc_vec4f_t* c = NULL;
-	cc_mapIter_t* miter;
 	if(color)
 	{
 		miter = cc_map_find(self->colors, color);
@@ -676,6 +734,7 @@ osmdb_style_beginOsmPoly(osmdb_style_t* self,
 		return 0;
 	}
 	poly->min_zoom = (int) strtol(min_zoom, NULL, 0);
+	poly->layer    = layeri;
 	poly->color    = c;
 
 	if(cc_map_add(self->polys, (const void*) poly,
@@ -704,7 +763,6 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 	self->state = OSMDB_STYLE_STATE_CLASS;
 
 	const char* name  = NULL;
-	const char* layer = NULL;
 	const char* ln    = NULL;
 	const char* poly  = NULL;
 	const char* point = NULL;
@@ -723,10 +781,6 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 		else if(strcmp(atts[idx0], "abrev") == 0)
 		{
 			abrev = (int) strtol(atts[idx1], NULL, 0);
-		}
-		else if(strcmp(atts[idx0], "layer") == 0)
-		{
-			layer = atts[idx1];
 		}
 		else if(strcmp(atts[idx0], "line") == 0)
 		{
@@ -751,22 +805,8 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 		return 0;
 	}
 
-	int layeri = 0;
-	cc_mapIter_t* miter;
-	if(layer)
-	{
-		miter = cc_map_find(self->layers, layer);
-		if(miter == NULL)
-		{
-			LOGE("invalid line=%i", line);
-			return 0;
-		}
-		int* layerp = (int*) cc_map_val(miter);
-
-		layeri = *layerp;
-	}
-
 	osmdb_styleLine_t* linep = NULL;
+	cc_mapIter_t*      miter;
 	if(ln)
 	{
 		miter = cc_map_find(self->lines, ln);
@@ -811,7 +851,6 @@ osmdb_style_beginOsmClass(osmdb_style_t* self,
 		return 0;
 	}
 	class->abrev = abrev;
-	class->layer = layeri;
 	class->line  = linep;
 	class->poly  = polyp;
 	class->point = pointp;

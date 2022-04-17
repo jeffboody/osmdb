@@ -45,6 +45,7 @@
 typedef struct
 {
 	int min_zoom;
+	int layer;
 	int show_ele;
 	int show_marker;
 	int label_center;
@@ -62,6 +63,7 @@ typedef struct
 	// mode may also include the named flag which instructs
 	// the importer to discard unnamed ways of this class
 	int   min_zoom;
+	int   layer;
 	float width;
 	int   mode;
 	cc_vec4f_t* color1;
@@ -71,6 +73,7 @@ typedef struct
 typedef struct
 {
 	int         min_zoom;
+	int         layer;
 	cc_vec4f_t* color;
 } osmdb_stylePolygon_t;
 
@@ -79,7 +82,6 @@ typedef struct
 typedef struct
 {
 	int abrev;
-	int layer;
 
 	osmdb_styleLine_t*    line;
 	osmdb_stylePolygon_t* poly;
