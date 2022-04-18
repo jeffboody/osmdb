@@ -129,14 +129,15 @@ int osmdb_tilerState_init(osmdb_tilerState_t* self,
 
 	// compute min_dist and scale min_dist since
 	// each tile serves multiple zoom levels
-	float s;
+	float s = 8.0f;
 	if(zoom == 14)
 	{
-		s = 1.0f/8.0f;
+		// 2:15, 4:16, 8:17, 16:18, 32:19, 64:20
+		s *= 1.0f/64.0f;
 	}
 	else
 	{
-		s = 1.0f/2.0f;
+		s *= 1.0f/2.0f;
 	}
 
 	float pix = sqrtf(2*256.0f*256.0f);
