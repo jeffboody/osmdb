@@ -44,10 +44,10 @@
 #define MODE_US 1
 #define MODE_CO 2
 
-#define NZOOM 6
+#define NZOOM 7
 const int ZOOM_LEVEL[] =
 {
-	4, 6, 8, 10, 12, 14
+	4, 6, 8, 10, 12, 14, 16
 };
 
 // sampling rectangles
@@ -176,7 +176,8 @@ osmdb_prefetch_tiles(osmdb_prefetch_t* self,
 	// prefetch tile
 	if((zoom == 4)  || (zoom == 6)  ||
 	   (zoom == 8)  || (zoom == 10) ||
-	   (zoom == 12) || (zoom == 14))
+	   (zoom == 12) || (zoom == 14) ||
+	   (zoom == 16))
 	{
 		if(osmdb_prefetch_tile(self, zoom, x, y) == 0)
 		{
@@ -185,7 +186,7 @@ osmdb_prefetch_tiles(osmdb_prefetch_t* self,
 	}
 
 	// prefetch subtiles
-	if(zoom < 14)
+	if(zoom < 16)
 	{
 		int zoom2 = zoom + 1;
 		int x2    = 2*x;
@@ -304,6 +305,7 @@ int main(int argc, char** argv)
 	self->total += osmdb_prefetch_range(self, 10);
 	self->total += osmdb_prefetch_range(self, 12);
 	self->total += osmdb_prefetch_range(self, 14);
+	self->total += osmdb_prefetch_range(self, 16);
 
 	if(bfs_util_initialize() == 0)
 	{
@@ -335,7 +337,7 @@ int main(int argc, char** argv)
 	   (bfs_file_attrSet(self->cache, "ext", "osmdb")    == 0) ||
 	   (bfs_file_attrSet(self->cache, "bounds", bounds)  == 0) ||
 	   (bfs_file_attrSet(self->cache, "zmin", "4")       == 0) ||
-	   (bfs_file_attrSet(self->cache, "zmax", "14")      == 0) ||
+	   (bfs_file_attrSet(self->cache, "zmax", "16")      == 0) ||
 	   (bfs_file_attrSet(self->cache, "changeset", cs)   == 0))
 	{
 		goto fail_attr;

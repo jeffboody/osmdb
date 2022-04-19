@@ -61,6 +61,7 @@ typedef struct
 	cc_map_t* map_node_coords10;
 	cc_map_t* map_node_coords12;
 	cc_map_t* map_node_coords14;
+	cc_map_t* map_node_coords16;
 
 	// parsing data
 	osmdb_nodeInfo_t* node_info;

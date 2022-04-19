@@ -1139,12 +1139,13 @@ osm_parser_addTileCoord(osm_parser_t* self,
 	int ix;
 	int iy;
 	int i          = 0;
-	int zoom[]     = { 14,    12,   10,   8,   6,  4,  -1 };
-	int max_zoom[] = { 1000,  14,   12,   10,  8,  6,  -1 };
-	int pow2n[]    = { 16384, 4096, 1024, 256, 64, 16, -1 };
+	int zoom[]     = { 16,    14,    12,   10,   8,   6,  4,  -1 };
+	int max_zoom[] = { 1000,  16,    14,   12,   10,  8,  6,  -1 };
+	int pow2n[]    = { 65536, 16384, 4096, 1024, 256, 64, 16, -1 };
 
 	int type_array[]  =
 	{
+		OSMDB_TYPE_TILEREF_NODE16,
 		OSMDB_TYPE_TILEREF_NODE14,
 		OSMDB_TYPE_TILEREF_NODE12,
 		OSMDB_TYPE_TILEREF_NODE10,
@@ -1633,6 +1634,7 @@ osm_parser_addTileRange(osm_parser_t* self,
 	// determine the tile type
 	int type_way[]  =
 	{
+		OSMDB_TYPE_TILEREF_WAY16,
 		OSMDB_TYPE_TILEREF_WAY14,
 		OSMDB_TYPE_TILEREF_WAY12,
 		OSMDB_TYPE_TILEREF_WAY10,
@@ -1642,6 +1644,7 @@ osm_parser_addTileRange(osm_parser_t* self,
 	};
 	int type_rel[]  =
 	{
+		OSMDB_TYPE_TILEREF_REL16,
 		OSMDB_TYPE_TILEREF_REL14,
 		OSMDB_TYPE_TILEREF_REL12,
 		OSMDB_TYPE_TILEREF_REL10,
@@ -1675,9 +1678,9 @@ osm_parser_addTileRange(osm_parser_t* self,
 	int   iy1;
 	int   id;
 	int   i          = 0;
-	int zoom[]       = { 14,    12,   10,   8,   6,  4,  -1 };
-	int max_zoom[]   = { 1000,  14,   12,   10,  8,  6,  -1 };
-	int pow2n[]      = { 16384, 4096, 1024, 256, 64, 16, -1 };
+	int zoom[]       = { 16,    14,    12,   10,   8,   6,  4,  -1 };
+	int max_zoom[]   = { 1000,  16,    14,   12,   10,  8,  6,  -1 };
+	int pow2n[]      = { 65536, 16384, 4096, 1024, 256, 64, 16, -1 };
 	while(min_zoom < max_zoom[i])
 	{
 		terrain_coord2tile(latT, lonL,
