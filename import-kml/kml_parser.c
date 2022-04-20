@@ -252,7 +252,7 @@ kml_parser_addTileRange(kml_parser_t* self,
 	int   id;
 	int   i        = 0;
 	int zoom[]     = { 16,    14,    12,   10,   8,   6,  4,  -1 };
-	int max_zoom[] = { 1000,  16,    14,   12,   10,  8,  6,  -1 };
+	int max_zoom[] = { 1000,  1000,  14,   12,   10,  8,  6,  -1 };
 	int pow2n[]    = { 65536, 16384, 4096, 1024, 256, 64, 16, -1 };
 	while(min_zoom < max_zoom[i])
 	{
@@ -783,7 +783,7 @@ kml_parser_addTileCoord(kml_parser_t* self,
 	int iy;
 	int i          = 0;
 	int zoom[]     = { 16,    14,    12,   10,   8,   6,  4,  -1 };
-	int max_zoom[] = { 1000,  16,    14,   12,   10,  8,  6,  -1 };
+	int max_zoom[] = { 1000,  1000,  14,   12,   10,  8,  6,  -1 };
 	int pow2n[]    = { 65536, 16384, 4096, 1024, 256, 64, 16, -1 };
 
 	int type_array[]  =
