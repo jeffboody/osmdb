@@ -122,53 +122,53 @@
 	<color name="core:mineral"    val="DE1B1BBF" />
 	<color name="core:historic"   val="E988D0BF" />
 
-	<point name="peak12"           min_zoom="14" layer="point:peak"           text_scale="1.00f" text_color1="peak:text"           text_color2="black" marker_color1="peak:point"   marker_color2="black" flags="marker:show,ele:show" />
-	<point name="saddle12"         min_zoom="14" layer="point:saddle"         text_scale="1.00f" text_color1="peak:text"           text_color2="black" marker_color1="peak:point"   marker_color2="black" flags="marker:show" />
+	<point name="peak14"           min_zoom="14" layer="point:peak"           text_scale="1.00f" text_color1="peak:text"           text_color2="black" marker_color1="peak:point"   marker_color2="black" flags="marker:show,ele:show" />
+	<point name="saddle14"         min_zoom="14" layer="point:saddle"         text_scale="1.00f" text_color1="peak:text"           text_color2="black" marker_color1="peak:point"   marker_color2="black" flags="marker:show" />
 	<point name="country4"         min_zoom="4"  layer="point:country"        text_scale="1.20f" text_color1="country:text"        text_color2="black" />
 	<point name="state6"           min_zoom="6"  layer="point:state"          text_scale="1.20f" text_color1="state:text"          text_color2="black" />
-	<point name="city6"            min_zoom="7"  layer="point:city"           text_scale="1.15f" text_color1="city:text"           text_color2="black" marker_color1="city:point"   marker_color2="white" flags="marker:show" />
+	<point name="city7"            min_zoom="7"  layer="point:city"           text_scale="1.15f" text_color1="city:text"           text_color2="black" marker_color1="city:point"   marker_color2="white" flags="marker:show" />
 	<point name="town8"            min_zoom="8"  layer="point:town"           text_scale="1.08f" text_color1="city:text"           text_color2="black" marker_color1="city:point"   marker_color2="white" flags="marker:show" />
-	<point name="village9"         min_zoom="10" layer="point:village"        text_scale="0.95f" text_color1="village:text"        text_color2="black" />
+	<point name="village10"        min_zoom="10" layer="point:village"        text_scale="0.95f" text_color1="village:text"        text_color2="black" />
 	<point name="ocean4"           min_zoom="4"  layer="point:ocean"          text_scale="1.00f" text_color1="ocean:text"          text_color2="black" />
 	<point name="sea4"             min_zoom="4"  layer="point:sea"            text_scale="1.00f" text_color1="ocean:text"          text_color2="black" />
 	<point name="water9"           min_zoom="9"  layer="point:water9"         text_scale="1.00f" text_color1="lake:text"           text_color2="black" />
-	<point name="water150"         min_zoom="15" layer="point:water150"       text_scale="1.00f"  text_color1="lake:text"           text_color2="black" />
-	<point name="water151"         min_zoom="15" layer="point:water151"       text_scale="1.00f"  text_color1="lake:text"           text_color2="black" />
+	<point name="water150"         min_zoom="15" layer="point:water150"       text_scale="1.00f" text_color1="lake:text"           text_color2="black" />
+	<point name="water151"         min_zoom="15" layer="point:water151"       text_scale="1.00f" text_color1="lake:text"           text_color2="black" />
 	<point name="glacier15"        min_zoom="15" layer="point:water151"       text_scale="1.00f" text_color1="glacier:text"        text_color2="black" />
-	<point name="minipark15"       min_zoom="15" layer="point:minipark"       text_scale="1.00f"  text_color1="outdoor:text"        text_color2="black" />
-	<point name="park15"           min_zoom="15" layer="point:park"           text_scale="1.00f"  text_color1="outdoor:text"        text_color2="black" />
-	<point name="forest9"          min_zoom="10" layer="point:forest"         text_scale="1.00f"  text_color1="forest:text"         text_color2="black" />
-	<point name="trail15"          min_zoom="17" layer="point:trail"          text_scale="0.95f"  text_color1="trail:text"          text_color2="black" />
-	<point name="track15"          min_zoom="17" layer="point:track"          text_scale="0.95f"  text_color1="track:text"          text_color2="black" />
-	<point name="core12"           min_zoom="12" layer="point:core"           text_scale="1.00f"  text_color1="core:text"           text_color2="black" flags="marker:show,ele:show" />
-	<point name="road15"           min_zoom="17" layer="point:residential"    text_scale="0.95f"  text_color1="white"               text_color2="black" />
-	<point name="highway17"        min_zoom="17" layer="point:other2"         text_scale="0.95f"  text_color1="white"               text_color2="black" />
-	<point name="waypoint15"       min_zoom="15" layer="point:waypoint"       text_scale="0.95f"  text_color1="white"               text_color2="black" />
-	<point name="motorway9"        min_zoom="10" layer="point:motorway"       text_scale="1.15f"  text_color1="motorway:text"       text_color2="black" />
-	<point name="trunk15"          min_zoom="11" layer="point:trunk"          text_scale="1.10f"  text_color1="trunk:text"          text_color2="black" />
-	<point name="primary15"        min_zoom="12" layer="point:primary"        text_scale="1.10f"  text_color1="primary:text"        text_color2="black" />
-	<point name="secondary15"      min_zoom="13" layer="point:secondary"      text_scale="1.05f"  text_color1="secondary:text"      text_color2="black" />
-	<point name="tertiary15"       min_zoom="14" layer="point:tertiary"       text_scale="1.05f"  text_color1="tertiary:text"       text_color2="black" />
-	<point name="airport150"       min_zoom="15" layer="point:airport0"       text_scale="1.05f"  text_color1="airport"             text_color2="black" marker_color1="airport"       marker_color2="black" flags="marker:show" />
-	<point name="airport151"       min_zoom="15" layer="point:airport1"       text_scale="1.05f"  text_color1="airport"             text_color2="black" marker_color1="airport"       marker_color2="black" flags="marker:show" />
-	<point name="other150"         min_zoom="17" layer="point:other0"         text_scale="0.95f"  text_color1="other:text"          text_color2="black" marker_color1="other:text"    marker_color2="black" />
-	<point name="other151"         min_zoom="17" layer="point:other1"         text_scale="0.95f"  text_color1="other:text"          text_color2="black" marker_color1="other:text"    marker_color2="black" />
-	<point name="other152"         min_zoom="17" layer="point:other2"         text_scale="0.95f"  text_color1="other:text"          text_color2="black" marker_color1="other:text"    marker_color2="black" />
-	<point name="military15"       min_zoom="17" layer="point:military"       text_scale="0.95f"  text_color1="military:text"       text_color2="black" marker_color1="military:text" marker_color2="black" />
-	<point name="junction15"       min_zoom="17" layer="point:junction"       text_scale="1.10f"  text_color1="junction:text"       text_color2="black" />
-	<point name="aerialway15"      min_zoom="15" layer="point:aerialway"      text_scale="0.95f"  text_color1="aerialway"           text_color2="black" />
-	<point name="groundway15"      min_zoom="15" layer="point:groundway"      text_scale="0.95f"  text_color1="aerialway"           text_color2="black" />
-	<point name="national_park9"   min_zoom="9"  layer="point:national_park"  text_scale="1.00f"  text_color1="national_park:text"  text_color2="black" flags="label:center" />
-	<point name="national_park12"  min_zoom="12" layer="point:protected_area" text_scale="1.00f"  text_color1="national_park:text"  text_color2="black" flags="label:center" />
-	<point name="protected_area12" min_zoom="12" layer="point:protected_area" text_scale="1.00f"  text_color1="protected_area:text" text_color2="black" />
+	<point name="minipark15"       min_zoom="15" layer="point:minipark"       text_scale="1.00f" text_color1="outdoor:text"        text_color2="black" />
+	<point name="park15"           min_zoom="15" layer="point:park"           text_scale="1.00f" text_color1="outdoor:text"        text_color2="black" />
+	<point name="forest10"         min_zoom="10" layer="point:forest"         text_scale="1.00f" text_color1="forest:text"         text_color2="black" />
+	<point name="trail16"          min_zoom="16" layer="point:trail"          text_scale="0.95f" text_color1="trail:text"          text_color2="black" />
+	<point name="track16"          min_zoom="16" layer="point:track"          text_scale="0.95f" text_color1="track:text"          text_color2="black" />
+	<point name="core11"           min_zoom="11" layer="point:core"           text_scale="1.00f" text_color1="core:text"           text_color2="black" flags="marker:show,ele:show" />
+	<point name="road16"           min_zoom="16" layer="point:residential"    text_scale="0.95f" text_color1="white"               text_color2="black" />
+	<point name="highway16"        min_zoom="16" layer="point:other2"         text_scale="0.95f" text_color1="white"               text_color2="black" />
+	<point name="waypoint15"       min_zoom="15" layer="point:waypoint"       text_scale="0.95f" text_color1="white"               text_color2="black" />
+	<point name="motorway12"       min_zoom="12" layer="point:motorway"       text_scale="1.15f" text_color1="motorway:text"       text_color2="black" />
+	<point name="trunk13"          min_zoom="13" layer="point:trunk"          text_scale="1.10f" text_color1="trunk:text"          text_color2="black" />
+	<point name="primary13"        min_zoom="13" layer="point:primary"        text_scale="1.10f" text_color1="primary:text"        text_color2="black" />
+	<point name="secondary14"      min_zoom="14" layer="point:secondary"      text_scale="1.05f" text_color1="secondary:text"      text_color2="black" />
+	<point name="tertiary15"       min_zoom="15" layer="point:tertiary"       text_scale="1.05f" text_color1="tertiary:text"       text_color2="black" />
+	<point name="airport150"       min_zoom="15" layer="point:airport0"       text_scale="1.05f" text_color1="airport"             text_color2="black" marker_color1="airport"       marker_color2="black" flags="marker:show" />
+	<point name="airport151"       min_zoom="15" layer="point:airport1"       text_scale="1.05f" text_color1="airport"             text_color2="black" marker_color1="airport"       marker_color2="black" flags="marker:show" />
+	<point name="other150"         min_zoom="17" layer="point:other0"         text_scale="0.95f" text_color1="other:text"          text_color2="black" marker_color1="other:text"    marker_color2="black" />
+	<point name="other151"         min_zoom="17" layer="point:other1"         text_scale="0.95f" text_color1="other:text"          text_color2="black" marker_color1="other:text"    marker_color2="black" />
+	<point name="other152"         min_zoom="17" layer="point:other2"         text_scale="0.95f" text_color1="other:text"          text_color2="black" marker_color1="other:text"    marker_color2="black" />
+	<point name="military17"       min_zoom="17" layer="point:military"       text_scale="0.95f" text_color1="military:text"       text_color2="black" marker_color1="military:text" marker_color2="black" />
+	<point name="junction17"       min_zoom="17" layer="point:junction"       text_scale="1.10f" text_color1="junction:text"       text_color2="black" />
+	<point name="aerialway16"      min_zoom="16" layer="point:aerialway"      text_scale="0.95f" text_color1="aerialway"           text_color2="black" />
+	<point name="groundway16"      min_zoom="16" layer="point:groundway"      text_scale="0.95f" text_color1="aerialway"           text_color2="black" />
+	<point name="national_park9"   min_zoom="9"  layer="point:national_park"  text_scale="1.00f" text_color1="national_park:text"  text_color2="black" flags="label:center" />
+	<point name="national_park12"  min_zoom="12" layer="point:protected_area" text_scale="1.00f" text_color1="national_park:text"  text_color2="black" flags="label:center" />
+	<point name="protected_area12" min_zoom="12" layer="point:protected_area" text_scale="1.00f" text_color1="protected_area:text" text_color2="black" />
 
 	<line name="aerialway15"       min_zoom="15" layer="line:aerialway"   mode="dashed,striped" color1="aerialway"      color2="dkgray" width="1.7" />
 	<line name="groundway15"       min_zoom="15" layer="line:groundway"   mode="dashed,striped" color1="aerialway"      color2="dkgray" width="1.7" />
-	<line name="motorway6"         min_zoom="7"  layer="line:motorway"    mode="striped"        color1="motorway:line"  color2="dkgray" width="3.5" />
-	<line name="trunk9"            min_zoom="9"  layer="line:trunk"       mode="striped"        color1="trunk:line"     color2="dkgray" width="3.5" />
+	<line name="motorway7"         min_zoom="7"  layer="line:motorway"    mode="striped"        color1="motorway:line"  color2="dkgray" width="3.5" />
+	<line name="trunk8"            min_zoom="8"  layer="line:trunk"       mode="striped"        color1="trunk:line"     color2="dkgray" width="3.5" />
 	<line name="primary9"          min_zoom="9"  layer="line:primary"     mode="striped"        color1="primary:line"   color2="dkgray" width="3.5" />
-	<line name="secondary12"       min_zoom="12" layer="line:secondary"   mode="striped"        color1="secondary:line" color2="dkgray" width="2.75" />
-	<line name="tertiary12"        min_zoom="12" layer="line:tertiary"    mode="striped"        color1="tertiary:line"  color2="dkgray" width="2.75" />
+	<line name="secondary10"       min_zoom="10" layer="line:secondary"   mode="striped"        color1="secondary:line" color2="dkgray" width="2.75" />
+	<line name="tertiary11"        min_zoom="11" layer="line:tertiary"    mode="striped"        color1="tertiary:line"  color2="dkgray" width="2.75" />
 	<line name="motorway_link15"   min_zoom="15" layer="line:link"        mode="striped"        color1="motorway:line"  color2="dkgray" width="2.5" />
 	<line name="trunk_link15"      min_zoom="15" layer="line:link"        mode="striped"        color1="trunk:line"     color2="dkgray" width="2.5" />
 	<line name="primary_link15"    min_zoom="15" layer="line:link"        mode="striped"        color1="primary:line"   color2="dkgray" width="2.5" />
@@ -183,17 +183,17 @@
 	<line name="trail15"           min_zoom="15" layer="line:trail"       mode="dashed,striped" color1="trail:line"     color2="dkgray" width="1.7" />
 	<line name="track15"           min_zoom="15" layer="line:track"       mode="striped"        color1="track:line"     color2="dkgray" width="1.7" />
 	<line name="railway15"         min_zoom="15" layer="line:railway"     mode="dashed,striped" color1="gray"           color2="ltgray" width="1.7" />
-	<line name="river12"           min_zoom="12" layer="line:water" color1="river:line" width="3.0" />
-	<line name="stream15"          min_zoom="15" layer="line:water" color1="river:line" width="1.7" />
 	<line name="footway15"         min_zoom="15" layer="line:trail"       mode="dashed,striped,named" color1="trail:line" color2="dkgray" />
-	<line name="core:wilderness12" min_zoom="12" layer="line:boundary" color1="core:wilderness" color2="core:wilderness" width="2.5" />
-	<line name="core:recreation12" min_zoom="12" layer="line:boundary" color1="core:recreation" color2="core:recreation" width="2.5" />
-	<line name="core:special12"    min_zoom="12" layer="line:boundary" color1="core:special"    color2="core:special"    width="2.5" />
-	<line name="core:mineral12"    min_zoom="12" layer="line:boundary" color1="core:mineral"    color2="core:mineral"    width="2.5" />
-	<line name="core:historic12"   min_zoom="12" layer="line:boundary" color1="core:historic"   color2="core:historic"   width="2.5" />
-	<line name="building15"        min_zoom="15" layer="line:building" color1="building:line"   color2="dkgray" width="0.25" />
-	<line name="state6"            min_zoom="6"  layer="line:boundary" color1="state:line" color2="state:line" width="3.5" />
-	<line name="national_park9"    min_zoom="10" layer="line:boundary" color1="national_park:line" color2="national_park:line" width="3.5" />
+	<line name="river12"           min_zoom="12" layer="line:water"    color1="river:line" width="3.0" />
+	<line name="stream15"          min_zoom="15" layer="line:water"    color1="river:line" width="1.7" />
+	<line name="core:wilderness12" min_zoom="12" layer="line:boundary" color1="core:wilderness"    color2="core:wilderness" width="2.5" />
+	<line name="core:recreation12" min_zoom="12" layer="line:boundary" color1="core:recreation"    color2="core:recreation" width="2.5" />
+	<line name="core:special12"    min_zoom="12" layer="line:boundary" color1="core:special"       color2="core:special"    width="2.5" />
+	<line name="core:mineral12"    min_zoom="12" layer="line:boundary" color1="core:mineral"       color2="core:mineral"    width="2.5" />
+	<line name="core:historic12"   min_zoom="12" layer="line:boundary" color1="core:historic"      color2="core:historic"   width="2.5" />
+	<line name="building15"        min_zoom="15" layer="line:building" color1="building:line"      color2="dkgray" width="0.25" />
+	<line name="state6"            min_zoom="6"  layer="line:boundary" color1="state:line"         color2="state:line" width="3.5" />
+	<line name="national_park10"   min_zoom="10" layer="line:boundary" color1="national_park:line" color2="national_park:line" width="3.5" />
 
 	<poly name="glacier15"  min_zoom="15" layer="poly:water"    color="glacier:poly" />
 	<poly name="water9"     min_zoom="9"  layer="poly:water"    color="lake:poly" />
@@ -201,18 +201,18 @@
 	<poly name="water15"    min_zoom="15" layer="poly:water"    color="lake:poly" />
 	<poly name="building15" min_zoom="15" layer="poly:building" color="building:poly" />
 
-	<class name="aerialway:cable_car"              abrev="1" point="aerialway15" line="aerialway15" />
-	<class name="aerialway:gondola"                abrev="1" point="aerialway15" line="aerialway15" />
-	<class name="aerialway:chair_lift"             abrev="1" point="aerialway15" line="aerialway15" />
-	<class name="aerialway:mixed_lift"             abrev="1" point="groundway15" line="groundway15" />
-	<class name="aerialway:drag_lift"              abrev="1" point="groundway15" line="groundway15" />
-	<class name="aerialway:t-bar"                  abrev="1" point="groundway15" line="groundway15" />
-	<class name="aerialway:j-bar"                  abrev="1" point="groundway15" line="groundway15" />
-	<class name="aerialway:platter"                abrev="1" point="groundway15" line="groundway15" />
-	<class name="aerialway:rope_tow"               abrev="1" point="groundway15" line="groundway15" />
-	<class name="aerialway:magic_carpet"           abrev="1" point="groundway15" line="groundway15" />
-	<class name="aerialway:zip_line"               abrev="1" point="aerialway15" line="aerialway15" />
-	<class name="aerialway:canopy"                 abrev="1" point="aerialway15" line="aerialway15" />
+	<class name="aerialway:cable_car"              abrev="1" point="aerialway16" line="aerialway15" />
+	<class name="aerialway:gondola"                abrev="1" point="aerialway16" line="aerialway15" />
+	<class name="aerialway:chair_lift"             abrev="1" point="aerialway16" line="aerialway15" />
+	<class name="aerialway:mixed_lift"             abrev="1" point="groundway16" line="groundway15" />
+	<class name="aerialway:drag_lift"              abrev="1" point="groundway16" line="groundway15" />
+	<class name="aerialway:t-bar"                  abrev="1" point="groundway16" line="groundway15" />
+	<class name="aerialway:j-bar"                  abrev="1" point="groundway16" line="groundway15" />
+	<class name="aerialway:platter"                abrev="1" point="groundway16" line="groundway15" />
+	<class name="aerialway:rope_tow"               abrev="1" point="groundway16" line="groundway15" />
+	<class name="aerialway:magic_carpet"           abrev="1" point="groundway16" line="groundway15" />
+	<class name="aerialway:zip_line"               abrev="1" point="aerialway16" line="aerialway15" />
+	<class name="aerialway:canopy"                 abrev="1" point="aerialway16" line="aerialway15" />
 	<class name="aeroway:aerodrome"                point="airport151" />
 	<class name="aeroway:helipad"                  point="airport150" />
 	<class name="aeroway:heliport"                 point="airport150" />
@@ -290,96 +290,96 @@
 	<class name="amenity:waste_transfer_station"   point="other150" />
 	<class name="amenity:watering_place"           point="other151" />
 	<class name="amenity:water_point"              point="other151" />
-	<class name="craft:agricultural_engines"       point="other150"   />
-	<class name="craft:bakery"                     point="other151"   />
-	<class name="craft:basket_maker"               point="other150"   />
-	<class name="craft:beekeeper"                  point="other150"   />
-	<class name="craft:blacksmith"                 point="other150"   />
-	<class name="craft:boatbuilder"                point="other150"   />
-	<class name="craft:bookbinder"                 point="other150"   />
-	<class name="craft:brewery"                    point="other151"   />
-	<class name="craft:builder"                    point="other150"   />
-	<class name="craft:carpenter"                  point="other150"   />
-	<class name="craft:carpet_layer"               point="other150"   />
-	<class name="craft:caterer"                    point="other151"   />
-	<class name="craft:chimney_sweeper"            point="other150"   />
-	<class name="craft:clockmaker"                 point="other150"   />
-	<class name="craft:confectionery"              point="other151"   />
-	<class name="craft:dental_technican"           point="other150"   />
-	<class name="craft:distillery"                 point="other151"   />
-	<class name="craft:dressmaker"                 point="other150"   />
-	<class name="craft:embroiderer"                point="other150"   />
-	<class name="craft:electrician"                point="other150"   />
-	<class name="craft:engraver"                   point="other150"   />
-	<class name="craft:floorer"                    point="other150"   />
-	<class name="craft:gardener"                   point="other150"   />
-	<class name="craft:glaziery"                   point="other150"   />
-	<class name="craft:handicraft"                 point="other150"   />
-	<class name="craft:hvac"                       point="other150"   />
-	<class name="craft:insulation"                 point="other150"   />
-	<class name="craft:jeweller"                   point="other150"   />
-	<class name="craft:joiner"                     point="other150"   />
-	<class name="craft:key_cutter"                 point="other150"   />
-	<class name="craft:locksmith"                  point="other150"   />
-	<class name="craft:metal_construction"         point="other150"   />
-	<class name="craft:mint"                       point="other150"   />
-	<class name="craft:optician"                   point="other150"   />
-	<class name="craft:painter"                    point="other150"   />
-	<class name="craft:photographer"               point="other150"   />
-	<class name="craft:photographic_laboratory"    point="other150"   />
-	<class name="craft:piano_tuner"                point="other150"   />
-	<class name="craft:plasterer"                  point="other150"   />
-	<class name="craft:plumber"                    point="other150"   />
-	<class name="craft:pottery"                    point="other150"   />
-	<class name="craft:printmaker"                 point="other150"   />
-	<class name="craft:rigger"                     point="other150"   />
-	<class name="craft:roofer"                     point="other150"   />
-	<class name="craft:saddler"                    point="other150"   />
-	<class name="craft:sailmaker"                  point="other150"   />
-	<class name="craft:sawmill"                    point="other150"   />
-	<class name="craft:scaffolder"                 point="other150"   />
-	<class name="craft:sculpter"                   point="other150"   />
-	<class name="craft:shoemaker"                  point="other150"   />
-	<class name="craft:stand_builder"              point="other150"   />
-	<class name="craft:stonemason"                 point="other150"   />
-	<class name="craft:sun_protection"             point="other150"   />
-	<class name="craft:tailor"                     point="other150"   />
-	<class name="craft:tiler"                      point="other150"   />
-	<class name="craft:tinsmith"                   point="other150"   />
-	<class name="craft:toolmaker"                  point="other150"   />
-	<class name="craft:turner"                     point="other150"   />
-	<class name="craft:upholsterer"                point="other150"   />
-	<class name="craft:watchmaker"                 point="other150"   />
-	<class name="craft:window_construction"        point="other150"   />
-	<class name="craft:winery"                     point="other151"   />
+	<class name="craft:agricultural_engines"       point="other150" />
+	<class name="craft:bakery"                     point="other151" />
+	<class name="craft:basket_maker"               point="other150" />
+	<class name="craft:beekeeper"                  point="other150" />
+	<class name="craft:blacksmith"                 point="other150" />
+	<class name="craft:boatbuilder"                point="other150" />
+	<class name="craft:bookbinder"                 point="other150" />
+	<class name="craft:brewery"                    point="other151" />
+	<class name="craft:builder"                    point="other150" />
+	<class name="craft:carpenter"                  point="other150" />
+	<class name="craft:carpet_layer"               point="other150" />
+	<class name="craft:caterer"                    point="other151" />
+	<class name="craft:chimney_sweeper"            point="other150" />
+	<class name="craft:clockmaker"                 point="other150" />
+	<class name="craft:confectionery"              point="other151" />
+	<class name="craft:dental_technican"           point="other150" />
+	<class name="craft:distillery"                 point="other151" />
+	<class name="craft:dressmaker"                 point="other150" />
+	<class name="craft:embroiderer"                point="other150" />
+	<class name="craft:electrician"                point="other150" />
+	<class name="craft:engraver"                   point="other150" />
+	<class name="craft:floorer"                    point="other150" />
+	<class name="craft:gardener"                   point="other150" />
+	<class name="craft:glaziery"                   point="other150" />
+	<class name="craft:handicraft"                 point="other150" />
+	<class name="craft:hvac"                       point="other150" />
+	<class name="craft:insulation"                 point="other150" />
+	<class name="craft:jeweller"                   point="other150" />
+	<class name="craft:joiner"                     point="other150" />
+	<class name="craft:key_cutter"                 point="other150" />
+	<class name="craft:locksmith"                  point="other150" />
+	<class name="craft:metal_construction"         point="other150" />
+	<class name="craft:mint"                       point="other150" />
+	<class name="craft:optician"                   point="other150" />
+	<class name="craft:painter"                    point="other150" />
+	<class name="craft:photographer"               point="other150" />
+	<class name="craft:photographic_laboratory"    point="other150" />
+	<class name="craft:piano_tuner"                point="other150" />
+	<class name="craft:plasterer"                  point="other150" />
+	<class name="craft:plumber"                    point="other150" />
+	<class name="craft:pottery"                    point="other150" />
+	<class name="craft:printmaker"                 point="other150" />
+	<class name="craft:rigger"                     point="other150" />
+	<class name="craft:roofer"                     point="other150" />
+	<class name="craft:saddler"                    point="other150" />
+	<class name="craft:sailmaker"                  point="other150" />
+	<class name="craft:sawmill"                    point="other150" />
+	<class name="craft:scaffolder"                 point="other150" />
+	<class name="craft:sculpter"                   point="other150" />
+	<class name="craft:shoemaker"                  point="other150" />
+	<class name="craft:stand_builder"              point="other150" />
+	<class name="craft:stonemason"                 point="other150" />
+	<class name="craft:sun_protection"             point="other150" />
+	<class name="craft:tailor"                     point="other150" />
+	<class name="craft:tiler"                      point="other150" />
+	<class name="craft:tinsmith"                   point="other150" />
+	<class name="craft:toolmaker"                  point="other150" />
+	<class name="craft:turner"                     point="other150" />
+	<class name="craft:upholsterer"                point="other150" />
+	<class name="craft:watchmaker"                 point="other150" />
+	<class name="craft:window_construction"        point="other150" />
+	<class name="craft:winery"                     point="other151" />
 	<class name="geological:moraine"               point="other150" />
 	<class name="geological:outcrop"               point="other150" />
 	<class name="geological:palaeontological_site" point="other150" />
-	<class name="highway:motorway"                 abrev="1" point="motorway9"   line="motorway6" />
-	<class name="highway:trunk"                    abrev="1" point="trunk15"     line="trunk9" />
-	<class name="highway:primary"                  abrev="1" point="primary15"   line="primary9" />
-	<class name="highway:secondary"                abrev="1" point="secondary15" line="secondary12" />
-	<class name="highway:tertiary"                 abrev="1" point="tertiary15"  line="tertiary12" />
-	<class name="highway:unclassified"             abrev="1" point="road15"      line="road15" />
-	<class name="highway:service"                  abrev="1" point="road15"      line="service15" />
-	<class name="highway:residential"              abrev="1" point="road15"      line="road15" />
+	<class name="highway:motorway"                 abrev="1" point="motorway12"  line="motorway7" />
+	<class name="highway:trunk"                    abrev="1" point="trunk13"     line="trunk8" />
+	<class name="highway:primary"                  abrev="1" point="primary13"   line="primary9" />
+	<class name="highway:secondary"                abrev="1" point="secondary14" line="secondary10" />
+	<class name="highway:tertiary"                 abrev="1" point="tertiary15"  line="tertiary11" />
+	<class name="highway:unclassified"             abrev="1" point="road16"      line="road15" />
+	<class name="highway:service"                  abrev="1" point="road16"      line="service15" />
+	<class name="highway:residential"              abrev="1" point="road16"      line="road15" />
 	<class name="highway:motorway_link"            abrev="1" line="motorway_link15" />
 	<class name="highway:trunk_link"               abrev="1" line="trunk_link15" />
 	<class name="highway:primary_link"             abrev="1" line="primary_link15" />
 	<class name="highway:secondary_link"           abrev="1" line="secondary_link15" />
 	<class name="highway:tertiary_link"            abrev="1" line="tertiary_link15" />
-	<class name="highway:living_street"            abrev="1" point="trail15"     line="pedestrian15" />
-	<class name="highway:pedestrian"               abrev="1" point="trail15"     line="pedestrian15" />
-	<class name="highway:track"                    abrev="1" point="track15"     line="track15" />
-	<class name="highway:escape"                   abrev="1" point="highway17"   line="highway15" />
-	<class name="highway:raceway"                  abrev="1" point="highway17"   line="highway15" />
-	<class name="highway:road"                     abrev="1" point="road15"      line="road15" />
-	<class name="highway:footway"                  abrev="1" point="trail15"     line="footway15" />
-	<class name="highway:bridleway"                abrev="1" point="trail15"     line="trail15" />
-	<class name="highway:steps"                    abrev="1" point="trail15"     line="footway15" />
-	<class name="highway:path"                     abrev="1" point="trail15"     line="trail15" />
-	<class name="highway:cycleway"                 abrev="1" point="trail15"     line="trail15" />
-	<class name="highway:motorway_junction"        abrev="1" point="junction15" />
+	<class name="highway:living_street"            abrev="1" point="trail16"     line="pedestrian15" />
+	<class name="highway:pedestrian"               abrev="1" point="trail16"     line="pedestrian15" />
+	<class name="highway:track"                    abrev="1" point="track16"     line="track15" />
+	<class name="highway:escape"                   abrev="1" point="highway16"   line="highway15" />
+	<class name="highway:raceway"                  abrev="1" point="highway16"   line="highway15" />
+	<class name="highway:road"                     abrev="1" point="road16"      line="road15" />
+	<class name="highway:footway"                  abrev="1" point="trail16"     line="footway15" />
+	<class name="highway:bridleway"                abrev="1" point="trail16"     line="trail15" />
+	<class name="highway:steps"                    abrev="1" point="trail16"     line="footway15" />
+	<class name="highway:path"                     abrev="1" point="trail16"     line="trail15" />
+	<class name="highway:cycleway"                 abrev="1" point="trail16"     line="trail15" />
+	<class name="highway:motorway_junction"        abrev="1" point="junction17" />
 	<class name="historic:aircraft"                point="other150" />
 	<class name="historic:aqueduct"                point="other150" />
 	<class name="historic:archaeological_site"     point="other150" />
@@ -427,7 +427,7 @@
 	<class name="landuse:reservoir"                point="water151" poly="water9" />
 	<class name="landuse:salt_pond"                point="water150" poly="water15" />
 	<class name="landuse:basin"                    point="water151" poly="water9" />
-	<class name="landuse:forest"                   point="forest9" />
+	<class name="landuse:forest"                   point="forest10" />
 	<class name="leisure:adult_gaming_centre"      point="other150" />
 	<class name="leisure:amusement_arcade"         point="other150" />
 	<class name="leisure:beach_resort"             point="other150" />
@@ -456,14 +456,14 @@
 	<class name="leisure:swimming_pool"            point="other150" />
 	<class name="leisure:track"                    point="other150" />
 	<class name="leisure:water_park"               point="other150" />
-	<class name="military:airfield"                point="military15" />
-	<class name="military:barracks"                point="military15" />
-	<class name="military:checkpoint"              point="military15" />
-	<class name="military:danger_area"             point="military15" />
-	<class name="military:naval_base"              point="military15" />
-	<class name="military:office"                  point="military15" />
-	<class name="military:range"                   point="military15" />
-	<class name="military:training_area"           point="military15" />
+	<class name="military:airfield"                point="military17" />
+	<class name="military:barracks"                point="military17" />
+	<class name="military:checkpoint"              point="military17" />
+	<class name="military:danger_area"             point="military17" />
+	<class name="military:naval_base"              point="military17" />
+	<class name="military:office"                  point="military17" />
+	<class name="military:range"                   point="military17" />
+	<class name="military:training_area"           point="military17" />
 	<class name="natural:wood"                     abrev="1" point="other151" />
 	<class name="natural:scrub"                    abrev="1" point="other151" />
 	<class name="natural:heath"                    abrev="1" point="other151" />
@@ -474,7 +474,7 @@
 	<class name="natural:shingle"                  abrev="1" point="other151" />
 	<class name="natural:sand"                     abrev="1" point="other151" />
 	<class name="natural:mud"                      abrev="1" point="other151" />
-	<class name="natural:water"                    abrev="1" point="water151"   poly="water9" />
+	<class name="natural:water"                    abrev="1" point="water151"  poly="water9" />
 	<class name="natural:wetland"                  abrev="1" point="other151" />
 	<class name="natural:glacier"                  abrev="1" point="glacier15" poly="glacier15" />
 	<class name="natural:bay"                      abrev="1" point="water9" />
@@ -484,63 +484,63 @@
 	<class name="natural:spring"                   abrev="1" point="other150" />
 	<class name="natural:hot_spring"               abrev="1" point="other150" />
 	<class name="natural:geyser"                   abrev="1" point="other150" />
-	<class name="natural:peak"                     abrev="1" point="peak12" />
-	<class name="natural:volcano"                  abrev="1" point="peak12" />
+	<class name="natural:peak"                     abrev="1" point="peak14" />
+	<class name="natural:volcano"                  abrev="1" point="peak14" />
 	<class name="natural:valley"                   abrev="1" point="other151" />
 	<class name="natural:ridge"                    abrev="1" point="other151" />
 	<class name="natural:arete"                    abrev="1" point="other150" />
 	<class name="natural:cliff"                    abrev="1" point="other150" />
-	<class name="natural:saddle"                   abrev="1" point="saddle12" />
+	<class name="natural:saddle"                   abrev="1" point="saddle14" />
 	<class name="natural:rock"                     abrev="1" point="other150" />
 	<class name="natural:stone"                    abrev="1" point="other150" />
 	<class name="natural:sinkhole"                 abrev="1" point="other150" />
 	<class name="natural:cave_entrance"            abrev="1" point="other150" />
-	<class name="office:accountant"                point="other150"  />
-	<class name="office:adoption_agency"           point="other150"  />
-	<class name="office:advertising_agency"        point="other150"  />
-	<class name="office:architect"                 point="other150"  />
-	<class name="office:association"               point="other150"  />
-	<class name="office:charity"                   point="other150"  />
-	<class name="office:company"                   point="other150"  />
-	<class name="office:educational_institution"   point="other150"  />
-	<class name="office:employment_agency"         point="other150"  />
-	<class name="office:energy_supplier"           point="other150"  />
-	<class name="office:estate_agent"              point="other150"  />
-	<class name="office:forestry"                  point="other151"  />
-	<class name="office:foundation"                point="other150"  />
-	<class name="office:government"                point="other150"  />
-	<class name="office:guide"                     point="other150"  />
-	<class name="office:healer"                    point="other150"  />
-	<class name="office:insurance"                 point="other150"  />
-	<class name="office:it"                        point="other150"  />
-	<class name="office:lawyer"                    point="other150"  />
-	<class name="office:logistics"                 point="other150"  />
-	<class name="office:moving_company"            point="other150"  />
-	<class name="office:newspaper"                 point="other150"  />
-	<class name="office:ngo"                       point="other150"  />
-	<class name="office:notary"                    point="other150"  />
-	<class name="office:physican"                  point="other150"  />
-	<class name="office:political_party"           point="other150"  />
-	<class name="office:private_investigator"      point="other150"  />
-	<class name="office:property_management"       point="other150"  />
-	<class name="office:quango"                    point="other150"  />
-	<class name="office:real_estate_agent"         point="other150"  />
-	<class name="office:research"                  point="other150"  />
-	<class name="office:surveyor"                  point="other150"  />
-	<class name="office:tax"                       point="other150"  />
-	<class name="office:tax_advisor"               point="other150"  />
-	<class name="office:telecommunication"         point="other150"  />
-	<class name="office:therapist"                 point="other150"  />
-	<class name="office:travel_agent"              point="other150"  />
-	<class name="office:water_utility"             point="other150"  />
+	<class name="office:accountant"                point="other150" />
+	<class name="office:adoption_agency"           point="other150" />
+	<class name="office:advertising_agency"        point="other150" />
+	<class name="office:architect"                 point="other150" />
+	<class name="office:association"               point="other150" />
+	<class name="office:charity"                   point="other150" />
+	<class name="office:company"                   point="other150" />
+	<class name="office:educational_institution"   point="other150" />
+	<class name="office:employment_agency"         point="other150" />
+	<class name="office:energy_supplier"           point="other150" />
+	<class name="office:estate_agent"              point="other150" />
+	<class name="office:forestry"                  point="other151" />
+	<class name="office:foundation"                point="other150" />
+	<class name="office:government"                point="other150" />
+	<class name="office:guide"                     point="other150" />
+	<class name="office:healer"                    point="other150" />
+	<class name="office:insurance"                 point="other150" />
+	<class name="office:it"                        point="other150" />
+	<class name="office:lawyer"                    point="other150" />
+	<class name="office:logistics"                 point="other150" />
+	<class name="office:moving_company"            point="other150" />
+	<class name="office:newspaper"                 point="other150" />
+	<class name="office:ngo"                       point="other150" />
+	<class name="office:notary"                    point="other150" />
+	<class name="office:physican"                  point="other150" />
+	<class name="office:political_party"           point="other150" />
+	<class name="office:private_investigator"      point="other150" />
+	<class name="office:property_management"       point="other150" />
+	<class name="office:quango"                    point="other150" />
+	<class name="office:real_estate_agent"         point="other150" />
+	<class name="office:research"                  point="other150" />
+	<class name="office:surveyor"                  point="other150" />
+	<class name="office:tax"                       point="other150" />
+	<class name="office:tax_advisor"               point="other150" />
+	<class name="office:telecommunication"         point="other150" />
+	<class name="office:therapist"                 point="other150" />
+	<class name="office:travel_agent"              point="other150" />
+	<class name="office:water_utility"             point="other150" />
 	<class name="place:country"                    point="country4" />
 	<class name="place:ocean"                      point="ocean4" />
 	<class name="place:sea"                        point="sea4" />
 	<class name="place:state"                      point="state6" />
-	<class name="place:city"                       point="city6" />
+	<class name="place:city"                       point="city7" />
 	<class name="place:town"                       point="town8" />
-	<class name="place:village"                    point="village9" />
-	<class name="place:hamlet"                     point="village9" />
+	<class name="place:village"                    point="village10" />
+	<class name="place:hamlet"                     point="village10" />
 	<class name="power:plant"                      point="other150" />
 	<class name="public_transport:station"         point="other150" />
 	<class name="railway:funicular"                abrev="1" line="railway15" />
@@ -552,245 +552,245 @@
 	<class name="railway:subway"                   abrev="1" line="railway15" />
 	<class name="railway:tram"                     abrev="1" line="railway15" />
 	<class name="railway:station"                  point="other150" />
-	<class name="shop:alcohol"                     point="other151"    />
-	<class name="shop:bakery"                      point="other151"    />
-	<class name="shop:beverages"                   point="other151"    />
-	<class name="shop:brewing_supplies"            point="other151"    />
-	<class name="shop:butcher"                     point="other150"    />
-	<class name="shop:cheese"                      point="other150"    />
-	<class name="shop:chocolate"                   point="other151"    />
-	<class name="shop:coffee"                      point="other151"    />
-	<class name="shop:confectionery"               point="other151"    />
-	<class name="shop:convenience"                 point="other151"    />
-	<class name="shop:deli"                        point="other151"    />
-	<class name="shop:dairy"                       point="other151"    />
-	<class name="shop:farm"                        point="other150"    />
-	<class name="shop:frozen_food"                 point="other150"    />
-	<class name="shop:greengrocier"                point="other150"    />
-	<class name="shop:health_food"                 point="other151"    />
-	<class name="shop:ice_cream"                   point="other151"    />
-	<class name="shop:pasta"                       point="other151"    />
-	<class name="shop:pastry"                      point="other151"    />
-	<class name="shop:seafood"                     point="other151"    />
-	<class name="shop:spices"                      point="other150"    />
-	<class name="shop:tea"                         point="other151"    />
-	<class name="shop:water"                       point="other151"    />
-	<class name="shop:department_store"            point="other151"    />
-	<class name="shop:general"                     point="other151"    />
-	<class name="shop:kiosk"                       point="other150"    />
-	<class name="shop:mall"                        point="other150"    />
-	<class name="shop:supermarket"                 point="other151"    />
-	<class name="shop:wholesale"                   point="other151"    />
-	<class name="shop:baby_goods"                  point="other150"    />
-	<class name="shop:bag"                         point="other150"    />
-	<class name="shop:boutique"                    point="other150"    />
-	<class name="shop:clothes"                     point="other151"    />
-	<class name="shop:fabric"                      point="other150"    />
-	<class name="shop:fashion"                     point="other150"    />
-	<class name="shop:jewelry"                     point="other150"    />
-	<class name="shop:leather"                     point="other150"    />
-	<class name="shop:sewing"                      point="other150"    />
-	<class name="shop:shoes"                       point="other151"    />
-	<class name="shop:tailor"                      point="other150"    />
-	<class name="shop:watches"                     point="other150"    />
-	<class name="shop:charity"                     point="other150"    />
-	<class name="shop:second_hand"                 point="other150"    />
-	<class name="shop:variety_store"               point="other150"    />
-	<class name="shop:beauty"                      point="other150"    />
-	<class name="shop:chemist"                     point="other150"    />
-	<class name="shop:cosmetics"                   point="other150"    />
-	<class name="shop:erotic"                      point="other150"    />
-	<class name="shop:hairdresser"                 point="other150"    />
-	<class name="shop:hairdresser_suply"           point="other150"    />
-	<class name="shop:hearing_aids"                point="other150"    />
-	<class name="shop:herbalist"                   point="other150"    />
-	<class name="shop:massage"                     point="other150"    />
-	<class name="shop:medical_supply"              point="other150"    />
-	<class name="shop:nutrition_supplements"       point="other151"    />
-	<class name="shop:optician"                    point="other150"    />
-	<class name="shop:perfumery"                   point="other150"    />
-	<class name="shop:tattoo"                      point="other150"    />
-	<class name="shop:agrarian"                    point="other150"    />
-	<class name="shop:appliance"                   point="other150"    />
-	<class name="shop:bathroom_furnishing"         point="other150"    />
-	<class name="shop:doityourself"                point="other150"    />
-	<class name="shop:electrical"                  point="other150"    />
-	<class name="shop:energy"                      point="other150"    />
-	<class name="shop:fireplace"                   point="other150"    />
-	<class name="shop:florist"                     point="other150"    />
-	<class name="shop:garden_centre"               point="other150"    />
-	<class name="shop:garden_furniture"            point="other150"    />
-	<class name="shop:gas"                         point="other151"    />
-	<class name="shop:glaziery"                    point="other150"    />
-	<class name="shop:hardware"                    point="other150"    />
-	<class name="shop:houseware"                   point="other150"    />
-	<class name="shop:locksmith"                   point="other150"    />
-	<class name="shop:paint"                       point="other150"    />
-	<class name="shop:security"                    point="other150"    />
-	<class name="shop:trade"                       point="other150"    />
-	<class name="shop:antiques"                    point="other150"    />
-	<class name="shop:bed"                         point="other150"    />
-	<class name="shop:candles"                     point="other150"    />
-	<class name="shop:carpet"                      point="other150"    />
-	<class name="shop:curtain"                     point="other150"    />
-	<class name="shop:doors"                       point="other150"    />
-	<class name="shop:flooring"                    point="other150"    />
-	<class name="shop:furniture"                   point="other150"    />
-	<class name="shop:interior_decoration"         point="other150"    />
-	<class name="shop:kitchen"                     point="other150"    />
-	<class name="shop:lamps"                       point="other150"    />
-	<class name="shop:tiles"                       point="other150"    />
-	<class name="shop:window_blind"                point="other150"    />
-	<class name="shop:computer"                    point="other151"    />
-	<class name="shop:robot"                       point="other151"    />
-	<class name="shop:electronics"                 point="other151"    />
-	<class name="shop:hifi"                        point="other150"    />
-	<class name="shop:mobile_phone"                point="other151"    />
-	<class name="shop:radiotechnics"               point="other150"    />
-	<class name="shop:vacuum_cleaner"              point="other150"    />
-	<class name="shop:atv"                         point="other150"    />
-	<class name="shop:bicycle"                     point="other151"    />
-	<class name="shop:boat"                        point="other150"    />
-	<class name="shop:car"                         point="other150"    />
-	<class name="shop:car_repair"                  point="other150"    />
-	<class name="shop:car_parts"                   point="other150"    />
-	<class name="shop:fuel"                        point="other151"    />
-	<class name="shop:fishing"                     point="other150"    />
-	<class name="shop:free_flying"                 point="other150"    />
-	<class name="shop:hunting"                     point="other150"    />
-	<class name="shop:jetski"                      point="other150"    />
-	<class name="shop:motorcycle"                  point="other150"    />
-	<class name="shop:outdoor"                     point="other151"    />
-	<class name="shop:scuba_diving"                point="other150"    />
-	<class name="shop:ski"                         point="other151"    />
-	<class name="shop:snowmobile"                  point="other150"    />
-	<class name="shop:sports"                      point="other151"    />
-	<class name="shop:swimming_pool"               point="other150"    />
-	<class name="shop:tyres"                       point="other150"    />
-	<class name="shop:art"                         point="other150"    />
-	<class name="shop:collector"                   point="other150"    />
-	<class name="shop:craft"                       point="other150"    />
-	<class name="shop:frame"                       point="other150"    />
-	<class name="shop:games"                       point="other150"    />
-	<class name="shop:model"                       point="other150"    />
-	<class name="shop:music"                       point="other150"    />
-	<class name="shop:musical_instrument"          point="other150"    />
-	<class name="shop:photo"                       point="other150"    />
-	<class name="shop:camera"                      point="other150"    />
-	<class name="shop:trophy"                      point="other150"    />
-	<class name="shop:video"                       point="other150"    />
-	<class name="shop:video_games"                 point="other150"    />
-	<class name="shop:anime"                       point="other150"    />
-	<class name="shop:books"                       point="other150"    />
-	<class name="shop:gift"                        point="other150"    />
-	<class name="shop:lottery"                     point="other150"    />
-	<class name="shop:newsagent"                   point="other150"    />
-	<class name="shop:stationery"                  point="other150"    />
-	<class name="shop:ticket"                      point="other150"    />
-	<class name="shop:bookmaker"                   point="other150"    />
-	<class name="shop:copyshop"                    point="other150"    />
-	<class name="shop:dry_cleaning"                point="other150"    />
-	<class name="shop:e-cigarette"                 point="other150"    />
-	<class name="shop:funeral_directors"           point="other150"    />
-	<class name="shop:laundry"                     point="other150"    />
-	<class name="shop:money_lender"                point="other150"    />
-	<class name="shop:party"                       point="other150"    />
-	<class name="shop:pawnbroker"                  point="other150"    />
-	<class name="shop:pet"                         point="other151"    />
-	<class name="shop:pyrotechnics"                point="other150"    />
-	<class name="shop:religion"                    point="other150"    />
-	<class name="shop:storage_rental"              point="other150"    />
-	<class name="shop:tobacco"                     point="other150"    />
-	<class name="shop:toys"                        point="other150"    />
-	<class name="shop:travel_agency"               point="other150"    />
-	<class name="shop:vacant"                      point="other150"    />
-	<class name="shop:weapons"                     point="other150"    />
-	<class name="sport:archery"                    point="other150"   />
-	<class name="sport:athletics"                  point="other150"   />
-	<class name="sport:australian_football"        point="other150"   />
-	<class name="sport:badminton"                  point="other150"   />
-	<class name="sport:bandy"                      point="other150"   />
-	<class name="sport:base"                       point="other150"   />
-	<class name="sport:baseball"                   point="other150"   />
-	<class name="sport:basketball"                 point="other150"   />
-	<class name="sport:beachvolleyball"            point="other150"   />
-	<class name="sport:billards"                   point="other150"   />
-	<class name="sport:bmx"                        point="other150"   />
-	<class name="sport:bobsleigh"                  point="other150"   />
-	<class name="sport:boules"                     point="other150"   />
-	<class name="sport:bowls"                      point="other150"   />
-	<class name="sport:boxing"                     point="other150"   />
-	<class name="sport:canadian_football"          point="other150"   />
-	<class name="sport:canoe"                      point="other150"   />
-	<class name="sport:chess"                      point="other150"   />
-	<class name="sport:cliff_diving"               point="other150"   />
-	<class name="sport:climbing"                   point="other150"   />
-	<class name="sport:climbing_adventure"         point="other150"   />
-	<class name="sport:cricket"                    point="other150"   />
-	<class name="sport:croquet"                    point="other150"   />
-	<class name="sport:curling"                    point="other150"   />
-	<class name="sport:cycling"                    point="other150"   />
-	<class name="sport:darts"                      point="other150"   />
-	<class name="sport:dog_racing"                 point="other150"   />
-	<class name="sport:equestrian"                 point="other150"   />
-	<class name="sport:fencing"                    point="other150"   />
-	<class name="sport:field_hockey"               point="other150"   />
-	<class name="sport:free_flying"                point="other150"   />
-	<class name="sport:futsal"                     point="other150"   />
-	<class name="sport:gaelic_games"               point="other150"   />
-	<class name="sport:golf"                       point="other150"   />
-	<class name="sport:gymnastics"                 point="other150"   />
-	<class name="sport:handball"                   point="other150"   />
-	<class name="sport:hapkido"                    point="other150"   />
-	<class name="sport:horseshoes"                 point="other150"   />
-	<class name="sport:horse_racing"               point="other150"   />
-	<class name="sport:ice_hockey"                 point="other150"   />
-	<class name="sport:ice_skating"                point="other150"   />
-	<class name="sport:ice_stock"                  point="other150"   />
-	<class name="sport:judo"                       point="other150"   />
-	<class name="sport:karate"                     point="other150"   />
-	<class name="sport:karting"                    point="other150"   />
-	<class name="sport:kitesurfing"                point="other150"   />
-	<class name="sport:korfball"                   point="other150"   />
-	<class name="sport:lacrosse"                   point="other150"   />
-	<class name="sport:model_aerodrome"            point="other150"   />
-	<class name="sport:motocross"                  point="other150"   />
-	<class name="sport:motor"                      point="other150"   />
-	<class name="sport:multi"                      point="other150"   />
-	<class name="sport:netball"                    point="other150"   />
-	<class name="sport:obstacle_course"            point="other150"   />
-	<class name="sport:orienteering"               point="other150"   />
-	<class name="sport:paddle_tennis"              point="other150"   />
-	<class name="sport:padel"                      point="other150"   />
-	<class name="sport:parachuting"                point="other150"   />
-	<class name="sport:paragliding"                point="other150"   />
-	<class name="sport:pelota"                     point="other150"   />
-	<class name="sport:racquet"                    point="other150"   />
-	<class name="sport:rc_car"                     point="other150"   />
-	<class name="sport:roller_skating"             point="other150"   />
-	<class name="sport:rowing"                     point="other150"   />
-	<class name="sport:rugby_league"               point="other150"   />
-	<class name="sport:rugby_union"                point="other150"   />
-	<class name="sport:running"                    point="other150"   />
-	<class name="sport:sailing"                    point="other150"   />
-	<class name="sport:scuba_diving"               point="other150"   />
-	<class name="sport:shooting"                   point="other150"   />
-	<class name="sport:skateboard"                 point="other150"   />
-	<class name="sport:soccer"                     point="other150"   />
-	<class name="sport:sumo"                       point="other150"   />
-	<class name="sport:surfing"                    point="other150"   />
-	<class name="sport:swimming"                   point="other150"   />
-	<class name="sport:table_tennis"               point="other150"   />
-	<class name="sport:table_soccer"               point="other150"   />
-	<class name="sport:taekwondo"                  point="other150"   />
-	<class name="sport:tennis"                     point="other150"   />
-	<class name="sport:toboggan"                   point="other150"   />
-	<class name="sport:volleyball"                 point="other150"   />
-	<class name="sport:water_polo"                 point="other150"   />
-	<class name="sport:water_ski"                  point="other150"   />
-	<class name="sport:weightlifting"              point="other150"   />
-	<class name="sport:wrestling"                  point="other150"   />
-	<class name="sport:yoga"                       point="other150"   />
+	<class name="shop:alcohol"                     point="other151" />
+	<class name="shop:bakery"                      point="other151" />
+	<class name="shop:beverages"                   point="other151" />
+	<class name="shop:brewing_supplies"            point="other151" />
+	<class name="shop:butcher"                     point="other150" />
+	<class name="shop:cheese"                      point="other150" />
+	<class name="shop:chocolate"                   point="other151" />
+	<class name="shop:coffee"                      point="other151" />
+	<class name="shop:confectionery"               point="other151" />
+	<class name="shop:convenience"                 point="other151" />
+	<class name="shop:deli"                        point="other151" />
+	<class name="shop:dairy"                       point="other151" />
+	<class name="shop:farm"                        point="other150" />
+	<class name="shop:frozen_food"                 point="other150" />
+	<class name="shop:greengrocier"                point="other150" />
+	<class name="shop:health_food"                 point="other151" />
+	<class name="shop:ice_cream"                   point="other151" />
+	<class name="shop:pasta"                       point="other151" />
+	<class name="shop:pastry"                      point="other151" />
+	<class name="shop:seafood"                     point="other151" />
+	<class name="shop:spices"                      point="other150" />
+	<class name="shop:tea"                         point="other151" />
+	<class name="shop:water"                       point="other151" />
+	<class name="shop:department_store"            point="other151" />
+	<class name="shop:general"                     point="other151" />
+	<class name="shop:kiosk"                       point="other150" />
+	<class name="shop:mall"                        point="other150" />
+	<class name="shop:supermarket"                 point="other151" />
+	<class name="shop:wholesale"                   point="other151" />
+	<class name="shop:baby_goods"                  point="other150" />
+	<class name="shop:bag"                         point="other150" />
+	<class name="shop:boutique"                    point="other150" />
+	<class name="shop:clothes"                     point="other151" />
+	<class name="shop:fabric"                      point="other150" />
+	<class name="shop:fashion"                     point="other150" />
+	<class name="shop:jewelry"                     point="other150" />
+	<class name="shop:leather"                     point="other150" />
+	<class name="shop:sewing"                      point="other150" />
+	<class name="shop:shoes"                       point="other151" />
+	<class name="shop:tailor"                      point="other150" />
+	<class name="shop:watches"                     point="other150" />
+	<class name="shop:charity"                     point="other150" />
+	<class name="shop:second_hand"                 point="other150" />
+	<class name="shop:variety_store"               point="other150" />
+	<class name="shop:beauty"                      point="other150" />
+	<class name="shop:chemist"                     point="other150" />
+	<class name="shop:cosmetics"                   point="other150" />
+	<class name="shop:erotic"                      point="other150" />
+	<class name="shop:hairdresser"                 point="other150" />
+	<class name="shop:hairdresser_suply"           point="other150" />
+	<class name="shop:hearing_aids"                point="other150" />
+	<class name="shop:herbalist"                   point="other150" />
+	<class name="shop:massage"                     point="other150" />
+	<class name="shop:medical_supply"              point="other150" />
+	<class name="shop:nutrition_supplements"       point="other151" />
+	<class name="shop:optician"                    point="other150" />
+	<class name="shop:perfumery"                   point="other150" />
+	<class name="shop:tattoo"                      point="other150" />
+	<class name="shop:agrarian"                    point="other150" />
+	<class name="shop:appliance"                   point="other150" />
+	<class name="shop:bathroom_furnishing"         point="other150" />
+	<class name="shop:doityourself"                point="other150" />
+	<class name="shop:electrical"                  point="other150" />
+	<class name="shop:energy"                      point="other150" />
+	<class name="shop:fireplace"                   point="other150" />
+	<class name="shop:florist"                     point="other150" />
+	<class name="shop:garden_centre"               point="other150" />
+	<class name="shop:garden_furniture"            point="other150" />
+	<class name="shop:gas"                         point="other151" />
+	<class name="shop:glaziery"                    point="other150" />
+	<class name="shop:hardware"                    point="other150" />
+	<class name="shop:houseware"                   point="other150" />
+	<class name="shop:locksmith"                   point="other150" />
+	<class name="shop:paint"                       point="other150" />
+	<class name="shop:security"                    point="other150" />
+	<class name="shop:trade"                       point="other150" />
+	<class name="shop:antiques"                    point="other150" />
+	<class name="shop:bed"                         point="other150" />
+	<class name="shop:candles"                     point="other150" />
+	<class name="shop:carpet"                      point="other150" />
+	<class name="shop:curtain"                     point="other150" />
+	<class name="shop:doors"                       point="other150" />
+	<class name="shop:flooring"                    point="other150" />
+	<class name="shop:furniture"                   point="other150" />
+	<class name="shop:interior_decoration"         point="other150" />
+	<class name="shop:kitchen"                     point="other150" />
+	<class name="shop:lamps"                       point="other150" />
+	<class name="shop:tiles"                       point="other150" />
+	<class name="shop:window_blind"                point="other150" />
+	<class name="shop:computer"                    point="other151" />
+	<class name="shop:robot"                       point="other151" />
+	<class name="shop:electronics"                 point="other151" />
+	<class name="shop:hifi"                        point="other150" />
+	<class name="shop:mobile_phone"                point="other151" />
+	<class name="shop:radiotechnics"               point="other150" />
+	<class name="shop:vacuum_cleaner"              point="other150" />
+	<class name="shop:atv"                         point="other150" />
+	<class name="shop:bicycle"                     point="other151" />
+	<class name="shop:boat"                        point="other150" />
+	<class name="shop:car"                         point="other150" />
+	<class name="shop:car_repair"                  point="other150" />
+	<class name="shop:car_parts"                   point="other150" />
+	<class name="shop:fuel"                        point="other151" />
+	<class name="shop:fishing"                     point="other150" />
+	<class name="shop:free_flying"                 point="other150" />
+	<class name="shop:hunting"                     point="other150" />
+	<class name="shop:jetski"                      point="other150" />
+	<class name="shop:motorcycle"                  point="other150" />
+	<class name="shop:outdoor"                     point="other151" />
+	<class name="shop:scuba_diving"                point="other150" />
+	<class name="shop:ski"                         point="other151" />
+	<class name="shop:snowmobile"                  point="other150" />
+	<class name="shop:sports"                      point="other151" />
+	<class name="shop:swimming_pool"               point="other150" />
+	<class name="shop:tyres"                       point="other150" />
+	<class name="shop:art"                         point="other150" />
+	<class name="shop:collector"                   point="other150" />
+	<class name="shop:craft"                       point="other150" />
+	<class name="shop:frame"                       point="other150" />
+	<class name="shop:games"                       point="other150" />
+	<class name="shop:model"                       point="other150" />
+	<class name="shop:music"                       point="other150" />
+	<class name="shop:musical_instrument"          point="other150" />
+	<class name="shop:photo"                       point="other150" />
+	<class name="shop:camera"                      point="other150" />
+	<class name="shop:trophy"                      point="other150" />
+	<class name="shop:video"                       point="other150" />
+	<class name="shop:video_games"                 point="other150" />
+	<class name="shop:anime"                       point="other150" />
+	<class name="shop:books"                       point="other150" />
+	<class name="shop:gift"                        point="other150" />
+	<class name="shop:lottery"                     point="other150" />
+	<class name="shop:newsagent"                   point="other150" />
+	<class name="shop:stationery"                  point="other150" />
+	<class name="shop:ticket"                      point="other150" />
+	<class name="shop:bookmaker"                   point="other150" />
+	<class name="shop:copyshop"                    point="other150" />
+	<class name="shop:dry_cleaning"                point="other150" />
+	<class name="shop:e-cigarette"                 point="other150" />
+	<class name="shop:funeral_directors"           point="other150" />
+	<class name="shop:laundry"                     point="other150" />
+	<class name="shop:money_lender"                point="other150" />
+	<class name="shop:party"                       point="other150" />
+	<class name="shop:pawnbroker"                  point="other150" />
+	<class name="shop:pet"                         point="other151" />
+	<class name="shop:pyrotechnics"                point="other150" />
+	<class name="shop:religion"                    point="other150" />
+	<class name="shop:storage_rental"              point="other150" />
+	<class name="shop:tobacco"                     point="other150" />
+	<class name="shop:toys"                        point="other150" />
+	<class name="shop:travel_agency"               point="other150" />
+	<class name="shop:vacant"                      point="other150" />
+	<class name="shop:weapons"                     point="other150" />
+	<class name="sport:archery"                    point="other150" />
+	<class name="sport:athletics"                  point="other150" />
+	<class name="sport:australian_football"        point="other150" />
+	<class name="sport:badminton"                  point="other150" />
+	<class name="sport:bandy"                      point="other150" />
+	<class name="sport:base"                       point="other150" />
+	<class name="sport:baseball"                   point="other150" />
+	<class name="sport:basketball"                 point="other150" />
+	<class name="sport:beachvolleyball"            point="other150" />
+	<class name="sport:billards"                   point="other150" />
+	<class name="sport:bmx"                        point="other150" />
+	<class name="sport:bobsleigh"                  point="other150" />
+	<class name="sport:boules"                     point="other150" />
+	<class name="sport:bowls"                      point="other150" />
+	<class name="sport:boxing"                     point="other150" />
+	<class name="sport:canadian_football"          point="other150" />
+	<class name="sport:canoe"                      point="other150" />
+	<class name="sport:chess"                      point="other150" />
+	<class name="sport:cliff_diving"               point="other150" />
+	<class name="sport:climbing"                   point="other150" />
+	<class name="sport:climbing_adventure"         point="other150" />
+	<class name="sport:cricket"                    point="other150" />
+	<class name="sport:croquet"                    point="other150" />
+	<class name="sport:curling"                    point="other150" />
+	<class name="sport:cycling"                    point="other150" />
+	<class name="sport:darts"                      point="other150" />
+	<class name="sport:dog_racing"                 point="other150" />
+	<class name="sport:equestrian"                 point="other150" />
+	<class name="sport:fencing"                    point="other150" />
+	<class name="sport:field_hockey"               point="other150" />
+	<class name="sport:free_flying"                point="other150" />
+	<class name="sport:futsal"                     point="other150" />
+	<class name="sport:gaelic_games"               point="other150" />
+	<class name="sport:golf"                       point="other150" />
+	<class name="sport:gymnastics"                 point="other150" />
+	<class name="sport:handball"                   point="other150" />
+	<class name="sport:hapkido"                    point="other150" />
+	<class name="sport:horseshoes"                 point="other150" />
+	<class name="sport:horse_racing"               point="other150" />
+	<class name="sport:ice_hockey"                 point="other150" />
+	<class name="sport:ice_skating"                point="other150" />
+	<class name="sport:ice_stock"                  point="other150" />
+	<class name="sport:judo"                       point="other150" />
+	<class name="sport:karate"                     point="other150" />
+	<class name="sport:karting"                    point="other150" />
+	<class name="sport:kitesurfing"                point="other150" />
+	<class name="sport:korfball"                   point="other150" />
+	<class name="sport:lacrosse"                   point="other150" />
+	<class name="sport:model_aerodrome"            point="other150" />
+	<class name="sport:motocross"                  point="other150" />
+	<class name="sport:motor"                      point="other150" />
+	<class name="sport:multi"                      point="other150" />
+	<class name="sport:netball"                    point="other150" />
+	<class name="sport:obstacle_course"            point="other150" />
+	<class name="sport:orienteering"               point="other150" />
+	<class name="sport:paddle_tennis"              point="other150" />
+	<class name="sport:padel"                      point="other150" />
+	<class name="sport:parachuting"                point="other150" />
+	<class name="sport:paragliding"                point="other150" />
+	<class name="sport:pelota"                     point="other150" />
+	<class name="sport:racquet"                    point="other150" />
+	<class name="sport:rc_car"                     point="other150" />
+	<class name="sport:roller_skating"             point="other150" />
+	<class name="sport:rowing"                     point="other150" />
+	<class name="sport:rugby_league"               point="other150" />
+	<class name="sport:rugby_union"                point="other150" />
+	<class name="sport:running"                    point="other150" />
+	<class name="sport:sailing"                    point="other150" />
+	<class name="sport:scuba_diving"               point="other150" />
+	<class name="sport:shooting"                   point="other150" />
+	<class name="sport:skateboard"                 point="other150" />
+	<class name="sport:soccer"                     point="other150" />
+	<class name="sport:sumo"                       point="other150" />
+	<class name="sport:surfing"                    point="other150" />
+	<class name="sport:swimming"                   point="other150" />
+	<class name="sport:table_tennis"               point="other150" />
+	<class name="sport:table_soccer"               point="other150" />
+	<class name="sport:taekwondo"                  point="other150" />
+	<class name="sport:tennis"                     point="other150" />
+	<class name="sport:toboggan"                   point="other150" />
+	<class name="sport:volleyball"                 point="other150" />
+	<class name="sport:water_polo"                 point="other150" />
+	<class name="sport:water_ski"                  point="other150" />
+	<class name="sport:weightlifting"              point="other150" />
+	<class name="sport:wrestling"                  point="other150" />
+	<class name="sport:yoga"                       point="other150" />
 	<class name="tourism:alpine_hut"               point="other151" />
 	<class name="tourism:apartment"                point="other150" />
 	<class name="tourism:aquarium"                 point="other150" />
@@ -820,17 +820,17 @@
 	<class name="waterway:dock"                    point="other150" />
 	<class name="waterway:boatyard"                point="other150" />
 	<class name="waterway:dam"                     point="other150" />
-	<class name="core:wilderness"                  line="core:wilderness12" point="core12" />
-	<class name="core:recreation"                  line="core:recreation12" point="core12" />
-	<class name="core:special"                     line="core:special12"    point="core12" />
-	<class name="core:mineral"                     line="core:mineral12"    point="core12" />
-	<class name="core:coal_methane"                line="core:mineral12"    point="core12" />
-	<class name="core:historic"                    line="core:historic12"   point="core12" />
+	<class name="core:wilderness"                  line="core:wilderness12" point="core11" />
+	<class name="core:recreation"                  line="core:recreation12" point="core11" />
+	<class name="core:special"                     line="core:special12"    point="core11" />
+	<class name="core:mineral"                     line="core:mineral12"    point="core11" />
+	<class name="core:coal_methane"                line="core:mineral12"    point="core11" />
+	<class name="core:historic"                    line="core:historic12"   point="core11" />
 	<class name="default:waypoint"                 point="waypoint15" />
 	<class name="building:yes"                     point="other150" line="building15" poly="building15" />
 	<class name="boundary:state"                   line="state6" />
-	<class name="boundary:national_park2"          point="national_park9" line="national_park9" />
-	<class name="boundary:national_monument3"      point="national_park9" line="national_park9" />
+	<class name="boundary:national_park2"          point="national_park9" line="national_park10" />
+	<class name="boundary:national_monument3"      point="national_park9" line="national_park10" />
 	<class name="boundary:national_park"           point="national_park12" />
 	<class name="boundary:protected_area"          point="protected_area12" />
 </osmdb>
