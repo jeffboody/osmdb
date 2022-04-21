@@ -42,12 +42,12 @@
 	<layer name="point:trunk" />
 	<layer name="point:motorway" />
 	<layer name="point:junction" />
-	<layer name="point:core" />
 	<layer name="point:village" />
 	<layer name="point:airport1" />
 	<layer name="point:saddle" />
 	<layer name="point:peak" />
 	<layer name="point:protected_area" />
+	<layer name="point:core" />
 	<layer name="point:town" />
 	<layer name="point:forest" />
 	<layer name="point:national_park" />
@@ -135,10 +135,10 @@
 	<point name="glacier15"        min_zoom="15" layer="point:water151"       text_scale="1.00f" text_color1="glacier:text"        text_color2="black" />
 	<point name="minipark15"       min_zoom="15" layer="point:minipark"       text_scale="0.95f" text_color1="outdoor:text"        text_color2="black" />
 	<point name="park15"           min_zoom="15" layer="point:park"           text_scale="1.00f" text_color1="outdoor:text"        text_color2="black" />
-	<point name="core11"           min_zoom="11" layer="point:core"           text_scale="1.00f" text_color1="core:text"           text_color2="black" flags="marker:show,ele:show" />
 	<point name="forest10"         min_zoom="10" layer="point:forest"         text_scale="1.08f" text_color1="forest:text"         text_color2="black" />
 	<point name="trail15"          min_zoom="15" layer="point:trail"          text_scale="0.95f" text_color1="trail:text"          text_color2="black" />
 	<point name="track15"          min_zoom="15" layer="point:track"          text_scale="0.95f" text_color1="track:text"          text_color2="black" />
+	<point name="core12"           min_zoom="12" layer="point:core"           text_scale="1.00f" text_color1="core:text"           text_color2="black" flags="marker:show,ele:show" />
 	<point name="road15"           min_zoom="15" layer="point:residential"    text_scale="0.95f" text_color1="white"               text_color2="black" />
 	<point name="highway15"        min_zoom="15" layer="point:other2"         text_scale="0.95f" text_color1="white"               text_color2="black" />
 	<point name="waypoint15"       min_zoom="15" layer="point:waypoint"       text_scale="1.00f" text_color1="white"               text_color2="black" />
@@ -818,12 +818,12 @@
 	<class name="waterway:dock"                    point="other150" />
 	<class name="waterway:boatyard"                point="other150" />
 	<class name="waterway:dam"                     point="other150" />
-	<class name="core:wilderness"                  line="core:wilderness12" point="core11" />
-	<class name="core:recreation"                  line="core:recreation12" point="core11" />
-	<class name="core:special"                     line="core:special12"    point="core11" />
-	<class name="core:mineral"                     line="core:mineral12"    point="core11" />
-	<class name="core:coal_methane"                line="core:mineral12"    point="core11" />
-	<class name="core:historic"                    line="core:historic12"   point="core11" />
+	<class name="core:wilderness"                  line="core:wilderness12" point="core12" />
+	<class name="core:recreation"                  line="core:recreation12" point="core12" />
+	<class name="core:special"                     line="core:special12"    point="core12" />
+	<class name="core:mineral"                     line="core:mineral12"    point="core12" />
+	<class name="core:coal_methane"                line="core:mineral12"    point="core12" />
+	<class name="core:historic"                    line="core:historic12"   point="core12" />
 	<class name="default:waypoint"                 point="waypoint15" />
 	<class name="building:yes"                     point="other150" line="building15" poly="building15" />
 	<class name="boundary:state"                   line="state6" />
