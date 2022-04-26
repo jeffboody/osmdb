@@ -336,7 +336,7 @@ osmdb_tile_t* osmdb_tile_new(size_t size, void* data,
 	}
 
 	// check address
-	if((self->zoom < 0) || (self->zoom > 16) ||
+	if((self->zoom < 0) || (self->zoom > 15) ||
 	   (self->x < 0) || (self->x >= cc_pow2n(self->zoom)) ||
 	   (self->y < 0) || (self->y >= cc_pow2n(self->zoom)))
 	{
