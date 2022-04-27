@@ -121,31 +121,31 @@
 	<color name="core:mineral"    val="DE1B1BBF" />
 	<color name="core:historic"   val="E988D0BF" />
 
-	<point name="peak14"           min_zoom="14" layer="point:peak"           text_scale="0.95f" text_color1="peak:text"           text_color2="black" marker_color1="peak:point"   marker_color2="black" flags="marker:show,ele:show" />
-	<point name="saddle14"         min_zoom="14" layer="point:saddle"         text_scale="0.95f" text_color1="peak:text"           text_color2="black" marker_color1="peak:point"   marker_color2="black" flags="marker:show" />
-	<point name="country4"         min_zoom="4"  layer="point:country"        text_scale="1.25f" text_color1="country:text"        text_color2="black" />
-	<point name="state6"           min_zoom="6"  layer="point:state"          text_scale="1.20f" text_color1="state:text"          text_color2="black" />
+	<point name="peak13"           min_zoom="13" layer="point:peak"           text_scale="0.95f" text_color1="peak:text"           text_color2="black" marker_color1="peak:point"   marker_color2="black" flags="marker:show,ele:show" />
+	<point name="saddle13"         min_zoom="13" layer="point:saddle"         text_scale="0.95f" text_color1="peak:text"           text_color2="black" marker_color1="peak:point"   marker_color2="black" flags="marker:show" />
+	<point name="country3"         min_zoom="3"  layer="point:country"        text_scale="1.25f" text_color1="country:text"        text_color2="black" />
+	<point name="state5"           min_zoom="5"  layer="point:state"          text_scale="1.20f" text_color1="state:text"          text_color2="black" />
 	<point name="city7"            min_zoom="7"  layer="point:city"           text_scale="1.15f" text_color1="city:text"           text_color2="black" marker_color1="city:point"   marker_color2="white" flags="marker:show" />
-	<point name="town8"            min_zoom="8"  layer="point:town"           text_scale="1.08f" text_color1="city:text"           text_color2="black" marker_color1="city:point"   marker_color2="white" flags="marker:show" />
-	<point name="village10"        min_zoom="10" layer="point:village"        text_scale="1.00f" text_color1="village:text"        text_color2="black" />
-	<point name="ocean4"           min_zoom="4"  layer="point:ocean"          text_scale="1.20f" text_color1="ocean:text"          text_color2="black" />
-	<point name="sea4"             min_zoom="4"  layer="point:sea"            text_scale="1.15f" text_color1="ocean:text"          text_color2="black" />
+	<point name="town9"            min_zoom="9"  layer="point:town"           text_scale="1.08f" text_color1="city:text"           text_color2="black" marker_color1="city:point"   marker_color2="white" flags="marker:show" />
+	<point name="village11"        min_zoom="11" layer="point:village"        text_scale="1.00f" text_color1="village:text"        text_color2="black" />
+	<point name="ocean3"           min_zoom="3"  layer="point:ocean"          text_scale="1.20f" text_color1="ocean:text"          text_color2="black" />
+	<point name="sea5"             min_zoom="5"  layer="point:sea"            text_scale="1.15f" text_color1="ocean:text"          text_color2="black" />
 	<point name="water150"         min_zoom="15" layer="point:water150"       text_scale="0.95f" text_color1="lake:text"           text_color2="black" />
 	<point name="water151"         min_zoom="15" layer="point:water151"       text_scale="1.00f" text_color1="lake:text"           text_color2="black" />
 	<point name="glacier15"        min_zoom="15" layer="point:water151"       text_scale="1.00f" text_color1="glacier:text"        text_color2="black" />
 	<point name="minipark15"       min_zoom="15" layer="point:minipark"       text_scale="0.95f" text_color1="outdoor:text"        text_color2="black" />
 	<point name="park15"           min_zoom="15" layer="point:park"           text_scale="1.00f" text_color1="outdoor:text"        text_color2="black" />
-	<point name="forest10"         min_zoom="10" layer="point:forest"         text_scale="1.08f" text_color1="forest:text"         text_color2="black" />
+	<point name="forest9"          min_zoom="9"  layer="point:forest"         text_scale="1.08f" text_color1="forest:text"         text_color2="black" />
 	<point name="trail15"          min_zoom="15" layer="point:trail"          text_scale="0.95f" text_color1="trail:text"          text_color2="black" />
 	<point name="track15"          min_zoom="15" layer="point:track"          text_scale="0.95f" text_color1="track:text"          text_color2="black" />
-	<point name="core12"           min_zoom="12" layer="point:core"           text_scale="1.00f" text_color1="core:text"           text_color2="black" flags="marker:show,ele:show" />
+	<point name="core13"           min_zoom="13" layer="point:core"           text_scale="1.00f" text_color1="core:text"           text_color2="black" flags="marker:show,ele:show" />
 	<point name="road15"           min_zoom="15" layer="point:residential"    text_scale="0.95f" text_color1="white"               text_color2="black" />
 	<point name="highway15"        min_zoom="15" layer="point:other2"         text_scale="0.95f" text_color1="white"               text_color2="black" />
 	<point name="waypoint15"       min_zoom="15" layer="point:waypoint"       text_scale="1.00f" text_color1="white"               text_color2="black" />
-	<point name="motorway12"       min_zoom="12" layer="point:motorway"       text_scale="1.15f" text_color1="motorway:text"       text_color2="black" />
+	<point name="motorway11"       min_zoom="11" layer="point:motorway"       text_scale="1.15f" text_color1="motorway:text"       text_color2="black" />
 	<point name="trunk13"          min_zoom="13" layer="point:trunk"          text_scale="1.08f" text_color1="trunk:text"          text_color2="black" />
 	<point name="primary13"        min_zoom="13" layer="point:primary"        text_scale="1.08f" text_color1="primary:text"        text_color2="black" />
-	<point name="secondary14"      min_zoom="14" layer="point:secondary"      text_scale="1.04f" text_color1="secondary:text"      text_color2="black" />
+	<point name="secondary15"      min_zoom="15" layer="point:secondary"      text_scale="1.04f" text_color1="secondary:text"      text_color2="black" />
 	<point name="tertiary15"       min_zoom="15" layer="point:tertiary"       text_scale="1.04f" text_color1="tertiary:text"       text_color2="black" />
 	<point name="airport150"       min_zoom="15" layer="point:airport0"       text_scale="1.04f" text_color1="airport"             text_color2="black" marker_color1="airport"       marker_color2="black" flags="marker:show" />
 	<point name="airport151"       min_zoom="15" layer="point:airport1"       text_scale="1.04f" text_color1="airport"             text_color2="black" marker_color1="airport"       marker_color2="black" flags="marker:show" />
@@ -156,16 +156,16 @@
 	<point name="junction17"       min_zoom="17" layer="point:junction"       text_scale="0.95f" text_color1="junction:text"       text_color2="black" />
 	<point name="aerialway15"      min_zoom="15" layer="point:aerialway"      text_scale="0.95f" text_color1="aerialway"           text_color2="black" />
 	<point name="groundway15"      min_zoom="15" layer="point:groundway"      text_scale="0.95f" text_color1="aerialway"           text_color2="black" />
-	<point name="national_park9"   min_zoom="9"  layer="point:national_park"  text_scale="1.15f" text_color1="national_park:text"  text_color2="black" flags="label:center" />
-	<point name="national_park12"  min_zoom="12" layer="point:protected_area" text_scale="1.00f" text_color1="national_park:text"  text_color2="black" flags="label:center" />
-	<point name="protected_area12" min_zoom="12" layer="point:protected_area" text_scale="1.00f" text_color1="protected_area:text" text_color2="black" />
+	<point name="national_park111" min_zoom="11" layer="point:national_park"  text_scale="1.15f" text_color1="national_park:text"  text_color2="black" flags="label:center" />
+	<point name="national_park110" min_zoom="11" layer="point:protected_area" text_scale="1.00f" text_color1="national_park:text"  text_color2="black" flags="label:center" />
+	<point name="protected_area11" min_zoom="11" layer="point:protected_area" text_scale="1.00f" text_color1="protected_area:text" text_color2="black" />
 
 	<line name="aerialway15"       min_zoom="15" layer="line:aerialway"   mode="dashed,striped" color1="aerialway"      color2="dkgray" width="1.7" />
 	<line name="groundway15"       min_zoom="15" layer="line:groundway"   mode="dashed,striped" color1="aerialway"      color2="dkgray" width="1.7" />
 	<line name="motorway7"         min_zoom="7"  layer="line:motorway"    mode="striped"        color1="motorway:line"  color2="dkgray" width="3.5" />
-	<line name="trunk8"            min_zoom="8"  layer="line:trunk"       mode="striped"        color1="trunk:line"     color2="dkgray" width="3.5" />
+	<line name="trunk9"            min_zoom="9"  layer="line:trunk"       mode="striped"        color1="trunk:line"     color2="dkgray" width="3.5" />
 	<line name="primary9"          min_zoom="9"  layer="line:primary"     mode="striped"        color1="primary:line"   color2="dkgray" width="3.5" />
-	<line name="secondary10"       min_zoom="10" layer="line:secondary"   mode="striped"        color1="secondary:line" color2="dkgray" width="2.75" />
+	<line name="secondary11"       min_zoom="11" layer="line:secondary"   mode="striped"        color1="secondary:line" color2="dkgray" width="2.75" />
 	<line name="tertiary11"        min_zoom="11" layer="line:tertiary"    mode="striped"        color1="tertiary:line"  color2="dkgray" width="2.75" />
 	<line name="motorway_link15"   min_zoom="15" layer="line:link"        mode="striped"        color1="motorway:line"  color2="dkgray" width="2.5" />
 	<line name="trunk_link15"      min_zoom="15" layer="line:link"        mode="striped"        color1="trunk:line"     color2="dkgray" width="2.5" />
@@ -182,16 +182,16 @@
 	<line name="track15"           min_zoom="15" layer="line:track"       mode="striped"        color1="track:line"     color2="dkgray" width="1.7" />
 	<line name="railway15"         min_zoom="15" layer="line:railway"     mode="dashed,striped" color1="gray"           color2="ltgray" width="1.7" />
 	<line name="footway15"         min_zoom="15" layer="line:trail"       mode="dashed,striped,named" color1="trail:line" color2="dkgray" />
-	<line name="river12"           min_zoom="12" layer="line:water"    color1="river:line" width="3.0" />
+	<line name="river11"           min_zoom="11" layer="line:water"    color1="river:line" width="3.0" />
 	<line name="stream15"          min_zoom="15" layer="line:water"    color1="river:line" width="1.7" />
-	<line name="core:wilderness12" min_zoom="12" layer="line:boundary" color1="core:wilderness"    color2="core:wilderness" width="2.5" />
-	<line name="core:recreation12" min_zoom="12" layer="line:boundary" color1="core:recreation"    color2="core:recreation" width="2.5" />
-	<line name="core:special12"    min_zoom="12" layer="line:boundary" color1="core:special"       color2="core:special"    width="2.5" />
-	<line name="core:mineral12"    min_zoom="12" layer="line:boundary" color1="core:mineral"       color2="core:mineral"    width="2.5" />
-	<line name="core:historic12"   min_zoom="12" layer="line:boundary" color1="core:historic"      color2="core:historic"   width="2.5" />
+	<line name="core:wilderness11" min_zoom="11" layer="line:boundary" color1="core:wilderness"    color2="core:wilderness" width="2.5" />
+	<line name="core:recreation11" min_zoom="11" layer="line:boundary" color1="core:recreation"    color2="core:recreation" width="2.5" />
+	<line name="core:special11"    min_zoom="11" layer="line:boundary" color1="core:special"       color2="core:special"    width="2.5" />
+	<line name="core:mineral11"    min_zoom="11" layer="line:boundary" color1="core:mineral"       color2="core:mineral"    width="2.5" />
+	<line name="core:historic11"   min_zoom="11" layer="line:boundary" color1="core:historic"      color2="core:historic"   width="2.5" />
 	<line name="building15"        min_zoom="15" layer="line:building" color1="building:line"      color2="dkgray" width="0.25" />
-	<line name="state6"            min_zoom="6"  layer="line:boundary" color1="state:line"         color2="state:line" width="3.5" />
-	<line name="national_park10"   min_zoom="10" layer="line:boundary" color1="national_park:line" color2="national_park:line" width="3.5" />
+	<line name="state3"            min_zoom="3"  layer="line:boundary" color1="state:line"         color2="state:line" width="3.5" />
+	<line name="national_park9"    min_zoom="9"  layer="line:boundary" color1="national_park:line" color2="national_park:line" width="3.5" />
 
 	<poly name="glacier15"  min_zoom="15" layer="poly:water"    color="glacier:poly" />
 	<poly name="water9"     min_zoom="9"  layer="poly:water"    color="lake:poly" />
@@ -353,10 +353,10 @@
 	<class name="geological:moraine"               point="other150" />
 	<class name="geological:outcrop"               point="other150" />
 	<class name="geological:palaeontological_site" point="other150" />
-	<class name="highway:motorway"                 abrev="1" point="motorway12"  line="motorway7" />
-	<class name="highway:trunk"                    abrev="1" point="trunk13"     line="trunk8" />
+	<class name="highway:motorway"                 abrev="1" point="motorway11"  line="motorway7" />
+	<class name="highway:trunk"                    abrev="1" point="trunk13"     line="trunk9" />
 	<class name="highway:primary"                  abrev="1" point="primary13"   line="primary9" />
-	<class name="highway:secondary"                abrev="1" point="secondary14" line="secondary10" />
+	<class name="highway:secondary"                abrev="1" point="secondary15" line="secondary11" />
 	<class name="highway:tertiary"                 abrev="1" point="tertiary15"  line="tertiary11" />
 	<class name="highway:unclassified"             abrev="1" point="road15"      line="road15" />
 	<class name="highway:service"                  abrev="1" point="road15"      line="service15" />
@@ -425,7 +425,7 @@
 	<class name="landuse:reservoir"                point="water151" poly="water9" />
 	<class name="landuse:salt_pond"                point="water150" poly="water15" />
 	<class name="landuse:basin"                    point="water151" poly="water9" />
-	<class name="landuse:forest"                   point="forest10" />
+	<class name="landuse:forest"                   point="forest9" />
 	<class name="leisure:adult_gaming_centre"      point="other150" />
 	<class name="leisure:amusement_arcade"         point="other150" />
 	<class name="leisure:beach_resort"             point="other150" />
@@ -482,13 +482,13 @@
 	<class name="natural:spring"                   abrev="1" point="other150" />
 	<class name="natural:hot_spring"               abrev="1" point="other150" />
 	<class name="natural:geyser"                   abrev="1" point="other150" />
-	<class name="natural:peak"                     abrev="1" point="peak14" />
-	<class name="natural:volcano"                  abrev="1" point="peak14" />
+	<class name="natural:peak"                     abrev="1" point="peak13" />
+	<class name="natural:volcano"                  abrev="1" point="peak13" />
 	<class name="natural:valley"                   abrev="1" point="other151" />
 	<class name="natural:ridge"                    abrev="1" point="other151" />
 	<class name="natural:arete"                    abrev="1" point="other150" />
 	<class name="natural:cliff"                    abrev="1" point="other150" />
-	<class name="natural:saddle"                   abrev="1" point="saddle14" />
+	<class name="natural:saddle"                   abrev="1" point="saddle13" />
 	<class name="natural:rock"                     abrev="1" point="other150" />
 	<class name="natural:stone"                    abrev="1" point="other150" />
 	<class name="natural:sinkhole"                 abrev="1" point="other150" />
@@ -531,14 +531,14 @@
 	<class name="office:therapist"                 point="other150" />
 	<class name="office:travel_agent"              point="other150" />
 	<class name="office:water_utility"             point="other150" />
-	<class name="place:country"                    point="country4" />
-	<class name="place:ocean"                      point="ocean4" />
-	<class name="place:sea"                        point="sea4" />
-	<class name="place:state"                      point="state6" />
+	<class name="place:country"                    point="country3" />
+	<class name="place:ocean"                      point="ocean3" />
+	<class name="place:sea"                        point="sea5" />
+	<class name="place:state"                      point="state5" />
 	<class name="place:city"                       point="city7" />
-	<class name="place:town"                       point="town8" />
-	<class name="place:village"                    point="village10" />
-	<class name="place:hamlet"                     point="village10" />
+	<class name="place:town"                       point="town9" />
+	<class name="place:village"                    point="village11" />
+	<class name="place:hamlet"                     point="village11" />
 	<class name="power:plant"                      point="other150" />
 	<class name="public_transport:station"         point="other150" />
 	<class name="railway:funicular"                abrev="1" line="railway15" />
@@ -809,7 +809,7 @@
 	<class name="tourism:viewpoint"                abrev="1" point="other151" />
 	<class name="tourism:wilderness_hut"           point="other150" />
 	<class name="tourism:zoo"                      point="other150" />
-	<class name="waterway:river"                   abrev="1" point="water151"   line="river12" />
+	<class name="waterway:river"                   abrev="1" point="water151"   line="river11" />
 	<class name="waterway:riverbank"               abrev="1" point="water151"   poly="water12" />
 	<class name="waterway:stream"                  abrev="1" point="water150"   line="stream15" />
 	<class name="waterway:canal"                   abrev="1" line="stream15" />
@@ -818,17 +818,17 @@
 	<class name="waterway:dock"                    point="other150" />
 	<class name="waterway:boatyard"                point="other150" />
 	<class name="waterway:dam"                     point="other150" />
-	<class name="core:wilderness"                  line="core:wilderness12" point="core12" />
-	<class name="core:recreation"                  line="core:recreation12" point="core12" />
-	<class name="core:special"                     line="core:special12"    point="core12" />
-	<class name="core:mineral"                     line="core:mineral12"    point="core12" />
-	<class name="core:coal_methane"                line="core:mineral12"    point="core12" />
-	<class name="core:historic"                    line="core:historic12"   point="core12" />
+	<class name="core:wilderness"                  line="core:wilderness11" point="core13" />
+	<class name="core:recreation"                  line="core:recreation11" point="core13" />
+	<class name="core:special"                     line="core:special11"    point="core13" />
+	<class name="core:mineral"                     line="core:mineral11"    point="core13" />
+	<class name="core:coal_methane"                line="core:mineral11"    point="core13" />
+	<class name="core:historic"                    line="core:historic11"   point="core13" />
 	<class name="default:waypoint"                 point="waypoint15" />
 	<class name="building:yes"                     point="other150" line="building15" poly="building15" />
-	<class name="boundary:state"                   line="state6" />
-	<class name="boundary:national_park2"          point="national_park9" line="national_park10" />
-	<class name="boundary:national_monument3"      point="national_park9" line="national_park10" />
-	<class name="boundary:national_park"           point="national_park12" />
-	<class name="boundary:protected_area"          point="protected_area12" />
+	<class name="boundary:state"                   line="state3" />
+	<class name="boundary:national_park2"          point="national_park111" line="national_park9" />
+	<class name="boundary:national_monument3"      point="national_park111" line="national_park9" />
+	<class name="boundary:national_park"           point="national_park110" />
+	<class name="boundary:protected_area"          point="protected_area11" />
 </osmdb>
