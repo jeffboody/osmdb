@@ -27,7 +27,7 @@
 #include <stdint.h>
 
 #define OSMDB_TILE_MAGIC   0xB00D90DB
-#define OSMDB_TILE_VERSION 20211112
+#define OSMDB_TILE_VERSION 20220427
 
 typedef struct
 {
