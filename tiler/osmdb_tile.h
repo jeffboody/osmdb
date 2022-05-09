@@ -26,6 +26,8 @@
 
 #include <stdint.h>
 
+#include "../osmdb_range.h"
+
 #define OSMDB_TILE_MAGIC   0xB00D90DB
 #define OSMDB_TILE_VERSION 20220523
 
@@ -34,14 +36,6 @@ typedef struct
 	short x;
 	short y;
 } osmdb_point_t;
-
-typedef struct
-{
-	short t;
-	short l;
-	short b;
-	short r;
-} osmdb_range_t;
 
 #define OSMDB_NODE_FLAG_BUILDING        0x0020
 #define OSMDB_NODE_FLAG_NAMEREF         0x0040
@@ -154,5 +148,7 @@ typedef struct
 osmdb_tile_t* osmdb_tile_new(size_t size, void* data,
                              osmdb_tileParser_t* parser);
 void          osmdb_tile_delete(osmdb_tile_t** _self);
+void          osmdb_tile_range(osmdb_tile_t* self,
+                               osmdb_range_t* range);
 
 #endif

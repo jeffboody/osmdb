@@ -11,6 +11,7 @@ add_library(osmdb
             STATIC
 
             # Source
+            osmdb_range.c
             osmdb_style.c
             osmdb_util.c
             tiler/osmdb_tile.c)

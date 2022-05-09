@@ -405,3 +405,12 @@ void osmdb_tile_delete(osmdb_tile_t** _self)
 		*_self = NULL;
 	}
 }
+
+void osmdb_tile_range(osmdb_tile_t* self,
+                      osmdb_range_t* range)
+{
+	ASSERT(self);
+	ASSERT(range);
+
+	osmdb_range_init(range, self->zoom, self->x, self->y);
+}

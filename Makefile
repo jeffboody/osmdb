@@ -1,7 +1,7 @@
 export CC_USE_MATH = 1
 
 TARGET   = libosmdb.a
-CLASSES  = osmdb_style osmdb_util tiler/osmdb_tile
+CLASSES  = osmdb_range osmdb_style osmdb_util tiler/osmdb_tile
 SOURCE   = $(CLASSES:%=%.c)
 OBJECTS  = $(SOURCE:.c=.o)
 HFILES   = $(CLASSES:%=%.h)
