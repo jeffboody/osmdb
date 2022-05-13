@@ -72,7 +72,8 @@ typedef struct
 	osmdb_style_t* style;
 } kml_parser_t;
 
-kml_parser_t* kml_parser_new(const char* style,
+kml_parser_t* kml_parser_new(float smem,
+                             const char* style,
                              const char* db_name);
 void          kml_parser_delete(kml_parser_t** _self);
 int           kml_parser_parse(kml_parser_t* self,

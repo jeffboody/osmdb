@@ -38,20 +38,23 @@ int main(int argc, char** argv)
 {
 	double t0 = cc_timestamp();
 
-	if(argc != 4)
+	if(argc != 5)
 	{
-		LOGE("usage: %s style.xml input.osm output.sqlite3", argv[0]);
+		LOGE("usage: %s [SMEM] style.xml input.osm output.sqlite3", argv[0]);
+		LOGE("SMEM: scale memory in GB (e.g. 1.0)");
 		return EXIT_FAILURE;
 	}
 
+	float smem = strtof(argv[1], NULL);
+
 	osm_parser_t* parser;
-	parser = osm_parser_new(argv[1], argv[3]);
+	parser = osm_parser_new(smem, argv[2], argv[4]);
 	if(parser == NULL)
 	{
 		goto fail_new;
 	}
 
-	if(osm_parser_parseFile(parser, argv[2]) == 0)
+	if(osm_parser_parseFile(parser, argv[3]) == 0)
 	{
 		goto fail_parse;
 	}

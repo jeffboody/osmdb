@@ -41,13 +41,17 @@ int main(int argc, char** argv)
 {
 	double t0 = cc_timestamp();
 
-	if(argc < 4)
+	if(argc < 5)
 	{
-		LOGE("usage: %s style.xml db.sqlite3 input.kml [...]", argv[0]);
+		LOGE("usage: %s [SMEM] style.xml db.sqlite3 input.kml [...]", argv[0]);
+		LOGE("SMEM: scale memory in GB (e.g. 1.0)");
 		return EXIT_FAILURE;
 	}
 
-	kml_parser_t* parser = kml_parser_new(argv[1], argv[2]);
+	float smem = strtof(argv[1], NULL);
+
+	kml_parser_t* parser;
+	parser = kml_parser_new(smem, argv[2], argv[3]);
 	if(parser == NULL)
 	{
 		goto fail_parser;
@@ -55,7 +59,7 @@ int main(int argc, char** argv)
 
 	// read all input files
 	int i;
-	for(i = 3; i < argc; ++i)
+	for(i = 4; i < argc; ++i)
 	{
 		if(kml_parser_parse(parser, argv[i]) == 0)
 		{

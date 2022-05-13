@@ -108,7 +108,8 @@ typedef struct
 	iconv_t cd;
 } osm_parser_t;
 
-osm_parser_t* osm_parser_new(const char* style,
+osm_parser_t* osm_parser_new(float smem,
+                             const char* style,
                              const char* db_name);
 void          osm_parser_delete(osm_parser_t** _self);
 int           osm_parser_parseFile(osm_parser_t* self,

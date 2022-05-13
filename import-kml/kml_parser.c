@@ -1410,7 +1410,7 @@ static int kml_parser_end(void* priv,
 ***********************************************************/
 
 kml_parser_t*
-kml_parser_new(const char* style,
+kml_parser_new(float smem, const char* style,
                const char* db_name)
 {
 	ASSERT(style);
@@ -1501,7 +1501,7 @@ kml_parser_new(const char* style,
 
 	self->index = osmdb_index_new(db_name,
 	                              OSMDB_INDEX_MODE_APPEND,
-	                              1, 1.0f);
+	                              1, smem);
 	if(self->index == NULL)
 	{
 		goto fail_index;

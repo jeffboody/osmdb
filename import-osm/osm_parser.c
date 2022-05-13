@@ -2744,7 +2744,7 @@ osm_parser_endOsmRelMember(osm_parser_t* self, int line,
 ***********************************************************/
 
 osm_parser_t*
-osm_parser_new(const char* style,
+osm_parser_new(float smem, const char* style,
                const char* db_name)
 {
 	ASSERT(style);
@@ -2767,7 +2767,7 @@ osm_parser_new(const char* style,
 
 	self->index = osmdb_index_new(db_name,
 	                              OSMDB_INDEX_MODE_CREATE,
-	                              1, 4.0f);
+	                              1, smem);
 	if(self->index == NULL)
 	{
 		goto fail_index;
