@@ -33,11 +33,13 @@ typedef struct
 
 	osmdb_wayRange_t way_range;
 
+	int flags;
+
 	cc_list_t* list_nds;
 } osmdb_waySegment_t;
 
 int  osmdb_waySegment_new(osmdb_index_t* index,
-                          int tid, int64_t wid,
+                          int tid, int64_t wid, int flags,
                           osmdb_waySegment_t** _seg);
 void osmdb_waySegment_delete(osmdb_index_t* index,
                              osmdb_waySegment_t** _seg);

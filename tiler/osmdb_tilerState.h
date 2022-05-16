@@ -54,6 +54,7 @@ void                osmdb_tilerState_delete(osmdb_tilerState_t** _self);
 int                 osmdb_tilerState_init(osmdb_tilerState_t* self,
                                           int zoom, int x, int y);
 void                osmdb_tilerState_reset(osmdb_tilerState_t* self,
-                                           osmdb_index_t* index);
+                                           osmdb_index_t* index,
+                                           int discard_export);
 
 #endif

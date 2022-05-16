@@ -147,14 +147,18 @@ int osmdb_tilerState_init(osmdb_tilerState_t* self,
 }
 
 void osmdb_tilerState_reset(osmdb_tilerState_t* self,
-                            osmdb_index_t* index)
+                            osmdb_index_t* index,
+                            int discard_export)
 {
 	ASSERT(self);
 	ASSERT(index);
 
 	// map_export is a mapping from nid/wid to ONE
 	// so we can simply discard the map references
-	cc_map_discard(self->map_export);
+	if(discard_export)
+	{
+		cc_map_discard(self->map_export);
+	}
 
 	// delete way segments
 	cc_mapIter_t* miter;

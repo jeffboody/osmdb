@@ -35,7 +35,7 @@
 ***********************************************************/
 
 int osmdb_waySegment_new(osmdb_index_t* index,
-                         int tid, int64_t wid,
+                         int tid, int64_t wid, int flags,
                          osmdb_waySegment_t** _seg)
 {
 	ASSERT(index);
@@ -51,6 +51,8 @@ int osmdb_waySegment_new(osmdb_index_t* index,
 		LOGE("CALLOC failed");
 		return 0;
 	}
+
+	seg->flags = flags;
 
 	if(osmdb_index_get(index, tid,
 	                   OSMDB_TYPE_WAYINFO,

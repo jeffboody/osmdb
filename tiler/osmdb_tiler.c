@@ -211,6 +211,7 @@ osmdb_tiler_gatherNodes(osmdb_tiler_t* self, int tid)
 
 static int
 osmdb_tiler_joinWay(osmdb_tiler_t* self, int tid,
+                    int is_member,
                     osmdb_waySegment_t* a,
                     osmdb_waySegment_t* b,
                     int64_t ref1, int64_t* ref2)
@@ -250,133 +251,130 @@ osmdb_tiler_joinWay(osmdb_tiler_t* self, int tid,
 		return 0;
 	}
 
-	// check if ref1 is included in both ways and that
-	// they can be joined head to tail
-	int append;
-	int64_t* refp;
-	int64_t* refn;
-	cc_listIter_t* next;
-	cc_listIter_t* prev;
-	if((ref1 == *refa1) && (ref1 == *refb2))
-	{
-		append = 0;
-		*ref2  = *refb1;
-
-		prev = cc_list_next(cc_list_head(a->list_nds));
-		next = cc_list_prev(cc_list_tail(b->list_nds));
-		refp = (int64_t*) cc_list_peekIter(prev);
-		refn = (int64_t*) cc_list_peekIter(next);
-	}
-	else if((ref1 == *refa2) && (ref1 == *refb1))
-	{
-		append = 1;
-		*ref2  = *refb2;
-
-		prev = cc_list_prev(cc_list_tail(a->list_nds));
-		next = cc_list_next(cc_list_head(b->list_nds));
-		refp = (int64_t*) cc_list_peekIter(prev);
-		refn = (int64_t*) cc_list_peekIter(next);
-	}
-	else
-	{
-		return 0;
-	}
-
-	// identify the nodes to be joined
-	osmdb_handle_t* hnc0 = NULL;
-	osmdb_handle_t* hnc1 = NULL;
-	osmdb_handle_t* hnc2 = NULL;
-	if((osmdb_index_get(self->index, tid,
-	                    OSMDB_TYPE_NODECOORD,
-	                    *refp, &hnc0) == 0) ||
-	   (osmdb_index_get(self->index, tid,
-	                    OSMDB_TYPE_NODECOORD,
-	                    ref1, &hnc1) == 0) ||
-	   (osmdb_index_get(self->index, tid,
-	                    OSMDB_TYPE_NODECOORD,
-	                    *refn, &hnc2) == 0) ||
-	   (hnc0 == NULL) || (hnc1 == NULL) ||
-	   (hnc2 == NULL))
-	{
-		osmdb_index_put(self->index, &hnc0);
-		osmdb_index_put(self->index, &hnc1);
-		osmdb_index_put(self->index, &hnc2);
-		return 0;
-	}
-
-	// check join angle to prevent joining ways
-	// at a sharp angle since this causes weird
-	// rendering artifacts
-	cc_vec3f_t p0;
-	cc_vec3f_t p1;
-	cc_vec3f_t p2;
-	cc_vec3f_t v01;
-	cc_vec3f_t v12;
-	osmdb_nodeCoord_t* nc0 = hnc0->node_coord;
-	osmdb_nodeCoord_t* nc1 = hnc1->node_coord;
-	osmdb_nodeCoord_t* nc2 = hnc2->node_coord;
-	float onemi = cc_mi2m(5280.0f);
-	terrain_geo2xyz(nc0->lat, nc0->lon, onemi,
-	                &p0.x,  &p0.y, &p0.z);
-	terrain_geo2xyz(nc1->lat, nc1->lon, onemi,
-	                &p1.x,  &p1.y, &p1.z);
-	terrain_geo2xyz(nc2->lat, nc2->lon, onemi,
-	                &p2.x,  &p2.y, &p2.z);
-	osmdb_index_put(self->index, &hnc0);
-	osmdb_index_put(self->index, &hnc1);
-	osmdb_index_put(self->index, &hnc2);
-	cc_vec3f_subv_copy(&p1, &p0, &v01);
-	cc_vec3f_subv_copy(&p2, &p1, &v12);
-	cc_vec3f_normalize(&v01);
-	cc_vec3f_normalize(&v12);
-	float dot = cc_vec3f_dot(&v01, &v12);
-	if(dot < cosf(cc_deg2rad(30.0f)))
-	{
-		return 0;
-	}
-
-	// check way attributes
+	// check if ways may be joined
 	osmdb_wayInfo_t* ai = a->hwi->way_info;
 	osmdb_wayInfo_t* bi = b->hwi->way_info;
-	if((ai->class != bi->class)  ||
-	   (ai->flags != bi->flags)  ||
-	   (ai->layer != bi->layer))
+	if(is_member == 0)
 	{
-		return 0;
-	}
-
-	// check name
-	char* aname = osmdb_wayInfo_name(ai);
-	char* bname = osmdb_wayInfo_name(bi);
-	if(aname && bname)
-	{
-		if(strcmp(aname, bname) != 0)
+		if((ai->class != bi->class)  ||
+		   (ai->flags != bi->flags)  ||
+		   (ai->layer != bi->layer))
 		{
 			return 0;
 		}
-	}
-	else if(aname || bname)
-	{
-		return 0;
+
+		// check name
+		char* aname = osmdb_wayInfo_name(ai);
+		char* bname = osmdb_wayInfo_name(bi);
+		if(aname && bname)
+		{
+			if(strcmp(aname, bname) != 0)
+			{
+				return 0;
+			}
+		}
+		else if(aname || bname)
+		{
+			return 0;
+		}
+
+		// check if ref1 is included in both ways and
+		// how they should be joined
+		int64_t*       refp;
+		int64_t*       refn;
+		cc_listIter_t* next;
+		cc_listIter_t* prev;
+		if((ref1 == *refa1) && (ref1 == *refb2))
+		{
+			// join head-to-tail
+			prev = cc_list_next(cc_list_head(a->list_nds));
+			next = cc_list_prev(cc_list_tail(b->list_nds));
+		}
+		else if((ref1 == *refa2) && (ref1 == *refb1))
+		{
+			// join tail-to-head
+			prev = cc_list_next(cc_list_head(b->list_nds));
+			next = cc_list_prev(cc_list_tail(a->list_nds));
+		}
+		else if((ref1 == *refa1) && (ref1 == *refb1))
+		{
+			// join head-to-head
+			prev = cc_list_next(cc_list_head(a->list_nds));
+			next = cc_list_next(cc_list_head(b->list_nds));
+		}
+		else if((ref1 == *refa2) && (ref1 == *refb2))
+		{
+			// join tail-to-tail
+			prev = cc_list_prev(cc_list_tail(a->list_nds));
+			next = cc_list_prev(cc_list_tail(b->list_nds));
+		}
+		else
+		{
+			return 0;
+		}
+		refp = (int64_t*) cc_list_peekIter(prev);
+		refn = (int64_t*) cc_list_peekIter(next);
+
+		// identify the nodes to be joined
+		osmdb_handle_t* hnc0 = NULL;
+		osmdb_handle_t* hnc1 = NULL;
+		osmdb_handle_t* hnc2 = NULL;
+		if((osmdb_index_get(self->index, tid,
+		                    OSMDB_TYPE_NODECOORD,
+		                    *refp, &hnc0) == 0) ||
+		   (osmdb_index_get(self->index, tid,
+		                    OSMDB_TYPE_NODECOORD,
+		                    ref1, &hnc1) == 0) ||
+		   (osmdb_index_get(self->index, tid,
+		                    OSMDB_TYPE_NODECOORD,
+		                    *refn, &hnc2) == 0) ||
+		   (hnc0 == NULL) || (hnc1 == NULL) ||
+		   (hnc2 == NULL))
+		{
+			osmdb_index_put(self->index, &hnc0);
+			osmdb_index_put(self->index, &hnc1);
+			osmdb_index_put(self->index, &hnc2);
+			return 0;
+		}
+
+		// check join angle to prevent joining ways
+		// at a sharp angle since this causes weird
+		// rendering artifacts
+		cc_vec3f_t p0;
+		cc_vec3f_t p1;
+		cc_vec3f_t p2;
+		cc_vec3f_t v01;
+		cc_vec3f_t v12;
+		osmdb_nodeCoord_t* nc0 = hnc0->node_coord;
+		osmdb_nodeCoord_t* nc1 = hnc1->node_coord;
+		osmdb_nodeCoord_t* nc2 = hnc2->node_coord;
+		float onemi = cc_mi2m(5280.0f);
+		terrain_geo2xyz(nc0->lat, nc0->lon, onemi,
+		                &p0.x,  &p0.y, &p0.z);
+		terrain_geo2xyz(nc1->lat, nc1->lon, onemi,
+		                &p1.x,  &p1.y, &p1.z);
+		terrain_geo2xyz(nc2->lat, nc2->lon, onemi,
+		                &p2.x,  &p2.y, &p2.z);
+		osmdb_index_put(self->index, &hnc0);
+		osmdb_index_put(self->index, &hnc1);
+		osmdb_index_put(self->index, &hnc2);
+		cc_vec3f_subv_copy(&p1, &p0, &v01);
+		cc_vec3f_subv_copy(&p2, &p1, &v12);
+		cc_vec3f_normalize(&v01);
+		cc_vec3f_normalize(&v12);
+		float dot = cc_vec3f_dot(&v01, &v12);
+		if(dot < cosf(cc_deg2rad(30.0f)))
+		{
+			return 0;
+		}
 	}
 
 	// join ways
 	cc_listIter_t* iter;
 	cc_listIter_t* temp;
-	if(append)
+	if((ref1 == *refa1) && (ref1 == *refb2))
 	{
-		// skip the first node
-		iter = cc_list_head(b->list_nds);
-		iter = cc_list_next(iter);
-		while(iter)
-		{
-			temp = cc_list_next(iter);
-			cc_list_swapn(b->list_nds, a->list_nds, iter, NULL);
-			iter = temp;
-		}
-	}
-	else
-	{
+		// join head-to-tail
 		// skip the last node
 		iter = cc_list_tail(b->list_nds);
 		iter = cc_list_prev(iter);
@@ -386,6 +384,49 @@ osmdb_tiler_joinWay(osmdb_tiler_t* self, int tid,
 			cc_list_swap(b->list_nds, a->list_nds, iter, NULL);
 			iter = temp;
 		}
+		*ref2 = *refb1;
+	}
+	else if((ref1 == *refa2) && (ref1 == *refb1))
+	{
+		// join tail-to-head
+		// skip the first node
+		iter = cc_list_head(b->list_nds);
+		iter = cc_list_next(iter);
+		while(iter)
+		{
+			temp = cc_list_next(iter);
+			cc_list_swapn(b->list_nds, a->list_nds, iter, NULL);
+			iter = temp;
+		}
+		*ref2 = *refb2;
+	}
+	else if((ref1 == *refa1) && (ref1 == *refb1))
+	{
+		// join head-to-head
+		// skip the first node
+		iter = cc_list_head(b->list_nds);
+		iter = cc_list_next(iter);
+		while(iter)
+		{
+			temp = cc_list_next(iter);
+			cc_list_swap(b->list_nds, a->list_nds, iter, NULL);
+			iter = temp;
+		}
+		*ref2 = *refb2;
+	}
+	else if((ref1 == *refa2) && (ref1 == *refb2))
+	{
+		// join tail-to-tail
+		// skip the last node
+		iter = cc_list_tail(b->list_nds);
+		iter = cc_list_prev(iter);
+		while(iter)
+		{
+			temp = cc_list_prev(iter);
+			cc_list_swapn(b->list_nds, a->list_nds, iter, NULL);
+			iter = temp;
+		}
+		*ref2 = *refb1;
 	}
 
 	// combine range
@@ -410,7 +451,8 @@ osmdb_tiler_joinWay(osmdb_tiler_t* self, int tid,
 }
 
 static int
-osmdb_tiler_joinWays(osmdb_tiler_t* self, int tid)
+osmdb_tiler_joinWays(osmdb_tiler_t* self, int tid,
+                     int is_member)
 {
 	ASSERT(self);
 
@@ -481,7 +523,8 @@ osmdb_tiler_joinWays(osmdb_tiler_t* self, int tid)
 				}
 				seg2 = (osmdb_waySegment_t*) cc_map_val(miter2);
 
-				if(osmdb_tiler_joinWay(self, tid, seg1, seg2,
+				if(osmdb_tiler_joinWay(self, tid, is_member,
+				                       seg1, seg2,
 				                       ref1, &ref2) == 0)
 				{
 					iter2 = cc_list_next(iter2);
@@ -490,9 +533,10 @@ osmdb_tiler_joinWays(osmdb_tiler_t* self, int tid)
 
 				// replace ref2->id2 with ref2->id1 in
 				// mm_nds_join
-				list2 = cc_multimap_findf(state->mm_nds_join,
+				list2 = cc_multimap_findp(state->mm_nds_join,
 				                          &mmiterator2,
-				                          "%" PRId64, ref2);
+				                          sizeof(int64_t),
+				                          (const void*) &ref2);
 				iter2 = cc_list_head(list2);
 				while(iter2)
 				{
@@ -879,8 +923,11 @@ osmdb_tiler_clipWays(osmdb_tiler_t* self, int tid)
 
 static int
 osmdb_tiler_gatherWay(osmdb_tiler_t* self,
-                      int tid, int64_t wid)
+                      int tid, int64_t wid,
+                      int flags, int is_member,
+                      int class, const char* name)
 {
+	// name may be NULL
 	ASSERT(self);
 
 	osmdb_tilerState_t* state = self->state[tid];
@@ -892,18 +939,22 @@ osmdb_tiler_gatherWay(osmdb_tiler_t* self,
 	};
 
 	// check if way is already included
-	cc_mapIter_t* miter;
-	miter = cc_map_findp(state->map_export,
-	                     sizeof(osmdb_exportKey_t), &key);
-	if(miter)
+	if(is_member == 0)
 	{
-		return 1;
+		cc_mapIter_t* miter;
+		miter = cc_map_findp(state->map_export,
+		                     sizeof(osmdb_exportKey_t), &key);
+		if(miter)
+		{
+			return 1;
+		}
 	}
 
 	// create segment
 	// segment may not exist due to osmosis
 	osmdb_waySegment_t* seg = NULL;
-	if(osmdb_waySegment_new(self->index, tid, wid, &seg) == 0)
+	if(osmdb_waySegment_new(self->index, tid, wid, flags,
+	                        &seg) == 0)
 	{
 		return 0;
 	}
@@ -947,21 +998,52 @@ osmdb_tiler_gatherWay(osmdb_tiler_t* self,
 	}
 	*id2_copy = wid;
 
-	if(cc_multimap_addf(state->mm_nds_join,
+	if(cc_multimap_addp(state->mm_nds_join,
 	                    (const void*) id1_copy,
-	                    "%" PRId64, *ref1) == 0)
+	                    sizeof(int64_t),
+	                    (const void*) ref1) == 0)
 	{
 		FREE(id1_copy);
 		FREE(id2_copy);
 		return 0;
 	}
 
-	if(cc_multimap_addf(state->mm_nds_join,
+	if(cc_multimap_addp(state->mm_nds_join,
 	                    (const void*) id2_copy,
-	                    "%" PRId64, *ref2) == 0)
+	                    sizeof(int64_t),
+	                    (const void*) ref2) == 0)
 	{
 		FREE(id2_copy);
 		return 0;
+	}
+
+	// mark way as found if class or name matches rel
+	if(is_member)
+	{
+		osmdb_handle_t* hwi       = seg->hwi;
+		int             way_class = hwi->way_info->class;
+		const char*     way_name  = osmdb_wayInfo_name(hwi->way_info);
+		if((class == way_class) ||
+		   (name && way_name && (strcmp(name, way_name) == 0)))
+		{
+			osmdb_exportKey_t key =
+			{
+				.type = OSMDB_EXPORT_TYPE_WAY,
+				.id   = wid
+			};
+
+			cc_mapIter_t* miter;
+			miter = cc_map_findp(state->map_export,
+			                     sizeof(osmdb_exportKey_t), &key);
+			if((miter == NULL) &&
+			   (cc_map_addp(state->map_export,
+			                (const void*) &OSMDB_ONE,
+			                sizeof(osmdb_exportKey_t),
+			                &key) == NULL))
+			{
+				return 0;
+			}
+		}
 	}
 
 	return 1;
@@ -969,16 +1051,23 @@ osmdb_tiler_gatherWay(osmdb_tiler_t* self,
 
 static int
 osmdb_tiler_exportWay(osmdb_tiler_t* self, int tid,
-                      osmdb_waySegment_t* seg, int flags)
+                      osmdb_waySegment_t* seg)
 {
 	ASSERT(self);
 	ASSERT(seg);
 
 	osmdb_tilerState_t* state = self->state[tid];
 
+	if(cc_list_size(seg->list_nds) == 0)
+	{
+		// skip
+		return 1;
+	}
+
 	if(osmdb_ostream_beginWay(state->os,
 	                          seg->hwi->way_info,
-	                          &seg->way_range, flags) == 0)
+	                          &seg->way_range,
+	                          seg->flags) == 0)
 	{
 		return 0;
 	}
@@ -1038,13 +1127,15 @@ osmdb_tiler_exportWays(osmdb_tiler_t* self, int tid)
 	while(miter)
 	{
 		seg = (osmdb_waySegment_t*) cc_map_val(miter);
-		if(osmdb_tiler_exportWay(self, tid, seg, 0) == 0)
+		if(osmdb_tiler_exportWay(self, tid, seg) == 0)
 		{
 			return 0;
 		}
 
 		miter = cc_map_next(miter);
 	}
+
+	osmdb_tilerState_reset(state, self->index, 0);
 
 	return 1;
 }
@@ -1116,13 +1207,14 @@ osmdb_tiler_gatherWays(osmdb_tiler_t* self, int tid)
 	int64_t* refs  = osmdb_tileRefs_refs(htr->tile_refs);
 	for(i = 0; i < count; ++i)
 	{
-		if(osmdb_tiler_gatherWay(self, tid, refs[i]) == 0)
+		if(osmdb_tiler_gatherWay(self, tid, refs[i],
+		                         0, 0, 0, NULL) == 0)
 		{
 			goto fail_gather_way;
 		}
 	}
 
-	if(osmdb_tiler_joinWays(self, tid) == 0)
+	if(osmdb_tiler_joinWays(self, tid, 0) == 0)
 	{
 		goto fail_join;
 	}
@@ -1153,103 +1245,6 @@ osmdb_tiler_gatherWays(osmdb_tiler_t* self, int tid)
 	fail_join:
 	fail_gather_way:
 		osmdb_index_put(self->index, &htr);
-	return 0;
-}
-
-static int
-osmdb_tiler_gatherMemberWay(osmdb_tiler_t* self,
-                            int tid, osmdb_relData_t* data,
-                            int class, const char* name)
-{
-	// name may be NULL
-	ASSERT(self);
-	ASSERT(data);
-
-	osmdb_tilerState_t* state = self->state[tid];
-
-	// create segment
-	// segment may not exist due to osmosis
-	osmdb_waySegment_t* seg = NULL;
-	if(osmdb_waySegment_new(self->index, tid,
-	                        data->wid, &seg) == 0)
-	{
-		return 0;
-	}
-	else if(seg == NULL)
-	{
-		return 1;
-	}
-
-	if(osmdb_tiler_sampleWay(self, tid, seg) == 0)
-	{
-		goto fail_sample;
-	}
-
-	// elements are defined with zero width but in
-	// practice are drawn with non-zero width
-	// points/lines so an offset is needed to ensure they
-	// are not clipped between neighboring tiles
-	double dlat = (state->latT - state->latB)/16.0;
-	double dlon = (state->lonR - state->lonL)/16.0;
-	double latT = state->latT + dlat;
-	double lonL = state->lonL - dlon;
-	double latB = state->latB - dlat;
-	double lonR = state->lonR + dlon;
-
-	if(osmdb_tiler_clipWay(self, tid, seg, 1,
-	                       latT, lonL, latB, lonR) == 0)
-	{
-		goto fail_clip;
-	}
-
-	int flags = 0;
-	if(data->inner)
-	{
-		flags = OSMDB_WAY_FLAG_INNER;
-	}
-
-	if(osmdb_tiler_exportWay(self, tid, seg, flags) == 0)
-	{
-		goto fail_export;
-	}
-
-	// mark way as found if class or name matches rel
-	osmdb_handle_t* hwi       = seg->hwi;
-	int             way_class = hwi->way_info->class;
-	const char*     way_name  = osmdb_wayInfo_name(hwi->way_info);
-	if((class == way_class) ||
-	   (name && way_name && (strcmp(name, way_name) == 0)))
-	{
-		osmdb_exportKey_t key =
-		{
-			.type = OSMDB_EXPORT_TYPE_WAY,
-			.id   = data->wid
-		};
-
-		cc_mapIter_t* miter;
-		miter = cc_map_findp(state->map_export,
-		                     sizeof(osmdb_exportKey_t), &key);
-		if((miter == NULL) &&
-		   (cc_map_addp(state->map_export,
-		                (const void*) &OSMDB_ONE,
-		                sizeof(osmdb_exportKey_t),
-		                &key) == NULL))
-		{
-			goto fail_mark;
-		}
-	}
-
-	osmdb_waySegment_delete(self->index, &seg);
-
-	// success
-	return 1;
-
-	// failure
-	fail_mark:
-	fail_export:
-	fail_clip:
-	fail_sample:
-		osmdb_waySegment_delete(self->index, &seg);
 	return 0;
 }
 
@@ -1342,13 +1337,41 @@ osmdb_tiler_gatherRel(osmdb_tiler_t* self,
 		count = hrm->rel_members->count;
 		for(i = 0; i < count; ++i)
 		{
-			if(osmdb_tiler_gatherMemberWay(self, tid, &data[i],
-			                               hri->rel_info->class,
-			                               name) == 0)
+			osmdb_relData_t* datai = &data[i];
+
+			int flags = 0;
+			if(datai->inner)
+			{
+				flags = OSMDB_WAY_FLAG_INNER;
+			}
+
+			int class = hri->rel_info->class;
+			if(osmdb_tiler_gatherWay(self, tid, datai->wid,
+			                         flags, 1, class, name) == 0)
 			{
 				goto fail_member;
 			}
 		}
+	}
+
+	if(osmdb_tiler_joinWays(self, tid, 1) == 0)
+	{
+		goto fail_join;
+	}
+
+	if(osmdb_tiler_sampleWays(self, tid) == 0)
+	{
+		goto fail_sample;
+	}
+
+	if(osmdb_tiler_clipWays(self, tid) == 0)
+	{
+		goto fail_clip;
+	}
+
+	if(osmdb_tiler_exportWays(self, tid) == 0)
+	{
+		goto fail_export;
 	}
 
 	osmdb_ostream_endRel(state->os);
@@ -1385,6 +1408,10 @@ osmdb_tiler_gatherRel(osmdb_tiler_t* self,
 
 	// failure
 	fail_mark:
+	fail_export:
+	fail_clip:
+	fail_sample:
+	fail_join:
 	fail_member:
 	fail_begin_rel:
 		osmdb_index_put(self->index, &hnc);
@@ -1619,7 +1646,7 @@ osmdb_tiler_make(osmdb_tiler_t* self,
 		goto fail_end;
 	}
 
-	osmdb_tilerState_reset(state, self->index);
+	osmdb_tilerState_reset(state, self->index, 1);
 	osmdb_index_unlock(self->index);
 
 	// success
@@ -1630,7 +1657,7 @@ osmdb_tiler_make(osmdb_tiler_t* self,
 	fail_gather_nodes:
 	fail_gather_ways:
 	fail_gather_rels:
-		osmdb_tilerState_reset(state, self->index);
+		osmdb_tilerState_reset(state, self->index, 1);
 	fail_begin:
 	fail_init:
 		osmdb_index_unlock(self->index);
