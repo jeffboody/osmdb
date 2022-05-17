@@ -2373,7 +2373,7 @@ osm_parser_insertRel(osm_parser_t* self,
 	float  area = (float) ((latT-latB)*(lonR-lonL));
 	if((center == 0) &&
 	   ((polygon == 0) ||
-	    (polygon && (area < 0.002f))))
+	    (polygon && (area < 64*0.002f))))
 	{
 		size = osmdb_relMembers_sizeof(self->rel_members);
 		if(osmdb_index_add(self->index,
