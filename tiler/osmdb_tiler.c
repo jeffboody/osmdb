@@ -428,6 +428,10 @@ osmdb_tiler_joinWay(osmdb_tiler_t* self, int tid,
 		}
 		*ref2 = *refb1;
 	}
+	else
+	{
+		return 0;
+	}
 
 	// combine range
 	if(b->way_range.latT > a->way_range.latT)
