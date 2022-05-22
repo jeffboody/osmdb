@@ -41,6 +41,8 @@ typedef struct
 	int   way_pts;
 	float way_x;
 	float way_y;
+	short waypt_x;
+	short waypt_y;
 
 	// bounding tile rect
 	float tileT;

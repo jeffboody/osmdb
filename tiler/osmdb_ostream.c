@@ -486,6 +486,26 @@ int osmdb_ostream_addWayPt(osmdb_ostream_t* self,
 		return 0;
 	}
 
+	osmdb_point_t tmp;
+	osmdb_ostream_xy2pt(x, y, &tmp);
+
+	// check for duplicate points
+	osmdb_way_t* way;
+	way = (osmdb_way_t*)
+	      osmdb_ostream_data(self, self->offset_way);
+	if(way == NULL)
+	{
+		return 0;
+	}
+	else if(way->count)
+	{
+		if((self->waypt_x == tmp.x) &&
+		   (self->waypt_y == tmp.y))
+		{
+			return 1;
+		}
+	}
+
 	osmdb_point_t* pt;
 	pt = (osmdb_point_t*)
 	     osmdb_ostream_add(self, sizeof(osmdb_point_t), NULL);
@@ -493,11 +513,16 @@ int osmdb_ostream_addWayPt(osmdb_ostream_t* self,
 	{
 		return 0;
 	}
+	pt->x = tmp.x;
+	pt->y = tmp.y;
 
-	osmdb_ostream_xy2pt(x, y, pt);
+	// update the cached point
+	self->waypt_x = tmp.x;
+	self->waypt_y = tmp.y;
 
 	// increment way pts count
-	osmdb_way_t* way;
+	// we must update the way pointer because it might be
+	// invalidated by osmdb_ostream_add
 	way = (osmdb_way_t*)
 	      osmdb_ostream_data(self, self->offset_way);
 	if(way == NULL)
