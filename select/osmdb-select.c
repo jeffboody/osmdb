@@ -284,7 +284,7 @@ int main(int argc, const char** argv)
 {
 	if(argc != 3)
 	{
-		LOGE("usage: %s file.sqlite3 [TILE]", argv[0]);
+		LOGE("usage: %s planet.sqlite3 [TILE]", argv[0]);
 		LOGE("TILE: /osmdbv8/zoom/x/y");
 		return EXIT_FAILURE;
 	}

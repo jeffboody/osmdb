@@ -43,8 +43,9 @@ int main(int argc, char** argv)
 
 	if(argc < 5)
 	{
-		LOGE("usage: %s [SMEM] style.xml db.sqlite3 input.kml [...]", argv[0]);
-		LOGE("SMEM: scale memory in GB (e.g. 1.0)");
+		LOGE("usage: %s [SMEM] style.xml planet.sqlite3 [KML]", argv[0]);
+		LOGE("SMEM:  size of memory in GB (e.g. 1.0)");
+		LOGE("KML:   list of KML files");
 		return EXIT_FAILURE;
 	}
 

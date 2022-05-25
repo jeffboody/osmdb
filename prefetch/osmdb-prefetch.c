@@ -269,13 +269,13 @@ int main(int argc, char** argv)
 
 	if(usage)
 	{
-		LOGE("usage: %s [PREFETCH] [SMEM] cache.sqlite3 index.sqlite3",
+		LOGE("usage: %s [PREFETCH] [SMEM] osmdb.bfs planet.sqlite3",
 		     argv[0]);
 		LOGE("PREFETCH:");
 		LOGE("-pf=CO (Colorado)");
 		LOGE("-pf=US (United States)");
 		LOGE("-pf=WW (Worldwide)");
-		LOGE("SMEM: scale memory in GB (e.g. 1.0)");
+		LOGE("SMEM: size of memory in GB (e.g. 1.0)");
 		return EXIT_FAILURE;
 	}
 

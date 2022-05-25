@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 
 	if(argc != 5)
 	{
-		LOGE("usage: %s [SMEM] style.xml input.osm output.sqlite3", argv[0]);
+		LOGE("usage: %s [SMEM] style.xml planet.osm planet.sqlite3", argv[0]);
 		LOGE("SMEM: scale memory in GB (e.g. 1.0)");
 		return EXIT_FAILURE;
 	}
