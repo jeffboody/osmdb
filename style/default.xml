@@ -104,7 +104,7 @@
 	<color name="lake:text"       val="B6CDEDFF" />
 	<color name="lake:poly"       val="4788D9BF" />
 	<color name="glacier:text"    val="C0F0F1FF" />
-	<color name="glacier:poly"    val="9BDFE07F" />
+	<color name="glacier:poly"    val="9BDFE0BF" />
 	<color name="ocean:text"      val="73A3DDFF" />
 	<color name="aerialway"       val="9BDFE0FF" />
 	<color name="city:text"       val="FFFFFFFF" />
