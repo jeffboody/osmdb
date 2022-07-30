@@ -27,10 +27,10 @@
 #include <string.h>
 
 #define LOG_TAG "osmdb"
-#include "libcc/math/cc_vec3f.h"
+#include "libcc/math/cc_float.h"
+#include "libcc/math/cc_vec3d.h"
 #include "libcc/cc_log.h"
 #include "libcc/cc_memory.h"
-#include "libcc/cc_unit.h"
 #include "terrain/terrain_util.h"
 #include "osmdb_tiler.h"
 #include "osmdb_waySegment.h"
@@ -340,11 +340,11 @@ osmdb_tiler_joinWay(osmdb_tiler_t* self, int tid,
 		// check join angle to prevent joining ways
 		// at a sharp angle since this causes weird
 		// rendering artifacts
-		cc_vec3f_t p0;
-		cc_vec3f_t p1;
-		cc_vec3f_t p2;
-		cc_vec3f_t v01;
-		cc_vec3f_t v12;
+		cc_vec3d_t p0;
+		cc_vec3d_t p1;
+		cc_vec3d_t p2;
+		cc_vec3d_t v01;
+		cc_vec3d_t v12;
 		osmdb_nodeCoord_t* nc0 = hnc0->node_coord;
 		osmdb_nodeCoord_t* nc1 = hnc1->node_coord;
 		osmdb_nodeCoord_t* nc2 = hnc2->node_coord;
@@ -358,11 +358,11 @@ osmdb_tiler_joinWay(osmdb_tiler_t* self, int tid,
 		osmdb_index_put(self->index, &hnc0);
 		osmdb_index_put(self->index, &hnc1);
 		osmdb_index_put(self->index, &hnc2);
-		cc_vec3f_subv_copy(&p1, &p0, &v01);
-		cc_vec3f_subv_copy(&p2, &p1, &v12);
-		cc_vec3f_normalize(&v01);
-		cc_vec3f_normalize(&v12);
-		float dot = cc_vec3f_dot(&v01, &v12);
+		cc_vec3d_subv_copy(&p1, &p0, &v01);
+		cc_vec3d_subv_copy(&p2, &p1, &v12);
+		cc_vec3d_normalize(&v01);
+		cc_vec3d_normalize(&v12);
+		float dot = cc_vec3d_dot(&v01, &v12);
 		if(dot < cosf(cc_deg2rad(30.0f)))
 		{
 			return 0;
@@ -584,7 +584,7 @@ osmdb_tiler_sampleWay(osmdb_tiler_t* self, int tid,
 
 	int first = 1;
 
-	cc_vec3f_t p0 = { .x=0.0f, .y=0.0f, .z=0.0f };
+	cc_vec3d_t p0 = { .x=0.0, .y=0.0, .z=0.0 };
 
 	cc_listIter_t* iter;
 	iter = cc_list_head(seg->list_nds);
@@ -618,15 +618,15 @@ osmdb_tiler_sampleWay(osmdb_tiler_t* self, int tid,
 		double     lat   = hnc->node_coord->lat;
 		double     lon   = hnc->node_coord->lon;
 		float      onemi = cc_mi2m(5280.0f);
-		cc_vec3f_t p1;
+		cc_vec3d_t p1;
 		terrain_geo2xyz(lat, lon, onemi,
 		                &p1.x, &p1.y, &p1.z);
-		float dist = cc_vec3f_distance(&p1, &p0);
+		float dist = cc_vec3d_distance(&p1, &p0);
 
 		// check if the nd should be kept or discarded
 		if(first || (dist >= state->min_dist))
 		{
-			cc_vec3f_copy(&p1, &p0);
+			cc_vec3d_copy(&p1, &p0);
 			iter = cc_list_next(iter);
 		}
 		else

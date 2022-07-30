@@ -27,10 +27,10 @@
 #include <string.h>
 
 #define LOG_TAG "osmdb"
-#include "libcc/math/cc_vec3f.h"
+#include "libcc/math/cc_float.h"
+#include "libcc/math/cc_vec3d.h"
 #include "libcc/cc_log.h"
 #include "libcc/cc_memory.h"
-#include "libcc/cc_unit.h"
 #include "terrain/terrain_util.h"
 #include "osmdb_waySegment.h"
 #include "osmdb_tilerState.h"
@@ -119,8 +119,8 @@ int osmdb_tilerState_init(osmdb_tilerState_t* self,
 	               &self->latB, &self->lonR);
 
 	// compute x,y for tile
-	cc_vec3f_t pa;
-	cc_vec3f_t pb;
+	cc_vec3d_t pa;
+	cc_vec3d_t pb;
 	float onemi = cc_mi2m(5280.0f);
 	terrain_geo2xyz(self->latT, self->lonL, onemi,
 	                &pa.x, &pa.y, &pa.z);
@@ -141,7 +141,7 @@ int osmdb_tilerState_init(osmdb_tilerState_t* self,
 	}
 
 	float pix = sqrtf(2*256.0f*256.0f);
-	self->min_dist = s*cc_vec3f_distance(&pb, &pa)/pix;
+	self->min_dist = s*cc_vec3d_distance(&pb, &pa)/pix;
 
 	return 1;
 }
