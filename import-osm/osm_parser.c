@@ -975,6 +975,8 @@ static void osm_parser_initNode(osm_parser_t* self)
 	self->name_en            = 0;
 	self->protect_class      = 0;
 	self->ownership_national = 1;
+	self->piste_downhill     = 0;
+	self->piste_difficulty   = -1;
 	self->tag_name[0]        = '\0';
 	self->tag_abrev[0]       = '\0';
 	self->tag_ref[0]         = '\0';
@@ -999,6 +1001,8 @@ static void osm_parser_initWay(osm_parser_t* self)
 	self->name_en            = 0;
 	self->protect_class      = 0;
 	self->ownership_national = 1;
+	self->piste_downhill     = 0;
+	self->piste_difficulty   = -1;
 	self->tag_name[0]        = '\0';
 	self->tag_abrev[0]       = '\0';
 	self->tag_ref[0]         = '\0';
@@ -1024,6 +1028,8 @@ static void osm_parser_initRel(osm_parser_t* self)
 	self->name_en            = 0;
 	self->protect_class      = 0;
 	self->ownership_national = 1;
+	self->piste_downhill     = 0;
+	self->piste_difficulty   = -1;
 	self->tag_name[0]        = '\0';
 	self->tag_abrev[0]       = '\0';
 	self->tag_ref[0]         = '\0';
@@ -1370,6 +1376,11 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 				        (self->node_info->class == self->boundary_pa))
 				{
 					// keep national park class
+				}
+				else if(class == self->winter_sports)
+				{
+					// overwrite any class with winter_sports
+					self->node_info->class = class;
 				}
 				else if((self->node_info->class == self->class_none)   ||
 				        (self->node_info->class == self->building_yes) ||
@@ -1808,6 +1819,29 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 			self->way_info->class = self->boundary_nm3;
 		}
 	}
+	else if(self->piste_downhill)
+	{
+		if(self->piste_difficulty == 0)
+		{
+			self->way_info->class = self->piste_downhill0;
+		}
+		else if(self->piste_difficulty == 1)
+		{
+			self->way_info->class = self->piste_downhill1;
+		}
+		else if(self->piste_difficulty == 2)
+		{
+			self->way_info->class = self->piste_downhill2;
+		}
+		else if(self->piste_difficulty == 3)
+		{
+			self->way_info->class = self->piste_downhill3;
+		}
+		else if(self->piste_difficulty == 4)
+		{
+			self->way_info->class = self->piste_downhill4;
+		}
+	}
 
 	const char* class_name;
 	class_name = osmdb_classCodeToName(self->way_info->class);
@@ -1990,6 +2024,11 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 				{
 					// keep national park class
 				}
+				else if(class == self->winter_sports)
+				{
+					// overwrite any class with winter_sports
+					self->way_info->class = class;
+				}
 				else if((self->way_info->class == self->class_none)   ||
 				        (self->way_info->class == self->building_yes) ||
 				        (self->way_info->class == self->barrier_yes)  ||
@@ -2072,6 +2111,34 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 				if(strcmp(val, "national") != 0)
 				{
 					self->ownership_national = 0;
+				}
+			}
+			else if((strcmp(atts[j], "piste:type") == 0) &&
+			        (strcmp(atts[n], "downhill") == 0))
+			{
+				self->piste_downhill = 1;
+			}
+			else if(strcmp(atts[j], "piste:difficulty") == 0)
+			{
+				if(strcmp(atts[n], "novice") == 0)
+				{
+					self->piste_difficulty = 0;
+				}
+				else if(strcmp(atts[n], "easy") == 0)
+				{
+					self->piste_difficulty = 1;
+				}
+				else if(strcmp(atts[n], "intermediate") == 0)
+				{
+					self->piste_difficulty = 2;
+				}
+				else if(strcmp(atts[n], "advanced") == 0)
+				{
+					self->piste_difficulty = 3;
+				}
+				else if(strcmp(atts[n], "expert") == 0)
+				{
+					self->piste_difficulty = 4;
 				}
 			}
 		}
@@ -2560,6 +2627,11 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 				{
 					// keep national park class
 				}
+				else if(class == self->winter_sports)
+				{
+					// overwrite any class with winter_sports
+					self->rel_info->class = class;
+				}
 				else if((self->rel_info->class == self->class_none)   ||
 				        (self->rel_info->class == self->building_yes) ||
 				        (self->rel_info->class == self->barrier_yes)  ||
@@ -2921,10 +2993,16 @@ osm_parser_new(float smem, const char* style,
 	self->tourism_yes      = osmdb_classKVToCode("tourism",  "yes");
 	self->highway_motorway = osmdb_classKVToCode("highway",  "motorway");
 	self->highway_junction = osmdb_classKVToCode("highway",  "motorway_junction");
+	self->winter_sports    = osmdb_classKVToCode("landuse",  "winter_sports");
 	self->boundary_np      = osmdb_classKVToCode("boundary", "national_park");
 	self->boundary_np2     = osmdb_classKVToCode("boundary", "national_park2");
 	self->boundary_nm3     = osmdb_classKVToCode("boundary", "national_monument3");
 	self->boundary_pa      = osmdb_classKVToCode("boundary", "protected_area");
+	self->piste_downhill0  = osmdb_classKVToCode("piste", "downhill0");
+	self->piste_downhill1  = osmdb_classKVToCode("piste", "downhill1");
+	self->piste_downhill2  = osmdb_classKVToCode("piste", "downhill2");
+	self->piste_downhill3  = osmdb_classKVToCode("piste", "downhill3");
+	self->piste_downhill4  = osmdb_classKVToCode("piste", "downhill4");
 
 	self->rel_member_type_node         = osmdb_relationMemberTypeToCode("node");
 	self->rel_member_type_way          = osmdb_relationMemberTypeToCode("way");

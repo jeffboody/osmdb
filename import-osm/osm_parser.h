@@ -66,6 +66,10 @@ typedef struct
 	int protect_class;
 	int ownership_national;
 
+	// for ski areas
+	int piste_downhill;
+	int piste_difficulty;
+
 	// tags
 	int64_t tag_changeset;
 	char    tag_name[256];
@@ -83,10 +87,16 @@ typedef struct
 	int tourism_yes;
 	int highway_motorway;
 	int highway_junction;
+	int winter_sports;
 	int boundary_np;  // national_park
 	int boundary_np2; // national_park2     (protect class 2)
 	int boundary_nm3; // national_monument3 (protect class 3)
 	int boundary_pa;  // protected_area
+	int piste_downhill0;
+	int piste_downhill1;
+	int piste_downhill2;
+	int piste_downhill3;
+	int piste_downhill4;
 
 	// relation member constants
 	int rel_member_type_node;

@@ -122,25 +122,29 @@ typedef struct
 } osmdb_utilClass_t;
 
 // https://wiki.openstreetmap.org/wiki/Map_Features
-// ranks: 0-5 (low to high)
-// 5: country/state
-// 4: city/town
-// 3: peak/volcano/national park/reservoir/lake/glacier/dam/forest
-// 2: parks/natural/tourism/airport/university/library/bridge/places
-// 1: trails/river
-// 0: other
 //
 // Custom Classes
 // * boundary:state is a custom class for state boundaries
 //   which are imported from cb_2018_us_state_500k.kml
 // * boundary:national_park2 is a custom class for
-//   national park boundaries with have
-//   boundary:national_park, protect_class=2 and
-//   ownership:national
+//   national park boundaries
+//   - boundary:national_park
+//   - protect_class=2
+//   - ownership:national
 // * boundary:national_monument3 is a custom class for
-//   national monument boundaries with have
-//   boundary:national_park, protect_class=3 and
-//   ownership:national
+//   national monument boundaries
+//   - boundary:national_park
+//   - protect_class=3
+//   - ownership:national
+// * piste:downhillN is a custom class for downhill skiing
+//   - piste:type=downhill
+//   - piste:difficulty (N)
+//     0: novice
+//     1: easy
+//     2: intermediate
+//     3: advanced
+//     4: expert
+//   - must be a way
 osmdb_utilClass_t OSM_UTIL_CLASSES[] =
 {
 	{ .class="class:none",                                     },
@@ -1145,6 +1149,11 @@ osmdb_utilClass_t OSM_UTIL_CLASSES[] =
 	{ .class="place:ocean"                                     },
 	{ .class="place:sea"                                       },
 	{ .class="natural:strait"                                  },
+	{ .class="piste:downhill0"                                 },
+	{ .class="piste:downhill1"                                 },
+	{ .class="piste:downhill2"                                 },
+	{ .class="piste:downhill3"                                 },
+	{ .class="piste:downhill4"                                 },
 	{ .class=NULL                                              },
 };
 
