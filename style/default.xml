@@ -121,7 +121,8 @@
 	<color name="glacier:text"    val="C0F0F1FF" />
 	<color name="glacier:poly"    val="9BDFE0BF" />
 	<color name="ocean:text"      val="73A3DDFF" />
-	<color name="aerialway"       val="DC143CFF" />
+	<color name="aerialway:text"  val="D88191FF" />
+	<color name="aerialway:line"  val="DC143CFF" />
 	<color name="city:text"       val="FFFFFFFF" />
 	<color name="city:point"      val="404040FF" />
 	<color name="village:text"    val="EEEEEEFF" />
@@ -172,14 +173,14 @@
 	<point name="other152"         min_zoom="17" layer="point:other2"         text_scale="0.95f" text_color1="other:text"          text_color2="black" marker_color1="other:text"    marker_color2="black" />
 	<point name="military17"       min_zoom="17" layer="point:military"       text_scale="0.95f" text_color1="military:text"       text_color2="black" marker_color1="military:text" marker_color2="black" />
 	<point name="junction17"       min_zoom="17" layer="point:junction"       text_scale="0.95f" text_color1="junction:text"       text_color2="black" />
-	<point name="aerialway15"      min_zoom="15" layer="point:aerialway"      text_scale="0.95f" text_color1="white"               text_color2="black" />
-	<point name="groundway15"      min_zoom="15" layer="point:groundway"      text_scale="0.95f" text_color1="white"               text_color2="black" />
+	<point name="aerialway15"      min_zoom="15" layer="point:aerialway"      text_scale="0.95f" text_color1="aerialway:text"      text_color2="black" />
+	<point name="groundway15"      min_zoom="15" layer="point:groundway"      text_scale="0.95f" text_color1="aerialway:text"      text_color2="black" />
 	<point name="national_park111" min_zoom="11" layer="point:national_park"  text_scale="1.15f" text_color1="national_park:text"  text_color2="black" flags="label:center" />
 	<point name="national_park110" min_zoom="11" layer="point:protected_area" text_scale="1.00f" text_color1="national_park:text"  text_color2="black" flags="label:center" />
 	<point name="protected_area11" min_zoom="11" layer="point:protected_area" text_scale="1.00f" text_color1="protected_area:text" text_color2="black" />
 
-	<line name="aerialway15"       min_zoom="15" layer="line:aerialway"   mode="dashed"         color1="aerialway"      width="1.4" />
-	<line name="groundway15"       min_zoom="15" layer="line:groundway"   mode="dashed"         color1="aerialway"      width="1.4" />
+	<line name="aerialway15"       min_zoom="15" layer="line:aerialway"   mode="dashed"         color1="aerialway:line" width="1.4" />
+	<line name="groundway15"       min_zoom="15" layer="line:groundway"   mode="dashed"         color1="aerialway:line" width="1.4" />
 	<line name="motorway7"         min_zoom="7"  layer="line:motorway"    mode="striped"        color1="motorway:line"  color2="dkgray" width="3.5" />
 	<line name="trunk9"            min_zoom="9"  layer="line:trunk"       mode="striped"        color1="trunk:line"     color2="dkgray" width="3.5" />
 	<line name="primary9"          min_zoom="9"  layer="line:primary"     mode="striped"        color1="primary:line"   color2="dkgray" width="3.5" />
