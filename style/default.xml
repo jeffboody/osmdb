@@ -33,6 +33,7 @@
 	<layer name="point:groundway" />
 	<layer name="point:water151" />
 	<layer name="point:minipark" />
+	<layer name="point:parking" />
 	<layer name="point:park" />
 	<layer name="point:nordic" />
 	<layer name="point:trail" />
@@ -129,6 +130,7 @@
 	<color name="country:text"    val="C71585FF" />
 	<color name="state:text"      val="9932CCFF" />
 	<color name="state:line"      val="4B0082BF" />
+	<color name="parking:text"    val="8796BEFF" />
 
 	<color name="core:text"       val="F29999FF" />
 	<color name="core:wilderness" val="119d11BF" />
@@ -171,6 +173,7 @@
 	<point name="other150"         min_zoom="17" layer="point:other0"         text_scale="0.95f" text_color1="other:text"          text_color2="black" marker_color1="other:text"    marker_color2="black" />
 	<point name="other151"         min_zoom="17" layer="point:other1"         text_scale="0.95f" text_color1="other:text"          text_color2="black" marker_color1="other:text"    marker_color2="black" />
 	<point name="other152"         min_zoom="17" layer="point:other2"         text_scale="0.95f" text_color1="other:text"          text_color2="black" marker_color1="other:text"    marker_color2="black" />
+	<point name="parking17"        min_zoom="17" layer="point:parking"        text_scale="0.95f" text_color1="parking:text"        text_color2="black" marker_color1="parking:text"  marker_color2="black" flags="marker:show"/>
 	<point name="military17"       min_zoom="17" layer="point:military"       text_scale="0.95f" text_color1="military:text"       text_color2="black" marker_color1="military:text" marker_color2="black" />
 	<point name="junction17"       min_zoom="17" layer="point:junction"       text_scale="0.95f" text_color1="junction:text"       text_color2="black" />
 	<point name="aerialway15"      min_zoom="15" layer="point:aerialway"      text_scale="0.95f" text_color1="aerialway:text"      text_color2="black" />
@@ -268,7 +271,7 @@
 	<class name="amenity:car_wash"                 point="other150" />
 	<class name="amenity:ferry_terminal"           point="other150" />
 	<class name="amenity:fuel"                     point="other150" />
-	<class name="amenity:parking"                  abrev="1" point="other151" />
+	<class name="amenity:parking"                  abrev="1" point="parking17" />
 	<class name="amenity:bank"                     point="other151" />
 	<class name="amenity:clinic"                   point="other150" />
 	<class name="amenity:dentist"                  point="other150" />
