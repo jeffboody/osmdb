@@ -68,6 +68,7 @@ typedef struct
 
 	// for ski areas
 	int piste_downhill;
+	int piste_nordic;
 	int piste_difficulty;
 
 	// tags
@@ -97,6 +98,7 @@ typedef struct
 	int class_piste_downhill2;
 	int class_piste_downhill3;
 	int class_piste_downhill4;
+	int class_piste_nordic;
 
 	// relation member constants
 	int rel_member_type_node;

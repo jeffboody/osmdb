@@ -145,6 +145,11 @@ typedef struct
 //     3: advanced
 //     4: expert
 //   - must be a way
+// * piste:nordic is a custom class for cross country skiing
+//   - piste:type=nordic
+//   - must be a way
+//   - low priority class and may be overridden by other
+//     classes (e.g. highway:trail)
 osmdb_utilClass_t OSM_UTIL_CLASSES[] =
 {
 	{ .class="class:none",                                     },
@@ -1154,6 +1159,7 @@ osmdb_utilClass_t OSM_UTIL_CLASSES[] =
 	{ .class="piste:downhill2"                                 },
 	{ .class="piste:downhill3"                                 },
 	{ .class="piste:downhill4"                                 },
+	{ .class="piste:nordic"                                    },
 	{ .class=NULL                                              },
 };
 

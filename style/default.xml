@@ -8,6 +8,7 @@
 	<layer name="line:building" />
 	<layer name="line:groundway" />
 	<layer name="line:trail" />
+	<layer name="line:nordic" />
 	<layer name="line:downhill" />
 	<layer name="line:track" />
 	<layer name="line:highway" />
@@ -33,6 +34,7 @@
 	<layer name="point:water151" />
 	<layer name="point:minipark" />
 	<layer name="point:park" />
+	<layer name="point:nordic" />
 	<layer name="point:trail" />
 	<layer name="point:track" />
 	<layer name="point:downhill" />
@@ -108,6 +110,8 @@
 	<color name="downhill2:line"     val="0000FFFF" />
 	<color name="downhill3:line"     val="000000FF" />
 	<color name="downhill4:line"     val="000000FF" />
+	<color name="nordic:text"        val="C0F0F1FF" />
+	<color name="nordic:line"        val="9BDFE0FF" />
 
 	<color name="airport"         val="8DA0CBFF" />
 	<color name="runway:line"     val="8DA0CBFF" />
@@ -149,6 +153,7 @@
 	<point name="park15"           min_zoom="15" layer="point:park"           text_scale="1.00f" text_color1="outdoor:text"        text_color2="black" />
 	<point name="forest9"          min_zoom="9"  layer="point:forest"         text_scale="1.08f" text_color1="forest:text"         text_color2="black" />
 	<point name="downhill15"       min_zoom="15" layer="point:downhill"       text_scale="0.95f" text_color1="white"               text_color2="black" />
+	<point name="nordic15"         min_zoom="15" layer="point:nordic"         text_scale="0.95f" text_color1="nordic:text"         text_color2="black" />
 	<point name="trail15"          min_zoom="15" layer="point:trail"          text_scale="0.95f" text_color1="trail:text"          text_color2="black" />
 	<point name="track15"          min_zoom="15" layer="point:track"          text_scale="0.95f" text_color1="track:text"          text_color2="black" />
 	<point name="core13"           min_zoom="13" layer="point:core"           text_scale="1.00f" text_color1="core:text"           text_color2="black" flags="marker:show,ele:show" />
@@ -196,6 +201,7 @@
 	<line name="downhill215"       min_zoom="15" layer="line:downhill"                          color1="downhill2:line" width="1.4" />
 	<line name="downhill315"       min_zoom="15" layer="line:downhill"                          color1="downhill3:line" width="1.4" />
 	<line name="downhill415"       min_zoom="15" layer="line:downhill"    mode="dashed"         color1="downhill4:line" width="1.4" />
+	<line name="nordic15"          min_zoom="15" layer="line:nordic"      mode="dashed,striped" color1="nordic:line"    color2="dkgray" width="1.7" />
 	<line name="trail15"           min_zoom="15" layer="line:trail"       mode="dashed,striped" color1="trail:line"     color2="dkgray" width="1.7" />
 	<line name="track15"           min_zoom="15" layer="line:track"       mode="striped"        color1="track:line"     color2="dkgray" width="1.7" />
 	<line name="railway15"         min_zoom="15" layer="line:railway"     mode="dashed,striped" color1="gray"           color2="ltgray" width="1.7" />
@@ -401,6 +407,7 @@
 	<class name="piste:downhill2"                  abrev="1" point="downhill15" line="downhill215" />
 	<class name="piste:downhill3"                  abrev="1" point="downhill15" line="downhill315" />
 	<class name="piste:downhill4"                  abrev="1" point="downhill15" line="downhill415" />
+	<class name="piste:nordic"                     abrev="1" point="nordic15"   line="nordic15" />
 	<class name="historic:aircraft"                point="other150" />
 	<class name="historic:aqueduct"                point="other150" />
 	<class name="historic:archaeological_site"     point="other150" />
