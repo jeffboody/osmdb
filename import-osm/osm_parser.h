@@ -79,24 +79,24 @@ typedef struct
 
 	// class constants
 	int class_none;
-	int building_yes;
-	int barrier_yes;
-	int office_yes;
-	int historic_yes;
-	int man_made_yes;
-	int tourism_yes;
-	int highway_motorway;
-	int highway_junction;
-	int winter_sports;
-	int boundary_np;  // national_park
-	int boundary_np2; // national_park2     (protect class 2)
-	int boundary_nm3; // national_monument3 (protect class 3)
-	int boundary_pa;  // protected_area
-	int piste_downhill0;
-	int piste_downhill1;
-	int piste_downhill2;
-	int piste_downhill3;
-	int piste_downhill4;
+	int class_building_yes;
+	int class_barrier_yes;
+	int class_office_yes;
+	int class_historic_yes;
+	int class_man_made_yes;
+	int class_tourism_yes;
+	int class_highway_motorway;
+	int class_highway_junction;
+	int class_winter_sports;
+	int class_boundary_np;  // national_park
+	int class_boundary_np2; // national_park2     (protect class 2)
+	int class_boundary_nm3; // national_monument3 (protect class 3)
+	int class_boundary_pa;  // protected_area
+	int class_piste_downhill0;
+	int class_piste_downhill1;
+	int class_piste_downhill2;
+	int class_piste_downhill3;
+	int class_piste_downhill4;
 
 	// relation member constants
 	int rel_member_type_node;

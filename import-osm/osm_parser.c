@@ -1230,16 +1230,16 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 
 	// override custom classes
 	if(self->ownership_national &&
-	   ((self->node_info->class == self->boundary_np) ||
-	    (self->node_info->class == self->boundary_pa)))
+	   ((self->node_info->class == self->class_boundary_np) ||
+	    (self->node_info->class == self->class_boundary_pa)))
 	{
 		if(self->protect_class == 2)
 		{
-			self->node_info->class = self->boundary_np2;
+			self->node_info->class = self->class_boundary_np2;
 		}
 		else if(self->protect_class == 3)
 		{
-			self->node_info->class = self->boundary_nm3;
+			self->node_info->class = self->class_boundary_nm3;
 		}
 	}
 
@@ -1261,7 +1261,7 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 
 	int has_name = 0;
 	if((self->tag_name[0] != '\0') ||
-	   ((self->node_info->class == self->highway_junction) &&
+	   ((self->node_info->class == self->class_highway_junction) &&
 	    (self->tag_ref[0] != '\0')))
 	{
 		has_name = 1;
@@ -1272,7 +1272,7 @@ osm_parser_endOsmNode(osm_parser_t* self, int line,
 		int min_zoom = sc->point->min_zoom;
 
 		// fill the name
-		if((self->node_info->class == self->highway_junction) &&
+		if((self->node_info->class == self->class_highway_junction) &&
 	       (self->tag_ref[0] != '\0'))
 		{
 			self->node_info->flags |= OSMDB_NODEINFO_FLAG_NAMEREF;
@@ -1366,29 +1366,29 @@ osm_parser_beginOsmNodeTag(osm_parser_t* self, int line,
 			int  class = osm_parser_findClass(self, atts[j], val);
 			if(class)
 			{
-				if((class == self->boundary_np) ||
-				   (class == self->boundary_pa))
+				if((class == self->class_boundary_np) ||
+				   (class == self->class_boundary_pa))
 				{
 					// overwrite any class with national park
 					self->node_info->class = class;
 				}
-				else if((self->node_info->class == self->boundary_np) ||
-				        (self->node_info->class == self->boundary_pa))
+				else if((self->node_info->class == self->class_boundary_np) ||
+				        (self->node_info->class == self->class_boundary_pa))
 				{
 					// keep national park class
 				}
-				else if(class == self->winter_sports)
+				else if(class == self->class_winter_sports)
 				{
-					// overwrite any class with winter_sports
+					// overwrite any class with class_winter_sports
 					self->node_info->class = class;
 				}
-				else if((self->node_info->class == self->class_none)   ||
-				        (self->node_info->class == self->building_yes) ||
-				        (self->node_info->class == self->barrier_yes)  ||
-				        (self->node_info->class == self->office_yes)   ||
-				        (self->node_info->class == self->historic_yes) ||
-				        (self->node_info->class == self->man_made_yes) ||
-				        (self->node_info->class == self->tourism_yes)  ||
+				else if((self->node_info->class == self->class_none)         ||
+				        (self->node_info->class == self->class_building_yes) ||
+				        (self->node_info->class == self->class_barrier_yes)  ||
+				        (self->node_info->class == self->class_office_yes)   ||
+				        (self->node_info->class == self->class_historic_yes) ||
+				        (self->node_info->class == self->class_man_made_yes) ||
+				        (self->node_info->class == self->class_tourism_yes)  ||
 				        osmdb_classIsBuilding(self->node_info->class))
 				{
 					// overwrite generic class
@@ -1807,39 +1807,39 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 
 	// override custom classes
 	if(self->ownership_national &&
-	   ((self->way_info->class == self->boundary_np) ||
-	    (self->way_info->class == self->boundary_pa)))
+	   ((self->way_info->class == self->class_boundary_np) ||
+	    (self->way_info->class == self->class_boundary_pa)))
 	{
 		if(self->protect_class == 2)
 		{
-			self->way_info->class = self->boundary_np2;
+			self->way_info->class = self->class_boundary_np2;
 		}
 		else if(self->protect_class == 3)
 		{
-			self->way_info->class = self->boundary_nm3;
+			self->way_info->class = self->class_boundary_nm3;
 		}
 	}
 	else if(self->piste_downhill)
 	{
 		if(self->piste_difficulty == 0)
 		{
-			self->way_info->class = self->piste_downhill0;
+			self->way_info->class = self->class_piste_downhill0;
 		}
 		else if(self->piste_difficulty == 1)
 		{
-			self->way_info->class = self->piste_downhill1;
+			self->way_info->class = self->class_piste_downhill1;
 		}
 		else if(self->piste_difficulty == 2)
 		{
-			self->way_info->class = self->piste_downhill2;
+			self->way_info->class = self->class_piste_downhill2;
 		}
 		else if(self->piste_difficulty == 3)
 		{
-			self->way_info->class = self->piste_downhill3;
+			self->way_info->class = self->class_piste_downhill3;
 		}
 		else if(self->piste_difficulty == 4)
 		{
-			self->way_info->class = self->piste_downhill4;
+			self->way_info->class = self->class_piste_downhill4;
 		}
 	}
 
@@ -1927,7 +1927,7 @@ osm_parser_endOsmWay(osm_parser_t* self, int line,
 	}
 
 	// fill the name
-	if((self->way_info->class == self->highway_motorway) &&
+	if((self->way_info->class == self->class_highway_motorway) &&
 	   (self->tag_ref[0] != '\0'))
 	{
 		// prefer ref for motorways
@@ -2013,29 +2013,29 @@ osm_parser_beginOsmWayTag(osm_parser_t* self, int line,
 			int  class = osm_parser_findClass(self, atts[j], val);
 			if(class)
 			{
-				if((class == self->boundary_np) ||
-				   (class == self->boundary_pa))
+				if((class == self->class_boundary_np) ||
+				   (class == self->class_boundary_pa))
 				{
 					// overwrite any class with national park
 					self->way_info->class = class;
 				}
-				else if((self->way_info->class == self->boundary_np) ||
-				        (self->way_info->class == self->boundary_pa))
+				else if((self->way_info->class == self->class_boundary_np) ||
+				        (self->way_info->class == self->class_boundary_pa))
 				{
 					// keep national park class
 				}
-				else if(class == self->winter_sports)
+				else if(class == self->class_winter_sports)
 				{
-					// overwrite any class with winter_sports
+					// overwrite any class with class_winter_sports
 					self->way_info->class = class;
 				}
-				else if((self->way_info->class == self->class_none)   ||
-				        (self->way_info->class == self->building_yes) ||
-				        (self->way_info->class == self->barrier_yes)  ||
-				        (self->way_info->class == self->office_yes)   ||
-				        (self->way_info->class == self->historic_yes) ||
-				        (self->way_info->class == self->man_made_yes) ||
-				        (self->way_info->class == self->tourism_yes)  ||
+				else if((self->way_info->class == self->class_none)         ||
+				        (self->way_info->class == self->class_building_yes) ||
+				        (self->way_info->class == self->class_barrier_yes)  ||
+				        (self->way_info->class == self->class_office_yes)   ||
+				        (self->way_info->class == self->class_historic_yes) ||
+				        (self->way_info->class == self->class_man_made_yes) ||
+				        (self->way_info->class == self->class_tourism_yes)  ||
 				        osmdb_classIsBuilding(self->way_info->class))
 				{
 					// overwrite generic class
@@ -2481,16 +2481,16 @@ osm_parser_endOsmRel(osm_parser_t* self, int line,
 
 	// override custom classes
 	if(self->ownership_national &&
-	   ((self->rel_info->class == self->boundary_np) ||
-	    (self->rel_info->class == self->boundary_pa)))
+	   ((self->rel_info->class == self->class_boundary_np) ||
+	    (self->rel_info->class == self->class_boundary_pa)))
 	{
 		if(self->protect_class == 2)
 		{
-			self->rel_info->class = self->boundary_np2;
+			self->rel_info->class = self->class_boundary_np2;
 		}
 		else if(self->protect_class == 3)
 		{
-			self->rel_info->class = self->boundary_nm3;
+			self->rel_info->class = self->class_boundary_nm3;
 		}
 	}
 
@@ -2616,29 +2616,29 @@ osm_parser_beginOsmRelTag(osm_parser_t* self, int line,
 			int  class = osm_parser_findClass(self, atts[j], val);
 			if(class)
 			{
-				if((class == self->boundary_np) ||
-				   (class == self->boundary_pa))
+				if((class == self->class_boundary_np) ||
+				   (class == self->class_boundary_pa))
 				{
 					// overwrite any class with national park
 					self->rel_info->class = class;
 				}
-				else if((self->rel_info->class == self->boundary_np) ||
-				        (self->rel_info->class == self->boundary_pa))
+				else if((self->rel_info->class == self->class_boundary_np) ||
+				        (self->rel_info->class == self->class_boundary_pa))
 				{
 					// keep national park class
 				}
-				else if(class == self->winter_sports)
+				else if(class == self->class_winter_sports)
 				{
-					// overwrite any class with winter_sports
+					// overwrite any class with class_winter_sports
 					self->rel_info->class = class;
 				}
-				else if((self->rel_info->class == self->class_none)   ||
-				        (self->rel_info->class == self->building_yes) ||
-				        (self->rel_info->class == self->barrier_yes)  ||
-				        (self->rel_info->class == self->office_yes)   ||
-				        (self->rel_info->class == self->historic_yes) ||
-				        (self->rel_info->class == self->man_made_yes) ||
-				        (self->rel_info->class == self->tourism_yes)  ||
+				else if((self->rel_info->class == self->class_none)         ||
+				        (self->rel_info->class == self->class_building_yes) ||
+				        (self->rel_info->class == self->class_barrier_yes)  ||
+				        (self->rel_info->class == self->class_office_yes)   ||
+				        (self->rel_info->class == self->class_historic_yes) ||
+				        (self->rel_info->class == self->class_man_made_yes) ||
+				        (self->rel_info->class == self->class_tourism_yes)  ||
 				        osmdb_classIsBuilding(self->rel_info->class))
 				{
 					// overwrite generic class
@@ -2984,25 +2984,25 @@ osm_parser_new(float smem, const char* style,
 		goto fail_iconv_open;
 	}
 
-	self->class_none       = osmdb_classKVToCode("class",    "none");
-	self->building_yes     = osmdb_classKVToCode("building", "yes");
-	self->barrier_yes      = osmdb_classKVToCode("barrier",  "yes");
-	self->office_yes       = osmdb_classKVToCode("office",   "yes");
-	self->historic_yes     = osmdb_classKVToCode("historic", "yes");
-	self->man_made_yes     = osmdb_classKVToCode("man_made", "yes");
-	self->tourism_yes      = osmdb_classKVToCode("tourism",  "yes");
-	self->highway_motorway = osmdb_classKVToCode("highway",  "motorway");
-	self->highway_junction = osmdb_classKVToCode("highway",  "motorway_junction");
-	self->winter_sports    = osmdb_classKVToCode("landuse",  "winter_sports");
-	self->boundary_np      = osmdb_classKVToCode("boundary", "national_park");
-	self->boundary_np2     = osmdb_classKVToCode("boundary", "national_park2");
-	self->boundary_nm3     = osmdb_classKVToCode("boundary", "national_monument3");
-	self->boundary_pa      = osmdb_classKVToCode("boundary", "protected_area");
-	self->piste_downhill0  = osmdb_classKVToCode("piste", "downhill0");
-	self->piste_downhill1  = osmdb_classKVToCode("piste", "downhill1");
-	self->piste_downhill2  = osmdb_classKVToCode("piste", "downhill2");
-	self->piste_downhill3  = osmdb_classKVToCode("piste", "downhill3");
-	self->piste_downhill4  = osmdb_classKVToCode("piste", "downhill4");
+	self->class_none             = osmdb_classKVToCode("class",    "none");
+	self->class_building_yes     = osmdb_classKVToCode("building", "yes");
+	self->class_barrier_yes      = osmdb_classKVToCode("barrier",  "yes");
+	self->class_office_yes       = osmdb_classKVToCode("office",   "yes");
+	self->class_historic_yes     = osmdb_classKVToCode("historic", "yes");
+	self->class_man_made_yes     = osmdb_classKVToCode("man_made", "yes");
+	self->class_tourism_yes      = osmdb_classKVToCode("tourism",  "yes");
+	self->class_highway_motorway = osmdb_classKVToCode("highway",  "motorway");
+	self->class_highway_junction = osmdb_classKVToCode("highway",  "motorway_junction");
+	self->class_winter_sports    = osmdb_classKVToCode("landuse",  "winter_sports");
+	self->class_boundary_np      = osmdb_classKVToCode("boundary", "national_park");
+	self->class_boundary_np2     = osmdb_classKVToCode("boundary", "national_park2");
+	self->class_boundary_nm3     = osmdb_classKVToCode("boundary", "national_monument3");
+	self->class_boundary_pa      = osmdb_classKVToCode("boundary", "protected_area");
+	self->class_piste_downhill0  = osmdb_classKVToCode("piste", "downhill0");
+	self->class_piste_downhill1  = osmdb_classKVToCode("piste", "downhill1");
+	self->class_piste_downhill2  = osmdb_classKVToCode("piste", "downhill2");
+	self->class_piste_downhill3  = osmdb_classKVToCode("piste", "downhill3");
+	self->class_piste_downhill4  = osmdb_classKVToCode("piste", "downhill4");
 
 	self->rel_member_type_node         = osmdb_relationMemberTypeToCode("node");
 	self->rel_member_type_way          = osmdb_relationMemberTypeToCode("way");
