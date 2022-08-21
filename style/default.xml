@@ -42,7 +42,11 @@
 	<layer name="point:nordic" />
 	<layer name="point:trail" />
 	<layer name="point:track" />
-	<layer name="point:downhill" />
+	<layer name="point:downhill4" />
+	<layer name="point:downhill3" />
+	<layer name="point:downhill2" />
+	<layer name="point:downhill1" />
+	<layer name="point:downhill0" />
 	<layer name="point:aerialway" />
 	<layer name="point:residential" />
 	<layer name="point:tertiary" />
@@ -164,11 +168,11 @@
 	<point name="minipark15"       min_zoom="15" layer="point:minipark"       text_scale="0.95f" text_color1="outdoor:text"        text_color2="black" />
 	<point name="park15"           min_zoom="15" layer="point:park"           text_scale="1.00f" text_color1="outdoor:text"        text_color2="black" />
 	<point name="forest9"          min_zoom="9"  layer="point:forest"         text_scale="1.08f" text_color1="forest:text"         text_color2="black" />
-	<point name="downhill015"      min_zoom="15" layer="point:downhill"       text_scale="0.95f" text_color1="downhill0:text"      text_color2="black" />
-	<point name="downhill115"      min_zoom="15" layer="point:downhill"       text_scale="0.95f" text_color1="downhill1:text"      text_color2="black" />
-	<point name="downhill215"      min_zoom="15" layer="point:downhill"       text_scale="0.95f" text_color1="downhill2:text"      text_color2="black" />
-	<point name="downhill315"      min_zoom="15" layer="point:downhill"       text_scale="0.95f" text_color1="downhill3:text"      text_color2="black" />
-	<point name="downhill415"      min_zoom="15" layer="point:downhill"       text_scale="0.95f" text_color1="downhill4:text"      text_color2="black" />
+	<point name="downhill015"      min_zoom="15" layer="point:downhill0"      text_scale="0.95f" text_color1="downhill0:text"      text_color2="black" />
+	<point name="downhill115"      min_zoom="15" layer="point:downhill1"      text_scale="0.95f" text_color1="downhill1:text"      text_color2="black" />
+	<point name="downhill215"      min_zoom="15" layer="point:downhill2"      text_scale="0.95f" text_color1="downhill2:text"      text_color2="black" />
+	<point name="downhill315"      min_zoom="15" layer="point:downhill3"      text_scale="0.95f" text_color1="downhill3:text"      text_color2="black" />
+	<point name="downhill415"      min_zoom="15" layer="point:downhill4"      text_scale="0.95f" text_color1="downhill4:text"      text_color2="black" />
 	<point name="nordic15"         min_zoom="15" layer="point:nordic"         text_scale="0.95f" text_color1="nordic:text"         text_color2="black" />
 	<point name="trail15"          min_zoom="15" layer="point:trail"          text_scale="0.95f" text_color1="trail:text"          text_color2="black" />
 	<point name="track15"          min_zoom="15" layer="point:track"          text_scale="0.95f" text_color1="track:text"          text_color2="black" />
