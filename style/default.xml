@@ -225,7 +225,7 @@
 	<line name="nordic15"          min_zoom="15" layer="line:nordic"      mode="dashed,striped" color1="nordic:line"    color2="dkgray" width="1.7" />
 	<line name="trail15"           min_zoom="15" layer="line:trail"       mode="dashed,striped" color1="trail:line"     color2="dkgray" width="1.7" />
 	<line name="track15"           min_zoom="15" layer="line:track"       mode="striped"        color1="track:line"     color2="dkgray" width="1.7" />
-	<line name="railway15"         min_zoom="15" layer="line:railway"     mode="dashed,striped" color1="gray"           color2="ltgray" width="1.7" />
+	<line name="railway15"         min_zoom="15" layer="line:railway"     mode="dashed,striped" color1="ltgray"         color2="dkgray" width="1.7" />
 	<line name="footway15"         min_zoom="15" layer="line:trail"       mode="dashed,striped,named" color1="trail:line" color2="dkgray" />
 	<line name="river11"           min_zoom="11" layer="line:water"    color1="river:line" width="3.0" />
 	<line name="stream15"          min_zoom="15" layer="line:water"    color1="river:line" width="1.7" />
