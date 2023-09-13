@@ -332,13 +332,13 @@ int main(int argc, char** argv)
 	snprintf(bounds, 256, "%lf %lf %lf %lf",
 	         latT, lonL, latB, lonR);
 	snprintf(cs, 256, "%" PRId64, self->tiler->changeset);
-	if((bfs_file_attrSet(self->cache, "name", "osmdbv9") == 0) ||
-	   (bfs_file_attrSet(self->cache, "pattern", pa)     == 0) ||
-	   (bfs_file_attrSet(self->cache, "ext", "osmdb")    == 0) ||
-	   (bfs_file_attrSet(self->cache, "bounds", bounds)  == 0) ||
-	   (bfs_file_attrSet(self->cache, "zmin", "3")       == 0) ||
-	   (bfs_file_attrSet(self->cache, "zmax", "15")      == 0) ||
-	   (bfs_file_attrSet(self->cache, "changeset", cs)   == 0))
+	if((bfs_file_attrSet(self->cache, "name", "osmdbv10") == 0) ||
+	   (bfs_file_attrSet(self->cache, "pattern", pa)      == 0) ||
+	   (bfs_file_attrSet(self->cache, "ext", "osmdb")     == 0) ||
+	   (bfs_file_attrSet(self->cache, "bounds", bounds)   == 0) ||
+	   (bfs_file_attrSet(self->cache, "zmin", "3")        == 0) ||
+	   (bfs_file_attrSet(self->cache, "zmax", "15")       == 0) ||
+	   (bfs_file_attrSet(self->cache, "changeset", cs)    == 0))
 	{
 		goto fail_attr;
 	}

@@ -28,6 +28,7 @@ Download Osmosis
 
 Optionally crop the Planet (e.g.)
 
+	osmosis/bin/osmosis --read-pbf planet-latest.osm.pbf --write-xml planet.osm
 	osmosis/bin/osmosis --read-pbf planet-latest.osm.pbf --bounding-box top=72.0 left=-170.0 bottom=18.0 right=-66.0 --write-xml US.osm
 	osmosis/bin/osmosis --read-pbf planet-latest.osm.pbf --bounding-box top=51.0 left=-126.0 bottom=23.0 right=-64.0 --write-xml US48.osm
 	osmosis/bin/osmosis --read-xml US48.osm --bounding-box top=43.0 left=-110.0 bottom=34.0 right=-100.0 --write-xml CO.osm
@@ -38,7 +39,7 @@ Import OSM
 
 To import planet.osm to sqlite3.
 
-	import-osm style/default.xml planet.osm planet.sqlite3 | tee log.txt
+	import-osm-planet.sh
 
 Import KML
 ==========
@@ -57,4 +58,11 @@ Convert shapefiles to KML files (https://www.igismap.com/shp-to-kml/).
 
 To import optional kml files.
 
-	import-kml planet.sqlite3 cb_2018_us_state_500k.kml CORE_Act.kml REC_Act.kml
+	import-kml-planet.sh
+
+Prefetch
+========
+
+To prefetch osmdb tiles.
+
+	prefetch-US.sh
