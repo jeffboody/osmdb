@@ -24,7 +24,7 @@ Download Osmosis
 	wget http://bretth.dev.openstreetmap.org/osmosis-build/osmosis-latest.tgz
 	tar -xzf osmosis-latest.tgz
 
-	sudo apt-get install openjdk-8-jdk
+	sudo apt install default-jdk
 
 Optionally crop the Planet (e.g.)
 
@@ -37,9 +37,13 @@ Optionally crop the Planet (e.g.)
 Import OSM
 ==========
 
+Install unbuffer
+
+	sudo apt install expect
+
 To import planet.osm to sqlite3.
 
-	import-osm-planet.sh
+	import-osm-US.sh
 
 Import KML
 ==========
@@ -58,7 +62,7 @@ Convert shapefiles to KML files (https://www.igismap.com/shp-to-kml/).
 
 To import optional kml files.
 
-	import-kml-planet.sh
+	import-kml-US.sh
 
 Prefetch
 ========
