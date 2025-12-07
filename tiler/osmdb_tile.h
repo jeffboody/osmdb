@@ -147,6 +147,8 @@ typedef struct
 
 osmdb_tile_t* osmdb_tile_new(size_t size, void* data,
                              osmdb_tileParser_t* parser);
+osmdb_tile_t* osmdb_tile_newNull(int64_t changeset,
+                                 int zoom, int x, int y);
 void          osmdb_tile_delete(osmdb_tile_t** _self);
 void          osmdb_tile_range(osmdb_tile_t* self,
                                osmdb_range_t* range);

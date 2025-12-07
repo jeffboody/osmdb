@@ -394,6 +394,28 @@ osmdb_tile_t* osmdb_tile_new(size_t size, void* data,
 	return self;
 }
 
+osmdb_tile_t*
+osmdb_tile_newNull(int64_t changeset,
+                   int zoom, int x, int y)
+{
+	osmdb_tile_t* self;
+	self = (osmdb_tile_t*) CALLOC(1, sizeof(osmdb_tile_t));
+	if(self == NULL)
+	{
+		LOGE("CALLOC failed");
+		return NULL;
+	}
+
+	self->magic     = OSMDB_TILE_MAGIC;
+	self->version   = OSMDB_TILE_VERSION;
+	self->changeset = changeset;
+	self->zoom      = zoom;
+	self->x         = x;
+	self->y         = y;
+
+	return self;
+}
+
 void osmdb_tile_delete(osmdb_tile_t** _self)
 {
 	ASSERT(_self);
